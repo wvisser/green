@@ -96,7 +96,7 @@
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
         <!--  haltonfailure = "yes" logfailedtests="on" outputtoformatters="on" -->
-        <junit fork="on" printsummary="on" haltonfailure = "on" showoutput="on">
+        <junit fork="on" printsummary="on" haltonfailure = "no" showoutput="on">
             <!-- <formatter type="plain" usefile="false"/> --> 
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
