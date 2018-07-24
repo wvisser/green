@@ -53,7 +53,6 @@ public class SATCanonizerTest {
 		assertNotNull(result);
 		assertEquals(Instance.class, result.getClass());
 		Instance j = (Instance) result;
-		System.out.println(j.getExpression().toString());
 		finalCheck(j.getExpression().toString(), expected);
 	}
 
@@ -166,7 +165,7 @@ public class SATCanonizerTest {
 	@Test
 	public void test08() {
 		IntVariable v1 = new IntVariable("aa", 0, 99);
-		IntVariable v2 = new IntVariable("bb", 0, 99);
+		IntVariable v2 = new IntVariable("bb", 0, 99);System.out.println(j.getExpression().toString());
 		IntVariable v3 = new IntVariable("cc", 0, 99);
 		IntVariable v4 = new IntVariable("dd", 0, 99);
 		IntVariable v5 = new IntVariable("ee", 0, 99);
