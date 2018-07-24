@@ -5,7 +5,8 @@ services:
 
 language: java
 
-before_instal:
+before_install:
+ - docker build -t DavidBakerEffendi/green .
  - docker pull DavidBakerEffendi/green
  - docker run -d -p 127.0.0.1:80:4567 DavidBakerEffendi/green /bin/sh -c "cd /root/green; ant;"
  - docker ps -a
