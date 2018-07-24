@@ -102,10 +102,6 @@
             <env key="LD_LIBRARY_PATH" value="lib"/>
             <sysproperty key="java.library.path" value="${z3lib}:${cvc3lib}"/>
             <classpath refid="green.classpath"/>
-            <!-- specify output dir for test result files -->
-            <batchtest todir="tmp/results">
-                <fileset dir="${tst-dir}" includes="**/Test*.class" />
-            </batchtest>
         </junit>
       
         <junitreport todir="${junit.dir}">
