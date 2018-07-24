@@ -14,4 +14,4 @@ script:
  # - ant;
  # - ant test;
  # - docker run sat3 /bin/sh -c "cd /root/green; ant;"
-  - docker run sat3 /bin/sh -c "ant; ant test;"
+  - docker run sat3 /bin/sh -c "ant; ant test; cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt | grep junit.framework.AssertionFailedError;"
