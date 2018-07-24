@@ -1,5 +1,11 @@
+sudo: required
 language: java
 
+services: 
+ - docker
+
+before_install:
+ - docker build -t jcoetzee/z3 .
+
 script:
- - ant;
- - ant test;
+ - docker run -d jcoetzee/z3 -c "/bin/sh -c 'ant; ant test;'"
