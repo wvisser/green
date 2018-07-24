@@ -297,7 +297,7 @@ public class SATCanonizerTest {
 
 	@Test
 	public void test20() {
-		System.out.println("\n\n Test 20 \n\n");
+		//System.out.println("\n\n Test 20 \n\n");
 		IntConstant c1 = new IntConstant(2);
 		IntVariable v1 = new IntVariable("aa", 0, 99);
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
