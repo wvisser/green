@@ -51,7 +51,7 @@ public class EntireSuite {
 
 	public static final boolean HAS_LATTE = false;
 
-	public static final boolean HAS_Z3 = false;
+	public static final boolean HAS_Z3;
 
 	public static final boolean HAS_Z3JAVA = false;
 
