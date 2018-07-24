@@ -40,7 +40,11 @@ public class SATCanonizerTest {
 		String s1 = s0.replaceAll("v[0-9]", "v");
 		SortedSet<String> s2 = new TreeSet<String>(Arrays.asList(s1.split("&&")));
 		SortedSet<String> s3 = new TreeSet<String>(Arrays.asList(expected));
+		try {
 		assertEquals(s3, s2);
+		} catch(ComparisonFailure e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	private void check(Expression expression, String full, String... expected) {
