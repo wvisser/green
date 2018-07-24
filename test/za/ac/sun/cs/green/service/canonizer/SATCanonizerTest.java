@@ -40,7 +40,7 @@ public class SATCanonizerTest {
 		String s1 = s0.replaceAll("v[0-9]", "v");
 		SortedSet<String> s2 = new TreeSet<String>(Arrays.asList(s1.split("&&")));
 		SortedSet<String> s3 = new TreeSet<String>(Arrays.asList(expected));
-	
+		System.out.println("\n\nExpected Output: " + s3.toString() + "\n\n Input Recieved: " + s2.toString() + "\n\n");
 		assertEquals(s3, s2);
 	}
 
@@ -297,6 +297,7 @@ public class SATCanonizerTest {
 
 	@Test
 	public void test20() {
+		System.out.println("\n\n Test 20 \n\n");
 		IntConstant c1 = new IntConstant(2);
 		IntVariable v1 = new IntVariable("aa", 0, 99);
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
