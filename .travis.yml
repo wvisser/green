@@ -2,9 +2,9 @@ sudo: required
 
 services:
   - docker
-
+  
 language: java
 
 script:
- - ant;
- - ant test;
+ - docker run ant;
+ - docker run ant test;
