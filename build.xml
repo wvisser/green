@@ -97,7 +97,8 @@
         <mkdir dir="${junit.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr" haltonfailure = "yes" showoutput="true">
             <formatter type="xml"/>
-            <formatter type="plain" usefile="false" /> <!-- to screen -->
+            <!-- formatter creates a report file and this displays any errors on the screen -->
+            <formatter type="plain" usefile="false" />
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
             <env key="LD_LIBRARY_PATH" value="lib"/>
