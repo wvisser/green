@@ -40,23 +40,17 @@
     <path id="green.srcpath">
     	<pathelement location="src"/>
     	<pathelement location="test"/>
-    </path>debug
+    </path>
     <property name="green.srcpath" refid="green.srcpath"/>
 
 <!--
     Initialization
 -->
 
-There are also possibilities for subtler logging, means changing the noiselevel for specific parts only, not for the whole ant script as ant -v or ant -debug does. See Make ant quiet without the -q flag? for another question dealing with loglevel and answers.
-
-
     <target name="init">
         <mkdir dir="${output.dir}"/>
         <copy file="build.properties" todir="${output.dir}"/>
-        <copy
-
-There are also possibilities for subtler logging, means changing the noiselevel for specific parts only, not for the whole ant script as ant -v or ant -debug does. See Make ant quiet without the -q flag? for another question dealing with loglevel and answers.
-includeemptydirs="false" todir="${output.dir}">
+        <copy includeemptydirs="false" todir="${output.dir}">
             <fileset dir="src">
                 <exclude name="**/*.java"/>
             </fileset>
@@ -101,8 +95,8 @@ includeemptydirs="false" todir="${output.dir}">
     <target name="test">
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr" haltonfailure = "no">
-            <formatter type="xml"/>
+        <junit fork="yes" printsummary="withOutAndErr" haltonfailure = "yes">
+            <formatter type="xml" usefile="false"/>
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
             <env key="LD_LIBRARY_PATH" value="lib"/>
