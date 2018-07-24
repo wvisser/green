@@ -95,47 +95,39 @@
     <target name="test">
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr" haltonfailure = "yes">
+        <junit fork="yes" printsummary="withOutAndErr" haltonfailure="yes" failureProperty="test.failure">
             <formatter type="xml"/>
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
             <env key="LD_LIBRARY_PATH" value="lib"/>
             <sysproperty key="java.library.path" value="${z3lib}:${cvc3lib}"/>
             <classpath refid="green.classpath"/>
+            <!-- specify output dir for test result files -->
+            <batchtest todir="tmp/results">
+                <fileset dir="${tst-dir}" includes="**/Test*.class" />
+            </batchtest>
         </junit>
       
-        <junit failureProperty="test.failure">
-          <classpath refid="classpath.test" />
+        <!-- generate report with junitreport -->
+        <junitreport todir="tmp">
+            <fileset dir="tmp/results" />
+            <report todir="tmp/report" />
+        </junitreport>
 
-          <!-- use XML formatter and let it output to file -->
-          <formatter type="xml" />
+        <!-- concat the report through a filter chain to extract what you want -->
+        <concat>
+            <fileset file="tmp/report/overview-summary.html" />
+            <filterchain>
+                <linecontainsregexp>
+                    <regexp pattern='title="Display all tests"' />
+                </linecontainsregexp>
+                <tokenfilter>
+                    <replaceregex pattern='&lt;td&gt;&lt;a href="all-tests.html" title="Display all tests"&gt;(\d+)&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;a href="alltests-fails.html" title="Display all failures"&gt;(\d+)&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;a href="alltests-errors.html" title="Display all errors"&gt;(\d+).*$' replace="Run: \1, Failed: \2, Errors: \3" />
+                </tokenfilter>
+            </filterchain>
+        </concat>
 
-          <!-- specify output dir for test result files -->
-          <batchtest todir="tmp/results">
-              <fileset dir="${tst-dir}" includes="**/Test*.class" />
-          </batchtest>
-        </junit>
-      
-      <!-- generate report with junitreport -->
-      <junitreport todir="tmp">
-          <fileset dir="tmp/results" />
-          <report todir="tmp/report" />
-      </junitreport>
-
-      <!-- concat the report through a filter chain to extract what you want -->
-      <concat>
-          <fileset file="tmp/report/overview-summary.html" />
-          <filterchain>
-              <linecontainsregexp>
-                  <regexp pattern='title="Display all tests"' />
-              </linecontainsregexp>
-              <tokenfilter>
-                  <replaceregex pattern='&lt;td&gt;&lt;a href="all-tests.html" title="Display all tests"&gt;(\d+)&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;a href="alltests-fails.html" title="Display all failures"&gt;(\d+)&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;a href="alltests-errors.html" title="Display all errors"&gt;(\d+).*$' replace="Run: \1, Failed: \2, Errors: \3" />
-              </tokenfilter>
-          </filterchain>
-      </concat>
-
-      <fail message="test failed" if="test.failure" />
+        <fail message="test failed" if="test.failure" />
       
         <junitreport todir="${junit.dir}">
             <fileset dir="${junit.dir}">
