@@ -301,9 +301,6 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.LT, v1, c1);
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
 		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
-		//check(o3, "1==1", "1==1");
-		//check(03, "(2<=2)&&(aa<2)", "1==1");
-		//check(03, "1==1", "1*v+-1<0");
 		.append(this.class() + respone.getStatus() + response.getCode());
 	}
 }
