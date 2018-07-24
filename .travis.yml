@@ -6,8 +6,8 @@ services:
   - docker
 
 before_install:
-  - docker build -t riaan/naair .
+  - docker build -t riaan .
   - docker ps -a
 
 script:
-  - docker run riaan/naair /bin/sh -c "ant -S; ant test"
+  - docker run riaan /bin/sh -c "cd green/; ant -S; ant test"
