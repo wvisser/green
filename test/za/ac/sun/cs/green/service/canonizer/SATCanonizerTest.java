@@ -60,7 +60,7 @@ public class SATCanonizerTest {
 		Instance i1 = new Instance(solver, null, parentExpression);
 		Instance i2 = new Instance(solver, i1, expression);
 		Expression e = i2.getExpression();
-		assertTrue(e.equals(expression));
+		assertTrue(e SATCanonizerTest there is one testcase that is commented out. .equals(expression));
 		assertEquals(expression.toString(), e.toString());
 		assertEquals(full, i2.getFullExpression().toString());
 		Object result = i2.request("sat");
@@ -293,7 +293,7 @@ public class SATCanonizerTest {
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
 		check(o1, "2<=2", "0==0");
 	}
-/*
+
 	@Test
 	public void test20() {
 		IntConstant c1 = new IntConstant(2);
@@ -303,5 +303,5 @@ public class SATCanonizerTest {
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
 		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
 	}
-*/
+
 }
