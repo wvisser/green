@@ -4,10 +4,9 @@ sudo: required
 
 services:
   - docker
-  
+
 before-install:
   - docker build -t green .
- 
-script:
- - docker run green /bin.sh -c "ant; ant test"
 
+script:
+ - docker run green /bin/sh -c "ant;ant test"
