@@ -14,7 +14,7 @@ script:
  # - ant;
  # - ant test;
  # - docker run sat3 /bin/sh -c "cd /root/green; ant;"
-  - docker run sat3 /bin/sh -c "ant; ant test;cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt | ! grep 'junit.framework.AssertionFailedError';"
+  - docker run sat3 /bin/sh -c "ant;ev=$?;ant test;ev=$(($ev+$?));grep junit.framework.AssertionFailedError bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt;if test '$ev' != '0' ; then false; fi;"
 
  # Bonus Deliverable
   #- docker run sat3 /bin/sh -c "cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt | grep 'junit.framework.AssertionFailedError';"
