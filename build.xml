@@ -95,13 +95,15 @@
     <target name="test">
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
-        <junit fork="yes" printsummary="on" haltonfailure = "yes" logfailedtests="on" outputtoformatters="on">
-            <formatter type="xml" usefile="false"/>
+        <!-- printsummary="on" haltonfailure = "yes" logfailedtests="on" outputtoformatters="on" -->
+        <junit fork="yes">
+            
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
             <env key="LD_LIBRARY_PATH" value="lib"/>
             <sysproperty key="java.library.path" value="${z3lib}:${cvc3lib}"/>
             <classpath refid="green.classpath"/>
+            <formatter type="xml" usefile="false"/>
         </junit>
         <junitreport todir="${junit.dir}">
             <fileset dir="${junit.dir}">
