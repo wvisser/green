@@ -3,4 +3,4 @@ language: java
 script:
  - ant;
  - ant test;
-  - cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml
+ - cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml;
