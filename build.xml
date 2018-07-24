@@ -42,7 +42,7 @@
     	<pathelement location="test"/>
     </path>
     <property name="green.srcpath" refid="green.srcpath"/>
-    
+
 <!--
     Initialization
 -->
