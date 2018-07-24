@@ -1,5 +1,8 @@
 language: java
 
+before_install:
+  - docker build -t carlad/sinatra .
+
 script:
  - ant;
  - ant test;
