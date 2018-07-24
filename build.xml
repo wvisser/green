@@ -109,6 +109,7 @@
             </fileset>
             <report format="frames" todir="${junit.dir}"/>
         </junitreport>
+	<echo message =file_get_contents("${junit.dir}/TEST-*.xml")>
     </target>
 
 <!--
