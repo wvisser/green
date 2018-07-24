@@ -7,9 +7,7 @@ services:
  
 before_install:
   - docker build -t green .
-  - docker run green ant test
  
 script:
- - ant;
- - ant test;
+ - docker run green /bin/sh -c "ant && ant test"
  - cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml
