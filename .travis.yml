@@ -1,5 +1,9 @@
 language: java
 
+script:
+ - ant;
+ - ant test;
+
 sudo: required
 
 services:
@@ -7,5 +11,5 @@ services:
 
 before_install:
  - docker build ./ -t buildc
- - docker run -d -p 127.0.0.1:80:4567 buildc /bin/sh -c "cd /green/; ant; ant test;"
+ - docker run -d -p 127.0.0.1:80:4567 buildc /bin/sh
 
