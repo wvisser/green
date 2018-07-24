@@ -1,11 +1,19 @@
+sudo: required
+
 language: java
 
 script:
  - ant;
  - ant test;
  
- services:
-  - docker;
-  
- before_install:
+services:
+  - docker
+
+before_install:
   - docker build -t .
+  - docker run -d /bin/sh -c "bundle exec foreman start;"
+  - docker ps -a
+  - docker run /bin/sh -c "bundle exec rake test"
+
+script:
+  - bundle exec rake test
