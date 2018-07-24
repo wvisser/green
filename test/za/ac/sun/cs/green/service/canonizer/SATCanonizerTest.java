@@ -53,11 +53,8 @@ public class SATCanonizerTest {
 		assertNotNull(result);
 		assertEquals(Instance.class, result.getClass());
 		Instance j = (Instance) result;
-		try {
-			finalCheck(j.getExpression().toString(), expected);
-		}  catch(ComparisonFailure e) {
-			System.out.println(e.getMessage());
-		}
+		finalCheck(j.getExpression().toString(), expected);
+		System.out.println(expected);
 	}
 
 	private void check(Expression expression, Expression parentExpression, String full, String... expected) {
