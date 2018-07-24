@@ -61,7 +61,7 @@ https://github.com/littleMissMae/green
 
     And identified the failing line in the error below:
 
-    ![cropped](/home/18232973/Downloads/cropped.png)
+    ![cropped](./cropped.png)
 
 
 
