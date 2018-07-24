@@ -1,4 +1,4 @@
-[![Build Status] https://github.com/RPasch/green
+[![Build Status] (https://travis-ci.org/Rpasch/green.svg?branch=master)](https://travis-ci.org/Rpasch/green.svg?branch=master)
 
 Notes:
 
