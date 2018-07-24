@@ -7,11 +7,7 @@ services:
 
 before_install:
   - docker build -t green .
-  # create docker image from Dockerfile
-  
-  #- docker run -d -p 127.0.0.1:80:4567 20289472/green /bin/sh -c "cd /root/green; bundle exec foreman start;"
-  #- docker ps -a
-  #- docker run 20289472/green /bin/sh -c "cd /root/green; bundle exec rake test"
+  # create docker image from Dockerfile  
 
 script:
  - docker run green /bin/sh -c "ant; ant test;" 
