@@ -4,7 +4,7 @@
 
 # Tut 1: Setting up CI for GREEN 
 
-###Task 1: Figuring out what was broken
+### Task 1: Figuring out what was broken
 
 **Acknowledgements:** This tut was successfully completed in a pair-programming endeavour with Simone-vanZyl as team *Genius and Qwen*
 
