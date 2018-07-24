@@ -7,15 +7,6 @@ services:
 
 before_install:
   - docker build -t sat3 .
-  #- docker run -d -p 127.0.0.1:80:4567 sat3 /bin/sh -c "cd /root/green; ant; ant test;"
-  #- docker ps -a
 
 script:
- # - ant;
- # - ant test;
- # - docker run sat3 /bin/sh -c "cd /root/green; ant;"
-  - docker run sat3 /bin/sh -c "ant;ev=$?;ant test;ev=$(($ev+$?));grep junit.framework.AssertionFailedError bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt;if test '$ev' != '0' ; then false; fi;"
-
- # Bonus Deliverable
-  #- docker run sat3 /bin/sh -c "cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt | grep 'junit.framework.AssertionFailedError';"
-
+  - docker run sat3 /bin/sh -c "ant;if ! ant test; then grep junit.framework.AssertionFailedError bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt; false; fi;"
