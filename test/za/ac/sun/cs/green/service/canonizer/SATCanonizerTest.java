@@ -1,17 +1,14 @@
 package za.ac.sun.cs.green.service.canonizer;
 
-import static org.junit.Assert.*;
-
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
@@ -57,6 +54,7 @@ public class SATCanonizerTest {
 	}
 
 	private void check(Expression expression, Expression parentExpression, String full, String... expected) {
+            try {
 		Instance i1 = new Instance(solver, null, parentExpression);
 		Instance i2 = new Instance(solver, i1, expression);
 		Expression e = i2.getExpression();
@@ -68,6 +66,10 @@ public class SATCanonizerTest {
 		assertEquals(Instance.class, result.getClass());
 		Instance j = (Instance) result;
 		finalCheck(j.getExpression().toString(), expected);
+            } catch (AssertionError ae) {
+                System.out.println(ae.toString());
+                throw ae;
+            }
 	}
 
 	@Test
