@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/chelsb/green)
+[![Build Status](https://travis-ci.org/chelsb/green.svg?branch=master)](https://travis-ci.org/chelsb/green)
 
 Notes:
 
