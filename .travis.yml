@@ -6,7 +6,7 @@ services:
  - docker
 
 before_install:
- - docker build -t Atomicdemon/green
+ - docker build -t Atomicdemon/green .
  - docker run -d -p 127.0.0.1:80:4567 Atomicdemon/green /bin/sh -c "cd /root/green; ant test;"
  - docker ps -a
  - docker run Atomicdemon/green /bin/sh -c "cd /root/green; ant test;"
