@@ -3,3 +3,9 @@ language: java
 script:
  - ant;
  - ant test;
+
+services:
+ - docker
+
+before_install:
+- docker build -t Dockerfile .
