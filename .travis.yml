@@ -9,10 +9,10 @@ before_install:
  - ls
  - docker build -t green .
  - ls
- - docker run -d -p 127.0.0.1:80:4567 green /bin/sh -c "cd /root/green; ant;"
+ - docker run -d -p 127.0.0.1:80:4567 green /bin/sh -c "ant;"
  - docker ps -a
  - ls
- - docker run green /bin/sh -c "cd /root/green; ant test"
+ - docker run green /bin/sh -c "ant test"
 
 script:
  - ant;
