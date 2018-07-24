@@ -103,6 +103,9 @@
             <sysproperty key="java.library.path" value="${z3lib}:${cvc3lib}"/>
             <classpath refid="green.classpath"/>
         </junit>
+<junit showoutput="true" printsummary="on" enabletestlistenerevents="true"
+fork="@{fork}" forkmode="once" haltonfailure="no" timeout="1800000">
+
         <junitreport todir="${junit.dir}">
             <fileset dir="${junit.dir}">
                 <include name="TEST-*.xml"/>
