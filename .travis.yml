@@ -4,7 +4,7 @@ services:
  - docker
 
 before_install:
- - docker build -t AntiStig/green .
+ - docker build -t green .
 
 script:
- - docker run AntiStig/green /bin/sh -c "ant; ant test;";
+ - docker run green /bin/sh -c "cd green/; ant; ant test;";
