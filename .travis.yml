@@ -12,4 +12,5 @@ before_script:
    - sudo apt-get install ant-optional
 
 script:
+  - docker run 20039867/green
   - docker exec "ant; ant test"
