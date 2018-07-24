@@ -75,7 +75,7 @@ public class EntireSuite {
 		Z3_PATH = z3;
 		HAS_Z3 = checkZ3Presence();
 		if (!HAS_Z3) {
-		  //System.out.println("Z3 Not Available, no tests for it will be executed");	
+		  System.out.println("Z3 Not Available, no tests for it will be executed");	
 		}
 		
 	}
