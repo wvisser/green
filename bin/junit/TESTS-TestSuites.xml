@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testsuites>
-  <testsuite errors="0" failures="0" hostname="localhost" id="0" name="EntireSuite" package="za.ac.sun.cs.green" skipped="1" tests="21" time="0.209" timestamp="2018-07-24T09:47:40">
+  <testsuite errors="0" failures="0" hostname="localhost" id="0" name="EntireSuite" package="za.ac.sun.cs.green" skipped="1" tests="21" time="0.193" timestamp="2018-07-24T09:49:44">
       <properties>
           <property name="env.DESKTOP_SESSION" value="ubuntu" />
 
@@ -90,7 +90,7 @@
 
           <property name="env.HOME" value="/home/19787065" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/19787065/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/19787065/Desktop/green/junitvmwatcher7758654526080016578.properties propsfile=/home/19787065/Desktop/green/junit6496581192998040459.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/19787065/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/19787065/Desktop/green/junitvmwatcher9183833981969397366.properties propsfile=/home/19787065/Desktop/green/junit4653669185675058417.properties" />
 
           <property name="ant.file" value="/home/19787065/Desktop/green/build.xml" />
 
@@ -306,25 +306,25 @@
 
       </properties>
 
-      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test12" time="0.01" />
+      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test12" time="0.007" />
 
       <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test13" time="0.001" />
 
-      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test14" time="0.001" />
+      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test14" time="0.003" />
 
-      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test15" time="0.001" />
+      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test15" time="0.002" />
 
-      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test16" time="0.001" />
+      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test16" time="0.002" />
 
-      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test17" time="0.001" />
+      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test17" time="0.002" />
 
-      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test18" time="0.01" />
+      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test18" time="0.006" />
 
       <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test19" time="0.002" />
 
       <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test20" time="0.003" />
 
-      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test01" time="0.002" />
+      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test01" time="0.003" />
 
       <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test02" time="0.002" />
 
@@ -334,15 +334,15 @@
 
       <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test05" time="0.002" />
 
-      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test06" time="0.001" />
+      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test06" time="0.003" />
 
       <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test07" time="0.003" />
 
-      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test08" time="0.003" />
+      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test08" time="0.001" />
 
       <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test09" time="0.002" />
 
-      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test10" time="0.002" />
+      <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test10" time="0.001" />
 
       <testcase classname="za.ac.sun.cs.green.service.canonizer.SATCanonizerTest" name="test11" time="0.002" />
 
@@ -352,70 +352,70 @@
       </testcase>
 
       <system-out><![CDATA[Z3 Not Available, no tests for it will be executed
-[20180724 11:47:40][za.ac.sun.cs.green.Green <init>][FINEST] Solver("anonymous1") created
-[20180724 11:47:40][za.ac.sun.cs.green.Green registerService][INFO] register service: name="sat", subservice=za.ac.sun.cs.green.service.slicer.SATSlicerService
-[20180724 11:47:40][za.ac.sun.cs.green.Green registerService][INFO] register service: name="za.ac.sun.cs.green.service.slicer.SATSlicerService", subservice=za.ac.sun.cs.green.service.canonizer.SATCanonizerService
-[20180724 11:47:40][za.ac.sun.cs.green.Green registerService][INFO] register service: name="za.ac.sun.cs.green.service.canonizer.SATCanonizerService", subservice=za.ac.sun.cs.green.service.sink.SinkService
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: ((2+3)*aa)<bb
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((5*v0)+(-1*v1))+1)<=0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa*(2+3))<bb
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((5*v0)+(-1*v1))+1)<=0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: ((aa-bb)*2)<aa
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+(-2*v1))+1)<=0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (2*(aa-bb))<aa
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+(-2*v1))+1)<=0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: ((aa*2)+(4*aa))<bb
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((6*v0)+(-1*v1))+1)<=0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: 2<2
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: 0==1
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (2<2)&&(aa<2)
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: 0==1
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: 2<=2
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: 0==0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa<2)&&(2<=2)
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((1*v0)+-1)<=0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: aa==0
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (1*v0)==0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (bb!=1)&&(aa==0)
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+-1)!=0)&&((1*v1)==0)
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: aa==0
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (1*v0)==0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa!=1)&&(aa==0)
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+-1)!=0)&&((1*v0)==0)
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (((aa==bb)&&(bb==cc))&&(cc==dd))&&(dd==ee)
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((((1*v0)+(-1*v1))==0)&&(((1*v1)+(-1*v2))==0))&&(((1*v2)+(-1*v3))==0))&&(((1*v3)+(-1*v4))==0)
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: ((aa==bb)&&(bb==cc))&&(cc==dd)
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((((1*v0)+(-1*v1))==0)&&(((1*v1)+(-1*v2))==0))&&(((1*v2)+(-1*v3))==0)
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: ((aa<(bb+cc))&&(bb<(dd+ee)))&&(cc<(ff+gg))
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((((((1*v0)+(-1*v1))+(-1*v2))+1)<=0)&&(((((1*v1)+(-1*v3))+(-1*v4))+1)<=0))&&(((((1*v2)+(-1*v5))+(-1*v6))+1)<=0)
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa<(bb+cc))&&(bb<(dd+ee))
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((((1*v0)+(-1*v1))+(-1*v2))+1)<=0)&&(((((1*v1)+(-1*v3))+(-1*v4))+1)<=0)
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa+bb)<(aa+cc)
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+(-1*v1))+1)<=0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa+bb)<(aa-cc)
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+(1*v1))+1)<=0
-[20180724 11:47:40][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa+bb)<(bb-aa)
-[20180724 11:47:40][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((2*v0)+1)<=0
+[20180724 11:49:44][za.ac.sun.cs.green.Green <init>][FINEST] Solver("anonymous1") created
+[20180724 11:49:44][za.ac.sun.cs.green.Green registerService][INFO] register service: name="sat", subservice=za.ac.sun.cs.green.service.slicer.SATSlicerService
+[20180724 11:49:44][za.ac.sun.cs.green.Green registerService][INFO] register service: name="za.ac.sun.cs.green.service.slicer.SATSlicerService", subservice=za.ac.sun.cs.green.service.canonizer.SATCanonizerService
+[20180724 11:49:44][za.ac.sun.cs.green.Green registerService][INFO] register service: name="za.ac.sun.cs.green.service.canonizer.SATCanonizerService", subservice=za.ac.sun.cs.green.service.sink.SinkService
+[20180724 11:49:44][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: ((2+3)*aa)<bb
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((5*v0)+(-1*v1))+1)<=0
+[20180724 11:49:44][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa*(2+3))<bb
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((5*v0)+(-1*v1))+1)<=0
+[20180724 11:49:44][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: ((aa-bb)*2)<aa
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+(-2*v1))+1)<=0
+[20180724 11:49:44][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (2*(aa-bb))<aa
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+(-2*v1))+1)<=0
+[20180724 11:49:44][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: ((aa*2)+(4*aa))<bb
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((6*v0)+(-1*v1))+1)<=0
+[20180724 11:49:44][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: 2<2
+[20180724 11:49:44][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: 0==1
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (2<2)&&(aa<2)
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: 0==1
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: 2<=2
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: 0==0
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa<2)&&(2<=2)
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((1*v0)+-1)<=0
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: aa==0
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (1*v0)==0
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (bb!=1)&&(aa==0)
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+-1)!=0)&&((1*v1)==0)
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: aa==0
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (1*v0)==0
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa!=1)&&(aa==0)
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+-1)!=0)&&((1*v0)==0)
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (((aa==bb)&&(bb==cc))&&(cc==dd))&&(dd==ee)
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((((1*v0)+(-1*v1))==0)&&(((1*v1)+(-1*v2))==0))&&(((1*v2)+(-1*v3))==0))&&(((1*v3)+(-1*v4))==0)
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: ((aa==bb)&&(bb==cc))&&(cc==dd)
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((((1*v0)+(-1*v1))==0)&&(((1*v1)+(-1*v2))==0))&&(((1*v2)+(-1*v3))==0)
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: ((aa<(bb+cc))&&(bb<(dd+ee)))&&(cc<(ff+gg))
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((((((1*v0)+(-1*v1))+(-1*v2))+1)<=0)&&(((((1*v1)+(-1*v3))+(-1*v4))+1)<=0))&&(((((1*v2)+(-1*v5))+(-1*v6))+1)<=0)
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa<(bb+cc))&&(bb<(dd+ee))
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((((1*v0)+(-1*v1))+(-1*v2))+1)<=0)&&(((((1*v1)+(-1*v3))+(-1*v4))+1)<=0)
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa+bb)<(aa+cc)
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+(-1*v1))+1)<=0
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa+bb)<(aa-cc)
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: (((1*v0)+(1*v1))+1)<=0
+[20180724 11:49:45][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] Before Canonization: (aa+bb)<(bb-aa)
+[20180724 11:49:45][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((2*v0)+1)<=0
 ]]></system-out>
 
       <system-err><![CDATA[]]></system-err>
