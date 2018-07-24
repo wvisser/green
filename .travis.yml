@@ -7,8 +7,6 @@ services:
   
 before_install:
 - docker build -t green .
-- docker run green /bin/bash -c "cd green; ant; ant test"
 
 script:
- - ant;
- - ant test;
+- docker run green /bin/bash -c "cd green; ant; ant test";
