@@ -102,7 +102,9 @@
             <env key="LD_LIBRARY_PATH" value="lib"/>
             <sysproperty key="java.library.path" value="${z3lib}:${cvc3lib}"/>
             <classpath refid="green.classpath"/>
-            <echo if="test.failed">^ This test failed</echo>
+            <actions if="test.failed">
+              <echo>^ This test failed</echo>
+            </actions>
         </junit>
         <junitreport todir="${junit.dir}">
             <fileset dir="${junit.dir}">
