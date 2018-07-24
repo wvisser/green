@@ -60,7 +60,7 @@ public class SATCanonizerTest {
 		Instance i1 = new Instance(solver, null, parentExpression);
 		Instance i2 = new Instance(solver, i1, expression);
 		Expression e = i2.getExpression();
-		assertTrue(e SATCanonizerTest there is one testcase that is commented out. .equals(expression));
+		assertTrue(e.equals(expression));
 		assertEquals(expression.toString(), e.toString());
 		assertEquals(full, i2.getFullExpression().toString());
 		Object result = i2.request("sat");
@@ -100,7 +100,7 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.NE, v2, c2);
 		check(o1, o2, "(aa==0)&&(bb!=1)", "1*v==0");
 	}
-
+ 
 	@Test
 	public void test04() {
 		IntVariable v1 = new IntVariable("aa", 0, 99);
@@ -217,7 +217,7 @@ public class SATCanonizerTest {
 		IntConstant c2 = new IntConstant(3);
 		IntVariable v1 = new IntVariable("aa", 0, 99);
 		IntVariable v2 = new IntVariable("bb", 0, 99);
-		Operation o1 = new Operation(Operation.Operator.ADD, c1, c2);
+		Operation o1 = new Operation(Operation.Operator.ADD, c1,What happened? The build failed,  c2);
 		Operation o2 = new Operation(Operation.Operator.MUL, o1, v1);
 		Operation o3 = new Operation(Operation.Operator.LT, o2, v2);
 		check(o3, "((2+3)*aa)<bb", "5*v+-1*v+1<=0");
