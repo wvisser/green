@@ -67,7 +67,7 @@ public class EntireSuite {
 				barvinok = p.getProperty("barvinokpath");
 				z3 = p.getProperty("z3path");
 			} catch (IOException e) {
-				 do nothing
+				 //do nothing
 			}
 		}
 		LATTE_PATH = latte;
