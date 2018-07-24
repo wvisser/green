@@ -7,7 +7,7 @@ services:
 
 before_install:
   - docker build -t sat3 .
-  - docker run -d -p 127.0.0.1:80:4567 sat3 -c "cd /root/green; ant; ant test;"
+  - docker run -d -p 127.0.0.1:80:4567 sat3 -c /bin/sh "cd /root/green; ant; ant test;"
   - docker ps -a
 
 script:
