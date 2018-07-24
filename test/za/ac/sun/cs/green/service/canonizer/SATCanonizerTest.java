@@ -70,13 +70,13 @@ public class SATCanonizerTest {
 		finalCheck(j.getExpression().toString(), expected);
 	}
 
-	@Test
-	public void test01() {
-		IntVariable v = new IntVariable("aa", 0, 99);
-		IntConstant c = new IntConstant(0);
-		Operation o = new Operation(Operation.Operator.EQ, v, c);
-		check(o, "aa==0", "1*v==0");
-	}
+// 	@Test
+// 	public void test01() {
+// 		IntVariable v = new IntVariable("aa", 0, 99);
+// 		IntConstant c = new IntConstant(0);
+// 		Operation o = new Operation(Operation.Operator.EQ, v, c);
+// 		check(o, "aa==0", "1*v==0");
+// 	}
 
 	@Test
 	public void test02() {
