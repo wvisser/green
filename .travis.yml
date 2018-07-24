@@ -3,5 +3,3 @@ language: java
 script:
  - ant;
  - ant test;
-after_failure:
-  - cat MSBuild_*.failure.txt
