@@ -111,7 +111,6 @@ public class EntireSuite {
 			x.printStackTrace();
 			return false;
 		}
-		System.out.println(result);
 		return result.trim().startsWith("This is LattE integrale");
 	}
 
@@ -129,7 +128,6 @@ public class EntireSuite {
 		} catch (IOException e) {
 			return false;
 		}
-		System.out.println(result);
 		return result.startsWith("Z3 [version ");
 	}
 
