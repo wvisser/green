@@ -1,6 +1,15 @@
+sudo: required
+
 language: java
 
+services:
+ - docker
+ 
+before_install:
+  - docker build -t green .
+  - docker run green ant test
+ 
 script:
  - ant;
  - ant test;
- - cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml;
+ - cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml
