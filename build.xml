@@ -103,6 +103,7 @@
             <sysproperty key="java.library.path" value="${z3lib}:${cvc3lib}"/>
             <classpath refid="green.classpath"/>
         </junit>
+	<echo message = "hello"/>
         <junitreport todir="${junit.dir}">
             <fileset dir="${junit.dir}">
                 <include name="TEST-*.xml"/>
