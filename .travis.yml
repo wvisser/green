@@ -8,9 +8,5 @@ services:
 before_install:
   - docker build -t 20039867/green .
   
-before_script:
-   - sudo apt-get install ant-optional
-
 script:
-  - docker run 20039867/green
-  - docker exec "ant; ant test"
+  - docker run 20039867/green bin/sh -c "ant; ant test"
