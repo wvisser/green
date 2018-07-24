@@ -9,4 +9,4 @@ before_install:
   - docker build -t 19770251/green .
   
 script:
-  - docker run 19770251/green "ant; ant test"
+  - docker run 19770251/green bin "ant; ant test"
