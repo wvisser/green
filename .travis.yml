@@ -4,9 +4,10 @@ language: java
 services: docker
 
 before_install:
-  - docker build -t green/Dockerfile .
+  - docker build -t green .
+  - docker run green /bin/sh -c "ant"
 
 script:
- - docker run green/Dockerfile /bin/sh -c
+ 
  - ant;
  - ant test;
