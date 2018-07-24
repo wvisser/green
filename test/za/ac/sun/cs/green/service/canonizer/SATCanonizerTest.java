@@ -217,7 +217,7 @@ public class SATCanonizerTest {
 		IntConstant c2 = new IntConstant(3);
 		IntVariable v1 = new IntVariable("aa", 0, 99);
 		IntVariable v2 = new IntVariable("bb", 0, 99);
-		Operation o1 = new Operation(Operation.Operator.ADD, c1,What happened? The build failed,  c2);
+		Operation o1 = new Operation(Operation.Operator.ADD, c1, c2);
 		Operation o2 = new Operation(Operation.Operator.MUL, o1, v1);
 		Operation o3 = new Operation(Operation.Operator.LT, o2, v2);
 		check(o3, "((2+3)*aa)<bb", "5*v+-1*v+1<=0");
