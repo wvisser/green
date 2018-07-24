@@ -1,0 +1,15 @@
+sudo: required
+
+language: java
+
+services:
+  - docker
+
+before_install:
+  - docker build -t green .
+  # create docker image from Dockerfile  
+  
+script:
+ - docker run green /bin/sh -c "ant; ant test;" 
+ # search for docker image to run ant and ant test in. 
+ 
