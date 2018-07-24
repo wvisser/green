@@ -6,4 +6,3 @@ script:
  - ant test;
 
  after_script:
- - printsummary;
