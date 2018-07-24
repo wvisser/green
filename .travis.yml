@@ -7,6 +7,7 @@ services:
 
 before_install:
   - docker build -t 20039867/green .
-  - docker run 20039867/green -c "cd /root/green; bundle exec ant"
-  - docker ps -a
-  - docker run 20039867/green c "cd /root/green; bundle exec ant"
+
+script:
+  - docker exec ant
+  - docker exec ant test
