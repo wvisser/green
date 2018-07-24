@@ -4,5 +4,5 @@ script:
  - ant;
  - ant test;
 
-addons:
-  artifacts: true
+after_failure: 
+  - cat target/surefire-reports/*.txt
