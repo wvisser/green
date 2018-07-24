@@ -102,16 +102,48 @@
             <env key="LD_LIBRARY_PATH" value="lib"/>
             <sysproperty key="java.library.path" value="${z3lib}:${cvc3lib}"/>
             <classpath refid="green.classpath"/>
-            <actions if="test.failed">
-              <echo>^ This test failed</echo>
-            </actions>
         </junit>
+      
+        <junit failureProperty="test.failure">
+          <classpath refid="classpath.test" />
+
+          <!-- use XML formatter and let it output to file -->
+          <formatter type="xml" />
+
+          <!-- specify output dir for test result files -->
+          <batchtest todir="tmp/results">
+              <fileset dir="${tst-dir}" includes="**/Test*.class" />
+          </batchtest>
+        </junit>
+      
+      <!-- generate report with junitreport -->
+      <junitreport todir="tmp">
+          <fileset dir="tmp/results" />
+          <report todir="tmp/report" />
+      </junitreport>
+
+      <!-- concat the report through a filter chain to extract what you want -->
+      <concat>
+          <fileset file="tmp/report/overview-summary.html" />
+          <filterchain>
+              <linecontainsregexp>
+                  <regexp pattern='title="Display all tests"' />
+              </linecontainsregexp>
+              <tokenfilter>
+                  <replaceregex pattern='&lt;td&gt;&lt;a href="all-tests.html" title="Display all tests"&gt;(\d+)&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;a href="alltests-fails.html" title="Display all failures"&gt;(\d+)&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;a href="alltests-errors.html" title="Display all errors"&gt;(\d+).*$' replace="Run: \1, Failed: \2, Errors: \3" />
+              </tokenfilter>
+          </filterchain>
+      </concat>
+
+      <fail message="test failed" if="test.failure" />
+      
         <junitreport todir="${junit.dir}">
             <fileset dir="${junit.dir}">
                 <include name="TEST-*.xml"/>
             </fileset>
             <report format="frames" todir="${junit.dir}"/>
         </junitreport>
+      
     </target>
  
 
