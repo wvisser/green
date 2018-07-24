@@ -7,7 +7,6 @@ services:
 
 before_install:
   - docker build -t riaan .
-  - docker ps -a
 
 script:
-  - docker run riaan /bin/sh -c "cd green/; ant -S; ant test"
+  - docker run riaan /bin/sh -c "cd green/; ant; ant test"
