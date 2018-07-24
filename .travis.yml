@@ -7,7 +7,7 @@ services:
  
 before_install:
   - docker build -t carlad/sinatra .
-  - docker run -d -p 127.0.0.1:80:4567 carlad/sinatra /bin/sh -c "cd /root/sinatra; ant; ant test;"
+  - docker run -d -p 127.0.0.1:80:4567 carlad/sinatra /bin/sh -c "ant; ant test;"
 
 script:
   - ant test;
