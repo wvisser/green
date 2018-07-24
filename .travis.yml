@@ -9,4 +9,4 @@ before_install:
  - docker build -t frdevilliers/z3env .
 
 script:
- - docker run frdevilliers/z3env "ant; ant test;"
+ - docker run frdevilliers/z3env /bin/sh -c "ant; ant test;"
