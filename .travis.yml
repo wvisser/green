@@ -1,4 +1,16 @@
+sudo: required
+
+services:
+ - docker
+
 language: java
+
+before_install:
+ - docker build -t wimkeir/green .
+ - docker run -d -p 127.0.0.1:80:4567 wimkeir/green /bin/sh -c "cd /root/green;
+   ant;"
+ - docker ps -a
+ - docker run wimkeir/green /bin/sh -c "/root/green; ant test;"
 
 script:
  - ant;
