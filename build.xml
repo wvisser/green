@@ -1,4 +1,6 @@
-ld.xml - The Green solver build script
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  build.xml - The Green solver build script
 
   Public targets:
     build (default)   compile classes
