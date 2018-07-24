@@ -40,7 +40,6 @@ public class SATCanonizerTest {
 		String s1 = s0.replaceAll("v[0-9]", "v");
 		SortedSet<String> s2 = new TreeSet<String>(Arrays.asList(s1.split("&&")));
 		SortedSet<String> s3 = new TreeSet<String>(Arrays.asList(expected));
-		System.out.println("======================================================");
 		assertEquals(s3, s2);
 	}
 
@@ -54,7 +53,6 @@ public class SATCanonizerTest {
 		assertNotNull(result);
 		assertEquals(Instance.class, result.getClass());
 		Instance j = (Instance) result;
-		System.out.println(j.getExpression().toString() + " ===== " + expected);
 		finalCheck(j.getExpression().toString(), expected);
 	}
 
