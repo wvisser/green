@@ -2,4 +2,4 @@ language: java
 
 script:
  - ant;
- - ant -v test;
+ - ant test -verbose;
