@@ -3,6 +3,3 @@ language: java
 script:
  - ant;
  - ant test;
-
-after_failure: 
-  - cat target/surefire-reports/*.txt
