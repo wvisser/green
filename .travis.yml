@@ -5,4 +5,4 @@ script:
  - ant test;
  
  services:
-  - docker
+  - docker;
