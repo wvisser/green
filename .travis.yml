@@ -6,6 +6,7 @@ services:
  - docker
 
 script:
- - docker build ./ -t buildc
  - docker run -p 127.0.0.1:80:4567 buildc /bin/sh -c "ant; ant test;"
 
+before_install:
+ - docker build ./ -t buildc
