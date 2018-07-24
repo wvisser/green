@@ -68,7 +68,7 @@ public class SATCanonizerTest2 {
 		Instance j = (Instance) result;
 		finalCheck(j.getExpression().toString(), expected);
 	}
-
+/*
 	@Test
 	public void test23() {
 		IntVariable x5 = new IntVariable("x5", 0, 99);
@@ -78,5 +78,5 @@ public class SATCanonizerTest2 {
 		Operation o2a = new Operation(Operation.Operator.NOT, o2b);
 		check(o2a, "!(x5!=x5)", "0==0");
 	}
-
+*/
 }
