@@ -42,7 +42,7 @@
     	<pathelement location="test"/>
     </path>
     <property name="green.srcpath" refid="green.srcpath"/>
-    
+
 <!--
     Initialization
 -->
@@ -95,7 +95,7 @@
     <target name="test">
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr" haltonfailure = "yes">
+        <junit fork="yes" printsummary="withOutAndErr" haltonfailure = "yes" failureproperty = "yes">
             <formatter type="xml"/>
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
