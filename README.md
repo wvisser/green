@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Simone-vanZyl/green/builds)](https://travis-ci.org/Simone-vanZyl/green.svg?branch=master)
+[![Build Status](https://travis-ci.org/Simone-vanZyl/green.svg?branch=master)](https://travis-ci.org/Simone-vanZyl/green/builds)
 
 Notes:
 
