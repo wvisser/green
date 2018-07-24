@@ -96,7 +96,6 @@
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
 				<!--<junit fork="yes" printsummary="withOutAndErr" haltonfailure = "yes">-->
-					<echo message="${test.dist.dir}"/>
 					<junit showoutput="true" printsummary="on" enabletestlistenerevents="true" fork="@{fork}" forkmode="once" haltonfailure="no" timeout="1800000">
             <formatter type="xml"/>
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
@@ -106,6 +105,7 @@
             <classpath refid="green.classpath"/>
         </junit>
         <junitreport todir="${junit.dir}">
+					<echo message="${junit.dir}"/>
             <fileset dir="${junit.dir}">
                 <include name="TEST-*.xml"/>
             </fileset>
