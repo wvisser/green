@@ -7,9 +7,9 @@ services:
 
 before_install:
   - docker build -t 20289472/green .
-  - docker run -d -p 127.0.0.1:80:4567 20289472/green /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
+  - docker run -d -p 127.0.0.1:80:4567 20289472/green /bin/sh -c "cd /root/green; bundle exec foreman start;"
   - docker ps -a
-  - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
+  - docker run carlad/sinatra /bin/sh -c "cd /root/green; bundle exec rake test"
 
 script:
  - ant;
