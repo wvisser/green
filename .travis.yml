@@ -7,7 +7,7 @@ script:
 sudo: required
 
 services:
-  - docker
+ - docker
 
 before_install:
-  - docker build -t rob-the-dog/docker .
+ - docker build -t rob-the-dog/docker .
