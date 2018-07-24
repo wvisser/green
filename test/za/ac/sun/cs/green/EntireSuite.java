@@ -68,10 +68,7 @@ public class EntireSuite {
 				z3 = p.getProperty("z3path");
 			} catch (IOException e) {
 				 //do nothing
-				 e.printStackTrace();
-             
-            // Prints what exception has been thrown
-            System.out.println(e);
+				
 			}
 		}
 		LATTE_PATH = latte;
