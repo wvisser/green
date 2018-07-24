@@ -1,8 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-
-<!--
-  build.xml - The Green solver build script
-
+ld.xml - The Green solver build script
   Public targets:
     build (default)   compile classes
     test              run all unit tests
@@ -99,7 +95,7 @@ bootclasspath="${bootpath}" includeantruntime="false">
     <target name="test">
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr" haltonfailure = "yes"/>
+        <junit fork="yes" printsummary="withOutAndErr" haltonfailure = "yes">
             <formatter type="xml"/>
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
@@ -128,4 +124,5 @@ bootclasspath="${bootpath}" includeantruntime="false">
             <fileset dir="test"/>
         </jar>
     </target>
+
 </project>
