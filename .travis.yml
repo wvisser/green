@@ -1,5 +1,9 @@
+sudo: required
+
 language: java
 
+before_install:
+ - docker build -t AntiStig/green .
+
 script:
- - ant;
- - ant test;
+ - docker run AntiStig/green /bin/sh -c "ant; ant test;";
