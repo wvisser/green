@@ -44,7 +44,6 @@ public class SATCanonizerTest {
 	}
 
 	private void check(Expression expression, String full, String... expected) {
-		try {
 		Instance i = new Instance(solver, null, null, expression);
 		Expression e = i.getExpression();
 		assertTrue(e.equals(expression));
@@ -54,8 +53,9 @@ public class SATCanonizerTest {
 		assertNotNull(result);
 		assertEquals(Instance.class, result.getClass());
 		Instance j = (Instance) result;
-		finalCheck(j.getExpression().toString(), expected);
-		} catch(ComparisonFailure e) {
+		try {
+			finalCheck(j.getExpression().toString(), expected);
+		}  catch(ComparisonFailure e) {
 			System.out.println(e.getMessage());
 		}
 	}
