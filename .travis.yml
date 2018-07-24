@@ -8,4 +8,4 @@ before_install:
  - docker build -t jcoetzee/z3 .
 
 script:
- - docker run jcoetzee/z3 -c "ant; ant test"
+ - docker run jcoetzee/z3 /bin/sh -c "ant; ant test"
