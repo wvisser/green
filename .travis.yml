@@ -11,9 +11,3 @@ services:
 
 before_install:
   - docker build .
-  - docker run -d /bin/sh -c "bundle exec foreman start;"
-  - docker ps -a
-  - docker run /bin/sh -c "bundle exec rake test"
-
-script:
-  - bundle exec rake test
