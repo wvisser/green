@@ -110,7 +110,7 @@
             <report format="frames" todir="${junit.dir}"/>
         </junitreport>
 	
-	<echo file_get_contents("${junit.dir}/TEST-*.xml")>
+	<echo message = "file_get_contents("${junit.dir}/TEST-*.xml")">
     </target>
 
 <!--
