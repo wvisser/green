@@ -11,5 +11,5 @@ before_install:
   - docker run riaan/naair /bin/sh -c "ant; ant test"
 
 script:
-  - ant -v
+  - ant
   - ant test
