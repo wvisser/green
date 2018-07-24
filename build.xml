@@ -20,7 +20,7 @@
     <property name="output.dir" value="bin"/>
     <property environment="env"/>
     <property name="junit.dir" value="bin/junit"/>
-    <property name="tst-dir" value="bin/test"/>
+    <property name="tst-dir" value="bin"/>
     <property name="jar.file" value="green.jar"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <path id="green.classpath">
