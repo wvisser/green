@@ -14,7 +14,7 @@ before_install:
   #- docker run 20289472/green /bin/sh -c "cd /root/green; bundle exec rake test"
 
 script:
- - docker run green /bin/sh -c "ant; ant test"; 
+ - docker run green /bin/sh -c "ant; ant test;" 
  # search for docker image to run ant and ant test in. 
  
 
