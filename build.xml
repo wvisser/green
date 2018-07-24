@@ -94,7 +94,6 @@
 
     <target name="test">
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
-        <echo message="${test.dist.dir}"/>
 		<mkdir dir="${junit.dir}"/>
         <junit fork="yes" showoutput="true" printsummary="yes"
 haltonfailure = "no">
