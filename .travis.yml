@@ -9,5 +9,4 @@ before install:
   - docker build -t green .
 
 script:
- - ant;
- - ant test;
+ - docker run green/bin/sh -c "ant && ant test"
