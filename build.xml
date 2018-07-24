@@ -105,11 +105,11 @@
             <classpath refid="green.classpath"/>
         </junit>
         <junitreport todir="${junit.dir}">
-					<echo message="${junit.dir}"/>
             <fileset dir="${junit.dir}">
                 <include name="TEST-*.xml"/>
             </fileset>
             <report format="frames" todir="${junit.dir}"/>
+					<echo message="${junit.dir}"/>
         </junitreport>
     </target>
 
