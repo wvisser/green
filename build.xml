@@ -98,6 +98,7 @@
         <junit fork="yes" printsummary="on" haltonfailure = "yes">
             <formatter type="xml"/>
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
+            <formatter type = "plain" usefile = "false">
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
             <env key="LD_LIBRARY_PATH" value="lib"/>
             <sysproperty key="java.library.path" value="${z3lib}:${cvc3lib}"/>
