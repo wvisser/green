@@ -108,11 +108,18 @@
                 <include name="TEST-*.xml"/>
             </fileset>
             <report format="frames" todir="${junit.dir}"/>
-        </junitreport>
-	
-	<echo message = "file_get_contents("${junit.dir}/TEST-*.xml")">
+        </junitreport>	
+
     </target>
 
+<target name = "read">
+	<loadfile property="textFile" srcfile = "${junit.dir}/TEST-*.xml"/>
+	<for param="line" list="${textFile}" delimiter="${line.separator}">
+		<sequential>
+			<echo message="@{line}"/>
+		</sequential>
+	</for>
+</target>
 <!--
     TARGET: package
 -->
