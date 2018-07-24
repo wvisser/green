@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Yougy/green?branch=master)](https://travis-ci.org/Yougy/green?branch=master)
+[![Build Status](https://travis-ci.org/Yougy/green.svg?branch=master)](https://travis-ci.org/Yougy/green?branch=master)
 
 Notes:
 
