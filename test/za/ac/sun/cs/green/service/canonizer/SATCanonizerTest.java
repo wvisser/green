@@ -53,7 +53,7 @@ public class SATCanonizerTest {
 		assertNotNull(result);
 		assertEquals(Instance.class, result.getClass());
 		Instance j = (Instance) result;
-		System.out.println(j.getExpression().toString())
+		System.out.println(j.getExpression().toString());
 		finalCheck(j.getExpression().toString(), expected);
 	}
 
