@@ -1,0 +1,9 @@
+Began by modifying build.xml where I changed on line 98, the haltonfailure="yes" to haltonfailure="no", as this allowed for the build to continue even after a test case failure.
+
+This then resulted in the error being output into a file TESTS-TestSuites.xml where it was clear what the error was for test case 20.
+
+As a result, the Oracle for test case 20 was changed to <=0 rather than <0.
+
+LINK TO GITHUB:
+
+	https://github.com/MacBeth97/green 
