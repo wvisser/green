@@ -56,7 +56,7 @@ public class SATCanonizerTest {
 		Instance j = (Instance) result;
 		finalCheck(j.getExpression().toString(), expected);
 		} catch(ComparisonFailure err){
-			System.out.println(e.getMessage);		
+			System.out.println(err.getMessage);		
 		}
 	}
 
