@@ -3,8 +3,8 @@ language: java
 services:
   - docker
 
-before-install:
+before_install:
   - docker build -t green .
 
 script:
- - docker run green /bin/sh -c "ant; ant test"
+ - docker run green /bin/sh -c "ant;ant test"
