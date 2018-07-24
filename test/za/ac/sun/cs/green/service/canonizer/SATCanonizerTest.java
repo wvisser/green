@@ -70,7 +70,7 @@ public class SATCanonizerTest {
 		finalCheck(j.getExpression().toString(), expected);
 	}
 
-	@Test
+	/*@Test
 	public void test01() {
 		IntVariable v = new IntVariable("aa", 0, 99);
 		IntConstant c = new IntConstant(0);
@@ -292,8 +292,8 @@ public class SATCanonizerTest {
 		IntConstant c1 = new IntConstant(2);
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
 		check(o1, "2<=2", "0==0");
-	}
-	
+	}*/
+
 	@Test
 	public void test20() {
 		IntConstant c1 = new IntConstant(2);
