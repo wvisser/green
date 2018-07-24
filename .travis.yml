@@ -9,4 +9,4 @@ before_install:
   - docker build -t riaan .
 
 script:
-  - docker run riaan /bin/sh -c "cd green/; ant; ant test"
+  - docker run riaan /bin/sh -c "ant; ant test"
