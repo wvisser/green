@@ -20,7 +20,6 @@
     <property name="output.dir" value="bin"/>
     <property environment="env"/>
     <property name="junit.dir" value="bin/junit"/>
-    <property name="tst-dir" value="bin"/>
     <property name="jar.file" value="green.jar"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <path id="green.classpath">
@@ -96,8 +95,8 @@
     <target name="test">
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr" haltonfailure="yes" failureProperty="test.failure">
-            <formatter type="xml"/>
+        <junit fork="yes" printsummary="withOutAndErr" haltonfailure="yes" filtertrace="yes">
+            <formatter usefile="false" type="brief"/>
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
             <env key="LD_LIBRARY_PATH" value="lib"/>
@@ -108,27 +107,6 @@
                 <fileset dir="${tst-dir}" includes="**/Test*.class" />
             </batchtest>
         </junit>
-      
-        <!-- generate report with junitreport -->
-        <junitreport todir="tmp">
-            <fileset dir="tmp/results" />
-            <report todir="tmp/report" />
-        </junitreport>
-
-        <!-- concat the report through a filter chain to extract what you want -->
-        <concat>
-            <fileset file="tmp/report/overview-summary.html" />
-            <filterchain>
-                <linecontainsregexp>
-                    <regexp pattern='title="Display all tests"' />
-                </linecontainsregexp>
-                <tokenfilter>
-                    <replaceregex pattern='&lt;td&gt;&lt;a href="all-tests.html" title="Display all tests"&gt;(\d+)&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;a href="alltests-fails.html" title="Display all failures"&gt;(\d+)&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;a href="alltests-errors.html" title="Display all errors"&gt;(\d+).*$' replace="Run: \1, Failed: \2, Errors: \3" />
-                </tokenfilter>
-            </filterchain>
-        </concat>
-
-        <fail message="test failed" if="test.failure" />
       
         <junitreport todir="${junit.dir}">
             <fileset dir="${junit.dir}">
