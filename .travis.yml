@@ -1,5 +1,16 @@
+sudo: required
+
 language: java
 
+services:
+	- docker
+
+before_install:
+	- docker build -t riaan/naair .
+	- docker run -d -p 127.0.0.1:80:4567 riaan/naair /bin/sh -c "cd /root/naair; bundle exec foreman start;"
+	- docker ps -a
+	- docker run riaan/naair /bin/sh -c "cd /root/naair; bundle exec rake test"
+
 script:
- - ant;
- - ant test;
+	- ant;
+	- ant test;
