@@ -17,4 +17,4 @@ script:
   - docker run sat3 /bin/sh -c "ant; ant test;"
 
 after_failure:
-  - docker run sat3 /bin/sh -c "cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt | grep junit.framework.AssertionFailedError;"
+  - docker run sat3 /bin/sh -c "cat bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt | grep junit.framework.AssertionFailedError";
