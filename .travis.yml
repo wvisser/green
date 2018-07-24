@@ -1,5 +1,14 @@
 language: java
 
+services:
+    - docker
+
+before_install:
+    - docker build -t .
+    - docker run -d -p 127.0.0.1:80:4567 /bin/sh -c "bundle exec foreman start;"
+    - docker ps -a
+    - docker run /bin/sh -c "bundle exec rake test"
+
 script:
  - ant;
  - ant test;
