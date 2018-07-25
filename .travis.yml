@@ -9,4 +9,4 @@ before_install:
   - docker build -t carlad/sinatra .
 
 script:
-  - shel.sh
+  - ./shel.sh
