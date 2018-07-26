@@ -8,8 +8,6 @@ language: java
 script:
  - docker-compose up --build -d
  - docker ps -a
- - docker run hello-world
- - docker images
 
 after_script:
  - docker-compose down
