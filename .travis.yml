@@ -1,7 +1,14 @@
+sudo: required
+
 language: java
+
+services:
+  - docker
+
+before-install:
+  - docker build -t Dockerfile
+  -
 
 script:
  - ant;
  - ant test;
-
-
