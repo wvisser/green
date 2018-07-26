@@ -8,7 +8,8 @@ services:
 before_install:
   - docker build -t friendlygreen .
   - docker run -d -p 4000:80 friendlygreen
+  - docker ps -a
+  - docker run friendlygreen
 
 script:
- - ant;
- - ant test;
+ - bundle exec rake test
