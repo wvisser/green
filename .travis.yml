@@ -5,6 +5,3 @@ language: java
 script:
  - ant;
  - ant test;
-
- services:
-  - docker
