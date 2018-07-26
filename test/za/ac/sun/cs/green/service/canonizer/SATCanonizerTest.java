@@ -303,6 +303,7 @@ public class SATCanonizerTest {
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
 		System.out.println("testing123");
 		System.out.println(o3);
+		System.out.println("testing456");
 		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
 	}
 
