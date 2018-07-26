@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/NAG47/green.svf?branch=master)](https://travis-ci.org/NAG47/green.svf?branch=master)
+[![Build Status](https://travis-ci.org/NAG47/green?branch=master)](https://travis-ci.org/NAG47/green?branch=master)
 
 Notes:
 
