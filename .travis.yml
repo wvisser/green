@@ -1,5 +1,15 @@
+sudo: required
+
+services:
+  - docker
+
 language: java
 
+before_install:
+  -docker -t green .
+
 script:
- - ant;
- - ant test;
+  - docker run green /bin/sh -c "cd /green; ant; ant test;"
+
+# - ant;
+# - ant test;
