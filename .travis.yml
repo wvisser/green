@@ -6,8 +6,8 @@ services:
   - docker
 
 before_install:
-  - docker build .
-  - docker run
+  - docker build -t friendlygreen .
+  - docker run -d -p 4000:80 friendlygreen
 
 script:
  - ant;
