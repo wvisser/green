@@ -8,8 +8,8 @@ services:
 before_install:
 
     - docker build -t hen3kr8/green .
-    - docker ps -a
     - docker run -p 127.0.0.1:80:4567 hen3kr8/green
+    - docker ps -a
 #    - docker run hen3kr8/green
 
 script:
