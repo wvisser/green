@@ -2,10 +2,10 @@ sudo: required
 
 language: java
 
-script:
- - ant;
- - ant test;
-
 before_install:
   - docker build
   - docker run
+
+script:
+ - ant;
+ - ant test;
