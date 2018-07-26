@@ -1,3 +1,8 @@
+## Bonus marks
+
+I added a formatter to the build.xml file which will display failing test cases
+nicely at the end of standard output, if you would like to check that.
+
 [![Build Status](https://travis-ci.org/frdevilliers/green.svg?branch=master)](https://travis-ci.org/frdevilliers/green?branch=master)
 
 Notes:
