@@ -6,10 +6,11 @@ services:
     - docker
 
 before_install:
-    - docker build -t hen3kr8/green
-    - docker run -d -p 127.0.0.1:8001 hen3kr8/green 
+
+    - docker build -t hen3kr8/green .
     - docker ps -a
-    - docker run hen3kr8/green
+    - docker run -p 127.0.0.1:80:4567 hen3kr8/green
+#    - docker run hen3kr8/green
 
 script:
     - ant;
