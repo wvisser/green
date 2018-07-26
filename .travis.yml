@@ -11,3 +11,6 @@ language: java
 script:
  - ant;
  - ant test;
+
+after_script:
+ - docker-compose down
