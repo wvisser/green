@@ -9,8 +9,8 @@ script:
  - docker-compose up --build -d
  - docker ps -a
  - docker run hello-world
- - ant;
- - ant test;
+ - docker run -t -i ant;
+ - docker run -t -i ant test;
 
 after_script:
  - docker-compose down
