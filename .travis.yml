@@ -1,5 +1,10 @@
+sudo: required
+
 language: java
 
 script:
  - ant;
  - ant test;
+
+ services:
+  - docker
