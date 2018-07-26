@@ -1,5 +1,14 @@
+sudo: required
+
+services:
+  - docker
+
+before-install:
+  - docker build -t NAG47/dock .
+
 language: java
 
 script:
+ - docker run NAG47/dock /bin/sh -c;
  - ant;
  - ant test;
