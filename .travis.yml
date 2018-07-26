@@ -4,11 +4,11 @@ services:
   - docker
 
 before-install:
-  - docker build -t NAG47/dock .
+  - docker build -t nag47/dock .
 
 language: java
 
 script:
- - docker run NAG47/dock /bin/sh -c;
+ - docker run nag47/dock /bin/sh -c;
  - ant;
  - ant test;
