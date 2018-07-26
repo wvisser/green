@@ -6,7 +6,7 @@ services:
 language: java
 
 before_install:
-  -docker build -t green .
+  - docker build -t green .
 
 script:
   - docker run green /bin/sh -c "cd /green; ant; ant test;"
