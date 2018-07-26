@@ -304,7 +304,7 @@ public class SATCanonizerTest {
 		System.out.println("testing123");
 		System.out.println(o3);
 		System.out.println("testing456");
-		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
+		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<=0");
 	}
 
 }
