@@ -3,3 +3,17 @@ language: java
 script:
  - ant;
  - ant test;
+
+sudo: required
+
+services:
+  - docker
+
+
+before_install:
+  - docker build -t lucia/green .
+
+language: java
+
+script:
+  - docker run lucia/green /bin/sh -c "ant; ant test"
