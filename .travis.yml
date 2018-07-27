@@ -7,8 +7,7 @@ services:
 
 before-install:
   - docker build -t Dockerfile
-  -
 
 script:
- - ant;
- - ant test;
+ # - ant;
+ # - ant test;
