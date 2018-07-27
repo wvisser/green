@@ -7,6 +7,7 @@ services:
 
 before_install:
   - docker build -t greenimage .
+  - docker run greenimage /bin/sh -c "ant; ant test"
   - docker ps -a
 
 script:
