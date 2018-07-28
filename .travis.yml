@@ -8,6 +8,5 @@ before_install:
  - docker build -t green .
 
 script:
- - ant clean
- - ant
- - ant test
+
+ - docker run green "ant clean; ant; ant test -v;"
