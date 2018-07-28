@@ -7,8 +7,8 @@ services:
 
 before_install:
   - docker build -t green .
+  - docker container logs -f green
 
 script:
   - docker run green /bin/sh -c "ant; ant test;"
   - docker ps -a
-  - docker container logs -f green
