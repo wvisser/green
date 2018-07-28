@@ -4,7 +4,7 @@ services:
   - docker
 
 before_install:
-  -docker build -t  ./Dockerfile
+  -docker build green
 
 script:
  - ant;
