@@ -5,11 +5,8 @@ services:
 
 before_install:
   -docker pull Dockerfile
-  -docker -run -d -p 127.0.0.1:80:4567 Dockerfile /bin/sh "cd /root/Dockerfile; bundle exec foreman start;"
-  -docker ps -a
-  -docker run Dockerfile /bin/sh -c "cd /root/Dockerfile; bundle exec rake test"
+  -docker -run
 
 script:
- - bundle exec rake test
  - ant;
  - ant test;
