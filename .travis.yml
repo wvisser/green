@@ -4,8 +4,7 @@ services:
   - docker
 
 before_install:
-  -docker pull ./Dockerfile
-  -docker -run
+  -docker build -t  Dockerfile
 
 script:
  - ant;
