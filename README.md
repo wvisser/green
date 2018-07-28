@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/18966330/green?branch=master)](https://travis-ci.org/18966330/green?branch=master)
+[![Build Status](https://travis-ci.org/18966330/green.png)](https://travis-ci.org/18966330/green)
 
 Notes:
 
