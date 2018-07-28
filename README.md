@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/18966330/green)](https://travis-ci.org/18966330/green)
+[![Build Status](https://travis-ci.org/18966330/green.png)](https://travis-ci.org/18966330/green)
 
 Notes:
 
