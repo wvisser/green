@@ -10,4 +10,4 @@ before_install:
 
 script:
   - docker run green /bin/sh -c "ant; ant test"
-  - docker logs
+  - docker logs -f green
