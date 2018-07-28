@@ -1,11 +1,11 @@
 language: java
 
 script:
- - ant;
- - ant test;
+ - docker run green /bin/sh -c "ant; ant test -v;"
+
 
 services:
  - docker
 
 before_install:
-- docker build .
+- docker build -t green .
