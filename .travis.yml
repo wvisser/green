@@ -9,4 +9,4 @@ before_install:
 
 script:
 
- - docker run green "ant clean; ant; ant test -v;"
+ - docker run green \bin\sh "ant clean; ant; ant test -v;"
