@@ -1,6 +1,5 @@
 language: java
 
-
 services:
  - docker
 
@@ -9,4 +8,5 @@ before_install:
  - docker run green /bin/sh -c "ant clean; ant; ant test -v;"
 
 script:
- - docker run green /bin/sh -c "ant clean; ant; ant test -v;"
+ - ant clean
+ - docker run green /bin/sh -c "ant; ant test -v;"
