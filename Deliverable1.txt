@@ -1,0 +1,14 @@
+Full Name: Michael Lee Farringer
+Student #: 18293468
+
+Deliverable 1:
+
+My first thought process was to read the readme provided. When added to the knowledge you gave us verbally I decided to look into .travis.yml file to see how travis was building the repo.
+
+There I stumbled upon ant test. I googled “ant test commands” in the hope of finding a cool way to print out errors and found the following URL: https://ant.apache.org/manual/Tasks/junit.html
+
+After reading the website I realized that these commands are not actually used in travis.yml but somewhere else. That place turned out to be build.xml after piecing together what you and the readme suggested.
+
+Next, following the comments to the “test” part of the code, I tried multiple methods and eventually one worked. I used <formatter type="plain" usefile="false"/> to print out the error messages as well as the test cases in a nice format.
+
+Here is the link to my repo: https://github.com/Zerabian/green
