@@ -4,6 +4,6 @@ root = tree.getroot()
 
 for test in root.findall("./testsuite/testcase"):
     if test.findall("failure"):
-        print testcase.attrib['name'], " Failed", testcase.findall("failure")[0].attrib['message']
+        print test.attrib['name'], " Failed", testcase.findall("failure")[0].attrib['message']
     else:
-        print testcase.attrib['name'], "Passed"
+        print test.attrib['name'], "Passed"
