@@ -11,4 +11,4 @@ before_install:
   - docker run green /bin/sh -c "cd /root/green; ant; ant test"
 
 script:
-  - ant; ant test;
+  - docker run green /bin/sh -c "ant; ant test;"
