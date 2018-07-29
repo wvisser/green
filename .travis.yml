@@ -9,4 +9,4 @@ before_install:
   - docker build -t satdock .
 
 script:
- - docker run satdock /bin/sh -c "ant && ant test; python outputresults.py"
+ - docker run satdock /bin/sh -c "ant && ant test && python outputresults.py"
