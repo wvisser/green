@@ -3,11 +3,11 @@ import sys
 
 tree = ET.parse('./bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml')
 root = tree.getroot()
-hadfail = false;
+hadfail = False;
 
 for test in root.findall("./testcase"):
     if test.findall("failure"):
-        hadfail = true
+        hadfail = True
         if test.attrib['classname'] == "za.ac.sun.cs.green.service.canonizer.SATCanonizerTest":
             print "SATCanonizerTest: ", test.attrib['name'], " Failed", test.find("failure").attrib['message']
         else:
@@ -18,7 +18,7 @@ for test in root.findall("./testcase"):
         else:
             print "Z3Test: ", test.attrib['name'], "Passed"
 
-if hadfail == true:
+if hadfail == True:
     sys.exit(1)
 else:
     sys.exit(0)
