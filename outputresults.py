@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-tree = ET.parse('./bin/junit/TESTS-TestSuites.xml')
+tree = ET.parse('./bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml')
 root = tree.getroot()
 
 for test in root.findall("./testsuite/testcase"):
