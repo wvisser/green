@@ -19,6 +19,6 @@ for test in root.findall("./testcase"):
             print "Z3Test: ", test.attrib['name'], "Passed"
 
 if hadfail == true:
-    return sys.exit(1)
+    sys.exit(1)
 else:
-    return sys.exit(0)
+    sys.exit(0)
