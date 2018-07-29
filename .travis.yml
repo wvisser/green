@@ -9,4 +9,4 @@ before_install:
   - docker build -t satdock .
 
 script:
- - docker run satdock /bin/sh -c "ant && ant test; cat bin/junit/TEST-TestSuites.xml"
+ - docker run satdock /bin/sh -c "ant && ant test; ls bin/junit"
