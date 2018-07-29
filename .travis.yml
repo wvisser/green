@@ -8,3 +8,6 @@ services:
 before_install:
   - docker build -t 20039867/green .
   - docker run 20039867/green bin/sh -c "ant; ant test"
+
+script:
+  - docker run 20039867/green bin/sh -c "ant; ant test"
