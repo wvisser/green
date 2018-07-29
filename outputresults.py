@@ -4,6 +4,12 @@ root = tree.getroot()
 
 for test in root.findall("./testsuite/testcase"):
     if test.findall("failure"):
-        print test.attrib['name'], " Failed", test.find("failure").attrib['message']
+        if test.attrib['classname'] == "za.ac.sun.cs.green.service.canonizer.SATCanonizerTest":
+            print "SATCanonizerTest: ", test.attrib['name'], " Failed", test.find("failure").attrib['message']
+        else:
+            print "Z3Test: ", test.attrib['name'], " Failed", test.find("failure").attrib['message']
     else:
-        print test.attrib['name'], "Passed"
+        if test.attrib['classname'] == "za.ac.sun.cs.green.service.canonizer.SATCanonizerTest":
+            print "SATCanonizerTest: ", test.attrib['name'], "Passed"
+        else:
+            print "Z3Test: ", test.attrib['name'], "Passed"
