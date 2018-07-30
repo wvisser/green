@@ -7,6 +7,7 @@ language: java
 
 before_install:
   - docker build -t green .
+  - docker build --force-rm
 
 script:
   - docker run green /bin/sh -c "cd /green; ant; ant test;"
