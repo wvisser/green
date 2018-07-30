@@ -6,9 +6,8 @@ services:
 language: java
 
 before_install:
-  - docker build --force-rm
+  - docker ps -aq -f status=exited
   - docker build -t green .
-
 
 script:
   - docker run green /bin/sh -c "cd /green; ant; ant test;"
