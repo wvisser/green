@@ -1,0 +1,2 @@
+https://blog.docker.com/2013/10/docker-0-6-5-links-container-naming-advanced-port-redirects-host-integration/
+https://docs.docker.com/engine/reference/run/#container-identification
