@@ -98,7 +98,7 @@
         <junit fork="yes" haltonfailure = "no"
 printsummary="no" filtertrace="yes" errorProperty="test.failed"
 failureProperty="test.failed">
-            <formatter type="plain" usefile="false"/>
+            <formatter type="brief" usefile="false"/>
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
             <env key="LD_LIBRARY_PATH" value="lib"/>
