@@ -76,7 +76,6 @@ public class SATCanonizerTest {
 		IntConstant c = new IntConstant(0);
 		Operation o = new Operation(Operation.Operator.EQ, v, c);
 		check(o, "aa==0", "1*v==0");
-		System.out.println("Test1");
 	}
 
 	@Test
@@ -89,7 +88,6 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.NE, v2, c2);
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
 		check(o3, "(aa==0)&&(bb!=1)", "1*v==0", "1*v+-1!=0");
-		System.out.println("Test2");
 	}
 
 	@Test
@@ -101,7 +99,6 @@ public class SATCanonizerTest {
 		IntConstant c2 = new IntConstant(1);
 		Operation o2 = new Operation(Operation.Operator.NE, v2, c2);
 		check(o1, o2, "(aa==0)&&(bb!=1)", "1*v==0");
-		System.out.println("Test3");
 	}
 
 	@Test
@@ -112,7 +109,6 @@ public class SATCanonizerTest {
 		IntConstant c2 = new IntConstant(1);
 		Operation o2 = new Operation(Operation.Operator.NE, v1, c2);
 		check(o1, o2, "(aa==0)&&(aa!=1)", "1*v==0", "1*v+-1!=0");
-		System.out.println("Test4");
 	}
 
 	@Test
@@ -130,7 +126,6 @@ public class SATCanonizerTest {
 		Operation o234 = new Operation(Operation.Operator.AND, o2, o34);
 		check(o1, o234, "(aa==bb)&&((bb==cc)&&((cc==dd)&&(dd==ee)))", "1*v+-1*v==0", "1*v+-1*v==0", "1*v+-1*v==0",
 				"1*v+-1*v==0");
-				System.out.println("Test5");
 	}
 
 	@Test
@@ -148,7 +143,6 @@ public class SATCanonizerTest {
 		Operation o34 = new Operation(Operation.Operator.AND, o3, o4);
 		Operation o234 = new Operation(Operation.Operator.AND, o2, o34);
 		check(o1, o234, "(aa==bb)&&((bb==cc)&&((cc==dd)&&(ee==ff)))", "1*v+-1*v==0", "1*v+-1*v==0", "1*v+-1*v==0");
-		System.out.println("Test6");
 	}
 
 	@Test
@@ -166,7 +160,6 @@ public class SATCanonizerTest {
 		Operation o23 = new Operation(Operation.Operator.AND, o2, o3);
 		check(o1, o23, "(aa<(bb+cc))&&((bb<(dd+ee))&&(cc<(ff+gg)))", "1*v+-1*v+-1*v+1<=0", "1*v+-1*v+-1*v+1<=0",
 				"1*v+-1*v+-1*v+1<=0");
-				System.out.println("Test7");
 	}
 
 	@Test
@@ -184,7 +177,6 @@ public class SATCanonizerTest {
 		Operation o3 = new Operation(Operation.Operator.LT, v6, new Operation(Operation.Operator.ADD, v7, v8));
 		Operation o23 = new Operation(Operation.Operator.AND, o2, o3);
 		check(o1, o23, "(aa<(bb+cc))&&((bb<(dd+ee))&&(ff<(gg+hh)))", "1*v+-1*v+-1*v+1<=0", "1*v+-1*v+-1*v+1<=0");
-		System.out.println("Test9");
 	}
 
 	@Test
@@ -195,8 +187,8 @@ public class SATCanonizerTest {
 		Operation o1 = new Operation(Operation.Operator.ADD, v1, v2);
 		Operation o2 = new Operation(Operation.Operator.ADD, v1, v3);
 		Operation o3 = new Operation(Operation.Operator.LT, o1, o2);
-		check(o3, "(aa+bb)<(aa+cc)", "1*v+-1*v+1<=0");
-		System.out.println("Test9");
+		check(o3, "(aa+bb)<(aa+cc)", "1*v+-1*v+1<0");
+		// check(o3, "(aa+bb)<(aa+cc)", "1*v+-1*v+1<=0");
 	}
 
 	@Test
@@ -208,7 +200,6 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.SUB, v1, v3);
 		Operation o3 = new Operation(Operation.Operator.LT, o1, o2);
 		check(o3, "(aa+bb)<(aa-cc)", "1*v+1*v+1<=0");
-		System.out.println("Test10");
 	}
 
 	@Test
@@ -219,7 +210,6 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.SUB, v2, v1);
 		Operation o3 = new Operation(Operation.Operator.LT, o1, o2);
 		check(o3, "(aa+bb)<(bb-aa)", "2*v+1<=0");
-		System.out.println("Test11");
 	}
 
 	@Test
@@ -232,7 +222,6 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.MUL, o1, v1);
 		Operation o3 = new Operation(Operation.Operator.LT, o2, v2);
 		check(o3, "((2+3)*aa)<bb", "5*v+-1*v+1<=0");
-		System.out.println("Test12");
 	}
 
 	@Test
@@ -245,7 +234,6 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.MUL, v1, o1);
 		Operation o3 = new Operation(Operation.Operator.LT, o2, v2);
 		check(o3, "(aa*(2+3))<bb", "5*v+-1*v+1<=0");
-		System.out.println("Test13");
 	}
 
 	@Test
@@ -257,7 +245,6 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.MUL, o1, c1);
 		Operation o3 = new Operation(Operation.Operator.LT, o2, v1);
 		check(o3, "((aa-bb)*2)<aa", "1*v+-2*v+1<=0");
-		System.out.println("Test14");
 	}
 
 	@Test
@@ -269,7 +256,6 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.MUL, c1, o1);
 		Operation o3 = new Operation(Operation.Operator.LT, o2, v1);
 		check(o3, "(2*(aa-bb))<aa", "1*v+-2*v+1<=0");
-		System.out.println("Test15");
 	}
 
 	@Test
@@ -283,7 +269,6 @@ public class SATCanonizerTest {
 		Operation o3 = new Operation(Operation.Operator.ADD, o1, o2);
 		Operation o4 = new Operation(Operation.Operator.LT, o3, v2);
 		check(o4, "((aa*2)+(4*aa))<bb", "6*v+-1*v+1<=0");
-		System.out.println("Test16");
 	}
 
 	@Test
@@ -291,7 +276,6 @@ public class SATCanonizerTest {
 		IntConstant c1 = new IntConstant(2);
 		Operation o1 = new Operation(Operation.Operator.LT, c1, c1);
 		check(o1, "2<2", "0==1");
-		System.out.println("Test17");
 	}
 
 	@Test
@@ -302,7 +286,6 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.LT, v1, c1);
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
 		check(o3, "(2<2)&&(aa<2)", "0==1");
-		System.out.println("Test18");
 	}
 
 	@Test
@@ -310,7 +293,6 @@ public class SATCanonizerTest {
 		IntConstant c1 = new IntConstant(2);
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
 		check(o1, "2<=2", "0==0");
-		System.out.println("Test19");
 	}
 
 	@Test
@@ -322,7 +304,6 @@ public class SATCanonizerTest {
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
 		// check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
 		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<=0");
-		System.out.println("Test20");
 	}
 
 }
