@@ -109,7 +109,7 @@ printsummary="no" filtertrace="yes">
             <fileset dir="${junit.dir}">
                 <include name="TEST-*.xml"/>
             </fileset>
-            <report format="frames" todir="${junit.dir}"/>
+            <report format="frames" todir="${junit.dir}" styledir="junitreport"/>
         </junitreport>
     </target>
 
