@@ -5,8 +5,6 @@ services:
 
 before_install:
  - docker build -t green .
- - docker run green /bin/sh -c "ant clean; ant; ant test -v;"
 
 script:
- - ant clean
- - docker run green /bin/sh -c "ant; ant test -v;"
+ - docker run green /bin/sh -c "ant clean; ant; ant test -v"
