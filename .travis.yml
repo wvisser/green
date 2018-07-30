@@ -8,4 +8,4 @@ before_install:
 
 script:
  - docker run -v /tmp/green:/green/bin green /bin/sh -c "ant;ant test"
- - grep AssertionFailedError /tmp/green/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt 
+ - grep AssertionFailedError /tmp/green/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt || true
