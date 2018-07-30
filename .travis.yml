@@ -8,5 +8,4 @@ before_install:
 
 script:
  - docker run -v /tmp/green:/green/bin green /bin/sh -c "ant;ant test"
- #- docker run -it green /bin/sh -c "pwd"
- - ls /tmp/green
+ - grep /tmp/green/junit/TEST-za.ac.sun.cs.green.EntireSuite.txt AssertionFailedError
