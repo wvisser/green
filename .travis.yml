@@ -9,7 +9,7 @@ before_install:
   - docker build -t green .
 
 script:
-  - docker run green /var/log/apache2 -c "ant; ant test;"
+  - docker run green -c "ant; ant test;"
   - docker ps -a
-  - docker logs green .
+  - docker logs green/*
   # - docker container logs -f green:latest
