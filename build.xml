@@ -104,7 +104,6 @@ failureProperty="test.failed">
             <env key="LD_LIBRARY_PATH" value="lib"/>
             <sysproperty key="java.library.path" value="${z3lib}:${cvc3lib}"/>
             <classpath refid="green.classpath"/>
-        	<fail if="test.failed" message="failure boi!"/>
         </junit>
         <fail if="test.failed" message="One or more unit tests failed!"/>
 		<echo> All the tests passed! </echo>
