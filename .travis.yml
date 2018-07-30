@@ -8,4 +8,4 @@ before_install:
 
 script:
  - docker run --name green green /bin/sh -c "ant;ant test"
- - docker run -it green /bin/sh -c "ls"
+ - docker run -it green /bin/sh -c "pwd"
