@@ -4,6 +4,10 @@ Deliverable 1
 19060815
 Hendri Krijt
 
+Link to repo: https://github.com/hen3kr8/green 
+
+How I found the error:
+
 In Test 20, line 305,
 check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
 was replaced with 
