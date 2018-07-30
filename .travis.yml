@@ -10,6 +10,5 @@ before_install:
 
 script:
   # - docker run green -name cont /bin/sh -c "ant; ant test;"
-  - docker run -d --name cont green /bin/sh -c "ant; ant test"
-  - sudo docker ps -aqf "name=cont"
-  - docker logs -f cont
+  - docker run -d --name cont green /bin/sh -c "ant; ant test -v"
+  - docker logs --details cont
