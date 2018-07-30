@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Zerabian/green.svg?branch=master)(https://travis-ci.org/Zerabian/green)]
+[![Build Status](https://travis-ci.org/Zerabian/green.svg?branch=master)](https://travis-ci.org/Zerabian/green)
 
 Notes:
 
