@@ -1,6 +1,8 @@
 TASK 1 SOLUTION
 
 I figured out what was broken by comparing the value that was expected after canonization with the value it would be checked against (given in SATCanonizerTest.java).
-The expected value was "((1*v0)+-1)<=0" while the value in the code was "1*v+-<0"
+The expected value was "((1*v0)+-1)<=0" while the value in the code was "1*v+-<0". After changing the test case to the correct value it worked.
+
+I also changed the formatting type in build.xml to "brief" in order to find the error with more ease.
 
     [junit] [20180724 08:44:41][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((1*v0)+-1)<=0
