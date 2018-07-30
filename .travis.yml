@@ -7,4 +7,5 @@ before_install:
   - docker build -t green .
 
 script:
- - docker run green /bin/sh -c "ant;ant test"
+ - docker run --name green green /bin/sh -c "ant;ant test"
+ - docker run -it green /bin/sh -c "ls"
