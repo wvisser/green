@@ -12,4 +12,3 @@ script:
   # - docker run green -name cont /bin/sh -c "ant; ant test;"
   - docker run -d --name cont green /bin/sh -c "ant; ant test -v"
   - docker logs -f cont
-  - docker logs --details cont
