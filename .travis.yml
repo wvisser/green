@@ -1,5 +1,11 @@
+sudo: required
+services:
+- docker
+
 language: java
 
+before_install:
+  - docker build -t z3green
+
 script:
- - ant;
- - ant test;
+ - docker run z3green bin/sh -c "ant; ant test"
