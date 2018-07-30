@@ -95,7 +95,7 @@
     <target name="test">
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
-        <junit fork="yes" showoutput="yes" haltonfailure = "yes"
+        <junit fork="yes" haltonfailure = "yes"
 printsummary="no" filtertrace="yes">
             <formatter type="brief" usefile="false"/>
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
@@ -104,7 +104,8 @@ printsummary="no" filtertrace="yes">
             <sysproperty key="java.library.path" value="${z3lib}:${cvc3lib}"/>
             <classpath refid="green.classpath"/>
         </junit>
-        <junitreport todir="${junit.dir}">
+        
+		<junitreport todir="${junit.dir}">
             <fileset dir="${junit.dir}">
                 <include name="TEST-*.xml"/>
             </fileset>
