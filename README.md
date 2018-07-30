@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/MichelleM1398/green.svg?branch=master)](https://travis-ci.org/MichelleM1398/green.svg?branch=master)
+[![Build Status](https://travis-ci.org/MichelleM1398/green.svg?branch=master)](https://travis-ci.org/MichelleM1398/green)
 
 Notes:
 
