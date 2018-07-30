@@ -75,7 +75,7 @@ public class SATCanonizerTest {
 		IntVariable v = new IntVariable("aa", 0, 99);
 		IntConstant c = new IntConstant(0);
 		Operation o = new Operation(Operation.Operator.EQ, v, c);
-		check(o, "aa==0", "1*v!=0"); // Correct is ==
+		check(o, "aa==0", "1*v==0");
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class SATCanonizerTest {
 		IntConstant c2 = new IntConstant(1);
 		Operation o2 = new Operation(Operation.Operator.NE, v2, c2);
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
-		check(o3, "(aa==0)&&(bb!=1)", "1*v==0", "1*v+-1==0"); // Correct is !=
+		check(o3, "(aa==0)&&(bb!=1)", "1*v==0", "1*v+-1!=0");
 	}
 
 	@Test
@@ -98,7 +98,7 @@ public class SATCanonizerTest {
 		IntVariable v2 = new IntVariable("bb", 0, 99);
 		IntConstant c2 = new IntConstant(1);
 		Operation o2 = new Operation(Operation.Operator.NE, v2, c2);
-		check(o1, o2, "(aa==0)&&(bb!=1)", "1*v!=0"); // Correct is ==
+		check(o1, o2, "(aa==0)&&(bb!=1)", "1*v==0");
 	}
 
 	@Test
