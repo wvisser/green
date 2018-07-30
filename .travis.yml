@@ -5,7 +5,7 @@ services:
 language: java
 
 before_install:
-  - docker build -t z3green
+  - docker build -t dijkstradev/z3green
 
 script:
- - docker run z3green bin/sh -c "ant; ant test"
+ - docker run dijkstradev/z3green bin/sh -c "ant; ant test"
