@@ -9,10 +9,10 @@ before_install:
 
     - docker build -t hen3kr8/green .
 #    - docker run hen3kr8/green
-#    - docker ps -a
+    - docker ps -a
 #    - 
 #    - docker run hen3kr8/green 
 
 script:
-    - docker run hen3kr8/green /bin/sh -c "ant; ant test -v"
+    - docker run --name contGreen hen3kr8/green /bin/sh -c "ant; ant test -v"
 #    - ant test;
