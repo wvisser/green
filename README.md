@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/alexmelville7/green](https://travis-ci.org/alexmelville7/green)
-
+[![Build Status](https://travis-ci.org/alexmelville7/green)](https://travis-ci.org/alexmelville7/green)
 Notes:
 
 The first step is to update "build.properties" with your local
