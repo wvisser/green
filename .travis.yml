@@ -11,4 +11,5 @@ before_install:
 script:
   - docker run green /var/log/apache2 -c "ant; ant test;"
   - docker ps -a
+  - docker logs green .
   # - docker container logs -f green:latest
