@@ -7,7 +7,7 @@ services:
 
 before_install:
   - docker build -t doctests .
-  - docker run doctests /bin/sh
+  - docker run doctests
 
 script:
   - ant
