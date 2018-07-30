@@ -6,8 +6,8 @@ services:
   - docker
 
 before_install:
-  - docker build -t carlad/sinatra .
-  - docker run carlad/sinatra /bin/sh
+  - docker build -t doctests .
+  - docker run doctests /bin/sh
 
 script:
   - ant
