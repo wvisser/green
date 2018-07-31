@@ -75,8 +75,7 @@ public class SATCanonizerTest {
 		IntVariable v = new IntVariable("aa", 0, 99);
 		IntConstant c = new IntConstant(0);
 		Operation o = new Operation(Operation.Operator.EQ, v, c);
-		/* Forced fail, correct oracle is 1*v==0 */
-		check(o, "aa==0", "1*v!=0");
+		check(o, "aa==0", "1*v==0");
 	}
 
 	@Test
@@ -88,8 +87,7 @@ public class SATCanonizerTest {
 		IntConstant c2 = new IntConstant(1);
 		Operation o2 = new Operation(Operation.Operator.NE, v2, c2);
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
-		/* Forced fail, correct oracle is 1*v+-1!=0 */
-		check(o3, "(aa==0)&&(bb!=1)", "1*v==0", "1*v+-1==0");
+		check(o3, "(aa==0)&&(bb!=1)", "1*v==0", "1*v+-1!=0");
 	}
 
 	@Test
@@ -110,8 +108,7 @@ public class SATCanonizerTest {
 		Operation o1 = new Operation(Operation.Operator.EQ, v1, c1);
 		IntConstant c2 = new IntConstant(1);
 		Operation o2 = new Operation(Operation.Operator.NE, v1, c2);
-		/* Forced fail, correct oracle is 1*v+-1!=0 */
-		check(o1, o2, "(aa==0)&&(aa!=1)", "1*v==0", "1*v+-1==0");
+		check(o1, o2, "(aa==0)&&(aa!=1)", "1*v==0", "1*v+-1!=0");
 	}
 
 	@Test
