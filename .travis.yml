@@ -1,10 +1,13 @@
 sudo: required
 
-language: java
-
 services:
    - docker
 
+language: java
+
 script:
-  - ant;
-  - ant test;
+  - docker -compose up --build -d
+  - docker ps -a
+
+after_script:
+  - docker -compose down
