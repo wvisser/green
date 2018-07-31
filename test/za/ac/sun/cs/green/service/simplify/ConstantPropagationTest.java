@@ -149,7 +149,17 @@ public class ConstantPropagationTest {
 //		IntVariable x = new IntVariable("x", 0, 99);
 //		IntVariable y = new IntVariable("y", 0, 99);
 //		IntVariable z = new IntVariable("z", 0 , 99);
-//		IntConstant c = new IntConstant(2);
+//		IntConstant c = new IntConstant(2);//	@Test
+//	public void test08() {
+//	IntVariable x = new IntVariable("x", 0, 99);
+//	IntConstant c = new IntConstant(2);
+//	IntConstant c1 = new IntConstant(4);
+//	Operation o1 = new Operation(Operation.Operator.EQ, x, c);		
+//	Operation o2 = new Operation(Operation.Operator.EQ, x, c1);
+//	Operation o = new Operation(Operation.Operator.AND, o1, o2);
+//	
+//	check(o, "0==1");
+//}
 //		IntConstant c1 = new IntConstant(4);
 //		Operation o1 = new Operation(Operation.Operator.MUL, x, y);		
 //		Operation o2 = new Operation(Operation.Operator.EQ, z, o1); // z = x * y
