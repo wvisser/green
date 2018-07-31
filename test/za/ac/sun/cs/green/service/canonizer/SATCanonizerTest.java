@@ -161,7 +161,7 @@ public class SATCanonizerTest {
 		check(o1, o23, "(aa<(bb+cc))&&((bb<(dd+ee))&&(cc<(ff+gg)))", "1*v+-1*v+-1*v+1<=0", "1*v+-1*v+-1*v+1<=0",
 				"1*v+-1*v+-1*v+1<=0");
 	}
-	
+
 	@Test
 	public void test08() {
 		IntVariable v1 = new IntVariable("aa", 0, 99);
@@ -198,7 +198,7 @@ public class SATCanonizerTest {
 		Operation o1 = new Operation(Operation.Operator.ADD, v1, v2);
 		Operation o2 = new Operation(Operation.Operator.SUB, v1, v3);
 		Operation o3 = new Operation(Operation.Operator.LT, o1, o2);
-		check(o3, "(aa+bb)<(aa-cc)", "1*v+1*v+1<0");
+		check(o3, "(aa+bb)<(aa-cc)", "0");
 	}
 
 	@Test
