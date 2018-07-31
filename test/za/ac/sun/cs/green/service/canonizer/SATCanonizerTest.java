@@ -77,7 +77,7 @@ public class SATCanonizerTest {
 		Operation o = new Operation(Operation.Operator.EQ, v, c);
 		check(o, "aa==0", "1*v==0");
 	}
-	//added broken test case, to show that we can find failed test cases 
+	//added broken test case,
 	@Test
 	public void test00() {
 		IntVariable v = new IntVariable("aa", 0, 99);
