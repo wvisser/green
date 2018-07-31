@@ -6,7 +6,7 @@ services:
   - docker
 
 before_install:
-  - docker rm status=exited
+  - docker ps -aq -f status=exited
   - docker build -t greenimage .
 
 script:
