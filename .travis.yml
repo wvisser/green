@@ -8,4 +8,5 @@ services:
 script:
  - docker build -t wimkeir/green .
  - docker run wimkeir/green /bin/sh -c "ant; ant test;"
- - docker logs
+ - docker inspect --format="{{.Id}}" wimkeir/green
+ - docker logs -t $?
