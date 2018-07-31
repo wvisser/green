@@ -3,7 +3,8 @@
 * Software Engineering 344 <br>
 Lucia Daly - 20143516 <br> 30 July 2018
 
-* <b> Link to my Github Account: <br> <git@github.com:LuciaDalySU/green.git>
+* <b> Link to my Github Account: <br>
+[LuciaDalySU](http://git@github.com:LuciaDalySU/green.git)
 
 ---
 
