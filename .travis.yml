@@ -10,3 +10,6 @@ before_install:
  
 script:
  - docker run greendock sh -c "ant; ant test;"
+
+after_failure:
+ - print_surefire_reports.sh
