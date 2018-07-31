@@ -161,7 +161,7 @@ public class SATCanonizerTest {
 		check(o1, o23, "(aa<(bb+cc))&&((bb<(dd+ee))&&(cc<(ff+gg)))", "1*v+-1*v+-1*v+1<=0", "1*v+-1*v+-1*v+1<=0",
 				"1*v+-1*v+-1*v+1<=0");
 	}
-qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+	
 	@Test
 	public void test08() {
 		IntVariable v1 = new IntVariable("aa", 0, 99);
