@@ -2,6 +2,8 @@ FROM openjdk:8
 
 MAINTAINER Phillip van Heerden <vanheerden.phillip@gmail.com>
 
+RUN apt clean -y
+
 # Update the system
 RUN apt update -y
 RUN apt upgrade -y
