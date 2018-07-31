@@ -42,7 +42,20 @@ ________________________________________________________________________________
 Link to my Github account:
 https://github.com/chelsb/green
 
-Link to the place in my repository where I made the change for task 1:
+Link to the place in my repository where I made the change for Task 1:
 https://github.com/chelsb/green/blob/master/test/za/ac/sun/cs/green/service/canonizer/SATCanonizerTest.java
-
 (On line 304)
+
+______________________________________________________________________________________________
+
+For testing the bonus question in Travis with Docker, please look at build #53 in the build history (Broke test 20 again to show error messages) 
+For testing the working build, please look at the latest build #54
+
+To do the bonus question I had to change the formatter to 
+<formatter type="plain" usefile="true"/>
+to be able to grep the file it was writing to. 
+
+
+
+
+
