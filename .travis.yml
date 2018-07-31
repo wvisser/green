@@ -6,7 +6,7 @@ services:
   - docker
 
 before_install:
-  - docker build -t Cezkarma/green .
+  - docker build -t joshua/green .
 
 script:
- - docker run Cezkarma/green /bin/sh -c "ant; ant test"
+  - docker run joshua/green /bin/sh -c "ant; ant test"
