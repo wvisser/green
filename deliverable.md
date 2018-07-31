@@ -15,18 +15,20 @@ Create a text file explaining how you figured out what was broken as well as a l
 
 
 > The following line of code in the `build.xml` indicated that all output files were stored in the bin directory.
+
 ``` xml
     <property name="output.dir" value="bin"/>
 ```
 > I decided to modify the attribute of `haltonfailure` to `no`, as this will prevent the build from ending when one of the test cases fail.
 
-> ``` xml
+``` xml
  <junit fork="yes" printsummary="withOutAndErr" haltonfailure = "no">
 ```
-> After running `ant build` and `ant test`, I inspected the files located in the bin. <br>
-> By opening the `TESTS-TestSuites.xml` in a browser, I could see that one of the test cases had failed. The following <b>Unit Test Results</b> indicated that for `test20` an output `<[1*v+-1<0]>` was expected but received `<[1*v+-1<=0]>`.
 
-> ![Fail Image](fail.png)
+> After running `ant build` and `ant test`, I inspected the files located in the bin. <br>
+> By opening the `TESTS-TestSuites.xml` in a browser, I could see that one of the test cases had failed. The following <b>Unit Test Results</b> indicated that for `test20` an output `<[1*v+-1<0]>` was expected but received `<[1*v+-1<=0]>`. <br>
+
+![Fail Image](fail.png)
 
 > Thereafter, I modified `test20` in the `SATCanonizerTest.java` file to the following:
 ``` java
@@ -41,3 +43,5 @@ public void test20() {
 }
 ```
 > This resulted in a successful build, as all test cases passed.
+
+---
