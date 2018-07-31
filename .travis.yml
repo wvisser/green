@@ -9,4 +9,4 @@ before_install:
 - docker build -t green .
 
 script:
-- docker run green /bin/bash -c "cd green; ant; ant test";
+- docker run green /bin/bash -c "ant; ant test";
