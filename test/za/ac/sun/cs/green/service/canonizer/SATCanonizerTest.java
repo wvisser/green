@@ -307,7 +307,7 @@ public class SATCanonizerTest {
 	}
 	
 	@Test
-	public void test21() {
+	public void test99() {
 		IntConstant c1 = new IntConstant(2);
 		IntVariable v1 = new IntVariable("aa", 0, 99);
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
