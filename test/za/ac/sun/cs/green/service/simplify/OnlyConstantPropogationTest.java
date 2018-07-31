@@ -56,7 +56,7 @@ public class OnlyConstantPropogationTest {
 		finalCheck(j.getExpression().toString(), expected);
 	}
 
-	@Test
+	/*@Test
 	public void test00() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
@@ -69,6 +69,6 @@ public class OnlyConstantPropogationTest {
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
 		check(o4, "(x==1)&&((1+y)==10)");
-	}
+	}*/
 
 }
