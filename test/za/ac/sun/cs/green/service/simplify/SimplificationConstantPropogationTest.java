@@ -56,7 +56,7 @@ public class SimplificationConstantPropogationTest {
 		finalCheck(j.getExpression().toString(), expected);
 	}
 
-	@Test
+	/*@Test
 	public void test00() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
@@ -178,7 +178,7 @@ public class SimplificationConstantPropogationTest {
 			
 			check(o, "0==1");
 		}
-
+*/
 
 
 
