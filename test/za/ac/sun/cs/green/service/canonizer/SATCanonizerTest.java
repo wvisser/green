@@ -274,7 +274,7 @@ public class SATCanonizerTest {
 	public void test17() {
 		IntConstant c1 = new IntConstant(2);
 		Operation o1 = new Operation(Operation.Operator.LT, c1, c1);
-		check(o1, "2<2", "0==1");
+		check(o1, "2<2", "0<=1");
 	}
 
 	@Test
@@ -291,7 +291,7 @@ public class SATCanonizerTest {
 	public void test19() {
 		IntConstant c1 = new IntConstant(2);
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
-		check(o1, "2<=2", "0==0");
+		check(o1, "2<=2", "0<=0");
 	}
 
 	@Test
