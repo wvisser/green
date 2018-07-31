@@ -20,7 +20,7 @@ import za.ac.sun.cs.green.util.Configuration;
 
 public class OnlyConstantPropogationTest {
 
-	public static Green solver;
+	public static Green solver ;
 
 	@BeforeClass
 		public static void initialize() {
