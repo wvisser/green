@@ -72,3 +72,5 @@ https://github.com/littleMissMae/green
     ```
 
 12. Run a Travis Build and we found that all tests passed
+
+13. *For extra marks*, Buil #34 displays the formatted printing which hilights the FAILED test case
