@@ -41,3 +41,8 @@ ________________________________________________________________________________
 
 Link to my Github account:
 https://github.com/chelsb/green
+
+Link to the place in my repository where I made the change for task 1:
+https://github.com/chelsb/green/blob/master/test/za/ac/sun/cs/green/service/canonizer/SATCanonizerTest.java
+
+(On line 304)
