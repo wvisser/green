@@ -548,7 +548,7 @@ public class SATZ3Test {
 	 */
 	@Test
 	public void test14() {
-		IntVariable v1 = new IntVariable("iasdsa1", 0, 2048);
+		IntVariable v1 = new IntVariable("i1", 0, 2048);
 		IntVariable v2 = new IntVariable("j2", 0, 2048);
 		IntVariable v3 = new IntVariable("k3", 0, 2048);
 		IntConstant c1 = new IntConstant(0);
