@@ -267,7 +267,7 @@ public class SATCanonizerTest {
 		Operation o2 = new Operation(Operation.Operator.MUL, c2, v1);
 		Operation o3 = new Operation(Operation.Operator.ADD, o1, o2);
 		Operation o4 = new Operation(Operation.Operator.LT, o3, v2);
-		check(o4, "((aa*2)+(4*aa))<bb", "6*v+-1*v+1<0");
+		check(o4, "((aa*2)+(4*aa))<bb", "6*v+-1*v+1<=0");
 	}
 
 	@Test
