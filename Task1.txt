@@ -9,5 +9,6 @@ After running the program again I saw that in bin/junit/TEST-za.ac.sun.cs.green.
 The link to the corrected code on my repo: 
 https://github.com/jonohulley/green
 
-For Task 2, the failing test details required can be found in bin/junit/TEST-za.ac.sun.cs.green.EntireSuit.xml . An example of this is commit message:
+For Task 2, the failing test details required can be found in bin/junit/TEST-za.ac.sun.cs.green.EntireSuit.xml . 
+An example of this is commit message: https://github.com/jonohulley/green/commit/640d5136d89d8236eacf633afd0239575ad06c28
 
