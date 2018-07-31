@@ -8,3 +8,4 @@ services:
 script:
  - docker build -t wimkeir/green .
  - docker run wimkeir/green /bin/sh -c "ant; ant test;"
+ - docker logs
