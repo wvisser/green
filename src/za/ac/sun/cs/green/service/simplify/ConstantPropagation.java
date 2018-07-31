@@ -26,6 +26,7 @@ import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation extends BasicService{
 	public ConstantPropagation(Green solver) {
+		System.out.println("Im being called");		
 		super(solver);
 	}
 }
