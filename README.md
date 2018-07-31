@@ -1,5 +1,5 @@
 [![Build
-Status](https://travis-ci.org/FrancoisVGit/gree?branch=master)](https://travis-ci.org/FrancoisVGit/green.svg?branch=master)
+Status](https://travis-ci.org/FrancoisVGit/green.svg?branch=master)](https://travis-ci.org/FrancoisVGit/green?branch=master)
 
 Notes:
 
