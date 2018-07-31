@@ -1,7 +1,5 @@
 [![Build Status](https://travis-ci.org/marcdefaria/green.svg?branch=master)](https://travis-ci.org/marcdefaria/green)
 
-(https://travis-ci.org/wvisser/green.svg?branch=master)
-
 Notes:
 HvQSDNw9jQZYGx6mw8N0Bg
 The first step is to update "build.properties" with your local
