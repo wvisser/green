@@ -22,3 +22,6 @@ before_install:
 	- docker build -t meyer/java .
 script:
 	- docker run meyer/java /bin/sh -c "ant; ant test;"
+
+	MY GITHUB FOLDER:
+	https://github.com/19007361/green
