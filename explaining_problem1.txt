@@ -1,0 +1,6 @@
+Upon uncommenting the test in SATCanonizerTest the build started failing, hence
+the newly enabled test is the cause of the failure.
+
+Running the test locally gave acces to the information on the failing test, that
+added with the hint that the fail is caused by the oracle of the test was enough
+information to change the tests expected value to cause the test to pass.
