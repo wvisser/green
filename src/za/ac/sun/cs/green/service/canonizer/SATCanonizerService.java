@@ -88,6 +88,7 @@ public class SATCanonizerService extends BasicService {
         }
 
         public Expression getExpression() {
+            return null;
             return stack.pop();
         }
 
@@ -102,8 +103,7 @@ public class SATCanonizerService extends BasicService {
         }
 
         @Override
-        public void postVisit(Operation operation) throws VisitorException {
-            throw new VisitorException("there was a fake error");
+        public void postVisit(Operation operation) {
             Operation.Operator op = operation.getOperator();
             Operation.Operator nop = null;
             switch (op) {
