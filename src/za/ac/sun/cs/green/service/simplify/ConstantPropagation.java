@@ -18,7 +18,7 @@ import za.ac.sun.cs.green.util.Reporter;
 
 
 public class ConstantPropagation extends BasicService {
-   private int invocations = 0;
+   /*private int invocations = 0;
    
    @Override
    public Set<Instance> processRequest(Instance instance) {
@@ -31,7 +31,10 @@ public class ConstantPropagation extends BasicService {
    }
    
 private static class ConstantPropagationVisitor extends Visitor {
+   private Stack<Expression> stack;
+   
    public ConstantPropagationVisitor() {
+	   stack = new Stack<Expression>();
     //TODO  
    }
    public Expression getExpression() {
@@ -50,5 +53,5 @@ private static class ConstantPropagationVisitor extends Visitor {
 	public void postVisit(Operation operation) throws VisitorException {
 
    }
-}
+}*/
 }
