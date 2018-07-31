@@ -1,3 +1,9 @@
+Chelsea Barraball
+19768125
+Software Engineering Tutorial 1
+______________________________________________________________________________________________
+Task 1
+
 For the first task, I looked in build.xml for where the tests and their outputs get formatted. 
 
 I noticed that the formatter looks like this:
@@ -30,3 +36,8 @@ Using the information that the error gave me, I changed it to this:
 check(o3, "(2<=2)&&(aa<2)", "1*v+-1<=0");
 
 Pushed and built, and it worked.
+
+______________________________________________________________________________________________
+
+Link to my Github account:
+https://github.com/chelsb/green
