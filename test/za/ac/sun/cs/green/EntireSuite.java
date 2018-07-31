@@ -39,8 +39,8 @@ import za.ac.sun.cs.green.service.simplify.SimplificationConstantPropogationTest
 @Suite.SuiteClasses({
 	//SATCanonizerTest.class,
 	//SATZ3Test.class,
-	OnlyConstantPropogationTest.class,
-	SimplificationConstantPropogationTest.class
+	OnlyConstantPropagationTest.class,
+	SimplificationConstantPropagationTest.class
 })
 
 public class EntireSuite {
