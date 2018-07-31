@@ -9,4 +9,4 @@ before_install:
 language: java
 
 script:
- - docker run -it nag47/dock /bin/sh -c "ant; ant test"
+ - docker run nag47/dock /bin/sh -c "ant; ant test"
