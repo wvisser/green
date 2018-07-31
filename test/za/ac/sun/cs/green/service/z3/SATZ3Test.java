@@ -341,7 +341,7 @@ public class SATZ3Test {
 	 * bb &lt;= cc
 	 * </pre>
 	 * 
-	 * given thatnistration portal.  The angular web portal would also display the state of the Command driven use cases being executed.  Th
+	 * given that
 	 * 
 	 * <pre>
 	 * cc &lt;= dd
@@ -363,7 +363,7 @@ public class SATZ3Test {
 	public void test10() {
 		IntVariable v1 = new IntVariable("aa", 0, 99);
 		IntVariable v2 = new IntVariable("bb", 0, 99);
-		IntVariable v3 = new IntVariable("cc", 0, 99);nistration portal.  The angular web portal would also display the state of the Command driven use cases being executed.  Th
+		IntVariable v3 = new IntVariable("cc", 0, 99);
 		IntVariable v4 = new IntVariable("dd", 0, 99);
 		IntVariable v5 = new IntVariable("ee", 0, 99);
 		Operation o1 = new Operation(Operation.Operator.LE, v1, v2);
