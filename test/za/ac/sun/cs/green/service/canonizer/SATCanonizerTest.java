@@ -108,7 +108,7 @@ public class SATCanonizerTest {
 		Operation o1 = new Operation(Operation.Operator.EQ, v1, c1);
 		IntConstant c2 = new IntConstant(1);
 		Operation o2 = new Operation(Operation.Operator.NE, v1, c2);
-		check(o1, o2, "(aa==0)&&(aa!=1)", "1*v==0", "1*v+-1!=");
+		check(o1, o2, "(aa==0)&&(aa!=1)", "1*v==0", "1*v+-1!=0");
 	}
 
 	@Test
