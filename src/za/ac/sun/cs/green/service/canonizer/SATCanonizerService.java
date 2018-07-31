@@ -57,6 +57,7 @@ public class SATCanonizerService extends BasicService {
 	public Expression canonize(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
+			log.log(Level.FINEST, "Before Canonization: " + expression);
 			invocations++;
 			
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
