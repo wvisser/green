@@ -96,12 +96,8 @@
     <target name="test">
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
-        <mkdir dir="${reports.dir}" />
-    	<mkdir dir="${reports.dir}/tmp" />
-    	<mkdir dir="${reports.dir}/style" />
-    	<mkdir dir="${reports.dir}/final" />
-        <junit fork="yes" printsummary="withOutAndErr" haltonfailure = "no" failureproperty="junit.failed">
-            <formatter type="xml"/>
+        <junit fork="yes" printsummary="yes" haltonfailure = "no" failureproperty="junit.failed">
+            <formatter type="plain" usefile="no"/>
             <test name="za.ac.sun.cs.green.EntireSuite" todir="${junit.dir}"/>
             <env key="DYLD_LIBRARY_PATH" value="lib"/>
             <env key="LD_LIBRARY_PATH" value="lib"/>
@@ -114,16 +110,6 @@
             </fileset>
             <report format="frames" todir="${junit.dir}"/>
         </junitreport>
-	<echo message="Now checking xml test results for errors"    />
-            <exec executable="grep" error="/dev/null">
-            	<arg value="-r" />
-            	<arg value="-m" />
-            	<arg value="1" />
-            	<arg value="-rl" />
-            	<arg value="errors=\&quot;[1-9]\&quot;" /> 
-            	<arg value="${reports.dir}" />
-             </exec>
-	<fail if="junit.failed" message="FAILING - unit tests failed." />
     </target>
 
 <!--
