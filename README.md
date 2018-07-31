@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/apvanniekerk/green.svg?branch=master)](https://travis-ci.org/apvanniekerk/green.svg?branch=master)
+[![Build Status](https://travis-ci.org/apvanniekerk/green.svg?branch=master)](https://travis-ci.org/apvanniekerk/green)
 
 AP van Niekerk - 16579089 - 2018
 
