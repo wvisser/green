@@ -25,8 +25,5 @@ import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation{
-	public call(){
-		System.out.println("TEASTRE");
-	}
 
 }
