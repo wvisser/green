@@ -7,4 +7,5 @@ I also changed the formatting type in build.xml to "brief" in order to find the 
 
 Link to the repo: https://github.com/Liso66/green
 
-    [junit] [20180724 08:44:41][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((1*v0)+-1)<=0
+Bonus mark:
+set usefile="false" in build.xml
