@@ -24,6 +24,8 @@ import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
 
-public class ConstantPropagation{
-
+public class ConstantPropagation extends BasicService{
+	public ConstantPropagation(Green solver) {
+		super(solver);
+	}
 }
