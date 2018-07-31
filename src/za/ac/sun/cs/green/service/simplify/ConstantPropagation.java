@@ -53,8 +53,7 @@ public class ConstantPropagation extends BasicService {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-	public Expression canonize(Expression expression,
-			Map<Variable, Variable> map) {
+	public Expression canonize(Expression expression, Map<Variable, Variable> map) {
 		try {
 			log.log(Level.FINEST, "Before Canonization: " + expression);
 			invocations++;
@@ -65,21 +64,17 @@ public class ConstantPropagation extends BasicService {
 			expression.accept(canonizationVisitor);
 			Expression canonized = canonizationVisitor.getExpression();
 			if (canonized != null) {
-				canonized = new Renamer(map,
-						canonizationVisitor.getVariableSet()).rename(canonized);
+				canonized = new Renamer(map, canonizationVisitor.getVariableSet()).rename(canonized);
 			}
 			log.log(Level.FINEST, "After Canonization: " + canonized);
 			return canonized;
 		} catch (VisitorException x) {
-			log.log(Level.SEVERE,
-					"encountered an exception -- this should not be happening!",
-					x);
+			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
 		}
 		return null;
 	}
 
 	private static class OrderingVisitor extends Visitor {
-
 		private Stack<Expression> stack;
 
 		public OrderingVisitor() {
@@ -129,13 +124,10 @@ public class ConstantPropagation extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				if ((r instanceof IntVariable)
-						&& (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(
-								((IntVariable) l).getName()) < 0)) {
+				if ((r instanceof IntVariable) && (l instanceof IntVariable)
+						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
 					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
+				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
 					stack.push(new Operation(nop, r, l));
 				} else {
 					stack.push(operation);
@@ -155,25 +147,15 @@ public class ConstantPropagation extends BasicService {
 	}
 
 	private static class CanonizationVisitor extends Visitor {
-
 		private Stack<Expression> stack;
-
 		private SortedSet<Expression> conjuncts;
-
 		private SortedSet<IntVariable> variableSet;
-
 		private Map<IntVariable, Integer> lowerBounds;
-
 		private Map<IntVariable, Integer> upperBounds;
-
 		private IntVariable boundVariable;
-
 		private Integer bound;
-
 		private int boundCoeff;
-
 		private boolean unsatisfiable;
-
 		private boolean linearInteger;
 
 		public CanonizationVisitor() {
@@ -210,20 +192,16 @@ public class ConstantPropagation extends BasicService {
 					} else if (e instanceof Operation) {
 						Operation o = (Operation) e;
 						if (o.getOperator() == Operation.Operator.GT) {
-							e = new Operation(Operation.Operator.LT, scale(-1,
-									o.getOperand(0)), o.getOperand(1));
+							e = new Operation(Operation.Operator.LT, scale(-1, o.getOperand(0)), o.getOperand(1));
 						} else if (o.getOperator() == Operation.Operator.GE) {
-							e = new Operation(Operation.Operator.LE, scale(-1,
-									o.getOperand(0)), o.getOperand(1));
+							e = new Operation(Operation.Operator.LE, scale(-1, o.getOperand(0)), o.getOperand(1));
 						}
 						o = (Operation) e;
 						if (o.getOperator() == Operation.Operator.GT) {
-							e = new Operation(Operation.Operator.GE, merge(
-									o.getOperand(0), new IntConstant(-1)),
+							e = new Operation(Operation.Operator.GE, merge(o.getOperand(0), new IntConstant(-1)),
 									o.getOperand(1));
 						} else if (o.getOperator() == Operation.Operator.LT) {
-							e = new Operation(Operation.Operator.LE, merge(
-									o.getOperand(0), new IntConstant(1)),
+							e = new Operation(Operation.Operator.LE, merge(o.getOperand(0), new IntConstant(1)),
 									o.getOperand(1));
 						}
 					}
@@ -354,8 +332,7 @@ public class ConstantPropagation extends BasicService {
 			if (linearInteger && !unsatisfiable) {
 				if (variable instanceof IntVariable) {
 					variableSet.add((IntVariable) variable);
-					stack.push(new Operation(Operation.Operator.MUL, Operation.ONE,
-							variable));
+					stack.push(new Operation(Operation.Operator.MUL, Operation.ONE, variable));
 				} else {
 					stack.clear();
 					linearInteger = false;
@@ -567,8 +544,7 @@ public class ConstantPropagation extends BasicService {
 			for (Map.Entry<Variable, Integer> e : coefficients.entrySet()) {
 				int coef = e.getValue();
 				if (coef != 0) {
-					Operation term = new Operation(Operation.Operator.MUL,
-							new IntConstant(coef), e.getKey());
+					Operation term = new Operation(Operation.Operator.MUL, new IntConstant(coef), e.getKey());
 					if (lr == null) {
 						lr = term;
 					} else {
@@ -581,14 +557,12 @@ public class ConstantPropagation extends BasicService {
 			} else if (s == 0) {
 				return lr;
 			} else {
-				return new Operation(Operation.Operator.ADD, lr,
-						new IntConstant(s));
+				return new Operation(Operation.Operator.ADD, lr, new IntConstant(s));
 			}
 		}
 
 		private boolean hasRightConstant(Expression expression) {
-			return isAddition(expression)
-					&& (getRightExpression(expression) instanceof IntConstant);
+			return isAddition(expression) && (getRightExpression(expression) instanceof IntConstant);
 		}
 
 		private int getRightConstant(Expression expression) {
@@ -616,8 +590,7 @@ public class ConstantPropagation extends BasicService {
 				return Operation.ZERO;
 			}
 			if (expression instanceof IntConstant) {
-				return new IntConstant(factor
-						* ((IntConstant) expression).getValue());
+				return new IntConstant(factor * ((IntConstant) expression).getValue());
 			} else if (expression instanceof IntVariable) {
 				return expression;
 			} else {
@@ -633,13 +606,10 @@ public class ConstantPropagation extends BasicService {
 	}
 
 	private static class Renamer extends Visitor {
-
 		private Map<Variable, Variable> map;
-
 		private Stack<Expression> stack;
 
-		public Renamer(Map<Variable, Variable> map,
-				SortedSet<IntVariable> variableSet) {
+		public Renamer(Map<Variable, Variable> map, SortedSet<IntVariable> variableSet) {
 			this.map = map;
 			stack = new Stack<Expression>();
 		}
@@ -653,8 +623,7 @@ public class ConstantPropagation extends BasicService {
 		public void postVisit(IntVariable variable) {
 			Variable v = map.get(variable);
 			if (v == null) {
-				v = new IntVariable("v" + map.size(), variable.getLowerBound(),
-						variable.getUpperBound());
+				v = new IntVariable("v" + map.size(), variable.getLowerBound(), variable.getUpperBound());
 				map.put(variable, v);
 			}
 			stack.push(v);
