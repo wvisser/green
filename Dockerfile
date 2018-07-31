@@ -17,7 +17,7 @@ RUN apt install libgomp1
 # Clone down the GreenSolver repository
 RUN git clone https://github.com/Zerabian/green
 
-# Download and extract Z3  
+# Download and extract Z3
 RUN mkdir z3
 WORKDIR z3
 RUN wget https://github.com/Z3Prover/z3/releases/download/z3-4.7.1/z3-4.7.1-x64-ubuntu-16.04.zip
