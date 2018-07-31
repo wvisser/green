@@ -9,5 +9,5 @@ before_install:
   - docker build -t greenimage .
 
 script:
-  - docker rm $(docker ps -q -f status=exited)
+  - docker ps -q -f status=exited
   - docker run greenimage /bin/sh -c "ant; ant test"
