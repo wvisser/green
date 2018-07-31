@@ -4,7 +4,6 @@ sudo: required
 
 services:
  - docker
- - ./gradlew test --info
  
 before_install:
  - docker build -t greendock .
