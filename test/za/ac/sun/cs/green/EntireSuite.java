@@ -1,5 +1,5 @@
 package za.ac.sun.cs.green;
-
+/*
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,7 @@ import za.ac.sun.cs.green.util.SetServiceTest;
 import za.ac.sun.cs.green.util.SetTaskManagerTest;
 
 import za.ac.sun.cs.green.service.simplify.*;
-
+*/
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	//SATCanonizerTest.class,
