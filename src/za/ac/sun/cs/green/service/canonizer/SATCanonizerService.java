@@ -88,7 +88,6 @@ public class SATCanonizerService extends BasicService {
         }
 
         public Expression getExpression() {
-            return null;
             return stack.pop();
         }
 
