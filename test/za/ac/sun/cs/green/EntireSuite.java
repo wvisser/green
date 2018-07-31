@@ -19,6 +19,7 @@ import cvc3.ValidityChecker;
 import za.ac.sun.cs.green.service.canonizer.SATCanonizerTest;
 import za.ac.sun.cs.green.service.z3.SATZ3Test;
 import za.ac.sun.cs.green.service.simplify.ConstantPropagation;
+import za.ac.sun.cs.green.service.simplify.ConstantPropagationTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
