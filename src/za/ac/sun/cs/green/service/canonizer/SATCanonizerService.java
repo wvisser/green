@@ -59,7 +59,7 @@ public class SATCanonizerService extends BasicService {
 		try {
 			//log.log(Level.FINEST, "Before Canonization: " + expression);
 			String logstr = "";
-			logstr += " Before Canonisation: ";
+			logstr += "Before Canonisation: ";
 			logstr += expression;
 			invocations++;
 			
@@ -68,7 +68,7 @@ public class SATCanonizerService extends BasicService {
 			expression = orderingVisitor.getExpression();
 			
 			//TODO remove
-			logstr += " After OrderingVisitor : ";
+			logstr += "\nAfter OrderingVisitor : ";
 			logstr += expression;
 			
 			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
@@ -76,9 +76,9 @@ public class SATCanonizerService extends BasicService {
 			Expression canonized = canonizationVisitor.getExpression();
 			
 			//TODO remove
-			logstr += " After CanonizationVisitor : ";
+			logstr += "\nAfter CanonizationVisitor : ";
 			logstr += expression;
-			log.log(Level.FINEST, "Before Canonization: " + logstr);
+			log.log(Level.FINEST, logstr);
 			
 			if (canonized != null) {
 				canonized = new Renamer(map,
