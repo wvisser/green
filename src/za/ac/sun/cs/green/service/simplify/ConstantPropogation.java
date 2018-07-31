@@ -43,13 +43,13 @@ public class ConstantPropogation extends BasicService {
     public Expression constant_propogation(Expression expression, Map<Variable, Variable> map) {
         try {
             log.log(Level.FINEST, "Before Constant Propogation: " + expression);
-            ConstantPropogation.ConstantPropogationVisitor canonizationVisitor = new ConstantPropogation.ConstantPropogationVisitor();
-            expression.accept(canonizationVisitor);
-            Expression processed = canonizationVisitor.getExpression();
+            ConstantPropogation.ConstantPropogationVisitor constantPropogationVisitor = new ConstantPropogation.ConstantPropogationVisitor();
+            expression.accept(constantPropogationVisitor);
+            Expression processed = constantPropogationVisitor.getExpression();
             log.log(Level.FINEST, "After Constant Propogation: " + processed);
             return processed;
         } catch (VisitorException x) {
-            log.log(Level.SEVERE,
+            log.log(Level.FINEST,
                     "encountered an exception -- this should not be happening!",
                     x);
         }
