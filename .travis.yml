@@ -6,8 +6,8 @@ services:
   - docker
 
 before_install:
-  - docker rm $(docker ps -q -f status=exited)
   - docker build -t greenimage .
 
 script:
+  - docker rm $(docker ps -q -f status=exited)
   - docker run greenimage /bin/sh -c "ant; ant test"
