@@ -58,6 +58,7 @@ public class SATCanonizerService extends BasicService {
 			Map<Variable, Variable> map) {
 		try {
 			log.log(Level.FINEST, "Before Canonization: " + expression);
+			log.log(Level.FINEST,"some log");
 			invocations++;
 			
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
