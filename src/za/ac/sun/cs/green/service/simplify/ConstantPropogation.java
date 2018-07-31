@@ -49,7 +49,7 @@ public class ConstantPropogation extends BasicService {
             log.log(Level.FINEST, "After Constant Propogation: " + processed);
             return processed;
         } catch (VisitorException x) {
-            log.log(Level.FINEST,
+            log.log(Level.SEVERE,
                     "encountered an exception -- this should not be happening!",
                     x);
         }
