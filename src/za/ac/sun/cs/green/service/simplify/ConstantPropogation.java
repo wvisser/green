@@ -10,6 +10,8 @@ import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Constant;
 import za.ac.sun.cs.green.expr.Expression;
+import za.ac.sun.cs.green.expr.IntConstant;
+import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
@@ -59,6 +61,7 @@ public class ConstantPropogation extends BasicService {
     private static class ConstantPropogationVisitor extends Visitor {
 
         private Stack<Expression> stack;
+        private HashMap<IntVariable, IntConstant> variables;
 
         public ConstantPropogationVisitor() {
             this.stack = new Stack<Expression>();
@@ -72,14 +75,32 @@ public class ConstantPropogation extends BasicService {
         public void postVisit(Constant constant) {
             stack.push(constant);
         }
-
+        
         @Override
         public void postVisit(Variable variable) {
             stack.push(variable);
         }
 
         @Override
+        public void postVisit(IntVariable variable) {
+            if (variables.containsKey(variable)) {
+                stack.push(variables.get(variable));
+            } else {
+                stack.push(variable);
+            }
+        }
+
+        @Override
         public void postVisit(Operation operation) {
+            Operation.Operator op = operation.getOperator();
+            if (op == Operation.Operator.EQ) {
+                Expression r = stack.pop();
+                Expression l = stack.pop();
+                if (r instanceof IntConstant &&
+                    l instanceof IntVariable) {
+                    variables.put((IntVariable) l, (IntConstant) r);
+                }
+            }
             stack.push(operation);
         }
 
