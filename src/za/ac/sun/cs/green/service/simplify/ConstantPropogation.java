@@ -58,8 +58,12 @@ public class ConstantPropogation extends BasicService {
 
     private static class ConstantPropogationVisitor extends Visitor {
 
-        Stack<Expression> stack;
+        private Stack<Expression> stack;
 
+        public ConstantPropogationVisitor() {
+            this.stack = new Stack<Expression>();
+        }
+        
         public Expression getExpression() {
             return stack.pop();
         }
