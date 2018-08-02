@@ -69,10 +69,9 @@ public class ConstantPropogation extends BasicService {
         }
         
         public Expression getExpression() {
-            return new IntConstant(42);
-            //return stack.pop();
+            return stack.pop();
         }
-
+/*
         @Override
         public void postVisit(Constant constant) {
             stack.push(constant);
@@ -82,12 +81,12 @@ public class ConstantPropogation extends BasicService {
         public void postVisit(Variable variable) {
             stack.push(variable);
         }
-
+*/
         @Override
         public void postVisit(IntVariable variable) {
             if (variables.containsKey(variable)) {
                 System.out.println("replacing variable " + variable.getName() + " with value " + variables.get(variable));
-                stack.push(variables.get(variable));
+                stack.push(new IntConstant(42));
             } else {
                 System.out.println("not replacing variable " + variable.getName());
                 stack.push(variable);
