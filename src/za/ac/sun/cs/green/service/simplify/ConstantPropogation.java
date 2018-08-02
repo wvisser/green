@@ -45,7 +45,7 @@ public class ConstantPropogation extends BasicService {
     public Expression constant_propogation(Expression expression, Map<Variable, Variable> map) {
         try {
             log.log(Level.FINEST, "Before Constant Propogation: " + expression);
-            ConstantPropogation.ConstantPropogationVisitor constantPropogationVisitor = new ConstantPropogation.ConstantPropogationVisitor();
+            ConstantPropogationVisitor constantPropogationVisitor = new ConstantPropogationVisitor();
             expression.accept(constantPropogationVisitor);
             Expression processed = constantPropogationVisitor.getExpression();
             log.log(Level.FINEST, "After Constant Propogation: " + processed);
@@ -69,7 +69,8 @@ public class ConstantPropogation extends BasicService {
         }
         
         public Expression getExpression() {
-            return stack.pop();
+            return new IntConstant(42);
+            //return stack.pop();
         }
 
         @Override
@@ -85,8 +86,8 @@ public class ConstantPropogation extends BasicService {
         @Override
         public void postVisit(IntVariable variable) {
             if (variables.containsKey(variable)) {
-                System.out.println("replacing variable " + variable.getName() + " with value " + variables.get(variable).getValue());
-                stack.push(new IntConstant(variables.get(variable).getValue()));
+                System.out.println("replacing variable " + variable.getName() + " with value " + variables.get(variable));
+                stack.push(variables.get(variable));
             } else {
                 System.out.println("not replacing variable " + variable.getName());
                 stack.push(variable);
@@ -104,8 +105,11 @@ public class ConstantPropogation extends BasicService {
                     System.out.println("adding variable " + l + " to list with value " + r);
                     variables.put((IntVariable) l, (IntConstant) r);
                 }
+                stack.push(l);
+                stack.push(r);
+            } else {
+                stack.push(operation);
             }
-            stack.push(operation);
         }
 
     }
