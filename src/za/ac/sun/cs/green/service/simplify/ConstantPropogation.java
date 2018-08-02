@@ -85,8 +85,10 @@ public class ConstantPropogation extends BasicService {
         @Override
         public void postVisit(IntVariable variable) {
             if (variables.containsKey(variable)) {
+                System.out.println("replacing variable " + variable.getName());
                 stack.push(variables.get(variable));
             } else {
+                System.out.println("not replacing variable " + variable.getName());
                 stack.push(variable);
             }
         }
@@ -94,13 +96,18 @@ public class ConstantPropogation extends BasicService {
         @Override
         public void postVisit(Operation operation) {
             Operation.Operator op = operation.getOperator();
+            System.out.println("processing operator " + op);
             if (op == Operation.Operator.EQ) {
                 Expression r = stack.pop();
                 Expression l = stack.pop();
                 if (r instanceof IntConstant &&
                     l instanceof IntVariable) {
+                    System.out.println("adding variable " + l + " to list with value " + r);
                     variables.put((IntVariable) l, (IntConstant) r);
                 }
+            }
+            for (Object value: variables.values()) {
+                System.out.println("variables contains:" + value);
             }
             stack.push(operation);
         }
