@@ -71,7 +71,7 @@ public class ConstantPropogation extends BasicService {
         public Expression getExpression() {
             return stack.pop();
         }
-/*
+
         @Override
         public void postVisit(Constant constant) {
             stack.push(constant);
@@ -81,7 +81,7 @@ public class ConstantPropogation extends BasicService {
         public void postVisit(Variable variable) {
             stack.push(variable);
         }
-*/
+
         @Override
         public void postVisit(IntVariable variable) {
             if (variables.containsKey(variable)) {
