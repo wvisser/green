@@ -79,23 +79,23 @@ public class ConstantPropagation extends BasicService {
 
 		public Expression getExpression() {
             Expression finalExp = stack.pop();
-            System.out.println("Final expression is" + finalExp);
+            System.out.println("Final expression is " + finalExp);
 			return finalExp;
 		}
 
 		@Override
 		public void postVisit(IntConstant constant) {
-            System.out.println("Pushing constant " + constant);
+            System.out.println("Pushing constant to stack: " + constant);
 			stack.push(constant);
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
             if(variables.containsKey(variable)) {
-                System.out.println("Propagating a constant: " + variable + " = " + variables.get(variable));
+                System.out.println("Pushing constant to stack (propagated). " + variable + " = " + variables.get(variable));
                 stack.push(variables.get(variable));
             } else {
-                System.out.println(variable + " doesn't have a value. Just pushing variable name instead");
+                System.out.println(variable + " doesn't have a value. Pushing variable to stack");
                 stack.push(variable);
             }
 		}
@@ -108,16 +108,15 @@ public class ConstantPropagation extends BasicService {
 				Expression r = stack.pop();
                 Expression l = stack.pop();
                 
-				if (r instanceof IntConstant && l instanceof IntVariable) {
-                    System.out.println("Found a constant assignment. Assigning " + l + " with value " + r);
+				if (l instanceof IntVariable && r instanceof IntConstant) {
+                    System.out.println("Found a constant assignment. Adding to Map: " + l + " with value " + r);
                     variables.put((IntVariable) l, (IntConstant) r);
-                    System.out.println("Pushing " + l + "==" + variables.get((IntVariable)l));
+                    System.out.println("Pushing EQ with constantable " + l + "==" + variables.get((IntVariable)l));
                     stack.push(new Operation(op, l, variables.get((IntVariable)l)));
                 } else {
-                    System.out.println("Pushing " + l + "==" + r);
+                    System.out.println("Pushing EQ with 2 unassigned variables " + l + "==" + r);
                     stack.push(new Operation(op, l, r));
                 }
-
 			} else {
                 System.out.println("Pushing operation " + operation);
 				stack.push(operation);
