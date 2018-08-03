@@ -40,7 +40,7 @@ public class ConstantPropagation extends BasicService {
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = canonize(instance.getFullExpression(), map);
+			final Expression e = propagate(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -53,7 +53,7 @@ public class ConstantPropagation extends BasicService {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-	public Expression canonize(Expression expression, Map<Variable, Variable> map) {
+	public Expression propagate(Expression expression, Map<Variable, Variable> map) {
 		try {
 			log.log(Level.FINEST, "Before Constant Propagation: " + expression);
 			invocations++;
@@ -69,10 +69,12 @@ public class ConstantPropagation extends BasicService {
 	}
 
 	private static class OrderingVisitor extends Visitor {
-		private Stack<Expression> stack;
+        private Stack<Expression> stack;
+        private HashMap<IntVariable, IntConstant> variables;
 
 		public OrderingVisitor() {
-			stack = new Stack<Expression>();
+            stack = new Stack<Expression>();
+            variables = new HashMap<IntVariable, IntConstant>();
 		}
 
 		public Expression getExpression() {
@@ -86,54 +88,32 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(IntVariable variable) {
+            if(variables.containsKey(variable)) {
+                System.out.println("Propagating a constant: " + variable + " = " + variables.get(variable));
+                stack.push(variables.get(variable));
+            } else {
+                System.out.println("Tried propagating constant but didn't find it in map")
+                stack.push(variable);
+            }
 			stack.push(variable);
 		}
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
-			Operation.Operator op = operation.getOperator();
-			Operation.Operator nop = null;
-			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case NE:
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
-			default:
-				break;
-			}
-			if (nop != null) {
+            Operation.Operator op = operation.getOperator();
+            
+			if (op == Operation.Operator.EQ) {
 				Expression r = stack.pop();
-				Expression l = stack.pop();
-				if ((r instanceof IntVariable) && (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
+                Expression l = stack.pop();
+                
+				if (r instanceof IntConstant && l instanceof IntVariable) {
+                    System.out.println("Found a constant assignment. Assigning " + l + " with value " + r);
+                    variables.put(l, r);
+                    // stack.push(new Operation(nop, r, l));
 				} else {
 					stack.push(operation);
 				}
-			} else if (op.getArity() == 2) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				stack.push(new Operation(op, l, r));
 			} else {
-				for (int i = op.getArity(); i > 0; i--) {
-					stack.pop();
-				}
 				stack.push(operation);
 			}
 		}
