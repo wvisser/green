@@ -100,25 +100,86 @@ public class ConstantPropagation extends BasicService {
             }
 		}
 
-		@Override
-		public void postVisit(Operation operation) throws VisitorException {
-            Operation.Operator op = operation.getOperator();
+		// @Override
+		// public void postVisit(Operation operation) throws VisitorException {
+        //     Operation.Operator op = operation.getOperator();
             
-			if (op == Operation.Operator.EQ) {
-				Expression r = stack.pop();
+		// 	if (op == Operation.Operator.EQ) {
+		// 		Expression r = stack.pop();
+        //         Expression l = stack.pop();
+                
+		// 		if (l instanceof IntVariable && r instanceof IntConstant) {
+        //             System.out.println("Found a constant assignment. Adding to Map: " + l + " with value " + r);
+        //             variables.put((IntVariable) l, (IntConstant) r);
+        //             System.out.println("Pushing EQ with constantable " + l + "==" + variables.get((IntVariable)l));
+        //             stack.push(new Operation(op, l, variables.get((IntVariable)l)));
+        //         } else {
+        //             System.out.println("Pushing EQ with 2 unassigned variables " + l + "==" + r);
+        //             stack.push(new Operation(op, l, r));
+        //         }
+		// 	} else {
+        //         System.out.println("Pushing operation " + operation);
+		// 		stack.push(operation);
+		// 	}
+        // }
+        
+        @Override
+		public void postVisit(Operation operation) throws VisitorException {
+			Operation.Operator op = operation.getOperator();
+			Operation.Operator nop = null;
+			switch (op) {
+			case EQ:
+				nop = Operation.Operator.EQ;
+				break;
+			case NE:
+				nop = Operation.Operator.NE;
+				break;
+			case LT:
+				nop = Operation.Operator.GT;
+				break;
+			case LE:
+				nop = Operation.Operator.GE;
+				break;
+			case GT:
+				nop = Operation.Operator.LT;
+				break;
+			case GE:
+				nop = Operation.Operator.LE;
+				break;
+			default:
+				break;
+            }
+            if (nop == Operation.Operator.EQ) {
+                Expression r = stack.pop();
                 Expression l = stack.pop();
                 
-				if (l instanceof IntVariable && r instanceof IntConstant) {
+                if (l instanceof IntVariable && r instanceof IntConstant) {
                     System.out.println("Found a constant assignment. Adding to Map: " + l + " with value " + r);
                     variables.put((IntVariable) l, (IntConstant) r);
                     System.out.println("Pushing EQ with constantable " + l + "==" + variables.get((IntVariable)l));
-                    stack.push(new Operation(op, l, variables.get((IntVariable)l)));
+                    stack.push(new Operation(nop, l, variables.get((IntVariable)l)));
                 } else {
                     System.out.println("Pushing EQ with 2 unassigned variables " + l + "==" + r);
-                    stack.push(new Operation(op, l, r));
+                    stack.push(new Operation(nop, l, r));
                 }
+            } else if (nop != null) {
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+				if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
+					stack.push(new Operation(nop, r, l));
+				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+					stack.push(new Operation(nop, r, l));
+				} else {
+					stack.push(operation);
+				}
+			} else if (op.getArity() == 2) {
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+				stack.push(new Operation(op, l, r));
 			} else {
-                System.out.println("Pushing operation " + operation);
+				for (int i = op.getArity(); i > 0; i--) {
+					stack.pop();
+				}
 				stack.push(operation);
 			}
 		}
