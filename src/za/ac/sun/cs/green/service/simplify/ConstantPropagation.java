@@ -83,36 +83,36 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(IntConstant constant) {
-			// stack.push(constant);
+			stack.push(constant);
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
-            // if(variables.containsKey(variable)) {
-            //     System.out.println("Propagating a constant: " + variable + " = " + variables.get(variable));
-            //     stack.push(variables.get(variable));
-            // } else {
-            //     System.out.println("Tried propagating constant but didn't find it in map");
-            //     stack.push(variable);
-            // }
+            if(variables.containsKey(variable)) {
+                System.out.println("Propagating a constant: " + variable + " = " + variables.get(variable));
+                stack.push(new IntConstant(3));
+            } else {
+                System.out.println("Tried propagating constant but didn't find it in map");
+                stack.push(variable);
+            }
 		}
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
-        //     Operation.Operator op = operation.getOperator();
+            Operation.Operator op = operation.getOperator();
             
-		// 	if (op == Operation.Operator.EQ) {
-		// 		Expression r = stack.pop();
-        //         Expression l = stack.pop();
+			if (op == Operation.Operator.EQ) {
+				Expression r = stack.pop();
+                Expression l = stack.pop();
                 
-		// 		if (r instanceof IntConstant && l instanceof IntVariable) {
-        //             System.out.println("Found a constant assignment. Assigning " + l + " with value " + r);
-        //             variables.put((IntVariable) l, (IntConstant) r);
-        //         }
-        //         stack.push(new Operation(op, l, r));
-		// 	} else {
-		// 		stack.push(operation);
-		// 	}
+				if (r instanceof IntConstant && l instanceof IntVariable) {
+                    System.out.println("Found a constant assignment. Assigning " + l + " with value " + r);
+                    variables.put((IntVariable) l, (IntConstant) r);
+                }
+                stack.push(new Operation(op, l, r));
+			} else {
+				stack.push(operation);
+			}
 		}
 
 	}
