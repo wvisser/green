@@ -83,7 +83,7 @@ public class ConstantPropogation extends BasicService {
 
 		@Override
 		public void postVisit(Constant constant) {
-			//stack.push(constant);
+			stack.push(constant);
 		}
 
 		@Override
