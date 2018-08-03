@@ -112,7 +112,7 @@ public class ConstantPropagation extends BasicService {
                     System.out.println("Found a constant assignment. Assigning " + l + " with value " + r);
                     variables.put((IntVariable) l, (IntConstant) r);
                     System.out.println("Pushing " + l + "==" + new IntConstant((int)r));
-                    stack.push(new Operation(op, new IntConstant((int)r), r));
+                    stack.push(new Operation(op, l, new IntConstant((int)r)));
                 } else {
                     System.out.println("Pushing " + l + "==" + r);
                     stack.push(new Operation(op, l, r));
