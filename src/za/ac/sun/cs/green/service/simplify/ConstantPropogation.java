@@ -87,11 +87,6 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		@Override
-		public void postVisit(Variable variable) {
-			stack.push(variable);
-		}
-
-		@Override
 		public void postVisit(IntVariable variable) {
 			if (variables.containsKey(variable)) {
 				System.out.println("replacing variable " + variable.getName() + " with value " + variables.get(variable));
