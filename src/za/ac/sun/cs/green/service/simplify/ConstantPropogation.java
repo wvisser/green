@@ -93,7 +93,7 @@ public class ConstantPropogation extends BasicService {
 				stack.push(new IntConstant(42));
 			} else {
 				System.out.println("not replacing variable " + variable.getName());
-				stack.push(variable);
+				stack.push(new IntConstant(41));
 			}
 		}
 
@@ -110,6 +110,7 @@ public class ConstantPropogation extends BasicService {
 				}
 				stack.push(l);
 				stack.push(r);
+				stack.push(operation);
 			} else {
 				stack.push(operation);
 			}
