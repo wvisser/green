@@ -1,6 +1,9 @@
 import xml.etree.ElementTree as ET
 import sys
 
+with open('./bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml', 'r') as fin:
+    print fin.read()
+
 tree = ET.parse('./bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml')
 root = tree.getroot()
 hadfail = False
