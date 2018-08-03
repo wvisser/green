@@ -92,7 +92,7 @@ public class ConstantPropagation extends BasicService {
                 System.out.println("Propagating a constant: " + variable + " = " + variables.get(variable));
                 stack.push(variables.get(variable));
             } else {
-                System.out.println("Tried propagating constant but didn't find it in map")
+                System.out.println("Tried propagating constant but didn't find it in map");
                 stack.push(variable);
             }
 			stack.push(variable);
