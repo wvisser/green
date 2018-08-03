@@ -85,7 +85,7 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(IntConstant constant) {
-            System.out.println("Pushing constant");
+            System.out.println("Pushing constant " + constant);
 			stack.push(constant);
 		}
 
@@ -93,9 +93,9 @@ public class ConstantPropagation extends BasicService {
 		public void postVisit(IntVariable variable) {
             if(variables.containsKey(variable)) {
                 System.out.println("Propagating a constant: " + variable + " = " + variables.get(variable));
-                stack.push(new IntConstant(3));
+                stack.push(variables.get(variable));
             } else {
-                System.out.println("Tried propagating constant but didn't find it in map. Pushing variable name");
+                System.out.println(variable + " doesn't have a value. Just pushing variable name instead");
                 stack.push(variable);
             }
 		}
@@ -112,10 +112,10 @@ public class ConstantPropagation extends BasicService {
                     System.out.println("Found a constant assignment. Assigning " + l + " with value " + r);
                     variables.put((IntVariable) l, (IntConstant) r);
                 }
-                System.out.println("Pushing something == something");
+                System.out.println("Pushing " + l + "==" + r);
                 stack.push(new Operation(op, l, r));
 			} else {
-                System.out.println("Pushing operator sign");
+                System.out.println("Pushing operation " + operation);
 				stack.push(operation);
 			}
 		}
