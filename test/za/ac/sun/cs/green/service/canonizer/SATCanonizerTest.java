@@ -87,7 +87,7 @@ public class SATCanonizerTest {
 		IntConstant c2 = new IntConstant(1);
 		Operation o2 = new Operation(Operation.Operator.NE, v2, c2);
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
-		check(o3, "(aa==0)&&(bb!=1)", "1*v==0", "1*v+-1==0");
+		check(o3, "(aa==0)&&(bb!=1)", "1*v==0", "1*v+-1!=0");
 	}
 
 	@Test
@@ -187,7 +187,7 @@ public class SATCanonizerTest {
 		Operation o1 = new Operation(Operation.Operator.ADD, v1, v2);
 		Operation o2 = new Operation(Operation.Operator.ADD, v1, v3);
 		Operation o3 = new Operation(Operation.Operator.LT, o1, o2);
-		check(o3, "(aa+bb)<(aa+cc)", "1*v+-1*v+1>0");
+		check(o3, "(aa+bb)<(aa+cc)", "1*v+-1*v+1<=0");
 	}
 
 	@Test
