@@ -78,12 +78,12 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		public Expression getExpression() {
-			return new IntConstant(90210);
+			return stack.pop();
 		}
 
 		@Override
 		public void postVisit(Constant constant) {
-			stack.push(constant);
+			//stack.push(constant);
 		}
 
 		@Override
@@ -108,9 +108,7 @@ public class ConstantPropogation extends BasicService {
 					System.out.println("adding variable " + l + " to list with value " + r);
 					variables.put((IntVariable) l, (IntConstant) r);
 				}
-				stack.push(l);
-				stack.push(r);
-				stack.push(operation);
+				stack.push(new Operation(op, l, r));
 			} else {
 				stack.push(operation);
 			}
