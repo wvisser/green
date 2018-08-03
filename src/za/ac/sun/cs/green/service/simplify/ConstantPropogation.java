@@ -95,7 +95,7 @@ public class ConstantPropogation extends BasicService {
 		public void postVisit(IntVariable variable) {
 			if (variables.containsKey(variable)) {
 				System.out.println("replacing variable " + variable.getName() + " with value " + variables.get(variable));
-				stack.push(variables.get(variable));
+				stack.push(new IntConstant(42));
 			} else {
 				System.out.println("not replacing variable " + variable.getName());
 				stack.push(variable);
