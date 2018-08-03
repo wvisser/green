@@ -95,34 +95,11 @@ public class ConstantPropagation extends BasicService {
                 System.out.println("Pushing constant to stack (propagated). " + variable + " = " + variables.get(variable));
                 stack.push(variables.get(variable));
             } else {
-                System.out.println(variable + " doesn't have a value. Pushing variable to stack");
+                System.out.println("Pushing variable to stack: " + variable + " doesn't have a value.");
                 stack.push(variable);
             }
 		}
-
-		// @Override
-		// public void postVisit(Operation operation) throws VisitorException {
-        //     Operation.Operator op = operation.getOperator();
-            
-		// 	if (op == Operation.Operator.EQ) {
-		// 		Expression r = stack.pop();
-        //         Expression l = stack.pop();
-                
-		// 		if (l instanceof IntVariable && r instanceof IntConstant) {
-        //             System.out.println("Found a constant assignment. Adding to Map: " + l + " with value " + r);
-        //             variables.put((IntVariable) l, (IntConstant) r);
-        //             System.out.println("Pushing EQ with constantable " + l + "==" + variables.get((IntVariable)l));
-        //             stack.push(new Operation(op, l, variables.get((IntVariable)l)));
-        //         } else {
-        //             System.out.println("Pushing EQ with 2 unassigned variables " + l + "==" + r);
-        //             stack.push(new Operation(op, l, r));
-        //         }
-		// 	} else {
-        //         System.out.println("Pushing operation " + operation);
-		// 		stack.push(operation);
-		// 	}
-        // }
-        
+    
         @Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
@@ -150,36 +127,49 @@ public class ConstantPropagation extends BasicService {
 				break;
             }
             if (nop == Operation.Operator.EQ) {
+                System.out.println("Popping stack");
                 Expression r = stack.pop();
+                System.out.println("Popping stack");
                 Expression l = stack.pop();
                 
                 if (l instanceof IntVariable && r instanceof IntConstant) {
-                    System.out.println("Found a constant assignment. Adding to Map: " + l + " with value " + r);
+                    System.out.println("Constant assignment - Map: " + l + " with value " + r);
                     variables.put((IntVariable) l, (IntConstant) r);
                     System.out.println("Pushing EQ with constantable " + l + "==" + variables.get((IntVariable)l));
                     stack.push(new Operation(nop, l, variables.get((IntVariable)l)));
                 } else {
-                    System.out.println("Pushing EQ with 2 unassigned variables " + l + "==" + r);
+                    System.out.println("Pushing non-simple (x==1) EQ: " + l + "==" + r);
                     stack.push(new Operation(nop, l, r));
                 }
             } else if (nop != null) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
+                System.out.println("Popping stack (area 1)");
+                Expression r = stack.pop();
+                System.out.println("Popping stack (area 1)");
+                Expression l = stack.pop();
+                
+                if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+                    Operation newOp = new Operation(nop, r, l);
+                    System.out.println("Pushing operation to stack (area 1): " + newOp);
+					stack.push(newOp);
 				} else {
+                    System.out.println("Pushing operation to stack (area 1): " + operation);
 					stack.push(operation);
 				}
 			} else if (op.getArity() == 2) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				stack.push(new Operation(op, l, r));
+                System.out.println("Popping stack (area 2)");
+                Expression r = stack.pop();
+                System.out.println("Popping stack (area 2)");
+                Expression l = stack.pop();
+                
+                Operation newOp = new Operation(op, r, l);
+                System.out.println("Pushing operation to stack (area 2): " + newOp);
+				stack.push(newOp);
 			} else {
 				for (int i = op.getArity(); i > 0; i--) {
+                    System.out.println("Popping stack (area 2)");
 					stack.pop();
-				}
+                }
+                System.out.println("Pushing operation to stack (area 2): " + operation);
 				stack.push(operation);
 			}
 		}
