@@ -148,11 +148,11 @@ public class ConstantPropagation extends BasicService {
                 Expression l = stack.pop();
                 
 				if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
-                    Operation newOp = new Operation(nop, r, l);
+                    Operation newOp = new Operation(nop, l, r);
                     System.out.println("Pushing operation to stack (area 1): " + newOp);
 					stack.push(newOp);
 				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-                    Operation newOp = new Operation(nop, r, l);
+                    Operation newOp = new Operation(nop, l, r);
                     System.out.println("Pushing operation to stack (area 1): " + newOp);
 					stack.push(newOp);
 				} else {
@@ -165,7 +165,7 @@ public class ConstantPropagation extends BasicService {
                 System.out.println("Popping stack (area 2)");
                 Expression l = stack.pop();
                 
-                Operation newOp = new Operation(op, r, l);
+                Operation newOp = new Operation(op, l, r);
                 System.out.println("Pushing operation to stack (area 2): " + newOp);
 				stack.push(newOp);
 			} else {
