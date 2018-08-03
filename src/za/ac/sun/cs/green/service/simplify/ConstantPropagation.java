@@ -113,7 +113,7 @@ public class ConstantPropagation extends BasicService {
 		// 	} else {
 		// 		stack.push(operation);
 		// 	}
-		// }
+		}
 
 	}
 
