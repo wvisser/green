@@ -108,7 +108,7 @@ public class ConstantPropagation extends BasicService {
                 
 				if (r instanceof IntConstant && l instanceof IntVariable) {
                     System.out.println("Found a constant assignment. Assigning " + l + " with value " + r);
-                    variables.put(l, r);
+                    variables.put((IntVariable) l, (IntConstant) r);
                     // stack.push(new Operation(nop, r, l));
 				} else {
 					stack.push(operation);
