@@ -78,14 +78,12 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		public Expression getExpression() {
-			System.out.println("returning the expression " + stack.peek());
 			return stack.pop();
 		}
 
 		@Override
 		public void postVisit(Constant constant) {
 			stack.push(constant);
-			System.out.println("top of stack expression " + stack.peek());
 		}
 
 		@Override
@@ -93,11 +91,9 @@ public class ConstantPropogation extends BasicService {
 			if (variables.containsKey(variable)) {
 				System.out.println("replacing variable " + variable.getName() + " with value " + variables.get(variable));
 				stack.push(variables.get(variable));
-				System.out.println("top of stack expression " + stack.peek());
 			} else {
 				System.out.println("not replacing variable " + variable.getName());
 				stack.push(variable);
-				System.out.println("top of stack expression " + stack.peek());
 			}
 		}
 
@@ -112,18 +108,16 @@ public class ConstantPropogation extends BasicService {
 				System.out.println("adding variable " + l + " to list with value " + r);
 				variables.put((IntVariable) l, (IntConstant) r);
 				stack.push(new Operation(op, l, r));
-				System.out.println("top of stack expression " + stack.peek());
 			} else {
-				if (r instanceof IntVariable && variables.containsKey((IntVariable) r)) {
+/*				if (r instanceof IntVariable && variables.containsKey((IntVariable) r)) {
 					System.out.println("replacing r with constant");
 					r = variables.get((IntVariable) r);
 				}
-				if (l instanceof IntVariable && variables.containsKey(l)) {
+				if (l instanceof IntVariable && variables.containsKey((IntVariable) l)) {
 					System.out.println("replacing l with constant");
 					l = variables.get((IntVariable) r);
-				}
+				}*/
 				stack.push(new Operation(op, l, r));
-				System.out.println("top of stack expression " + stack.peek());
 			}
 
 		}
