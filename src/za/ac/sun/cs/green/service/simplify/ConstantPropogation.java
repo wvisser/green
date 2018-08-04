@@ -85,6 +85,7 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(Constant constant) {
 			stack.push(constant);
+			System.out.println("top of stack expression " + stack.peek());
 		}
 
 		@Override
@@ -92,9 +93,11 @@ public class ConstantPropogation extends BasicService {
 			if (variables.containsKey(variable)) {
 				System.out.println("replacing variable " + variable.getName() + " with value " + variables.get(variable));
 				stack.push(variables.get(variable));
+				System.out.println("top of stack expression " + stack.peek());
 			} else {
 				System.out.println("not replacing variable " + variable.getName());
 				stack.push(variable);
+				System.out.println("top of stack expression " + stack.peek());
 			}
 		}
 
@@ -110,8 +113,10 @@ public class ConstantPropogation extends BasicService {
 					variables.put((IntVariable) l, (IntConstant) r);
 				}
 				stack.push(new Operation(op, l, r));
+				System.out.println("top of stack expression " + stack.peek());
 			} else {
 				stack.push(operation);
+				System.out.println("top of stack expression " + stack.peek());
 			}
 		}
 
