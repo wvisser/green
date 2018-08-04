@@ -26,7 +26,7 @@ import za.ac.sun.cs.green.util.Reporter;
 public class ConstantPropogation extends BasicService {
 
 	private int invocations = 0;
-	
+
 	public ConstantPropogation(Green solver) {
 		super(solver);
 	}
@@ -44,7 +44,7 @@ public class ConstantPropogation extends BasicService {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void report(Reporter reporter) {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
@@ -61,8 +61,8 @@ public class ConstantPropogation extends BasicService {
 			return expression;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
-					"encountered an exception -- this should not be happening!",
-					x);
+					  "encountered an exception -- this should not be happening!",
+					  x);
 		}
 		return null;
 	}
@@ -104,30 +104,28 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
-			if (op == Operation.Operator.EQ) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				if (r instanceof IntConstant
-						&& l instanceof IntVariable) {
-					System.out.println("adding variable " + l + " to list with value " + r);
-					variables.put((IntVariable) l, (IntConstant) r);
-				} else if (r instanceof IntVariable) {
-					if (variables.containsKey((IntVariable) r)) {
-						System.out.println("replacing r with constant");
-						r = variables.get((IntVariable) r);
-					}
-				} else if (l instanceof IntVariable) {
-					if (variables.containsKey((IntVariable) l)) {
-						System.out.println("replacing l with constant");
-						l = variables.get((IntVariable) l);
-					}
-				}
+			Expression r = stack.pop();
+			Expression l = stack.pop();
+			if (op == Operation.Operator.EQ
+					  && (r instanceof IntConstant
+					  && l instanceof IntVariable)) {
+				System.out.println("adding variable " + l + " to list with value " + r);
+				variables.put((IntVariable) l, (IntConstant) r);
 				stack.push(new Operation(op, l, r));
 				System.out.println("top of stack expression " + stack.peek());
 			} else {
-				stack.push(operation);
+				if (r instanceof IntVariable && variables.containsKey((IntVariable) r)) {
+					System.out.println("replacing r with constant");
+					r = variables.get((IntVariable) r);
+				}
+				if (l instanceof IntVariable && variables.containsKey(l)) {
+					System.out.println("replacing l with constant");
+					l = variables.get((IntVariable) r);
+				}
+				stack.push(new Operation(op, l, r));
 				System.out.println("top of stack expression " + stack.peek());
 			}
+
 		}
 
 	}
