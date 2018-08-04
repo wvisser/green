@@ -112,9 +112,15 @@ public class ConstantPropogation extends BasicService {
 					System.out.println("adding variable " + l + " to list with value " + r);
 					variables.put((IntVariable) l, (IntConstant) r);
 				} else if (r instanceof IntVariable) {
-					if (variables.containsKey((IntVariable) r)) r = variables.get((IntVariable) r);
+					if (variables.containsKey((IntVariable) r)) {
+						System.out.println("replacing r with constant");
+						r = variables.get((IntVariable) r);
+					}
 				} else if (l instanceof IntVariable) {
-					if (variables.containsKey((IntVariable) l)) l = variables.get((IntVariable) l);
+					if (variables.containsKey((IntVariable) l)) {
+						System.out.println("replacing l with constant");
+						l = variables.get((IntVariable) l);
+					}
 				}
 				stack.push(new Operation(op, l, r));
 				System.out.println("top of stack expression " + stack.peek());
