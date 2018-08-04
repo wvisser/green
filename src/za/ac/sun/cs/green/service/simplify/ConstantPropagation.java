@@ -138,7 +138,7 @@ public class ConstantPropagation extends BasicService {
                     System.out.println("Pushing EQ with constantable " + l + "==" + variables.get((IntVariable)l));
                     stack.push(new Operation(nop, l, variables.get((IntVariable)l)));
                 } else {
-                    System.out.println("Pushing non-simple (x==1) EQ: " + l + "==" + r);
+                    System.out.println("Pushing non-simple EQ: " + l + "==" + r);
                     stack.push(new Operation(nop, l, r));
                 }
             } else if (nop != null) {
