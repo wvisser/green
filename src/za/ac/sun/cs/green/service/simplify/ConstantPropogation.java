@@ -78,6 +78,7 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		public Expression getExpression() {
+			System.out.println("returning the expression " + stack.peek());
 			return stack.pop();
 		}
 
