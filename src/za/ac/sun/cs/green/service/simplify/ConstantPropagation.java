@@ -41,12 +41,16 @@ public class ConstantPropagation extends BasicService {
    }
 
 private static class ConstantPropagationVisitor extends Visitor {
+   private Stack<Expression> stack;
+
    public ConstantPropagationVisitor() {
-    //TODO
+	   stack = new Stack<Expression>();
    }
    public Expression getExpression() {
     //TODO
-    return new Expression();
+    	Expression ex = stack.pop();
+
+	return ex;
    }
    @Override
    public void postVisit(Constant constant) {
