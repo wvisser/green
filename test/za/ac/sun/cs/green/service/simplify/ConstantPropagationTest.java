@@ -1,7 +1,7 @@
 
 package za.ac.sun.cs.green.service.simplify;
 
-public static class ConstantPropagationTest {
-  
+public class ConstantPropagationTest {
+
 /*TODO show that code is working*/
 }
