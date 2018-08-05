@@ -117,7 +117,7 @@ public class ConstantPropagation extends BasicService {
 // 			stack.push(variable);
 		}
     
-        	@Override
+        @Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
             Expression r = operation.getOperand(0);
@@ -137,6 +137,13 @@ public class ConstantPropagation extends BasicService {
                     stack.push(new Operation(op, l, r));
                 }
             } else {
+				if(variables.containsKey(r)) {
+					r = variables.get(r);
+				}
+				if(variables.containsKey(l)) {
+					l = variables.get(l);
+                }
+            
                 System.out.println("Non equal operation: " + l + op + r);
 				stack.push(new Operation(op, l, r));
 			}
