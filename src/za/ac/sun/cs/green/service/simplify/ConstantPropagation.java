@@ -83,60 +83,75 @@ public class ConstantPropagation extends BasicService {
 			return finalExp;
 		}
 
-        @Override
-        public void preVisit(Operation operation) throws VisitorException {
-            if (operation.getOperator() == Operation.Operator.EQ) {
-                Expression r = operation.getOperand(0);
-                Expression l = operation.getOperand(1);
-                if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
-					System.out.println("Constant assignment - Map: " + l + " with value " + r);
-                    variables.put((IntVariable) l, (IntConstant) r);
-                } else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
-					System.out.println("Constant assignment - Map: " + r + " with value " + l);
-                    variables.put((IntVariable) r, (IntConstant) l);
-                }
-            }
-        }
+//         @Override
+//         public void preVisit(Operation operation) throws VisitorException {
+//             if (operation.getOperator() == Operation.Operator.EQ) {
+//                 Expression r = operation.getOperand(0);
+//                 Expression l = operation.getOperand(1);
+//                 if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+// 					System.out.println("Constant assignment - Map: " + l + " with value " + r);
+//                     variables.put((IntVariable) l, (IntConstant) r);
+//                 } else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
+// 					System.out.println("Constant assignment - Map: " + r + " with value " + l);
+//                     variables.put((IntVariable) r, (IntConstant) l);
+//                 }
+//             }
+//         }
 
 		@Override
 		public void postVisit(IntConstant constant) {
-            System.out.println("Pushing constant to stack: " + constant);
+            		System.out.println("Pushing constant to stack: " + constant);
 			stack.push(constant);
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
-            // if(variables.containsKey(variable)) {
-            //     System.out.println("Pushing constant to stack (propagated). " + variable + " = " + variables.get(variable));
-            //     stack.push(variables.get(variable));
-            // } else {
-            //     System.out.println("Pushing variable to stack: " + variable + " doesn't have a value.");
-            //     stack.push(variable);
-			// }
-			System.out.println("Pushing variable to stack: " + variable);
+		    if(variables.containsKey(variable)) {
+			System.out.println("Pushing constant to stack (propagated). " + variable + " = " + variables.get(variable));
+			stack.push(variables.get(variable));
+		    } else {
+			System.out.println("Pushing variable to stack: " + variable + " doesn't have a value.");
 			stack.push(variable);
+		    }
+// 			System.out.println("Pushing variable to stack: " + variable);
+// 			stack.push(variable);
 		}
     
-        @Override
+        	@Override
 		public void postVisit(Operation operation) throws VisitorException {
-			Operation.Operator op = operation.getOperator();
-
-			System.out.println("Popping stack (area 2)");
-			Expression r = stack.pop();
-			System.out.println("Popping stack (area 2)");
-			Expression l = stack.pop();
-
-			/* Have to make sure its not EQ otherwise it propagates the assignment */
-            if (op != Operation.Operator.EQ) {
-				if(variables.containsKey(r)) {
-					r = variables.get(r);
+			if (operation.getOperator() == Operation.Operator.EQ) {
+				Expression r = operation.getOperand(0);
+				Expression l = operation.getOperand(1);
+				if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+					System.out.println("Constant assignment - Map: " + l + " with value " + r);
+					variables.put((IntVariable) l, (IntConstant) r);
+					stack.push(new Operation(op, l, r));
+				} else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
+					System.out.println("Constant assignment - Map: " + r + " with value " + l);
+					variables.put((IntVariable) r, (IntConstant) l);
+					stack.push(new Operation(op, r, l));
 				}
-				if(variables.containsKey(l)) {
-					l = variables.get(l);
-				}
+            		} else {
+				stack.push(new Operation(op, l, r));
 			}
-			System.out.println("Pushing to stack (area2) " + l + op + r);
-			stack.push(new Operation(op, l, r)); 
+// 			Operation.Operator op = operation.getOperator();
+
+// 			System.out.println("Popping stack (area 2)");
+// 			Expression r = stack.pop();
+// 			System.out.println("Popping stack (area 2)");
+// 			Expression l = stack.pop();
+
+// 			/* Have to make sure its not EQ otherwise it propagates the assignment */
+//             if (op != Operation.Operator.EQ) {
+// 				if(variables.containsKey(r)) {
+// 					r = variables.get(r);
+// 				}
+// 				if(variables.containsKey(l)) {
+// 					l = variables.get(l);
+// 				}
+// 			}
+// 			System.out.println("Pushing to stack (area2) " + l + op + r);
+// 			stack.push(new Operation(op, l, r)); 
 			// } else {
 			// 	for (int i = op.getArity(); i > 0; i--) {
             //         System.out.println("Popping stack (area 3)");
@@ -145,7 +160,7 @@ public class ConstantPropagation extends BasicService {
             //     System.out.println("Pushing operation to stack (area 3): " + operation);
 			// 	stack.push(operation);
 			// }
-		}
+// 		}
 
 	}
 
