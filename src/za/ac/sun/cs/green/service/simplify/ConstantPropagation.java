@@ -39,7 +39,9 @@ private static class ConstantPropagationVisitor extends Visitor {
    }
    public Expression getExpression() {
     //TODO
-    return new Expression();
+    	Expression ex = stack.pop();
+	  
+	return ex;   
    }
    @Override
    public void postVisit(Constant constant) {
