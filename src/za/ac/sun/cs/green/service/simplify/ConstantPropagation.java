@@ -100,18 +100,18 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(IntConstant constant) {
-            		System.out.println("Pushing constant to stack: " + constant);
+            System.out.println("Pushing constant to stack: " + constant);
 			stack.push(constant);
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
 		    if(variables.containsKey(variable)) {
-			System.out.println("Pushing constant to stack (propagated). " + variable + " = " + variables.get(variable));
-			stack.push(variables.get(variable));
+                System.out.println("Pushing constant to stack (propagated). " + variable + " = " + variables.get(variable));
+                stack.push(variables.get(variable));
 		    } else {
-			System.out.println("Pushing variable to stack: " + variable + " doesn't have a value.");
-			stack.push(variable);
+                System.out.println("Pushing variable to stack: " + variable + " doesn't have a value.");
+                stack.push(variable);
 		    }
 // 			System.out.println("Pushing variable to stack: " + variable);
 // 			stack.push(variable);
@@ -120,10 +120,10 @@ public class ConstantPropagation extends BasicService {
         	@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
+            Expression r = operation.getOperand(0);
+            Expression l = operation.getOperand(1);
 
 			if (op == Operation.Operator.EQ) {
-				Expression r = operation.getOperand(0);
-				Expression l = operation.getOperand(1);
 				if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
 					System.out.println("Constant assignment - Map: " + l + " with value " + r);
 					variables.put((IntVariable) l, (IntConstant) r);
@@ -132,8 +132,12 @@ public class ConstantPropagation extends BasicService {
 					System.out.println("Constant assignment - Map: " + r + " with value " + l);
 					variables.put((IntVariable) r, (IntConstant) l);
 					stack.push(new Operation(op, r, l));
-				}
-            		} else {
+				} else {
+                    System.out.println("MAKE SURE OF THIS. NONE COMMON OCCURANCE");
+                    stack.push(new Operation(op, l, r));
+                }
+            } else {
+                System.out.println("Non equal operation: " + l + op + r);
 				stack.push(new Operation(op, l, r));
 			}
 			// Operation.Operator op = operation.getOperator();
