@@ -120,8 +120,8 @@ public class ConstantPropagation extends BasicService {
         @Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-            Expression r = operation.getOperand(0);
-            Expression l = operation.getOperand(1);
+            Expression r = stack.pop();
+            Expression l = stack.pop();
 
 			if (op == Operation.Operator.EQ) {
 				if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
@@ -131,7 +131,7 @@ public class ConstantPropagation extends BasicService {
 				} else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
 					System.out.println("Constant assignment - Map: " + r + " with value " + l);
 					variables.put((IntVariable) r, (IntConstant) l);
-					stack.push(new Operation(op, r, l));
+					stack.push(new Operation(op, l, r));
 				} else {
                     System.out.println("MAKE SURE OF THIS. NONE COMMON OCCURANCE");
                     stack.push(new Operation(op, l, r));
