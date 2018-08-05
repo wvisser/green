@@ -57,9 +57,9 @@ public class ConstantPropagation extends BasicService {
 		try {
 			log.log(Level.FINEST, "Before Constant Propagation: " + expression);
 			invocations++;
-			OrderingVisitor orderingVisitor = new OrderingVisitor();
-			expression.accept(orderingVisitor);
-			expression = orderingVisitor.getExpression();
+			PropogationVisitor propogationVisitor = new PropogationVisitor();
+			expression.accept(propogationVisitor);
+			expression = propogationVisitor.getExpression();
 			log.log(Level.FINEST, "After Constant Propagation: " + expression);
 			return expression;
 		} catch (VisitorException x) {
@@ -68,11 +68,11 @@ public class ConstantPropagation extends BasicService {
 		return null;
 	}
 
-	private static class OrderingVisitor extends Visitor {
+	private static class PropogationVisitor extends Visitor {
         private Stack<Expression> stack;
         private HashMap<IntVariable, IntConstant> variables;
 
-		public OrderingVisitor() {
+		public PropogationVisitor() {
             stack = new Stack<Expression>();
             variables = new HashMap<IntVariable, IntConstant>();
 		}
