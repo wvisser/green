@@ -136,7 +136,7 @@ public class ConstantPropagation extends BasicService {
 				}
 			}
 			System.out.println("Pushing to stack (area2) " + l + op + r);
-			stack.push(new Operation(op, l, r));
+			stack.push(new Operation(op, l, r)); 
 			// } else {
 			// 	for (int i = op.getArity(); i > 0; i--) {
             //         System.out.println("Popping stack (area 3)");
