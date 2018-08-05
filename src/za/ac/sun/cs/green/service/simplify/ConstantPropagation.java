@@ -140,19 +140,14 @@ public class ConstantPropagation extends BasicService {
 				break;
 			default:
 				break;
-            }
-            if (nop == Operation.Operator.EQ) {
-                System.out.println("Popping stack");
+			}
+			/* Have to make sure its not EQ otherwise it propagates the assignment */
+            if (nop != Operation.Operator.EQ) {
+                System.out.println("Popping stack (area 1)");
                 Expression r = stack.pop();
-                System.out.println("Popping stack");
+                System.out.println("Popping stack (area 1)");
 				Expression l = stack.pop();
 				
-				if(variables.containsKey(r)) {
-					r = variables.get(r);
-				} else if(variables.containsKey(l)) {
-					l = variables.get(l);
-				}
-
 				System.out.println("Pushing to stack (area1) " + l + nop + r);
 				stack.push(new Operation(nop, l, r));
                 // if (l instanceof IntVariable && r instanceof IntConstant) {
@@ -165,34 +160,7 @@ public class ConstantPropagation extends BasicService {
                 //     System.out.println("Pushing EQ: " + l + "==" + r);
                 //     stack.push(new Operation(nop, l, r));
                 // }
-            } else if (nop != null) {
-                System.out.println("Popping stack (area 1)");
-                Expression r = stack.pop();
-                System.out.println("Popping stack (area 1)");
-				Expression l = stack.pop();
-				
-				if(variables.containsKey(r)) {
-					r = variables.get(r);
-				} else if(variables.containsKey(l)) {
-					l = variables.get(l);
-				}
-
-				System.out.println("Pushing to stack (area1) " + l + nop + r);
-				stack.push(new Operation(nop, l, r));
-                
-				// if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
-                //     Operation newOp = new Operation(nop, l, r);
-                //     System.out.println("Pushing operation to stack (area 1): " + newOp);
-				// 	stack.push(newOp);
-				// } else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-                //     Operation newOp = new Operation(nop, l, r);
-                //     System.out.println("Pushing operation to stack (area 1): " + newOp);
-				// 	stack.push(newOp);
-				// } else {
-                //     System.out.println("Pushing operation to stack (area 1): " + operation);
-				// 	stack.push(operation);
-				// }
-			} else if (op.getArity() == 2) {
+            } else if (op.getArity() == 2) {
                 System.out.println("Popping stack (area 2)");
                 Expression r = stack.pop();
                 System.out.println("Popping stack (area 2)");
@@ -207,9 +175,18 @@ public class ConstantPropagation extends BasicService {
 				System.out.println("Pushing to stack (area2) " + l + nop + r);
 				stack.push(new Operation(nop, l, r));
                 
-                // Operation newOp = new Operation(op, l, r);
-                // System.out.println("Pushing operation to stack (area 2): " + newOp);
-				// stack.push(newOp);
+				// if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
+                //     Operation newOp = new Operation(nop, l, r);
+                //     System.out.println("Pushing operation to stack (area 1): " + newOp);
+				// 	stack.push(newOp);
+				// } else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+                //     Operation newOp = new Operation(nop, l, r);
+                //     System.out.println("Pushing operation to stack (area 1): " + newOp);
+				// 	stack.push(newOp);
+				// } else {
+                //     System.out.println("Pushing operation to stack (area 1): " + operation);
+				// 	stack.push(operation);
+				// }
 			} else {
 				for (int i = op.getArity(); i > 0; i--) {
                     System.out.println("Popping stack (area 3)");
