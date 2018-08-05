@@ -120,14 +120,14 @@ public class ConstantPropagation extends BasicService {
         @Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			/* Have to make sure its not EQ otherwise it propagates the assignment */
 
-            if (op.getArity() == 2 && op != Operation.Operator.EQ) {
-                System.out.println("Popping stack (area 2)");
-                Expression r = stack.pop();
-                System.out.println("Popping stack (area 2)");
-				Expression l = stack.pop();
-				
+			System.out.println("Popping stack (area 2)");
+			Expression r = stack.pop();
+			System.out.println("Popping stack (area 2)");
+			Expression l = stack.pop();
+
+			/* Have to make sure its not EQ otherwise it propagates the assignment */
+            if (op != Operation.Operator.EQ) {
 				if(variables.containsKey(r)) {
 					r = variables.get(r);
 				}
@@ -137,14 +137,15 @@ public class ConstantPropagation extends BasicService {
 
 				System.out.println("Pushing to stack (area2) " + l + op + r);
 				stack.push(new Operation(op, l, r));
-			} else {
-				for (int i = op.getArity(); i > 0; i--) {
-                    System.out.println("Popping stack (area 3)");
-					stack.pop();
-                }
-                System.out.println("Pushing operation to stack (area 3): " + operation);
-				stack.push(operation);
 			}
+			// } else {
+			// 	for (int i = op.getArity(); i > 0; i--) {
+            //         System.out.println("Popping stack (area 3)");
+			// 		stack.pop();
+            //     }
+            //     System.out.println("Pushing operation to stack (area 3): " + operation);
+			// 	stack.push(operation);
+			// }
 		}
 
 	}
