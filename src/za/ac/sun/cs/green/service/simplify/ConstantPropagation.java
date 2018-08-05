@@ -106,13 +106,14 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(IntVariable variable) {
-            if(variables.containsKey(variable)) {
-                System.out.println("Pushing constant to stack (propagated). " + variable + " = " + variables.get(variable));
-                stack.push(variables.get(variable));
-            } else {
-                System.out.println("Pushing variable to stack: " + variable + " doesn't have a value.");
-                stack.push(variable);
-            }
+            // if(variables.containsKey(variable)) {
+            //     System.out.println("Pushing constant to stack (propagated). " + variable + " = " + variables.get(variable));
+            //     stack.push(variables.get(variable));
+            // } else {
+            //     System.out.println("Pushing variable to stack: " + variable + " doesn't have a value.");
+            //     stack.push(variable);
+			// }
+			stack.push(variable);
 		}
     
         @Override
