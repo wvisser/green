@@ -6,6 +6,7 @@ package za.ac.sun.cs.green.service.simplify;
 
 */
 /* External */
+import java.util.Set;
 import java.util.Stack;
 
 /* local */
