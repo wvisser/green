@@ -160,7 +160,7 @@ public class ConstantPropagation extends BasicService {
             //     System.out.println("Pushing operation to stack (area 3): " + operation);
 			// 	stack.push(operation);
 			// }
-// 		}
+		}
 
 	}
 
