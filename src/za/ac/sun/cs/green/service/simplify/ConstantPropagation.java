@@ -119,7 +119,9 @@ public class ConstantPropagation extends BasicService {
     
         	@Override
 		public void postVisit(Operation operation) throws VisitorException {
-			if (operation.getOperator() == Operation.Operator.EQ) {
+			Operation.Operator op = operation.getOperator();
+
+			if (op == Operation.Operator.EQ) {
 				Expression r = operation.getOperand(0);
 				Expression l = operation.getOperand(1);
 				if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
@@ -134,24 +136,24 @@ public class ConstantPropagation extends BasicService {
             		} else {
 				stack.push(new Operation(op, l, r));
 			}
-// 			Operation.Operator op = operation.getOperator();
+			// Operation.Operator op = operation.getOperator();
 
-// 			System.out.println("Popping stack (area 2)");
-// 			Expression r = stack.pop();
-// 			System.out.println("Popping stack (area 2)");
-// 			Expression l = stack.pop();
+			// System.out.println("Popping stack (area 2)");
+			// Expression r = stack.pop();
+			// System.out.println("Popping stack (area 2)");
+			// Expression l = stack.pop();
 
-// 			/* Have to make sure its not EQ otherwise it propagates the assignment */
-//             if (op != Operation.Operator.EQ) {
-// 				if(variables.containsKey(r)) {
-// 					r = variables.get(r);
-// 				}
-// 				if(variables.containsKey(l)) {
-// 					l = variables.get(l);
-// 				}
-// 			}
-// 			System.out.println("Pushing to stack (area2) " + l + op + r);
-// 			stack.push(new Operation(op, l, r)); 
+			// /* Have to make sure its not EQ otherwise it propagates the assignment */
+            // if (op != Operation.Operator.EQ) {
+			// 	if(variables.containsKey(r)) {
+			// 		r = variables.get(r);
+			// 	}
+			// 	if(variables.containsKey(l)) {
+			// 		l = variables.get(l);
+			// 	}
+			// }
+			// System.out.println("Pushing to stack (area2) " + l + op + r);
+			// stack.push(new Operation(op, l, r)); 
 			// } else {
 			// 	for (int i = op.getArity(); i > 0; i--) {
             //         System.out.println("Popping stack (area 3)");
