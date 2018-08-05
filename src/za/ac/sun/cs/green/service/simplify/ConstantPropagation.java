@@ -11,6 +11,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
+import com.sun.prism.paint.RadialGradient;
+
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.expr.Expression;
@@ -57,9 +59,9 @@ public class ConstantPropagation extends BasicService {
 		try {
 			log.log(Level.FINEST, "Before Constant Propagation: " + expression);
 			invocations++;
-			PropogationVisitor propogationVisitor = new PropogationVisitor();
-			expression.accept(propogationVisitor);
-			expression = propogationVisitor.getExpression();
+			OrderingVisitor orderingVisitor = new OrderingVisitor();
+			expression.accept(orderingVisitor);
+			expression = orderingVisitor.getExpression();
 			log.log(Level.FINEST, "After Constant Propagation: " + expression);
 			return expression;
 		} catch (VisitorException x) {
@@ -68,11 +70,11 @@ public class ConstantPropagation extends BasicService {
 		return null;
 	}
 
-	private static class PropogationVisitor extends Visitor {
+	private static class OrderingVisitor extends Visitor {
         private Stack<Expression> stack;
         private HashMap<IntVariable, IntConstant> variables;
 
-		public PropogationVisitor() {
+		public OrderingVisitor() {
             stack = new Stack<Expression>();
             variables = new HashMap<IntVariable, IntConstant>();
 		}
@@ -82,6 +84,21 @@ public class ConstantPropagation extends BasicService {
             System.out.println("Final expression is " + finalExp);
 			return finalExp;
 		}
+
+        @Override
+        public void preVisit(Operation operation) throws VisitorException {
+            if (operation.getOperator() == Operation.Operator.EQ) {
+                Expression r = operation.getOperand(0);
+                Expression l = operation.getOperand(1);
+                if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+					System.out.println("Constant assignment - Map: " + l + " with value " + r);
+                    variables.put((IntVariable) l, (IntConstant) r);
+                } else if ((r instanceof IntConstant) && (l instanceof IntVariable)) {
+					System.out.println("Constant assignment - Map: " + r + " with value " + l);
+                    variables.put((IntVariable) r, (IntConstant) l);
+                }
+            }
+        }
 
 		@Override
 		public void postVisit(IntConstant constant) {
@@ -133,12 +150,13 @@ public class ConstantPropagation extends BasicService {
                 Expression l = stack.pop();
                 
                 if (l instanceof IntVariable && r instanceof IntConstant) {
-                    System.out.println("Constant assignment - Map: " + l + " with value " + r);
-                    variables.put((IntVariable) l, (IntConstant) r);
-                    System.out.println("Pushing EQ with constantable " + l + "==" + variables.get((IntVariable)l));
+                    System.out.println("Pushing EQ with constant " + l + "==" + variables.get((IntVariable)l));
                     stack.push(new Operation(nop, l, variables.get((IntVariable)l)));
-                } else {
-                    System.out.println("Pushing non-simple EQ: " + l + "==" + r);
+                } else if(r instanceof IntVariable && l instanceof IntConstant) {
+                    System.out.println("Pushing EQ with constant " + r + "==" + variables.get((IntVariable)r));
+                    stack.push(new Operation(nop, r, variables.get((IntVariable)r)));
+				} else {
+                    System.out.println("Pushing EQ: " + l + "==" + r);
                     stack.push(new Operation(nop, l, r));
                 }
             } else if (nop != null) {
