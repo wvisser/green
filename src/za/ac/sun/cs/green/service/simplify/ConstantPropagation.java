@@ -113,6 +113,7 @@ public class ConstantPropagation extends BasicService {
             //     System.out.println("Pushing variable to stack: " + variable + " doesn't have a value.");
             //     stack.push(variable);
 			// }
+			System.out.println("Pushing variable to stack: " + variable);
 			stack.push(variable);
 		}
     
