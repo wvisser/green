@@ -11,33 +11,33 @@ import java.util.logging.Level;
 
 public class ConstantPropagation extends BasicService {
 
-	/**
-	 * Number of times the slicer has been invoked.
-	 */
-	private int invocations = 0;
+    /**
+     * Number of times the slicer has been invoked.
+     */
+    private int invocations = 0;
 
-	public ConstantPropagation(Green solver) {
-		super(solver);
-	}
+    public ConstantPropagation(Green solver) {
+        super(solver);
+    }
 
-	@Override
-	public Set<Instance> processRequest(Instance instance) {
-		@SuppressWarnings("unchecked")
-		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
-		if (result == null) {
-			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = simplify(instance.getFullExpression(), map);
-			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
-			result = Collections.singleton(i);
-			instance.setData(getClass(), result);
-		}
-		return result;
-	}
+    @Override
+    public Set<Instance> processRequest(Instance instance) {
+        @SuppressWarnings("unchecked")
+        Set<Instance> result = (Set<Instance>) instance.getData(getClass());
+        if (result == null) {
+            final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
+            final Expression e = simplify(instance.getFullExpression(), map);
+            final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
+            result = Collections.singleton(i);
+            instance.setData(getClass(), result);
+        }
+        return result;
+    }
 
-	@Override
-	public void report(Reporter reporter) {
-		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
-	}
+    @Override
+    public void report(Reporter reporter) {
+        reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
+    }
 
     public Expression simplify(Expression expression, Map<Variable, Variable> map) {
         try {
@@ -68,63 +68,45 @@ public class ConstantPropagation extends BasicService {
             return stack.pop();
         }
 
-		@Override
-		public void preVisit(IntConstant constant) {
-			//System.out.println("SimplificationVisitor.preVisit IntConstant");
-			//System.out.println(constant);
-		}
+        @Override
+        public void preVisit(Operation operation) throws VisitorException {
+            if (operation.getOperator() == Operation.Operator.EQ) {
+                Expression op0 = operation.getOperand(0);
+                Expression op1 = operation.getOperand(1);
+                if ((op0 instanceof IntVariable) && (op1 instanceof IntConstant)) {
+                    map.put((IntVariable) op0, (IntConstant) op1);
+                } else if ((op0 instanceof IntConstant) && (op1 instanceof IntVariable)) {
+                    map.put((IntVariable) op1, (IntConstant) op0);
+                }
+            }
+        }
 
-		@Override
-		public void preVisit(IntVariable variable) {
-			//System.out.println("SimplificationVisitor.preVisit IntVariable");
-			//System.out.println(variable);
-		}
+        @Override
+        public void postVisit(IntConstant constant) {
+            stack.push(constant);
+        }
 
-		@Override
-		public void preVisit(Operation operation) throws VisitorException {
-			//System.out.println("SimplificationVisitor.preVisit Operation");
-			//System.out.println(operation);
-			if (operation.getOperator() == Operation.Operator.EQ) {
-				Expression op0 = operation.getOperand(0);
-				Expression op1 = operation.getOperand(1);
-				if ((op0 instanceof IntVariable) && (op1 instanceof IntConstant)) {
-			    	map.put((IntVariable) op0, (IntConstant) op1);
-				} else if ((op0 instanceof IntConstant) && (op1 instanceof IntVariable)) {
-					map.put((IntVariable) op1, (IntConstant) op0);
-				}
-			}
-		}
+        @Override
+        public void postVisit(IntVariable variable) {
+            stack.push(variable);
+        }
 
-		@Override
-		public void postVisit(IntConstant constant) {
-			System.out.println("SimplificationVisitor.postVisit IntConstant");
-			System.out.println(constant);
-			stack.push(constant);
-		}
-
-		@Override
-		public void postVisit(IntVariable variable) {
-			System.out.println("SimplificationVisitor.postVisit IntVariable");
-			System.out.println(variable);
-			stack.push(variable);
-		}
-
-		@Override
-		public void postVisit(Operation operation) {
+        @Override
+        public void postVisit(Operation operation) {
             Operation.Operator operator = operation.getOperator();
             Expression r = stack.pop();
             Expression l = stack.pop();
             if (!operator.equals(Operation.Operator.EQ)) {
-            	if (map.containsKey(r)) {
-            		r = map.get(r);
-				}
-				if (map.containsKey(l)) {
-            		l = map.get(l);
-				}
-			}
+                if (map.containsKey(r)) {
+                    r = map.get(r);
+                }
+                if (map.containsKey(l)) {
+                    l = map.get(l);
+                }
+            }
             Operation newOperation = new Operation(operator, l, r);
-			stack.push(newOperation);
-		}
+            stack.push(newOperation);
+        }
 
     }
 }
