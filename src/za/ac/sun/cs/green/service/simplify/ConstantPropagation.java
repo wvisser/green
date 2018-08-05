@@ -91,7 +91,7 @@ public class ConstantPropagation extends BasicService {
                 if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
 					System.out.println("Constant assignment - Map: " + l + " with value " + r);
                     variables.put((IntVariable) l, (IntConstant) r);
-                } else if ((r instanceof IntConstant) && (l instanceof IntVariable)) {
+                } else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
 					System.out.println("Constant assignment - Map: " + r + " with value " + l);
                     variables.put((IntVariable) r, (IntConstant) l);
                 }
