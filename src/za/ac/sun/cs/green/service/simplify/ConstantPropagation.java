@@ -158,7 +158,8 @@ public class ConstantPropagation extends BasicService {
 				
 				if(variables.containsKey(r)) {
 					r = variables.get(r);
-				} else if(variables.containsKey(l)) {
+				}
+				if(variables.containsKey(l)) {
 					l = variables.get(l);
 				}
 
