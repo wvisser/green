@@ -153,6 +153,7 @@ public class ConstantPropagation extends BasicService {
 					l = variables.get(l);
 				}
 
+				System.out.println("Pushing to stack (area1) " + l + nop + r);
 				stack.push(new Operation(nop, l, r));
                 // if (l instanceof IntVariable && r instanceof IntConstant) {
                 //     System.out.println("Pushing EQ with constant " + l + "==" + variables.get((IntVariable)l));
@@ -176,6 +177,7 @@ public class ConstantPropagation extends BasicService {
 					l = variables.get(l);
 				}
 
+				System.out.println("Pushing to stack (area2) " + l + nop + r);
 				stack.push(new Operation(nop, l, r));
                 
 				// if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
@@ -202,6 +204,7 @@ public class ConstantPropagation extends BasicService {
 					l = variables.get(l);
 				}
 
+				System.out.println("Pushing to stack (area3) " + l + nop + r);
 				stack.push(new Operation(nop, l, r));
                 
                 // Operation newOp = new Operation(op, l, r);
