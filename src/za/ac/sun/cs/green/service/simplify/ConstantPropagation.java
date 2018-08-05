@@ -120,39 +120,9 @@ public class ConstantPropagation extends BasicService {
         @Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			Operation.Operator nop = null;
-			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case NE:
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
-			default:
-				break;
-			}
 			/* Have to make sure its not EQ otherwise it propagates the assignment */
-            if (nop == Operation.Operator.EQ) {
-                System.out.println("Popping stack (area 1)");
-                Expression r = stack.pop();
-                System.out.println("Popping stack (area 1)");
-				Expression l = stack.pop();
-				
-				System.out.println("Pushing to stack (area1) " + l + nop + r);
-				stack.push(new Operation(nop, l, r));
-            } else if (op.getArity() == 2) {
+
+            if (op.getArity() == 2 && op != Operation.Operator.EQ) {
                 System.out.println("Popping stack (area 2)");
                 Expression r = stack.pop();
                 System.out.println("Popping stack (area 2)");
