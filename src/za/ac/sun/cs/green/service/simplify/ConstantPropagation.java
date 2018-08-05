@@ -147,45 +147,68 @@ public class ConstantPropagation extends BasicService {
                 System.out.println("Popping stack");
                 Expression r = stack.pop();
                 System.out.println("Popping stack");
-                Expression l = stack.pop();
-                
-                if (l instanceof IntVariable && r instanceof IntConstant) {
-                    System.out.println("Pushing EQ with constant " + l + "==" + variables.get((IntVariable)l));
-                    stack.push(new Operation(nop, l, variables.get((IntVariable)l)));
-                } else if(r instanceof IntVariable && l instanceof IntConstant) {
-                    System.out.println("Pushing EQ with constant " + r + "==" + variables.get((IntVariable)r));
-                    stack.push(new Operation(nop, r, variables.get((IntVariable)r)));
-				} else {
-                    System.out.println("Pushing EQ: " + l + "==" + r);
-                    stack.push(new Operation(nop, l, r));
-                }
+				Expression l = stack.pop();
+				
+				if(variables.containsKey(r)) {
+					r = variables.get(r);
+				} else if(variables.containsKey(l)) {
+					l = variables.get(l);
+				}
+
+				stack.push(new Operation(nop, l, r));
+                // if (l instanceof IntVariable && r instanceof IntConstant) {
+                //     System.out.println("Pushing EQ with constant " + l + "==" + variables.get((IntVariable)l));
+                //     stack.push(new Operation(nop, l, r));
+                // } else if(r instanceof IntVariable && l instanceof IntConstant) {
+                //     System.out.println("Pushing EQ with constant " + r + "==" + variables.get((IntVariable)r));
+                //     stack.push(new Operation(nop, r, variables.get((IntVariable)r)));
+				// } else {
+                //     System.out.println("Pushing EQ: " + l + "==" + r);
+                //     stack.push(new Operation(nop, l, r));
+                // }
             } else if (nop != null) {
                 System.out.println("Popping stack (area 1)");
                 Expression r = stack.pop();
                 System.out.println("Popping stack (area 1)");
-                Expression l = stack.pop();
-                
-				if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
-                    Operation newOp = new Operation(nop, l, r);
-                    System.out.println("Pushing operation to stack (area 1): " + newOp);
-					stack.push(newOp);
-				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-                    Operation newOp = new Operation(nop, l, r);
-                    System.out.println("Pushing operation to stack (area 1): " + newOp);
-					stack.push(newOp);
-				} else {
-                    System.out.println("Pushing operation to stack (area 1): " + operation);
-					stack.push(operation);
+				Expression l = stack.pop();
+				
+				if(variables.containsKey(r)) {
+					r = variables.get(r);
+				} else if(variables.containsKey(l)) {
+					l = variables.get(l);
 				}
+
+				stack.push(new Operation(nop, l, r));
+                
+				// if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
+                //     Operation newOp = new Operation(nop, l, r);
+                //     System.out.println("Pushing operation to stack (area 1): " + newOp);
+				// 	stack.push(newOp);
+				// } else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+                //     Operation newOp = new Operation(nop, l, r);
+                //     System.out.println("Pushing operation to stack (area 1): " + newOp);
+				// 	stack.push(newOp);
+				// } else {
+                //     System.out.println("Pushing operation to stack (area 1): " + operation);
+				// 	stack.push(operation);
+				// }
 			} else if (op.getArity() == 2) {
                 System.out.println("Popping stack (area 2)");
                 Expression r = stack.pop();
                 System.out.println("Popping stack (area 2)");
-                Expression l = stack.pop();
+				Expression l = stack.pop();
+				
+				if(variables.containsKey(r)) {
+					r = variables.get(r);
+				} else if(variables.containsKey(l)) {
+					l = variables.get(l);
+				}
+
+				stack.push(new Operation(nop, l, r));
                 
-                Operation newOp = new Operation(op, l, r);
-                System.out.println("Pushing operation to stack (area 2): " + newOp);
-				stack.push(newOp);
+                // Operation newOp = new Operation(op, l, r);
+                // System.out.println("Pushing operation to stack (area 2): " + newOp);
+				// stack.push(newOp);
 			} else {
 				for (int i = op.getArity(); i > 0; i--) {
                     System.out.println("Popping stack (area 3)");
