@@ -59,9 +59,9 @@ public class ConstantPropogation extends BasicService {
 		try {
 			log.log(Level.FINEST, "Before Canonization: " + expression);
 			invocations++;
-			OrderingVisitor orderingVisitor = new OrderingVisitor();
-			expression.accept(orderingVisitor);
-			expression = orderingVisitor.getExpression();
+			//OrderingVisitor orderingVisitor = new OrderingVisitor();
+			//expression.accept(orderingVisitor);
+			//expression = orderingVisitor.getExpression();
 			//CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
 			//expression.accept(canonizationVisitor);
 			//Expression canonized = canonizationVisitor.getExpression();
@@ -94,11 +94,13 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(IntConstant constant) {
 			stack.push(constant);
+			System.out.println("\n... 1: " + constant + " ...");
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
+			System.out.println("\n... 2: " + variable + " ...");
 		}
 
 		@Override
@@ -151,10 +153,11 @@ public class ConstantPropogation extends BasicService {
 				}
 				stack.push(operation);
 			}
+			System.out.println("\n... 3: " + operation + " ...");
 		}
-
+		
 	}
-
+	
 	private static class Renamer extends Visitor {
 
 		private Map<Variable, Variable> map;
@@ -167,24 +170,29 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		public Expression rename(Expression expression) throws VisitorException {
+			System.out.println("heyhey: " + this);
 			expression.accept(this);
 			return stack.pop();
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
-			Variable v = map.get(variable);
-			if (v == null) {
-				v = new IntVariable("v" + map.size(), variable.getLowerBound(),
-						variable.getUpperBound());
-				map.put(variable, v);
-			}
-			stack.push(v);
+			//Variable v = map.get(variable);
+			//System.out.println("4: get this from map: " + v + "\n");
+//			if (v == null) {
+//				v = new IntVariable("v" + map.size(), variable.getLowerBound(),
+//						variable.getUpperBound());
+//				map.put(variable, v);
+//				System.out.println("4: put this in map: " + variable + " with " + v + "\n");
+//			}
+			stack.push(variable);
+			System.out.println("4: push this to stack: " + variable + "\n");
 		}
 
 		@Override
 		public void postVisit(IntConstant constant) {
 			stack.push(constant);
+			System.out.println("5: push this to stack: " + constant + "\n");
 		}
 
 		@Override
@@ -193,8 +201,82 @@ public class ConstantPropogation extends BasicService {
 			Expression operands[] = new Expression[arity];
 			for (int i = arity; i > 0; i--) {
 				operands[i - 1] = stack.pop();
+				System.out.println("6: pop this from stack: " + operands[i-1] + "\n");
 			}
+			
+			if (operands[0].getClass().equals(IntVariable.class) && operands[1].getClass().equals(IntConstant.class)) {
+				Variable v = map.get(operands[0]);
+				if (v == null) {
+					System.out.println("HERE1");
+					Variable value = new IntVariable(operands[1].toString(), 0, 99999);
+					Variable var = new IntVariable(operands[0].toString(), 0, 99999);
+					map.put(var, value);
+					//operands[0] = operands[1];
+				}
+			}
+			
+			if (operands[1].getClass().equals(IntVariable.class) && operands[0].getClass().equals(IntConstant.class)) {
+				Variable v = map.get(operands[1]);
+				if (v == null) {
+					System.out.println("HERE2");
+					Variable value = new IntVariable(operands[0].toString(), 0, 99999);
+					Variable var = new IntVariable(operands[1].toString(), 0, 99999);
+					map.put(var, value);
+					//operands[1] = operands[0];
+				}
+			}
+			
+			
+			
+			if (operands[1].getClass().equals(IntVariable.class) && operands[0].getClass().equals(IntVariable.class)) {
+				Variable v = map.get(operands[0]);
+				if (v != null) {
+					operands[0] = v;
+				}
+				v = map.get(operands[1]);
+				if (v != null) {
+					operands[1] = v;
+				}
+			}
+//			
+//			if (operands[1].getClass().equals(IntVariable.class) && operands[0].getClass().equals(IntVariable.class)) {
+//				Variable v = map.get(operands[0]);
+//				if (v == null) {
+//					System.out.println("HERE4");
+//					Variable value = new IntVariable(operands[1].toString(), 0, 99999);
+//					Variable var = new IntVariable(operands[0].toString(), 0, 99999);
+//					map.put(var, value);
+//				}
+//			}
+//			
+//			if (operands[1].getClass().equals(IntConstant.class) && operands[0].getClass().equals(IntConstant.class)) {
+//				Variable v = map.get(operands[0]);
+//				if (v == null) {
+//					System.out.println("HERE5");
+//					Variable value = new IntVariable(operands[1].toString(), 0, 99999);
+//					Variable var = new IntVariable(operands[0].toString(), 0, 99999);
+//					map.put(var, value);
+//				}
+//			}
+//			
+//			if (operands[1].getClass().equals(IntConstant.class) && operands[0].getClass().equals(IntConstant.class)) {
+//				Variable v = map.get(operands[1]);
+//				if (v == null) {
+//					System.out.println("HERE6");
+//					Variable value = new IntVariable(operands[0].toString(), 0, 99999);
+//					Variable var = new IntVariable(operands[1].toString(), 0, 99999);
+//					map.put(var, value);
+//				}
+//			}
+			
+			for (Map.Entry<Variable, Variable> entry : map.entrySet()) {
+			    System.out.println("-- " + entry.getKey() + ":" + entry.getValue().toString());
+			}
+			
 			stack.push(new Operation(operation.getOperator(), operands));
+			System.out.println("6: push this operation part1 to stack: " + operation + "\n");
+			System.out.println("6: push this operation part1 to stack: " + operands[0] + "\n");
+			System.out.println("6: push this operation part1 to stack: " + operands[1] + "\n");
 		}
 
 	}
