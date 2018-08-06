@@ -87,6 +87,7 @@ public class ConstantPropagation extends BasicService {
 
         @Override
         public void postVisit(IntVariable variable) {
+            //If variable exists in HashMap (it has been assigned a value)
             if (variables.containsKey(variable)) {
                 System.out.println("Pushing constant to stack (propagated). " + variable + " = " + variables.get(variable));
                 stack.push(variables.get(variable));
@@ -102,6 +103,7 @@ public class ConstantPropagation extends BasicService {
             Expression r = stack.pop();
             Expression l = stack.pop();
 
+            //If operation is an EQ type. Add the equality to the HashMap to propagate in future
             if (op == Operation.Operator.EQ) {
                 if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
                     System.out.println("Constant assignment - Map: " + l + " with value " + r);
