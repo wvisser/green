@@ -31,6 +31,11 @@ public class ConstantPropagation extends BasicService{
 		super(solver);
 	}
 
+	/**
+	 * Number of times the slicer has been invoked.
+	 */
+	private int invocations = 0;
+	
 	@Override
 	public Set<Instance> processRequest(Instance instance) {
 		@SuppressWarnings("unchecked")
