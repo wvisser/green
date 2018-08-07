@@ -70,7 +70,7 @@ public class ConstantPropagation extends BasicService{
 			log.log(Level.FINEST, "After Canonization: " + canonized);
 			return canonized;
 			*/
-			log.log(Level.FINEST, "After PROPAGATION: " + expression)
+			log.log(Level.FINEST, "After PROPAGATION: " + expression);
 			return expression;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
