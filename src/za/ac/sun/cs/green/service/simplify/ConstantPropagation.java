@@ -38,6 +38,9 @@ public class ConstantPropagation extends BasicService{
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
+	/**
+	 * XXX REPURPOSE FROM CANONIZATION XXX
+	 */
 	public Expression canonize(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
@@ -139,6 +142,9 @@ public class ConstantPropagation extends BasicService{
 
 	}
 
+	/**
+	 * XXX REPURPOSE FROM CANONIZATION XXX
+	 */
 	private static class CanonizationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
