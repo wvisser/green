@@ -141,18 +141,24 @@ public class ConstantPropagation extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
+				
+				if (nop.equals(Operation.Operator.EQ) && r instanceof IntVariable && l instanceof IntConstant) {
+					map.put(r, l);
+				} else if (nop.equals(Operation.Operator.EQ) && l instanceof IntVariable && r instanceof IntConstant) {
+					map.put(l, r);
+				}
+				
 				if ((r instanceof IntVariable) && (l instanceof IntVariable)
 						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
 					stack.push(new Operation(nop, r, l));
 				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-					System.out.println("Found r var and l const");
 					if (map.containsKey(r)) {
 						stack.push(new Operation(nop, map.get(r), l));
 					} else {
 						stack.push(new Operation(nop, r, l));
 					}
+					
 				} else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
-					System.out.println("Found l var and r const");
 					if (map.containsKey(l)) {
 						stack.push(new Operation(nop, map.get(l), r));
 					} else {
@@ -164,7 +170,14 @@ public class ConstantPropagation extends BasicService {
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				stack.push(new Operation(op, l, r));
+				if (map.containsKey(r)) {
+					stack.push(new Operation(op, l, map.get(r)));
+				} else if (map.containsKey(l)) {
+					stack.push(new Operation(op, map.get(l), r));
+				} else {
+					stack.push(operation);
+				}
+				
 			} else {
 				for (int i = op.getArity(); i > 0; i--) {
 					stack.pop();
