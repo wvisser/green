@@ -41,11 +41,11 @@ public class ConstantPropagation extends BasicService {
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
 		
-		OrderingVisitor ov = new OrderingVisitor();
+		OrderingVisitor orderingVisitor = new OrderingVisitor();
 		try {
-			o4.accept(ov);
-			Expression ex = ov.getExpression();
-			System.out.println(ex);
+			System.out.println(o4);
+			o4.accept(orderingVisitor);
+			System.out.println(orderingVisitor.getExpression());
 		} catch (VisitorException e) {
 			
 		}
@@ -53,7 +53,6 @@ public class ConstantPropagation extends BasicService {
 
 	@Override
 	public Set<Instance> processRequest(Instance instance) {
-		System.out.println("WE'rE DOING THE THING!");
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
@@ -68,20 +67,11 @@ public class ConstantPropagation extends BasicService {
 
 	public Expression propagate(Expression expression, Map<Variable, Variable> map) {
 		try {
-			System.out.println("PROPAGATING!");
 			log.log(Level.FINEST, "Before Propagation: " + expression);
-			/*
-			 * OrderingVisitor orderingVisitor = new OrderingVisitor();
-			 * expression.accept(orderingVisitor); expression =
-			 * orderingVisitor.getExpression(); PropagationVisitor
-			 * propagationVisitor = new PropagationVisitor();
-			 * expression.accept(propagationVisitor); Expression canonized =
-			 * propagationVisitor.getExpression();
-			 */
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			log.log(Level.FINEST, "After Propagation: " + expression);
+			log.log(Level.FINEST, "After Propagation: " + orderingVisitor.getExpression());
 			return expression;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
@@ -142,6 +132,7 @@ public class ConstantPropagation extends BasicService {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
 				
+				/* Map variables to their assigned constant */
 				if (nop.equals(Operation.Operator.EQ) && r instanceof IntVariable && l instanceof IntConstant) {
 					map.put(r, l);
 				} else if (nop.equals(Operation.Operator.EQ) && l instanceof IntVariable && r instanceof IntConstant) {
@@ -152,13 +143,14 @@ public class ConstantPropagation extends BasicService {
 						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
 					stack.push(new Operation(nop, r, l));
 				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+					/* If the variable has constant assigned, replace it here */
 					if (map.containsKey(r)) {
 						stack.push(new Operation(nop, map.get(r), l));
 					} else {
 						stack.push(new Operation(nop, r, l));
 					}
-					
 				} else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
+					/* If the variable has constant assigned, replace it here */
 					if (map.containsKey(l)) {
 						stack.push(new Operation(nop, map.get(l), r));
 					} else {
@@ -170,6 +162,7 @@ public class ConstantPropagation extends BasicService {
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
+				/* If the variable has constant assigned, replace it here */
 				if (map.containsKey(r)) {
 					stack.push(new Operation(op, l, map.get(r)));
 				} else if (map.containsKey(l)) {
