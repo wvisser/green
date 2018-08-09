@@ -83,27 +83,5 @@ public class ConstantPropagation extends BasicService {
             stack = new Stack<Expression>();
             variableMap = new Map<IntVariable, IntConstant>();
         }
-
-        public Expression getExpression() {
-            return stack.pop();
-        }
-
-        public Map<IntVariable, IntConstant> getVariableMap() {
-            return variableMap;
-        }
-
-        @Override
-        public void postVisit(IntConstant constant) {
-            stack.push(constant);
-        }
-
-        @Override
-        public void postVisit(IntVariable variable) {
-            stack.push(variable);
-        }
-
-        @Override
-        public void postVisit(Operation operation) {
-        }
     }
 }
