@@ -33,14 +33,30 @@ public class ConstantPropagation {
     }
 
 
+    public Expression simplify(Expression expression, Map<Variable, Variable> map) {
+
+    }
 
     private static class PropagationVisitor extends Visitor {
 
         private Stack<Expression> stack;
+        private SortedSet<Expression> conjuncts;
+        private SortedSet<IntVariable> variableSet;
 
         public PropagationVisitor() {
             stack = new Stack<Expression>();
+            conjuncts = new TreeSet<Expression>();
+            variableSet = new TreeSet<IntVariable>();
+
         }
+
+
+        @Override
+        public void postVisit(Constant constant) {
+            // TODO
+
+        }
+
 
 
 
