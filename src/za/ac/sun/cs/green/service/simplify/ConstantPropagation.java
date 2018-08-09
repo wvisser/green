@@ -82,7 +82,7 @@ public class ConstantPropagation extends BasicService {
 
         public ConstantPropagationVisitor() {
             stack = new Stack<Expression>();
-            variableMap = new Map<IntVariable, IntConstant>();
+            variableMap = new HashMap<IntVariable, IntConstant>();
         }
     }
 
