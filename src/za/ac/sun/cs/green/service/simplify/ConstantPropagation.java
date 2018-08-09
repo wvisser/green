@@ -24,12 +24,11 @@ import za.ac.sun.cs.green.expr.VisitorException;
 import za.ac.sun.cs.green.service.BasicService;
 
 public class ConstantPropagation extends BasicService {
-	
-	
+
 	public ConstantPropagation(Green solver) {
 		super(solver);
 	}
-	
+
 	@Override
 	public Set<Instance> processRequest(Instance instance) {
 		System.out.println("WE'rE DOING THE THING!");
@@ -44,32 +43,34 @@ public class ConstantPropagation extends BasicService {
 		}
 		return result;
 	}
-	
-	public Expression propagate(Expression expression,
-			Map<Variable, Variable> map) {
+
+	public Expression propagate(Expression expression, Map<Variable, Variable> map) {
 		try {
 			System.out.println("PROPAGATING!");
-			log.log(Level.FINEST, "Before Canonization: " + expression);
+			log.log(Level.FINEST, "Before Propagation: " + expression);
+			/*
+			 * OrderingVisitor orderingVisitor = new OrderingVisitor();
+			 * expression.accept(orderingVisitor); expression =
+			 * orderingVisitor.getExpression(); PropagationVisitor
+			 * propagationVisitor = new PropagationVisitor();
+			 * expression.accept(propagationVisitor); Expression canonized =
+			 * propagationVisitor.getExpression();
+			 */
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			PropagationVisitor propagationVisitor = new PropagationVisitor();
-			expression.accept(propagationVisitor);
-			Expression canonized = propagationVisitor.getExpression();
-			log.log(Level.FINEST, "After Canonization: " + canonized);
-			return canonized;
+			log.log(Level.FINEST, "After Propagation: " + expression);
+			return expression;
 		} catch (VisitorException x) {
-			log.log(Level.SEVERE,
-					"encountered an exception -- this should not be happening!",
-					x);
+			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
 		}
 		return null;
 	}
 
-	
 	private static class OrderingVisitor extends Visitor {
 
 		private Stack<Expression> stack;
+		private Map<Expression, Expression> map = new HashMap<Expression, Expression>();
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
@@ -118,14 +119,21 @@ public class ConstantPropagation extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				if ((r instanceof IntVariable)
-						&& (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(
-								((IntVariable) l).getName()) < 0)) {
+				if ((r instanceof IntVariable) && (l instanceof IntVariable)
+						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
 					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
+				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+					if (map.containsKey(r)) {
+						stack.push(new Operation(nop, map.get(r), l));
+					} else {
+						stack.push(new Operation(nop, r, l));
+					}
+				} else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
+					if (map.containsKey(l)) {
+						stack.push(new Operation(nop, map.get(l), r));
+					} else {
+						stack.push(new Operation(nop, l, r));
+					}
 				} else {
 					stack.push(operation);
 				}
@@ -192,7 +200,7 @@ public class ConstantPropagation extends BasicService {
 					}
 				}
 				SortedSet<Expression> newConjuncts = processBounds();
-//				new TreeSet<Expression>();
+				// new TreeSet<Expression>();
 				Expression c = null;
 				for (Expression e : newConjuncts) {
 					if (e.equals(Operation.FALSE)) {
@@ -200,20 +208,16 @@ public class ConstantPropagation extends BasicService {
 					} else if (e instanceof Operation) {
 						Operation o = (Operation) e;
 						if (o.getOperator() == Operation.Operator.GT) {
-							e = new Operation(Operation.Operator.LT, scale(-1,
-									o.getOperand(0)), o.getOperand(1));
+							e = new Operation(Operation.Operator.LT, scale(-1, o.getOperand(0)), o.getOperand(1));
 						} else if (o.getOperator() == Operation.Operator.GE) {
-							e = new Operation(Operation.Operator.LE, scale(-1,
-									o.getOperand(0)), o.getOperand(1));
+							e = new Operation(Operation.Operator.LE, scale(-1, o.getOperand(0)), o.getOperand(1));
 						}
 						o = (Operation) e;
 						if (o.getOperator() == Operation.Operator.GT) {
-							e = new Operation(Operation.Operator.GE, merge(
-									o.getOperand(0), new IntConstant(-1)),
+							e = new Operation(Operation.Operator.GE, merge(o.getOperand(0), new IntConstant(-1)),
 									o.getOperand(1));
 						} else if (o.getOperator() == Operation.Operator.LT) {
-							e = new Operation(Operation.Operator.LE, merge(
-									o.getOperand(0), new IntConstant(1)),
+							e = new Operation(Operation.Operator.LE, merge(o.getOperand(0), new IntConstant(1)),
 									o.getOperand(1));
 						}
 					}
@@ -344,8 +348,7 @@ public class ConstantPropagation extends BasicService {
 			if (linearInteger && !unsatisfiable) {
 				if (variable instanceof IntVariable) {
 					variableSet.add((IntVariable) variable);
-					stack.push(new Operation(Operation.Operator.MUL, Operation.ONE,
-							variable));
+					stack.push(new Operation(Operation.Operator.MUL, Operation.ONE, variable));
 				} else {
 					stack.clear();
 					linearInteger = false;
@@ -557,8 +560,7 @@ public class ConstantPropagation extends BasicService {
 			for (Map.Entry<Variable, Integer> e : coefficients.entrySet()) {
 				int coef = e.getValue();
 				if (coef != 0) {
-					Operation term = new Operation(Operation.Operator.MUL,
-							new IntConstant(coef), e.getKey());
+					Operation term = new Operation(Operation.Operator.MUL, new IntConstant(coef), e.getKey());
 					if (lr == null) {
 						lr = term;
 					} else {
@@ -571,14 +573,12 @@ public class ConstantPropagation extends BasicService {
 			} else if (s == 0) {
 				return lr;
 			} else {
-				return new Operation(Operation.Operator.ADD, lr,
-						new IntConstant(s));
+				return new Operation(Operation.Operator.ADD, lr, new IntConstant(s));
 			}
 		}
 
 		private boolean hasRightConstant(Expression expression) {
-			return isAddition(expression)
-					&& (getRightExpression(expression) instanceof IntConstant);
+			return isAddition(expression) && (getRightExpression(expression) instanceof IntConstant);
 		}
 
 		private int getRightConstant(Expression expression) {
@@ -606,8 +606,7 @@ public class ConstantPropagation extends BasicService {
 				return Operation.ZERO;
 			}
 			if (expression instanceof IntConstant) {
-				return new IntConstant(factor
-						* ((IntConstant) expression).getValue());
+				return new IntConstant(factor * ((IntConstant) expression).getValue());
 			} else if (expression instanceof IntVariable) {
 				return expression;
 			} else {
