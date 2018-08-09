@@ -54,7 +54,7 @@ public class ConstantPropagation extends BasicService {
         reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
     }
 
-    public Expression constantPropogation(Expression expression, Map<Variable, Variable> map) {
+    public Expression constantPropagation(Expression expression, Map<Variable, Variable> map) {
         try {
             log.log(Level.FINEST, "Before Canonization: " + expression);
             invocations++;
@@ -75,7 +75,7 @@ public class ConstantPropagation extends BasicService {
         return null;
     }
 
-    private static class ConstantPropogationVisitor extends Visitor {
+    private static class ConstantPropagationVisitor extends Visitor {
         private Stack<Expression> stack;
         private Map<IntVariable, IntConstant> variableMap;
 
