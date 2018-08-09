@@ -128,8 +128,6 @@ public class Operation extends Expression {
 	public static final Expression TRUE = new Operation(Operation.Operator.EQ, ZERO, ZERO);
 
 	private final Operator operator;
-	
-	private static Map map = new HashMap();
 
 	private final Expression[] operands;
 
