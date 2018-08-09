@@ -28,7 +28,7 @@ public class ConstantPropagation extends BasicService {
 	public ConstantPropagation(Green solver) {
 		super(solver);
 	}
-	
+
 	public static void main(String[] args) {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
@@ -39,15 +39,15 @@ public class ConstantPropagation extends BasicService {
 		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
 		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
-		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
-		
+		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10
+
 		OrderingVisitor orderingVisitor = new OrderingVisitor();
 		try {
 			System.out.println(o4);
 			o4.accept(orderingVisitor);
 			System.out.println(orderingVisitor.getExpression());
 		} catch (VisitorException e) {
-			
+
 		}
 	}
 
@@ -70,8 +70,11 @@ public class ConstantPropagation extends BasicService {
 			log.log(Level.FINEST, "Before Propagation: " + expression);
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
-			expression = orderingVisitor.getExpression();
-			log.log(Level.FINEST, "After Propagation: " + orderingVisitor.getExpression());
+			while (!orderingVisitor.isEmpty()) {
+				expression = orderingVisitor.getExpression();
+				log.log(Level.FINE, "Popping expression from visitor: " + expression);
+			}
+			log.log(Level.FINEST, "After Propagation: " + expression);
 			return expression;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
@@ -131,14 +134,14 @@ public class ConstantPropagation extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				
+
 				/* Map variables to their assigned constant */
 				if (nop.equals(Operation.Operator.EQ) && r instanceof IntVariable && l instanceof IntConstant) {
 					map.put(r, l);
 				} else if (nop.equals(Operation.Operator.EQ) && l instanceof IntVariable && r instanceof IntConstant) {
 					map.put(l, r);
 				}
-				
+
 				if ((r instanceof IntVariable) && (l instanceof IntVariable)
 						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
 					stack.push(new Operation(nop, r, l));
@@ -170,13 +173,20 @@ public class ConstantPropagation extends BasicService {
 				} else {
 					stack.push(new Operation(op, l, r));
 				}
-				
+
 			} else {
 				for (int i = op.getArity(); i > 0; i--) {
 					stack.pop();
 				}
 				stack.push(operation);
 			}
+		}
+
+		/**
+		 * @return Returns true if the stack is empty, false otherwise.
+		 */
+		public boolean isEmpty() {
+			return stack.isEmpty();
 		}
 
 	}
