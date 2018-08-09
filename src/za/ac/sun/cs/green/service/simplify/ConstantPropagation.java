@@ -165,7 +165,7 @@ public class ConstantPropagation extends BasicService {
 						stack.push(new Operation(nop, l, r));
 					}
 				} else {
-					stack.push(operation);
+					stack.push(new Operation(nop, l, r));
 				}
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
@@ -175,7 +175,7 @@ public class ConstantPropagation extends BasicService {
 				} else if (map.containsKey(l)) {
 					stack.push(new Operation(op, map.get(l), r));
 				} else {
-					stack.push(operation);
+					stack.push(new Operation(op, l, r));
 				}
 				
 			} else {
