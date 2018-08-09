@@ -70,5 +70,35 @@ public class ConstantPropogationTest {
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
 		check(o4, "(x==1)&&((1+y)==10)");
 	}
+	
+	@Test
+	public void test01() {
+		IntVariable x = new IntVariable("x", 0, 99);
+		IntVariable y = new IntVariable("y", 0, 99);
+		IntVariable z = new IntVariable("z", 0, 99);
+		IntConstant c = new IntConstant(1);
+		IntConstant c10 = new IntConstant(10);
+		IntConstant c3 = new IntConstant(3);
+		Operation o1 = new Operation(Operation.Operator.EQ, y, c); // o1 : y = 1
+		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
+		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
+		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : y = 1 && (x+y) = 10 
+		check(o4, "(y==1)&&((x+1)==10)");
+	}
+	
+	@Test
+	public void test02() {
+		IntVariable x = new IntVariable("x", 0, 99);
+		IntVariable y = new IntVariable("y", 0, 99);
+		IntVariable z = new IntVariable("z", 0, 99);
+		IntConstant c = new IntConstant(1);
+		IntConstant c10 = new IntConstant(10);
+		IntConstant c3 = new IntConstant(3);
+		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
+		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
+		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
+		Operation o4 = new Operation(Operation.Operator.AND, o3, o1); // o4 : (x+y) = 10 && x = 1 
+		check(o4, "((1+y)==10)&&(x==1)");
+	}
 
 }
