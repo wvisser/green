@@ -54,7 +54,7 @@ public class ConstantPropagationTest {
 		finalCheck(j.getExpression().toString(), expected);
 	}
 
-	@Test
+	@Test /* Unsimplified version */
 	public void test00() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
