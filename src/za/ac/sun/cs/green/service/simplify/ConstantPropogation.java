@@ -57,7 +57,9 @@ public class ConstantPropogation extends BasicService {
 			invocations++;
 			SimplifyVisitor simplifyVisitor = new SimplifyVisitor();
 			expression.accept(simplifyVisitor);
-			expression = simplifyVisitor.getExpression();
+			Expression simplified = simplifyVisitor.getExpression();
+			log.log(Level.FINEST, "After simplification: " + expression);
+			log.log(Level.FINEST, "Simplified: " + simplified);
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
 		} finally {
@@ -84,7 +86,7 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		@Override
-		public void postVisit(Operation operation) {
+		public void preVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
 			if (op.equals(Operation.Operator.EQ)) {
 				Expression opL = operation.getOperand(0);
@@ -94,7 +96,6 @@ public class ConstantPropogation extends BasicService {
 				} else if ((opL instanceof IntVariable) && (opR instanceof IntConstant)) {
 					map.put((IntVariable) opL, (IntConstant) opR);
 				}
-
 			}
 		}
 
@@ -104,7 +105,7 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		@Override
-		public void preVisit(Operation operation) {
+		public void postVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
 
 			if (stack.size() >= 2) {
@@ -122,8 +123,7 @@ public class ConstantPropogation extends BasicService {
 						}
 					}
 				}
-
-				Operation e = new Operation(Operation.Operator.EQ, left, right);
+				Operation e = new Operation(operation.getOperator(), left, right);
 				stack.push(e);
 			}
 
