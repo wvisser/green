@@ -2,20 +2,29 @@ package za.ac.sun.cs.green.service.simplify;
 
 
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
+import java.util.logging.Level;
 
+import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
+import za.ac.sun.cs.green.expr.Operation.Operator;
+import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
+import za.ac.sun.cs.green.service.BasicService;
 
 
-
-public class ConstantPropagation extends Visitor {
+public class ConstantPropagation extends BasicService {
+	private int invocations = 0;
+	static Map<Expression, Expression> bobby = new HashMap<>();
 	
 	public static void main (String[] args) {
 		
@@ -30,20 +39,29 @@ public class ConstantPropagation extends Visitor {
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
 		
-		System.out.println(o4);
 		
-		OrderingVisitor ov = new OrderingVisitor();
+		constantVisitor ov = new constantVisitor();
 		try {
 			o4.accept(ov);
 			
 			//ov.postVisit(o4);
 			ov.print();
-			System.out.println(ov.getExpression());
+			//System.out.println(ov.getExpression());
 			
 		} catch (VisitorException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		Operation constantProp = (Operation)ov.getExpression();
+		simplificationVisitor sv = new simplificationVisitor();
+		try {
+			constantProp.accept(sv);
+		} catch (VisitorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		sv.print();
+		System.out.println(bobby);
 		test01();
 	}
 	
@@ -60,9 +78,10 @@ public class ConstantPropagation extends Visitor {
 		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
 		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
 		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
+		System.out.println(o);
 		// (x = 1) && (x+y < 10) && (y-1 = 2)
 		//check(o, "(x==1)&&(y==3)");
-		OrderingVisitor ov = new OrderingVisitor();
+		constantVisitor ov = new constantVisitor();
 		
 		try {
 			o.accept(ov);
@@ -70,15 +89,63 @@ public class ConstantPropagation extends Visitor {
 		} catch (VisitorException e) {
 			e.printStackTrace();
 		}
+		Operation constantProp = (Operation)ov.getExpression();
+		simplificationVisitor sv = new simplificationVisitor();
+		try {
+			constantProp.accept(sv);
+		} catch (VisitorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		sv.print();
 	}
 
-	static class OrderingVisitor extends Visitor {
-		Map<Expression, Expression> exp = new HashMap<>();
+	public ConstantPropagation(Green solver) {
+		super(solver);
+	}
+	
+	@Override
+	public Set<Instance> processRequest(Instance instance) {
+		@SuppressWarnings("unchecked")
+		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
+		if (result == null) {
+			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
+			final Expression e = propagate(instance.getFullExpression(), map);
+			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
+			result = Collections.singleton(i);
+			instance.setData(getClass(), result);
+		}
+		return result;
+	}
+	
+	public Expression propagate(Expression expression,
+			Map<Variable, Variable> map) {
+		try {
+			log.log(Level.FINEST, "Before Canonization: " + expression);
+			invocations++;
+			constantVisitor constantVisitor = new constantVisitor();
+			expression.accept(constantVisitor);
+			expression = constantVisitor.getExpression();
+			simplificationVisitor canonizationVisitor = new simplificationVisitor();
+			expression.accept(canonizationVisitor);
+			Expression canonized = canonizationVisitor.getExpression();
+			
+			log.log(Level.FINEST, "After Canonization: " + canonized);
+			return canonized;
+		} catch (VisitorException x) {
+			log.log(Level.SEVERE,
+					"encountered an exception -- this should not be happening!",
+					x);
+		}
+		return null;
+	}
+	
+	static class constantVisitor extends Visitor {
+		
 		
 		private Stack<Expression> stack;
 
-		public OrderingVisitor() {
-			System.out.println("Stack: " + stack);
+		public constantVisitor() {
 			stack = new Stack<Expression>();
 		}
 
@@ -86,48 +153,138 @@ public class ConstantPropagation extends Visitor {
 			System.out.println("EXPRESSION ON DAT BOI");
 			return stack.pop();
 		}
-		
-		public void pushh(Operation.Operator op, IntVariable l, IntConstant r) {
-			if (exp.containsKey(r)) {
-				stack.push(new Operation(op, l, exp.get(r)));
-			} else {
-				stack.push(new Operation(op, l, r));
-			}
-		}
-		
-		public void pushh(Operation.Operator op, IntConstant l, IntVariable r) {
-			if (exp.containsKey(l)) {
-				stack.push(new Operation(op, l, exp.get(r)));
-			} else {
-				stack.push(new Operation(op, l, r));
-			}
-		}
 
 		@Override
 		public void postVisit(IntConstant constant) throws VisitorException {
 			System.out.println("Constant: " + constant);
-			
 			stack.push(constant);
-			System.out.println("Stack: " + stack);
+			System.out.println(stack);
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
 			System.out.println("Variable: " + variable);
 			stack.push(variable);
-			System.out.println("Stack: " + stack);
+			System.out.println(stack);
 		}
 		
 		public void print() {
-			System.out.println(exp.size());
-			System.out.println("HEEERE");
-			System.out.println(exp);
+			System.out.println(bobby);
 			System.out.println(stack);
 		}
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
-			System.out.println(stack.size());
+			Operation.Operator op = operation.getOperator();
+			Operation.Operator nop = null;
+			switch (op) {
+			case EQ:
+				nop = Operation.Operator.EQ;
+				break;
+			case NE:
+				nop = Operation.Operator.NE;
+				break;
+			case LT:
+				nop = Operation.Operator.GT;
+				break;
+			case LE:
+				nop = Operation.Operator.GE;
+				break;
+			case GT:
+				nop = Operation.Operator.LT;
+				break;
+			case GE:
+				nop = Operation.Operator.LE;
+				break;
+			default:
+				break;
+			}
+			if (nop != null) {
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+				System.out.println(stack);
+				if (nop.equals(Operation.Operator.EQ) && r instanceof IntVariable && l instanceof IntConstant) {
+					bobby.put(r, l);
+				} else if (nop.equals(Operation.Operator.EQ) && l instanceof IntVariable && r instanceof IntConstant) {
+					bobby.put(l, r);
+				} 
+				
+				if ((r instanceof IntVariable)
+						&& (l instanceof IntVariable)
+						&& (((IntVariable) r).getName().compareTo(
+								((IntVariable) l).getName()) < 0)) {
+					stack.push(new Operation(nop, l, r));
+				} else if ((r instanceof IntVariable)
+						&& (l instanceof IntConstant)) {
+					stack.push(new Operation(nop, l, r));
+					System.out.println(stack + " :");
+				} else if ((l instanceof IntVariable)
+						&& (r instanceof IntConstant)) {
+					stack.push(new Operation(nop, l, r));
+				} 
+				else {
+					stack.push(new Operation(op, l ,r));
+				}
+			} else if (op.getArity() == 2) {
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+				if (bobby.containsKey(r)) {
+					System.out.println("WE HERE");
+					stack.push(new Operation(op, l, bobby.get(r)));
+				} else if (bobby.containsKey(l)) {
+					System.out.println("WEEE HERE " + op);
+					stack.push(new Operation(op, bobby.get(l) , r));
+				} else {
+					stack.push(new Operation(op, l, r));
+				} 
+				System.out.println(stack);
+			} else {
+				for (int i = op.getArity(); i > 0; i--) {
+					stack.pop();
+				}
+				stack.push(operation);
+			}
+		}
+	}
+	
+	private static Operation.Operator reverse(Operation.Operator in) {
+		if (in.equals(Operation.Operator.ADD)) {
+			return Operation.Operator.SUB;
+		} else {
+			return Operation.Operator.ADD;
+		}	
+	}
+	
+	
+	static class simplificationVisitor extends Visitor {
+		private Stack<Expression> stack;
+
+		public simplificationVisitor() {
+			stack = new Stack<Expression>();
+		}
+
+		public Expression getExpression() {
+			return stack.pop();
+		}
+		
+		public void print() {
+			System.out.println("YAS SIMPLIFY");
+			System.out.println(stack);
+			System.out.println(stack.peek());
+		}
+
+		@Override
+		public void postVisit(IntConstant constant) throws VisitorException {
+			stack.push(constant);
+		}
+
+		@Override
+		public void postVisit(IntVariable variable) {
+			stack.push(variable);
+		}
+
+		@Override
+		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
 			Operation.Operator nop = null;
 			switch (op) {
@@ -156,23 +313,96 @@ public class ConstantPropagation extends Visitor {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
 
-				//1 + y = 10, equates to y==9
 				if (nop.equals(Operation.Operator.EQ) && r instanceof IntConstant && l instanceof Operation) {
-					IntConstant nr = new IntConstant(-1*Integer.parseInt(r.toString()));
-					System.out.println(nr + " new r");
-					Operation test = (Operation) l;
-
-					r = Operation.apply(Operation.Operator.ADD, test.getOperand(0), nr);
-					r = new IntConstant(-1*(Integer.parseInt(r.toString())));
-				
-					if (test.getOperand(0) instanceof IntConstant) {
-						l = test.getOperand(1);
-					} else {
-						l = test.getOperand(0);
+			
+					
+					Operation left = (Operation) l;
+					
+					Stack<Object> stack_temp = new Stack<Object>();
+					
+						
+					stack_temp.push(r); //push constant
+					
+					stack_temp.push(reverse(left.getOperator()));
+					if (left.getOperand(0) instanceof IntConstant) {
+						stack_temp.push(left.getOperand(0));
+					} else if (left.getOperand(1) instanceof IntConstant) {
+						stack_temp.push(left.getOperand(1));
 					}
-					new Operation(Operation.Operator.EQ, l, r);
-					//12 + y = -1, equates to y = -13
+					stack_temp.push(Operation.Operator.EQ);
+					if (left.getOperand(0) instanceof IntVariable) {
+						stack_temp.push(left.getOperand(0));
+					} else if (left.getOperand(1) instanceof IntVariable) {
+						stack_temp.push(left.getOperand(1));
+					}
+				
+					System.out.println(stack_temp);
+					Expression constant = null;
+					IntConstant ln = null;
+					IntVariable orig = null;
+					
+					while (!stack_temp.isEmpty()) {
+						if (stack_temp.peek() != Operation.Operator.EQ && stack_temp.peek() != Operation.Operator.ADD && stack_temp.peek() != Operation.Operator.SUB) {
+							if (stack_temp.peek() instanceof IntConstant) {
+								ln = (IntConstant) stack_temp.pop();
+								
+								System.out.print(ln);
+								System.out.println(stack_temp);
+							} else {
+								
+									orig = (IntVariable) stack_temp.pop();
+									System.out.println(orig + " 123");
+									System.out.println(stack_temp);
+								
+							}	
+						} else if (stack_temp.peek() == Operation.Operator.EQ) {
+							System.out.print(" " + stack_temp.pop() + " ");
+							System.out.println(stack_temp);
+						} else {
+							Operation.Operator t = (Operator) stack_temp.pop();
+							System.out.println(stack_temp);
+							IntConstant rn = (IntConstant)(stack_temp.pop());
+							if (reverse(t).equals(Operation.Operator.ADD)) {
+								ln = new IntConstant(ln.getValue()*-1);
+								t = reverse(t);
+							} 
+							constant = Operation.apply(t, rn, ln);
+							System.out.println(constant + " CONSTANT");
+							if (orig != null) {
+							//bobby.put(orig, constant);
+							}
+						}
+					}
+					System.out.println("ORIG:" + orig + " CONSTANT: " + constant);
+					//exp.put(orig, constant);
+					System.out.println(bobby);
+					System.out.println("WHAT");
+					Operation fin = new Operation(Operation.Operator.EQ, orig, constant);
+					if (bobby == null) {
+						System.out.println("WHY");
+					}
+					System.out.println(fin + " WHAT!");
+					stack.push(fin);
+					//exp.put(fin.getOperand(0), fin.getOperand(1));
+					System.out.println(" R R R " + r);
+					if (left.getOperand(0) instanceof IntConstant) {
+						System.out.println(left.getOperator() + " OPERATOR");
+						if (left.getOperand(1) instanceof IntVariable) {
+							System.out.println("sn " + left.getOperand(0));
+						}
+						System.out.println("Preright: " + r + " Preleft: " + -1*Integer.parseInt(left.getOperand(0).toString()));
+						IntConstant lv = new IntConstant(-1*Integer.parseInt(left.getOperand(0).toString()));
+						r = Operation.apply(Operation.Operator.ADD, r, lv);
+						l = new IntConstant(-1*Integer.parseInt(left.getOperand(0).toString()));
+						
+						System.out.println("Left:" + l + " " + "\tRight: " + r);
+					} else {
+						System.out.println(left.getOperator() + " OPERATOR +");
+						r = Operation.apply(Operation.Operator.ADD, left.getOperand(1), r);
+						l = left.getOperand(0);
+					}
 				} else if (nop.equals(Operation.Operator.EQ) && l instanceof IntConstant && r instanceof Operation) {
+					System.out.println("ISSUES");
 					IntConstant nl = new IntConstant(-1*Integer.parseInt(l.toString()));
 					System.out.println(nl);
 					Operation test = (Operation) r;
@@ -184,67 +414,38 @@ public class ConstantPropagation extends Visitor {
 					} else {
 						r = test.getOperand(0);
 					}
-					new Operation(Operation.Operator.EQ, r, l);
-				}
-				
-				if (nop.equals(Operation.Operator.EQ) && l instanceof IntConstant && r instanceof Operation) {
-					System.out.println("YEET 2");
-				}
-				if (nop.equals(Operation.Operator.EQ) && r instanceof IntVariable && l instanceof IntConstant) {
-					System.out.println("WHAT 1");
-					exp.put(r, l);
-				} else if (nop.equals(Operation.Operator.EQ) && l instanceof IntVariable && r instanceof IntConstant) {
-					System.out.println("WHAT 2");
-					exp.put(l, r);
+					new Operation(Operation.Operator.EQ, l, r);
 				} else {
-					System.out.println("WHAT 3");
-				}
 				
-				
+			
 				if ((r instanceof IntVariable)
 						&& (l instanceof IntVariable)
 						&& (((IntVariable) r).getName().compareTo(
 								((IntVariable) l).getName()) < 0)) {
-					if (exp.containsKey(r)) {
-						System.out.println("Contains a value");
-					} else if (exp.containsKey(l)) {
-						System.out.println("Contains this shit");
-					}
-					stack.push(new Operation(nop, r, l));
-					System.out.println("Stack: " + stack);
+					stack.push(new Operation(nop, l, r));
 				} else if ((r instanceof IntVariable)
 						&& (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
-					exp.put(l, r);
+					stack.push(new Operation(nop, l, r));
 				} else if ((l instanceof IntVariable)
 						&& (r instanceof IntConstant)) {
-					//System.out.println("Q " + nop + " | " + l + " | " + r);
 					stack.push(new Operation(nop, l, r));
-					System.out.println("Stack: " + stack);
-					//exp.put(l, r);
 				} 
 				else {
-					stack.push(new Operation(nop, l ,r));
-					System.out.println("Stack: " + stack);
+					stack.push(new Operation(op, l , r));
+				}
 				}
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				if (exp.containsKey(r)) {
-					stack.push(new Operation(op, l, exp.get(r)));
-				} else if (exp.containsKey(l)) {
-					stack.push(new Operation(op, exp.get(l), r));
-				} else {
-					stack.push(new Operation(op, l, r));
-				} 
-				exp.put(l, r);
+				stack.push(new Operation(op, l, r));
 			} else {
 				for (int i = op.getArity(); i > 0; i--) {
 					stack.pop();
 				}
+				System.out.println("WE HERE");
 				stack.push(operation);
 			}
+			
 		}
-
 	}
 }
