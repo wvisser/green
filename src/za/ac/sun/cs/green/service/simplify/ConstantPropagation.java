@@ -10,6 +10,8 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
@@ -27,35 +29,6 @@ public class ConstantPropagation extends BasicService {
 
 	public ConstantPropagation(Green solver) {
 		super(solver);
-	}
-
-	public static void main(String[] args) {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntVariable z = new IntVariable("z", 0, 99);
-		IntConstant c = new IntConstant(1);
-		IntConstant c10 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(3);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
-		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x +
-																	// y)
-		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 :
-																		// x+y =
-																		// 10
-		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x
-																		// = 1
-																		// &&
-																		// (x+y)
-																		// = 10
-
-		VariableVisitor orderingVisitor = new VariableVisitor();
-		try {
-			System.out.println(o4);
-			o4.accept(orderingVisitor);
-			System.out.println(orderingVisitor.getExpression());
-		} catch (VisitorException e) {
-
-		}
 	}
 
 	@Override
@@ -84,12 +57,14 @@ public class ConstantPropagation extends BasicService {
 			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
 			expression.accept(canonizationVisitor);
 			Expression canonized = canonizationVisitor.getExpression();
-			if (canonized != null) {
-				canonized = new Renamer(map,
-						canonizationVisitor.getVariableSet()).rename(canonized);
-			}
 			log.log(Level.FINEST, "After canonization: " + canonized);
-			return expression;
+			/* Simplify */
+			SimplificationVisitor simplificationVisitor = new SimplificationVisitor();
+			canonized.accept(simplificationVisitor);
+			Expression simplified = simplificationVisitor.getExpression();
+			log.log(Level.FINEST, "After simplification: " + simplified);
+
+			return simplified;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
 		}
@@ -398,6 +373,9 @@ public class ConstantPropagation extends BasicService {
 		}
 
 		@Override
+		/**
+		 * This adds the 1 multiplied by variable.
+		 */
 		public void postVisit(Variable variable) {
 			if (linearInteger && !unsatisfiable) {
 				if (variable instanceof IntVariable) {
@@ -675,30 +653,16 @@ public class ConstantPropagation extends BasicService {
 
 	}
 
-	private static class Renamer extends Visitor {
-
-		private Map<Variable, Variable> map;
+	private static class SimplificationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
 
-		public Renamer(Map<Variable, Variable> map, SortedSet<IntVariable> variableSet) {
-			this.map = map;
+		public SimplificationVisitor() {
 			stack = new Stack<Expression>();
 		}
 
-		public Expression rename(Expression expression) throws VisitorException {
-			expression.accept(this);
+		public Expression getExpression() {
 			return stack.pop();
-		}
-
-		@Override
-		public void postVisit(IntVariable variable) {
-			Variable v = map.get(variable);
-			if (v == null) {
-				v = new IntVariable("v" + map.size(), variable.getLowerBound(), variable.getUpperBound());
-				map.put(variable, v);
-			}
-			stack.push(v);
 		}
 
 		@Override
@@ -707,15 +671,108 @@ public class ConstantPropagation extends BasicService {
 		}
 
 		@Override
-		public void postVisit(Operation operation) {
-			int arity = operation.getOperator().getArity();
-			Expression operands[] = new Expression[arity];
-			for (int i = arity; i > 0; i--) {
-				operands[i - 1] = stack.pop();
-			}
-			stack.push(new Operation(operation.getOperator(), operands));
+		public void postVisit(IntVariable variable) {
+			stack.push(variable);
 		}
 
-	}
+		@Override
+		public void postVisit(Operation operation) throws VisitorException {
+			Operation.Operator op = operation.getOperator();
+			Operation.Operator nop = null;
+			switch (op) {
+			case EQ:
+				nop = Operation.Operator.EQ;
+				break;
+			case NE:
+				nop = Operation.Operator.NE;
+				break;
+			case LT:
+				nop = Operation.Operator.GT;
+				break;
+			case LE:
+				nop = Operation.Operator.GE;
+				break;
+			case GT:
+				nop = Operation.Operator.LT;
+				break;
+			case GE:
+				nop = Operation.Operator.LE;
+				break;
+			default:
+				break;
+			}
 
+			if (nop != null) {
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+
+				/* Find <something> == 0 */
+				if (nop.equals(Operation.Operator.EQ) && (r.equals(Operation.ZERO))) {
+					stack.push(swippySwoppy(l, r));
+				} /* Find x <op> y */
+				else if ((r instanceof IntVariable) && (l instanceof IntVariable)
+						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
+					stack.push(new Operation(nop, l, r));
+				} /* Find x <op> <const> */
+				else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+					stack.push(new Operation(nop, l, r));
+				} else {
+					stack.push(new Operation(nop, l, r));
+				}
+			} else if (op.getArity() == 2) {
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+
+				/* Get rid of (1*x) tokens with just the variable */
+				if (op.equals(Operation.Operator.MUL)) {
+					if ((r instanceof IntVariable) && (l.equals(Operation.ONE))) {
+						stack.push(r);
+					} else {
+						stack.push(new Operation(op, l, r));
+					}
+				} else {
+					stack.push(new Operation(op, l, r));
+				}
+			} else {
+				for (int i = op.getArity(); i > 0; i--) {
+					stack.pop();
+				}
+				stack.push(operation);
+			}
+		}
+
+		/**
+		 * Gets called for '<var> + [-]<const> == 0' and places the var on left
+		 * and const on right.
+		 * 
+		 * @param l
+		 *            <var> + [-]<const>
+		 * @param r
+		 *            0
+		 * @return <var> == [-]<const>
+		 */
+		private Operation swippySwoppy(Expression l, Expression r) {
+			/* Find variable */
+			Pattern ptrn = Pattern.compile("[a-zA-Z]");
+			Matcher mtchr = ptrn.matcher(l.toString());
+			String variable = "";
+			if (mtchr.find()) {
+				variable = mtchr.group();
+			}
+			/* Find constant */
+			ptrn = Pattern.compile("-[0-9]");
+			mtchr = ptrn.matcher(l.toString());
+			String constant = "";
+			if (mtchr.find()) {
+				constant = mtchr.group();
+			} else {
+				ptrn = Pattern.compile("[0-9]");
+				mtchr = ptrn.matcher(l.toString());
+			}
+
+			IntVariable var = new IntVariable(variable, 0, 99);
+			IntConstant cons = new IntConstant((-1) * Integer.parseInt(constant));
+			return new Operation(Operation.Operator.EQ, var, cons);
+		}
+	}
 }
