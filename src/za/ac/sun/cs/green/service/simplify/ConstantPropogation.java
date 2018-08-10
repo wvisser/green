@@ -52,10 +52,17 @@ public class ConstantPropogation extends BasicService {
     }
 
 	public Expression simplify(Expression expression, Map<Variable, Variable> map) {
-		log.log(Level.FINEST, "Before simplifying: " + expression);
-		invocations += 1;
-		
-		return expression;
+		try {
+			log.log(Level.FINEST, "Before Canonization: " + expression);
+			invocations++;
+			SimplifyVisitor simplifyVisitor = new SimplifyVisitor();
+			expression.accept(simplifyVisitor);
+			expression = simplifyVisitor.getExpression();
+		} catch (VisitorException x) {
+			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
+		} finally {
+			return expression;
+		}		
 	}
 
 	public class SimplifyVisitor extends Visitor {
