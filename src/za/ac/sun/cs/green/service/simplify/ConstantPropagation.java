@@ -43,6 +43,7 @@ public class ConstantPropagation extends BasicService {
             result = Collections.singleton(i);
             instance.setData(getClass(), result);
         }
+        
         return result;
     }
 
