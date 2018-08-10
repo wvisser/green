@@ -80,12 +80,15 @@ public class ConstantPropagation extends BasicService {
 			expression.accept(variableVisitor);
 			expression = variableVisitor.getExpression();
 			log.log(Level.FINEST, "After variable mapping: " + expression);
-			/* Simplify */
-			log.log(Level.FINEST, "Before simplification: " + expression);
-			SimplificationVisitor simplificationVisitor = new SimplificationVisitor();
-			expression.accept(simplificationVisitor);
-			expression = simplificationVisitor.getExpression();
-			log.log(Level.FINEST, "After simplification: " + expression);
+			/* Canonize */
+			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
+			expression.accept(canonizationVisitor);
+			Expression canonized = canonizationVisitor.getExpression();
+			if (canonized != null) {
+				canonized = new Renamer(map,
+						canonizationVisitor.getVariableSet()).rename(canonized);
+			}
+			log.log(Level.FINEST, "After canonization: " + canonized);
 			return expression;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
@@ -202,7 +205,7 @@ public class ConstantPropagation extends BasicService {
 
 	}
 
-	private static class SimplificationVisitor extends Visitor {
+	private static class CanonizationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
 
@@ -224,7 +227,7 @@ public class ConstantPropagation extends BasicService {
 
 		private boolean linearInteger;
 
-		public SimplificationVisitor() {
+		public CanonizationVisitor() {
 			stack = new Stack<Expression>();
 			conjuncts = new TreeSet<Expression>();
 			variableSet = new TreeSet<IntVariable>();
@@ -671,4 +674,48 @@ public class ConstantPropagation extends BasicService {
 		}
 
 	}
+
+	private static class Renamer extends Visitor {
+
+		private Map<Variable, Variable> map;
+
+		private Stack<Expression> stack;
+
+		public Renamer(Map<Variable, Variable> map, SortedSet<IntVariable> variableSet) {
+			this.map = map;
+			stack = new Stack<Expression>();
+		}
+
+		public Expression rename(Expression expression) throws VisitorException {
+			expression.accept(this);
+			return stack.pop();
+		}
+
+		@Override
+		public void postVisit(IntVariable variable) {
+			Variable v = map.get(variable);
+			if (v == null) {
+				v = new IntVariable("v" + map.size(), variable.getLowerBound(), variable.getUpperBound());
+				map.put(variable, v);
+			}
+			stack.push(v);
+		}
+
+		@Override
+		public void postVisit(IntConstant constant) {
+			stack.push(constant);
+		}
+
+		@Override
+		public void postVisit(Operation operation) {
+			int arity = operation.getOperator().getArity();
+			Expression operands[] = new Expression[arity];
+			for (int i = arity; i > 0; i--) {
+				operands[i - 1] = stack.pop();
+			}
+			stack.push(new Operation(operation.getOperator(), operands));
+		}
+
+	}
+
 }
