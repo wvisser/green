@@ -56,34 +56,17 @@ public class ConstantPropagation extends BasicService {
 
     public Expression propagateConstants(Expression expression, Map<Variable, Variable> map) {
         try {
-            log.log(Level.FINEST, "Before Canonization: " + expression);
+            log.log(Level.FINEST, "Before Ordering Visitor: " + expression);
             invocations++;
             OrderingVisitor orderingVisitor = new OrderingVisitor();
             expression.accept(orderingVisitor);
             expression = orderingVisitor.getExpression();
-            /*CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
-            expression.accept(canonizationVisitor);
-            Expression canonized = canonizationVisitor.getExpression();
-            if (canonized != null) {
-                canonized = new Renamer(map, canonizationVisitor.getVariableSet()).rename(canonized);
-            }*/
-            //log.log(Level.FINEST, "After Canonization: " + canonized);
-            //return canonized;
+            log.log(Level.FINEST, "After Ordering Visitor: " + expression);
             return expression;
         } catch (VisitorException x) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
         }
         return null;
-    }
-
-    private static class ConstantPropagationVisitor extends Visitor {
-        private Stack<Expression> stack;
-        private Map<IntVariable, IntConstant> variableMap;
-
-        public ConstantPropagationVisitor() {
-            stack = new Stack<Expression>();
-            variableMap = new HashMap<IntVariable, IntConstant>();
-        }
     }
 
     private static class OrderingVisitor extends Visitor {
@@ -159,6 +142,15 @@ public class ConstantPropagation extends BasicService {
                 stack.push(operation);
             }
         }
+    }
 
+    private static class ConstantPropagationVisitor extends Visitor {
+        private Stack<Expression> stack;
+        private Map<IntVariable, IntConstant> variableMap;
+
+        public ConstantPropagationVisitor() {
+            stack = new Stack<Expression>();
+            variableMap = new HashMap<IntVariable, IntConstant>();
+        }
     }
 }
