@@ -68,7 +68,7 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		public Expression getExpression() {
-			stack.pop();
+			return stack.pop();
 		}
 
 		@Override
