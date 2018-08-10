@@ -4,11 +4,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.logging.Level;
 
 import za.ac.sun.cs.green.Instance;
@@ -64,15 +62,15 @@ public class ConstantPropagation extends BasicService {
 
             ConstantPropagationVisitor constantPropagationVisitor = new ConstantPropagationVisitor();
             expression.accept(constantPropagationVisitor);
-            Expression propogated = constantPropagationVisitor.getExpression();
+            Expression propagated = constantPropagationVisitor.getExpression();
 
-            if (propogated != null) {
+            if (propagated != null) {
                 System.out.println("Prob?");
             }
 
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
             //return expression;
-            return propogated;
+            return propagated;
         } catch (VisitorException x) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
         }
@@ -167,12 +165,8 @@ public class ConstantPropagation extends BasicService {
             variableMap = new TreeMap<IntVariable, IntConstant>();
         }
 
-        public SortedSet<IntVariable> getVariableSet() {
-            return variableMap;
-        }
-
         public Expression getExpression() {
-            Expression x;
+            Expression x = null;
             if (!stack.isEmpty()) {
                 x = stack.pop();
             }
@@ -192,7 +186,7 @@ public class ConstantPropagation extends BasicService {
         @Override
         public void postVisit(Variable variable) {
             if (variable instanceof IntVariable) {
-                variableMap.add((IntVariable) variable, null);
+                //variableMap.put((IntVariable) variable, null);
                 stack.push(new Operation(Operation.Operator.MUL, Operation.ONE, variable));
             } else {
                 stack.clear();
@@ -206,8 +200,6 @@ public class ConstantPropagation extends BasicService {
                 Expression l = stack.pop();
                 Operation.Operator op = operation.getOperator();
                 if (op.equals(Operation.Operator.EQ)) {
-                    Expression r = stack.pop();
-                    Expression l = stack.pop();
                     if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
                         variableMap.put((IntVariable) l, (IntConstant) r);
                     } else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
