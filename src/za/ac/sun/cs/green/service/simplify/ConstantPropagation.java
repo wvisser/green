@@ -37,11 +37,18 @@ public class ConstantPropagation extends BasicService {
 		IntConstant c10 = new IntConstant(10);
 		IntConstant c3 = new IntConstant(3);
 		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
-		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
-		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
-		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10
+		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x +
+																	// y)
+		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 :
+																		// x+y =
+																		// 10
+		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x
+																		// = 1
+																		// &&
+																		// (x+y)
+																		// = 10
 
-		OrderingVisitor orderingVisitor = new OrderingVisitor();
+		VariableVisitor orderingVisitor = new VariableVisitor();
 		try {
 			System.out.println(o4);
 			o4.accept(orderingVisitor);
@@ -67,14 +74,18 @@ public class ConstantPropagation extends BasicService {
 
 	public Expression propagate(Expression expression, Map<Variable, Variable> map) {
 		try {
-			log.log(Level.FINEST, "Before Propagation: " + expression);
-			OrderingVisitor orderingVisitor = new OrderingVisitor();
-			expression.accept(orderingVisitor);
-			while (!orderingVisitor.isEmpty()) {
-				expression = orderingVisitor.getExpression();
-				log.log(Level.FINE, "Popping expression from visitor: " + expression);
-			}
-			log.log(Level.FINEST, "After Propagation: " + expression);
+			/* Map variables */
+			log.log(Level.FINEST, "Before variable mapping: " + expression);
+			VariableVisitor variableVisitor = new VariableVisitor();
+			expression.accept(variableVisitor);
+			expression = variableVisitor.getExpression();
+			log.log(Level.FINEST, "After variable mapping: " + expression);
+			/* Simplify */
+			log.log(Level.FINEST, "Before simplification: " + expression);
+			SimplificationVisitor simplificationVisitor = new SimplificationVisitor();
+			expression.accept(simplificationVisitor);
+			expression = simplificationVisitor.getExpression();
+			log.log(Level.FINEST, "After simplification: " + expression);
 			return expression;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
@@ -82,12 +93,12 @@ public class ConstantPropagation extends BasicService {
 		return null;
 	}
 
-	private static class OrderingVisitor extends Visitor {
+	private static class VariableVisitor extends Visitor {
 
 		private Stack<Expression> stack;
 		private Map<Expression, Expression> map = new HashMap<Expression, Expression>();
 
-		public OrderingVisitor() {
+		public VariableVisitor() {
 			stack = new Stack<Expression>();
 		}
 
@@ -191,7 +202,7 @@ public class ConstantPropagation extends BasicService {
 
 	}
 
-	private static class PropagationVisitor extends Visitor {
+	private static class SimplificationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
 
@@ -213,7 +224,7 @@ public class ConstantPropagation extends BasicService {
 
 		private boolean linearInteger;
 
-		public PropagationVisitor() {
+		public SimplificationVisitor() {
 			stack = new Stack<Expression>();
 			conjuncts = new TreeSet<Expression>();
 			variableSet = new TreeSet<IntVariable>();
