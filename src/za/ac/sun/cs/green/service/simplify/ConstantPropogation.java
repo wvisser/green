@@ -87,7 +87,7 @@ public class ConstantPropogation extends BasicService {
 				if ((opL instanceof IntConstant) && (opR instanceof IntVariable)) {
 					map.put((IntVariable) opR, (IntConstant) opL);
 				} else if ((opL instanceof IntVariable) && (opR instanceof IntConstant)) {
-					map.put((IntVarible) opL, (IntConstant) opR);
+					map.put((IntVariable) opL, (IntConstant) opR);
 				}
 
 			}
