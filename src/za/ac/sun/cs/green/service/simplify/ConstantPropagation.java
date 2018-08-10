@@ -56,13 +56,23 @@ public class ConstantPropagation extends BasicService {
 
     public Expression propagateConstants(Expression expression, Map<Variable, Variable> map) {
         try {
-            log.log(Level.FINEST, "Before Ordering Visitor: " + expression);
+            log.log(Level.FINEST, "Before Constant Propagation: " + expression);
             invocations++;
             OrderingVisitor orderingVisitor = new OrderingVisitor();
             expression.accept(orderingVisitor);
             expression = orderingVisitor.getExpression();
-            log.log(Level.FINEST, "After Ordering Visitor: " + expression);
-            return expression;
+
+            ConstantPropagationVisitor constantPropagationVisitor = new ConstantPropagationVisitor();
+            expression.accept(constantPropagationVisitor);
+            Expression propogated = constantPropagationVisitor.getExpression();
+
+            if (propogated != null) {
+                System.out.println("Prob?");
+            }
+
+            log.log(Level.FINEST, "After Constant Propagation: " + expression);
+            //return expression;
+            return propogated;
         } catch (VisitorException x) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
         }
@@ -150,7 +160,68 @@ public class ConstantPropagation extends BasicService {
 
         public ConstantPropagationVisitor() {
             stack = new Stack<Expression>();
-            variableMap = new HashMap<IntVariable, IntConstant>();
+
+            /**
+             * Do not what to write a hash function.
+             */
+            variableMap = new TreeMap<IntVariable, IntConstant>();
+        }
+
+        public SortedSet<IntVariable> getVariableSet() {
+            return variableMap;
+        }
+
+        public Expression getExpression() {
+            Expression x;
+            if (!stack.isEmpty()) {
+                x = stack.pop();
+            }
+
+            return x;
+        }
+
+        @Override
+        public void postVisit(Constant constant) {
+            if (constant instanceof IntConstant) {
+                stack.push(constant);
+            } else {
+                stack.clear();
+            }
+        }
+
+        @Override
+        public void postVisit(Variable variable) {
+            if (variable instanceof IntVariable) {
+                variableMap.add((IntVariable) variable, null);
+                stack.push(new Operation(Operation.Operator.MUL, Operation.ONE, variable));
+            } else {
+                stack.clear();
+            }
+        }
+
+        @Override
+        public void postVisit(Operation operation) throws VisitorException {
+            if (stack.size() >= 2) {
+                Expression r = stack.pop();
+                Expression l = stack.pop();
+                Operation.Operator op = operation.getOperator();
+                if (op.equals(Operation.Operator.EQ)) {
+                    Expression r = stack.pop();
+                    Expression l = stack.pop();
+                    if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+                        variableMap.put((IntVariable) l, (IntConstant) r);
+                    } else if ((r instanceof IntVariable) && (l instanceof IntConstant))){
+                        variableMap.put((IntVariable) r, (IntConstant) l);
+                    }
+                } else if (!op.equals(Operation.Operator.EQ)) {
+                    if (variableMap.containsKey(l)) {
+                        l = variableMap.get(l);
+                    }
+                    else if (variableMap.containsKey(r))) {
+                        r = variableMap.get(r);
+                    }
+                    stack.push(new Operation(op, l, r));
+                }
+            }
         }
     }
-}
