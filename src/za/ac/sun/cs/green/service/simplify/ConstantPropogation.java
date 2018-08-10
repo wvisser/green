@@ -53,13 +53,12 @@ public class ConstantPropogation extends BasicService {
 
 	public Expression simplify(Expression expression, Map<Variable, Variable> map) {
 		try {
-			log.log(Level.FINEST, "Before Canonization: " + expression);
+			log.log(Level.FINEST, "Before Simplification: " + expression);
 			invocations++;
 			SimplifyVisitor simplifyVisitor = new SimplifyVisitor();
 			expression.accept(simplifyVisitor);
-			Expression simplified = simplifyVisitor.getExpression();
+			expression = simplifyVisitor.getExpression();
 			log.log(Level.FINEST, "After simplification: " + expression);
-			log.log(Level.FINEST, "Simplified: " + simplified);
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
 		} finally {
