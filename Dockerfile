@@ -18,10 +18,10 @@ RUN apt install libgomp1
 RUN git clone https://github.com/AntiStig/green
 
 # Checkout the constant propagation branch
-WORKDIR /green
-RUN git fetch
-RUN git checkout Feature-ConstProp
-WORKDIR /
+#WORKDIR /green
+#RUN git fetch
+#RUN git checkout Feature-ConstProp
+#WORKDIR /
 
 # Download and extract Z3
 RUN mkdir z3
