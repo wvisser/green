@@ -210,14 +210,13 @@ public class ConstantPropagation extends BasicService {
                     Expression l = stack.pop();
                     if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
                         variableMap.put((IntVariable) l, (IntConstant) r);
-                    } else if ((r instanceof IntVariable) && (l instanceof IntConstant))){
+                    } else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
                         variableMap.put((IntVariable) r, (IntConstant) l);
                     }
                 } else if (!op.equals(Operation.Operator.EQ)) {
                     if (variableMap.containsKey(l)) {
                         l = variableMap.get(l);
-                    }
-                    else if (variableMap.containsKey(r))) {
+                    } else if (variableMap.containsKey(r)) {
                         r = variableMap.get(r);
                     }
                     stack.push(new Operation(op, l, r));
@@ -225,3 +224,4 @@ public class ConstantPropagation extends BasicService {
             }
         }
     }
+}
