@@ -18,10 +18,10 @@ RUN apt install libgomp1
 RUN git clone https://github.com/rob-the-dog/green
 
 # Checkout the constant propagation branch
-WORKDIR /green
-RUN git fetch
-RUN git checkout constant-propogation
-WORKDIR /
+#WORKDIR /green
+#RUN git fetch
+#RUN git checkout constant-propogation
+#WORKDIR /
 
 # Download and extract Z3
 RUN mkdir z3
