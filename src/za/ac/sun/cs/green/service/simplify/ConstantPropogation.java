@@ -32,5 +32,9 @@ public class ConstantPropogation extends BasicService {
 		super(solver);
 	}
 
+	public Expression simplify(Expression expression, Map<Variable, Variable> map) {
+		return expression;
+	}
+
 
 }
