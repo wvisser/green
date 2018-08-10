@@ -33,12 +33,13 @@ import za.ac.sun.cs.green.util.ParallelSATTest;
 import za.ac.sun.cs.green.util.SetServiceTest;
 import za.ac.sun.cs.green.util.SetTaskManagerTest;
 import za.ac.sun.cs.green.service.simplify.OnlyConstantPropagationTest;
+import za.ac.sun.cs.green.service.simplify.SimplificationConstantPropagationTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	SATCanonizerTest.class,
 	SATZ3Test.class,
-	OnlyConstantPropagationTest.class
+	OnlyConstantPropagationTest.class,
 })
 
 public class EntireSuite {

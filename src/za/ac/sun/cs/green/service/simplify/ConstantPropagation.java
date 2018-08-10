@@ -41,12 +41,19 @@ public class ConstantPropagation extends BasicService {
 
     public Expression simplify(Expression expression, Map<Variable, Variable> map) {
         try {
-            log.log(Level.FINEST, "Before Simplification: " + expression);
             invocations++;
+            log.log(Level.FINEST, "Before Simplification: " + expression);
             SimplificationVisitor simplificationVisitor = new SimplificationVisitor();
             expression.accept(simplificationVisitor);
             Expression simplified = simplificationVisitor.getExpression();
-            log.log(Level.FINEST, "After Simplification: " + simplified);
+            while (!(expression.equals(simplified))) {
+                expression = simplified;
+                simplificationVisitor = new SimplificationVisitor();
+                simplified.accept(simplificationVisitor);
+                simplified = simplificationVisitor.getExpression();
+            }
+            log.log(Level.FINEST, "Original After Simplification" + expression);
+            log.log(Level.FINEST, "Simplified After Simplification: " + simplified);
             return simplified;
         } catch (VisitorException x) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
@@ -58,10 +65,12 @@ public class ConstantPropagation extends BasicService {
 
         private Stack<Expression> stack;
         private TreeMap<IntVariable, IntConstant> map;
+        private boolean madeChange;
 
         public SimplificationVisitor() {
             stack = new Stack<Expression>();
             map = new TreeMap<IntVariable, IntConstant>();
+            madeChange = false;
         }
 
         public Expression getExpression() {
@@ -75,8 +84,10 @@ public class ConstantPropagation extends BasicService {
                 Expression op1 = operation.getOperand(1);
                 if ((op0 instanceof IntVariable) && (op1 instanceof IntConstant)) {
                     map.put((IntVariable) op0, (IntConstant) op1);
+                    madeChange = true;
                 } else if ((op0 instanceof IntConstant) && (op1 instanceof IntVariable)) {
                     map.put((IntVariable) op1, (IntConstant) op0);
+                    madeChange = true;
                 }
             }
         }
@@ -106,6 +117,10 @@ public class ConstantPropagation extends BasicService {
             }
             Operation newOperation = new Operation(operator, l, r);
             stack.push(newOperation);
+        }
+
+        public boolean hasMadeChange() {
+            return madeChange;
         }
 
     }
