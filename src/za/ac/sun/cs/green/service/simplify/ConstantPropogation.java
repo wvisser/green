@@ -102,7 +102,7 @@ public class ConstantPropogation extends BasicService {
 		public void preVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
 
-			if (stack.size >= 2) {
+			if (stack.size() >= 2) {
 				Expression right = stack.pop();
 				Expression left = stack.pop();
 				if (!op.equals(Operation.Operator.EQ)) {
