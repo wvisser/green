@@ -120,7 +120,7 @@ public class ConstantPropogation extends BasicService {
          * @param operation
          */
         @Override
-        public void postVisit(Operation operation) {
+        public void preVisit(Operation operation) {
             Operation.Operator op = operation.getOperator();
             Expression r = stack.pop();
             Expression l = stack.pop();
