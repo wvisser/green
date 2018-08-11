@@ -120,6 +120,7 @@ public class ConstantPropogation extends BasicService {
 			Operation.Operator op = operation.getOperator();
 			Expression r = stack.pop();
 			Expression l = stack.pop();
+			System.out.println("processing operator " + op);
 			// simple assignment (x = 1, 1 = x)
 			if (op == Operation.Operator.EQ
 					  && (r instanceof IntConstant
@@ -139,7 +140,7 @@ public class ConstantPropogation extends BasicService {
 			} else if (op == Operation.Operator.EQ
 					  && (r instanceof IntVariable
 					  && l instanceof IntConstant)) {
-				System.out.println("adding variable " + r + " to list with value " + r);
+				System.out.println("adding variable " + r + " to list with value " + l);
 				if (partials.containsKey((IntVariable) r)) {
 					int val = partials.get((IntVariable) r).getValue();
 					System.out.println("variable " + r + " has partial assignment " + val + ", adjusting");
