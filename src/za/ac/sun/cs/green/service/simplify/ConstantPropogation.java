@@ -76,27 +76,35 @@ public class ConstantPropogation extends BasicService {
 	
 	private static Expression GetSimplifiedExpression(Map<Variable, IntConstant> map, Expression ex) throws VisitorException {
 		boolean changeMade = false;
+		boolean endExpressionFalse = false;
 		if (ex != null) {
 			System.out.println("--run renamer''\n");
 			Renamer re = new Renamer(map, changeMade);
 			ex = re.rename(ex);
 			changeMade = re.getChangeMade();
+			endExpressionFalse = re.getEndExpressionFalse();
 			while (changeMade == true) {
 				changeMade = false;
 				System.out.println("--run renamer''\n");
 				Renamer re2 = new Renamer(map, changeMade);
 				ex = re2.rename(ex);
 				changeMade = re2.getChangeMade();
+				endExpressionFalse = re.getEndExpressionFalse();
 			}
 		}
 		
-		return ex;
+		if (endExpressionFalse == true) {
+			return Operation.FALSE;
+		} else {
+			return ex;
+		}
 	}
 	
 	private static class Renamer extends Visitor {
 		
 		private Map<Variable, IntConstant> map;
 		private boolean changeMade;
+		private boolean endExpressionFalse = false;
 
 		private Stack<Expression> stack;
 
@@ -113,6 +121,10 @@ public class ConstantPropogation extends BasicService {
 		
 		public boolean getChangeMade() {
 			return changeMade;
+		}
+		
+		public boolean getEndExpressionFalse() {
+			return endExpressionFalse;
 		}
 
 		@Override
@@ -159,7 +171,11 @@ public class ConstantPropogation extends BasicService {
 						System.out.println("3: " + var + " : " + con +  "\n");
 						//System.out.println("changeMade1");
 						changeMade = true;
-					} 
+					} else {
+						if (!v.equals(operands[1])) {
+							endExpressionFalse = true;
+						}
+					}
 					break;
 				case NE:
 					IntConstant vNE = map.get(operands[0]);
