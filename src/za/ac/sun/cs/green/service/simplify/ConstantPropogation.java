@@ -155,7 +155,7 @@ public class ConstantPropogation extends BasicService {
 			}
 			// complex assignment (1 +/- x) = 2, 2 = (1 +/- x)
 			// adds added/subtracted value to x in variables to prepere for simple assignment
-			if (inAssignment) {
+			if (inAssignment == true) {
 				if (op == Operation.Operator.ADD
 						  && l instanceof IntConstant
 						  && r instanceof IntVariable) {
