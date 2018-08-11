@@ -49,6 +49,7 @@ public class ConstantPropagation extends BasicService {
      * @return The simplified expression.
      */
     public Expression simplify(Expression expression) {
+
         /* Log a sanity check and increment the invocation counter. */
         log.log(Level.FINEST, "Before Propagation: " + expression);
         invocations++;
@@ -67,6 +68,7 @@ public class ConstantPropagation extends BasicService {
 
         Map<Variable, Constant> replacements =
                 scoutVisitor.getReplacements();
+
 
         log.log(Level.FINEST, "Replacements: " + replacements.toString());
 
@@ -105,8 +107,14 @@ public class ConstantPropagation extends BasicService {
 
         log.log(Level.FINEST, "After Simplification: " + simplifiedExpression);
 
-        return simplifiedExpression;
-
+        /* If the size of replacements is zero, then we have nothing further to
+         * propagate. Otherwise, repeat the same process with the simplified expression.
+         */
+        if (replacements.size() == 0) {
+            return simplifiedExpression;
+        } else {
+            return simplify(simplifiedExpression);
+        }
     }
 
     /**
