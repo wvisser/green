@@ -132,6 +132,10 @@ public class ConstantPropogation extends BasicService {
     private static class SimplificationVisitor extends Visitor {
 
         private Stack<Expression> stack;
+        private final Operation o_true= new Operation(Operation.Operator.EQ,
+                    new IntConstant(0), new IntConstant(0));
+        private final Operation o_false = new Operation(Operation.Operator.EQ,
+                    new IntConstant(0), new IntConstant(1));
 
         public SimplificationVisitor() {
             this.stack = new Stack<Expression>();
@@ -160,56 +164,44 @@ public class ConstantPropogation extends BasicService {
                 switch (op) {
                     case LT:
                         if (r.compareTo(l) < 0) {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(0), new IntConstant(0)));
+                            stack.push(o_true);
                         } else {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(1), new IntConstant(0)));
+                            stack.push(o_false);
                         }
                         return;
                     case LE:
                         if (r.compareTo(l) <= 0) {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(0), new IntConstant(0)));
+                            stack.push(o_true);
                         } else {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(1), new IntConstant(0)));
+                            stack.push(o_false);
                         }
                         return;
                     case GT:
                         if (r.compareTo(l) > 0) {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(0), new IntConstant(0)));
+                            stack.push(o_true);
                         } else {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(1), new IntConstant(0)));
+                            stack.push(o_false);
                         }
                         return;
                     case GE:
                         if (r.compareTo(l) >= 0) {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(0), new IntConstant(0)));
+                            stack.push(o_true);
                         } else {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(1), new IntConstant(0)));
+                            stack.push(o_false);
                         }
                         return;
                     case EQ:
                         if (r.compareTo(l) == 0) {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(0), new IntConstant(0)));
+                            stack.push(o_true);
                         } else {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(1), new IntConstant(0)));
+                            stack.push(o_false);
                         }
                         return;
                     case NE:
                         if (r.compareTo(l) != 0) {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(0), new IntConstant(0)));
+                            stack.push(o_true);
                         } else {
-                            stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(1), new IntConstant(0)));
+                            stack.push(o_false);
                         }
                         return;
                     case AND:
