@@ -126,8 +126,8 @@ public class ConstantPropogation extends BasicService {
 				}
 				// complex assignment (1 +/- x) = 2, 2 = (1 +/- x)
 				if (l instanceof IntConstant && r instanceof Operation) {
-					Expression r2 = stack.pop();
-					Expression l2 = stack.pop();
+					Expression r2 = ((Operation) r).getOperand(1);
+					Expression l2 = ((Operation) r).getOperand(0);
 					if (r2 instanceof IntVariable && l2 instanceof IntConstant) {
 						l = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) l2).getValue() * 
 								  (((Operation) r).getOperator() == Operation.Operator.ADD ? -1 : 1));
@@ -138,8 +138,8 @@ public class ConstantPropogation extends BasicService {
 						r = l2;
 					}
 				} else if (l instanceof Operation && r instanceof IntConstant) {
-					Expression r2 = stack.pop();
-					Expression l2 = stack.pop();
+					Expression r2 = ((Operation) r).getOperand(1);
+					Expression l2 = ((Operation) r).getOperand(0);
 					if (r2 instanceof IntVariable && l2 instanceof IntConstant) {
 						r = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) l2).getValue() * 
 								  (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
