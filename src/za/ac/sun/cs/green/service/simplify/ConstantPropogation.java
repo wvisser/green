@@ -78,6 +78,7 @@ public class ConstantPropogation extends BasicService {
 
         private Stack<Expression> stack;
         private HashMap<IntVariable, IntConstant> variables;
+        private HashMap<IntVariable, IntConstant> partials;
 
         public ConstantPropogationVisitor() {
             this.stack = new Stack<Expression>();
@@ -130,9 +131,9 @@ public class ConstantPropogation extends BasicService {
                     && l instanceof IntVariable)) {
                 System.out.println("adding variable " + l + " to list with value " + r);
                 if (variables.containsKey((IntVariable) l)) {
-                    int val = variables.get((IntVariable) l).getValue();
+                    int val = partials.get((IntVariable) l).getValue();
                     System.out.println("variable " + l + " has partial assignment " + val + ", adjusting");
-                    variables.replace((IntVariable) l, new IntConstant(val + ((IntConstant) r).getValue()));
+                    variables.put((IntVariable) l, new IntConstant(val + ((IntConstant) r).getValue()));
                 } else {
                     variables.put((IntVariable) l, (IntConstant) r);
                 }
@@ -142,10 +143,10 @@ public class ConstantPropogation extends BasicService {
                     && (r instanceof IntVariable
                     && l instanceof IntConstant)) {
                 System.out.println("adding variable " + r + " to list with value " + r);
-                if (variables.containsKey((IntVariable) r)) {
-                    int val = variables.get((IntVariable) r).getValue();
+                if (partials.containsKey((IntVariable) r)) {
+                    int val = partials.get((IntVariable) r).getValue();
                     System.out.println("variable " + r + " has partial assignment " + val + ", adjusting");
-                    variables.replace((IntVariable) r, new IntConstant(val + ((IntConstant) l).getValue()));
+                    variables.put((IntVariable) r, new IntConstant(val + ((IntConstant) l).getValue()));
                 } else {
                     variables.put((IntVariable) r, (IntConstant) l);
                 }
@@ -158,14 +159,14 @@ public class ConstantPropogation extends BasicService {
                     && l instanceof IntConstant
                     && r instanceof IntVariable) {
                 System.out.println("partially assigning -" + l + " to variable " + r);
-                variables.put((IntVariable) r, new IntConstant(((IntConstant) l).getValue() * -1));
+                partials.put((IntVariable) r, new IntConstant(((IntConstant) l).getValue() * -1));
                 stack.push(r);
                 return;
             } else if (op == Operation.Operator.ADD
                     && l instanceof IntVariable
                     && r instanceof IntConstant) {
                 System.out.println("partially assigning -" + l + " to variable " + r);
-                variables.put((IntVariable) l, new IntConstant(((IntConstant) r).getValue() * -1));
+                partials.put((IntVariable) l, new IntConstant(((IntConstant) r).getValue() * -1));
                 stack.push(l);
                 return;
             }
@@ -173,14 +174,14 @@ public class ConstantPropogation extends BasicService {
                     && l instanceof IntConstant
                     && r instanceof IntVariable) {
                 System.out.println("partially assigning " + l + " to variable " + r);
-                variables.put((IntVariable) r, (IntConstant) l);
+                partials.put((IntVariable) r, (IntConstant) l);
                 stack.push(r);
                 return;
             } else if (op == Operation.Operator.ADD
                     && l instanceof IntVariable
                     && r instanceof IntConstant) {
                 System.out.println("partially assigning " + l + " to variable " + r);
-                variables.put((IntVariable) l, (IntConstant) r);
+                partials.put((IntVariable) l, (IntConstant) r);
                 stack.push(l);
                 return;
             }
