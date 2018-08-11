@@ -204,10 +204,28 @@ public class ConstantPropogation extends BasicService {
                             stack.push(o_false);
                         }
                         return;
+                    default:
+                        break;
+                }
+            }
+            if (r instanceof Operation && l instanceof Operation) {
+                switch (op) {
                     case AND:
-                        break;
+                        if (r.equals(o_true) && l.equals(o_true)) {
+                            stack.push(o_true);
+                            return;
+                        } else {
+                            stack.push(o_false);
+                            return;
+                        }
                     case OR:
-                        break;
+                        if (r.equals(o_false) && l.equals(o_false)) {
+                            stack.push(o_false);
+                            return;
+                        } else {
+                            stack.push(o_true);
+                            return;
+                        }
                     default:
                         break;
                 }
