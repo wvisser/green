@@ -105,6 +105,7 @@ public class ConstantPropogation extends BasicService {
 		public void preVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
 			if (op == Operation.Operator.EQ) {
+				System.out.println("assignment is true");
 				inAssignment = true;
 			}
 		}
@@ -133,6 +134,7 @@ public class ConstantPropogation extends BasicService {
 				}
 				stack.push(new Operation(op, l, r));
 				inAssignment = false;
+				System.out.println("assignment is false");
 				return;
 			} else if (op == Operation.Operator.EQ
 					  && (r instanceof IntVariable
@@ -147,6 +149,7 @@ public class ConstantPropogation extends BasicService {
 				}
 				stack.push(new Operation(op, l, r));
 				inAssignment = false;
+				System.out.println("assignment is false");
 				return;
 			}
 			// complex assignment (1 +/- x) = 2, 2 = (1 +/- x)
@@ -185,9 +188,11 @@ public class ConstantPropogation extends BasicService {
 			}
 			// replacement of variables
 			if (l instanceof IntVariable && variables.containsKey((IntVariable) l)) {
+				System.out.println("replacing variable " + l + " with value " + variables.get(l));
 				l = variables.get((IntVariable) l);
 			}
 			if (r instanceof IntVariable && variables.containsKey((IntVariable) r)) {
+				System.out.println("replacing variable " + r + " with value " + variables.get(r));
 				r = variables.get((IntVariable) r);
 			}
 			stack.push(new Operation(op, l, r));
