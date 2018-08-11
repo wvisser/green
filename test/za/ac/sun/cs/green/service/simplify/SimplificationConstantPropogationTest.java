@@ -93,7 +93,7 @@ public class SimplificationConstantPropogationTest {
     public void test02() {
         IntConstant c1 = new IntConstant(4);
         IntConstant c2 = new IntConstant(10);
-        Operation o = new Operation(Operation.Operator.LT, c1, c2);
+        Operation o = new Operation(Operation.Operator.LT, c1, c2); // 4  < 10
         check(o, "0==0");
     }
 
@@ -101,7 +101,7 @@ public class SimplificationConstantPropogationTest {
     public void test03() {
         IntConstant c1 = new IntConstant(4);
         IntConstant c2 = new IntConstant(10);
-        Operation o = new Operation(Operation.Operator.GT, c1, c2);
+        Operation o = new Operation(Operation.Operator.GT, c1, c2); // 4 > 10
         check(o, "0==1");
     }
 
@@ -111,7 +111,7 @@ public class SimplificationConstantPropogationTest {
         IntConstant c2 = new IntConstant(10);
         Operation o1 = new Operation(Operation.Operator.LT, c1, c2);
         Operation o2 = new Operation(Operation.Operator.GT, c1, c2);
-        Operation o = new Operation(Operation.Operator.AND, o1, o2);
+        Operation o = new Operation(Operation.Operator.AND, o1, o2); // 4 < 10 && 4 > 10
         check(o, "0==1");
     }
 
@@ -122,13 +122,13 @@ public class SimplificationConstantPropogationTest {
         IntConstant c = new IntConstant(1);
         IntConstant c2 = new IntConstant(10);
         IntConstant c3 = new IntConstant(2);
-        Operation o1 = new Operation(Operation.Operator.EQ, c, x);
-        Operation o2 = new Operation(Operation.Operator.ADD, x, y);
-        Operation o3 = new Operation(Operation.Operator.LT, o2, c2);
-        Operation oi = new Operation(Operation.Operator.SUB, y, c);
-        Operation o4 = new Operation(Operation.Operator.EQ, c3, oi);
-        Operation o5 = new Operation(Operation.Operator.AND, o1, o3);
-        Operation o = new Operation(Operation.Operator.AND, o5, o4);
+        Operation o1 = new Operation(Operation.Operator.EQ, c, x); // 1 = x
+        Operation o2 = new Operation(Operation.Operator.ADD, x, y); // x + y
+        Operation o3 = new Operation(Operation.Operator.LT, o2, c2); // (x+y) < 2
+        Operation oi = new Operation(Operation.Operator.SUB, y, c); // (y-1)
+        Operation o4 = new Operation(Operation.Operator.EQ, c3, oi); // 2 = (y-1)
+        Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // (1=x) && (x+y) < 10
+        Operation o = new Operation(Operation.Operator.AND, o5, o4); // ((1=x) && (x+y) < 10) && 2 = (y-1)
         check(o, "(1==x)&&(3==y)");
     }
 
