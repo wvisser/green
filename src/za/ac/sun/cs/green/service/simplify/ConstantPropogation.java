@@ -119,12 +119,14 @@ public class ConstantPropogation extends BasicService {
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
 			System.out.println("1: " + variable + "\n");
+			//changeMade = true;
 		}
 
 		@Override
 		public void postVisit(IntConstant constant) {
 			stack.push(constant);
 			System.out.println("2: " + constant + "\n");
+			//changeMade = true;
 		}
 
 		@Override
@@ -230,6 +232,34 @@ public class ConstantPropogation extends BasicService {
 						}
 					} 
 					break;
+				case ADD:
+					IntConstant vADD = map.get(operands[0]);
+					if (vADD != null) {
+						operands[0] = vADD;
+						changeMade = true;
+					} 
+					break;
+				case SUB:
+					IntConstant vSUB = map.get(operands[0]);
+					if (vSUB != null) {
+						operands[0] = vSUB;
+						changeMade = true;
+					}
+					break;
+				case MUL:
+					IntConstant vMUL = map.get(operands[0]);
+					if (vMUL != null) {
+						operands[0] = vMUL;
+						changeMade = true;
+					}
+					break;
+				case DIV:
+					IntConstant vDIV = map.get(operands[0]);
+					if (vDIV != null) {
+						operands[0] = vDIV;
+						changeMade = true;
+					}
+					break;
 				default:
 					break;
 				}
@@ -321,6 +351,34 @@ public class ConstantPropogation extends BasicService {
 							changeMade = true;
 						}
 					} 
+					break;
+				case ADD:
+					IntConstant vADD = map.get(operands[1]);
+					if (vADD != null) {
+						operands[1] = vADD;
+						changeMade = true;
+					} 
+					break;
+				case SUB:
+					IntConstant vSUB = map.get(operands[1]);
+					if (vSUB != null) {
+						operands[1] = vSUB;
+						changeMade = true;
+					}
+					break;
+				case MUL:
+					IntConstant vMUL = map.get(operands[1]);
+					if (vMUL != null) {
+						operands[1] = vMUL;
+						changeMade = true;
+					}
+					break;
+				case DIV:
+					IntConstant vDIV = map.get(operands[1]);
+					if (vDIV != null) {
+						operands[1] = vDIV;
+						changeMade = true;
+					}
 					break;
 				default:
 					break;
@@ -1584,7 +1642,7 @@ public class ConstantPropogation extends BasicService {
 					if ((constLeft.getValue() == constRight.getValue()) && (constLeft.getValue() != 0)) { // if infinite loop, add if the operand != 0 because of the 0==0 case for true
 						stack.push(Operation.TRUE);
 						replacementMade = true;
-						changeMade = true;
+						//changeMade = true;
 					} else if (!operands[0].equals(operands[1])) {
 						stack.push(Operation.FALSE);
 						replacementMade = true;
@@ -1597,7 +1655,7 @@ public class ConstantPropogation extends BasicService {
 					} else {
 						stack.push(Operation.FALSE);
 					}
-					changeMade = true;
+					//changeMade = true;
 					replacementMade = true;
 					break;
 				case LE:
@@ -1606,7 +1664,7 @@ public class ConstantPropogation extends BasicService {
 					} else {
 						stack.push(Operation.FALSE);
 					}
-					changeMade = true;
+					//changeMade = true;
 					replacementMade = true;
 					break;
 				case GT:
@@ -1615,7 +1673,7 @@ public class ConstantPropogation extends BasicService {
 					} else {
 						stack.push(Operation.FALSE);
 					}
-					changeMade = true;
+					//changeMade = true;
 					replacementMade = true;
 					break;
 				case GE:
@@ -1624,7 +1682,7 @@ public class ConstantPropogation extends BasicService {
 					} else {
 						stack.push(Operation.FALSE);
 					}
-					changeMade = true;
+					//changeMade = true;
 					replacementMade = true;
 					break;
 				case NE:
@@ -1633,40 +1691,61 @@ public class ConstantPropogation extends BasicService {
 					} else {
 						stack.push(Operation.FALSE);
 					}
-					changeMade = true;
+					//changeMade = true;
 					replacementMade = true;
 					break;
+				case ADD:
+					IntConstant operationToConstantADD = new IntConstant(constLeft.getValue() + constRight.getValue());
+					stack.push(operationToConstantADD);
+					replacementMade = true;
+					break;
+				case SUB:
+					IntConstant operationToConstantSUB = new IntConstant(constLeft.getValue() - constRight.getValue());
+					stack.push(operationToConstantSUB);
+					replacementMade = true;
+					break;
+				case MUL:
+					IntConstant operationToConstantMUL = new IntConstant(constLeft.getValue() * constRight.getValue());
+					stack.push(operationToConstantMUL);
+					replacementMade = true;
+					break;
+				case DIV:
+					IntConstant operationToConstantDIV = new IntConstant(constLeft.getValue() / constRight.getValue());
+					stack.push(operationToConstantDIV);
+					replacementMade = true;
+					break;	
+				
 				default:
 					break;
 				}
 			}
 			
-//			if (operands[0].getClass().equals(Operation.class) && operands[1].getClass().equals(IntVariable.class)) {
-//				System.out.println("could split");
-//				Map<Variable, IntConstant> mapLeft = new HashMap<Variable, IntConstant>();
-//				Map<Variable, IntConstant> mapRight = new HashMap<Variable, IntConstant>();
-//				Expression leftBefore = operands[0];
-//				Expression rightBefore = operands[1];
-//				
-//				Expression left = GetSimplifiedExpression(mapLeft, operands[0]);
-//				Expression right = GetSimplifiedExpression(mapRight, operands[1]);	
-//				operands[0] = left;
-//				operands[1] = right;
-//			}
-//			
-//			if (operands[1].getClass().equals(Operation.class) && operands[0].getClass().equals(IntVariable.class)) {
-//				
-//				Map<Variable, IntConstant> mapLeft = new HashMap<Variable, IntConstant>();
-//				Map<Variable, IntConstant> mapRight = new HashMap<Variable, IntConstant>();
-//				Expression leftBefore = operands[0];
-//				Expression rightBefore = operands[1];
-//				System.out.println("IN THIS SECTION: " + leftBefore + " " + rightBefore);
-//				Expression left = GetSimplifiedExpression(map, operands[0]);
-//				Expression right = GetSimplifiedExpression(map, operands[1]);	
-//				System.out.println("IN THIS SECTION after: " + left + " " + right);
-//				operands[0] = left;
-//				operands[1] = right;
-//			}
+			if (operands[0].getClass().equals(Operation.class) && operands[1].getClass().equals(IntVariable.class)) {
+				System.out.println("could split");
+				Expression leftBefore = operands[0];
+				Expression rightBefore = operands[1];
+				//for (int i; i < map.size(); i++) {
+					System.out.println(map.toString());
+				//}
+				
+				Expression left = GetSimplifiedExpression(map, operands[0]);
+				Expression right = GetSimplifiedExpression(map, operands[1]);	
+				operands[0] = left;
+				operands[1] = right;
+			}
+			
+			if (operands[1].getClass().equals(Operation.class) && operands[0].getClass().equals(IntVariable.class)) {
+				
+				Expression leftBefore = operands[0];
+				Expression rightBefore = operands[1];
+				System.out.println("IN THIS SECTION: " + leftBefore + " " + rightBefore);
+				System.out.println(map.toString());
+				Expression left = GetSimplifiedExpression(map, operands[0]);
+				Expression right = GetSimplifiedExpression(map, operands[1]);	
+				System.out.println("IN THIS SECTION after: " + left + " " + right);
+				operands[0] = left;
+				operands[1] = right;
+			}
 			
 			if (operands[0].getClass().equals(Operation.class) && operands[1].getClass().equals(Operation.class)) {
 				if (operands[0].equals(Operation.TRUE) && !operands[1].equals(Operation.TRUE) && operation.getOperator().equals(Operator.AND)) {
