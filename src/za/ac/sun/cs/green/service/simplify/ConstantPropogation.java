@@ -159,57 +159,57 @@ public class ConstantPropogation extends BasicService {
             if (r instanceof IntConstant && l instanceof IntConstant) {
                 switch (op) {
                     case LT:
-                        if (l.compareTo(r) < 0) {
+                        if (r.compareTo(l) < 0) {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(42), new IntConstant(42)));
+                                    new IntConstant(0), new IntConstant(0)));
                         } else {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(21), new IntConstant(42)));
+                                    new IntConstant(1), new IntConstant(0)));
                         }
                         return;
                     case LE:
-                        if (l.compareTo(r) <= 0) {
+                        if (r.compareTo(l) <= 0) {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(42), new IntConstant(42)));
+                                    new IntConstant(0), new IntConstant(0)));
                         } else {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(21), new IntConstant(42)));
+                                    new IntConstant(1), new IntConstant(0)));
                         }
                         return;
                     case GT:
-                        if (l.compareTo(r) > 0) {
+                        if (r.compareTo(l) > 0) {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(42), new IntConstant(42)));
+                                    new IntConstant(0), new IntConstant(0)));
                         } else {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(21), new IntConstant(42)));
+                                    new IntConstant(1), new IntConstant(0)));
                         }
                         return;
                     case GE:
-                        if (l.compareTo(r) >= 0) {
+                        if (r.compareTo(l) >= 0) {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(42), new IntConstant(42)));
+                                    new IntConstant(0), new IntConstant(0)));
                         } else {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(21), new IntConstant(42)));
+                                    new IntConstant(1), new IntConstant(0)));
                         }
                         return;
                     case EQ:
-                        if (l.compareTo(r) == 0) {
+                        if (r.compareTo(l) == 0) {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(42), new IntConstant(42)));
+                                    new IntConstant(0), new IntConstant(0)));
                         } else {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(21), new IntConstant(42)));
+                                    new IntConstant(1), new IntConstant(0)));
                         }
                         return;
                     case NE:
-                        if (l.compareTo(r) != 0) {
+                        if (r.compareTo(l) != 0) {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(42), new IntConstant(42)));
+                                    new IntConstant(0), new IntConstant(0)));
                         } else {
                             stack.push(new Operation(Operation.Operator.EQ,
-                                    new IntConstant(21), new IntConstant(42)));
+                                    new IntConstant(1), new IntConstant(0)));
                         }
                         return;
                     case AND:
