@@ -34,7 +34,6 @@ public class ConstantPropagation extends BasicService {
         @SuppressWarnings("unchecked")
         Set<Instance> result = (Set<Instance>) instance.getData(getClass());
         if (result == null) {
-            final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
             final Expression e = simplify(instance.getFullExpression());
             final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
             result = Collections.singleton(i);
@@ -89,9 +88,10 @@ public class ConstantPropagation extends BasicService {
             visitorException.printStackTrace();
         }
 
-        Expression newExpression = constantPropagationVisitor.getExpression();
-
         /* Now that we have our new expression, we can return this to processRequest */
+        Expression newExpression = constantPropagationVisitor.getExpression();
+        log.log(Level.FINEST, "After Propagation: " + newExpression);
+
         return newExpression;
 
     }
@@ -144,7 +144,7 @@ public class ConstantPropagation extends BasicService {
 
         /**
          * Some leg work surrounding operations has been "borrowed" from the
-         * {@link Renamer#postVisit(Operation)}.
+         * {@link za.ac.sun.cs.green.service.renamer.RenamerService.Renamer}.
          *
          * @param operation
          */
