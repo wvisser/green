@@ -9,14 +9,9 @@ import java.util.logging.Level;
 
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
-import za.ac.sun.cs.green.expr.Expression;
+import za.ac.sun.cs.green.expr.*;
 import za.ac.sun.cs.green.service.BasicService;
 import za.ac.sun.cs.green.util.Reporter;
-import za.ac.sun.cs.green.expr.Constant;
-import za.ac.sun.cs.green.expr.Operation;
-import za.ac.sun.cs.green.expr.Variable;
-import za.ac.sun.cs.green.expr.Visitor;
-import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation extends BasicService {
 
@@ -88,12 +83,108 @@ public class ConstantPropagation extends BasicService {
             visitorException.printStackTrace();
         }
 
+        /* Grab the propagated expression. */
+        Expression propagatedExpression = constantPropagationVisitor.getExpression();
+
+        log.log(Level.FINEST, "After Propagation: " + propagatedExpression);
+
+        /* A third visitor is now run over the expression to take care of
+         * simplifications.
+         */
+        SimplificationVisitor simplificationVisitor =
+                new SimplificationVisitor();
+
+        try {
+            propagatedExpression.accept(simplificationVisitor);
+        } catch (VisitorException visitorException) {
+            visitorException.printStackTrace();
+        }
+
         /* Now that we have our new expression, we can return this to processRequest */
-        Expression newExpression = constantPropagationVisitor.getExpression();
-        log.log(Level.FINEST, "After Propagation: " + newExpression);
+        Expression simplifiedExpression = simplificationVisitor.getExpression();
 
-        return newExpression;
+        log.log(Level.FINEST, "After Simplification: " + simplifiedExpression);
 
+        return simplifiedExpression;
+
+    }
+
+    /**
+     * The visitor responsible for simplifying mathematical expressions
+     */
+    private static class SimplificationVisitor extends Visitor {
+        private Stack<Expression> expressionStack;
+
+        public SimplificationVisitor() {
+            this.expressionStack = new Stack<>();
+        }
+
+        /**
+         * Constants just get pushed onto the stack.
+         *
+         * @param constant
+         */
+        @Override
+        public void postVisit(Constant constant) {
+            expressionStack.push(constant);
+        }
+
+        /**
+         * Variables just get pushed onto the stack.
+         *
+         * @param variable
+         */
+        @Override
+        public void postVisit(Variable variable) {
+            expressionStack.push(variable);
+        }
+
+        /**
+         * This method is responsible for rewriting triplets of Constant + Op + Constant
+         * into their evaluated, "final" form.
+         *
+         * @param operation
+         */
+        @Override
+        public void postVisit(Operation operation) {
+
+            /* Simple test case, binary add with both operands being constants. */
+            if (operation.getOperator() == Operation.Operator.ADD) {
+                Expression LHS = operation.getOperand(0);
+                Expression RHS = operation.getOperand(1);
+
+                /* If both are integer constants, we can add them. */
+                if (LHS instanceof IntConstant && RHS instanceof IntConstant) {
+                    int LHSValue = ((IntConstant) LHS).getValue();
+                    int RHSValue = ((IntConstant) RHS).getValue();
+
+                    int result = LHSValue + RHSValue;
+
+                    Expression resultExpr = new IntConstant(result);
+
+                    expressionStack.push(resultExpr);
+
+                }
+
+            } else {
+                /* The catch-all case. */
+                int arity = operation.getOperator().getArity();
+
+                Expression operands[] = new Expression[arity];
+                for (int i = arity; i > 0; i--) {
+                    operands[i - 1] = expressionStack.pop();
+                }
+                expressionStack.push(new Operation(operation.getOperator(), operands));
+
+            }
+        }
+
+        /**
+         * @return The expression resulting from the propagation.
+         */
+        public Expression getExpression() {
+            return expressionStack.pop();
+        }
     }
 
     /**
@@ -168,7 +259,7 @@ public class ConstantPropagation extends BasicService {
     }
 
     /**
-     * The visitor responsible for finding possible propagations on an expression/
+     * The visitor responsible for finding possible propagations on an expression.
      */
     private static class ScoutVisitor extends Visitor {
         private Map<Variable, Constant> replacements;
