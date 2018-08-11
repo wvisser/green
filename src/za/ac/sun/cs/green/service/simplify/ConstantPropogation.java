@@ -79,7 +79,6 @@ public class ConstantPropogation extends BasicService {
 		private Stack<Expression> stack;
 		private HashMap<IntVariable, IntConstant> variables;
 		private HashMap<IntVariable, IntConstant> partials;
-		private boolean inAssignment = false;
 
 		public ConstantPropogationVisitor() {
 			this.stack = new Stack<Expression>();
@@ -104,58 +103,34 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void preVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
-			if (op == Operation.Operator.EQ) {
-				System.out.println("assignment is true");
-				inAssignment = true;
+			Expression r = stack.pop();
+			Expression l = stack.pop();
+			System.out.println("preprocessing operator " + op);
+			// simple assignment
+			if (op == Operation.Operator.EQ
+					  && (r instanceof IntConstant
+					  && l instanceof IntVariable)) {
+				System.out.println("adding variable " + l + " to list with value " + r);
+				variables.put((IntVariable) l, (IntConstant) r);
+			} else if (op == Operation.Operator.EQ
+					  && (r instanceof IntVariable
+					  && l instanceof IntConstant)) {
+				System.out.println("adding variable " + r + " to list with value " + l);
+				variables.put((IntVariable) r, (IntConstant) l);
 			}
+			stack.push(l);
+			stack.push(r);
 		}
 
-		/**
-		 * Assigns values to variables
-		 *
-		 * @param operation
-		 */
 		@Override
 		public void postVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
 			Expression r = stack.pop();
 			Expression l = stack.pop();
-			System.out.println("processing operator " + op);
-			// simple assignment (x = 1, 1 = x)
-			if (op == Operation.Operator.EQ
-					  && (r instanceof IntConstant
-					  && l instanceof IntVariable)) {
-				System.out.println("adding variable " + l + " to list with value " + r);
-				if (partials.containsKey((IntVariable) l)) {
-					int val = partials.get((IntVariable) l).getValue();
-					System.out.println("variable " + l + " has partial assignment " + val + ", adjusting");
-					variables.put((IntVariable) l, new IntConstant(val + ((IntConstant) r).getValue()));
-				} else {
-					variables.put((IntVariable) l, (IntConstant) r);
-				}
-				stack.push(new Operation(op, l, r));
-				inAssignment = false;
-				System.out.println("assignment is false");
-				return;
-			} else if (op == Operation.Operator.EQ
-					  && (r instanceof IntVariable
-					  && l instanceof IntConstant)) {
-				System.out.println("adding variable " + r + " to list with value " + l);
-				if (partials.containsKey((IntVariable) r)) {
-					int val = partials.get((IntVariable) r).getValue();
-					System.out.println("variable " + r + " has partial assignment " + val + ", adjusting");
-					variables.put((IntVariable) r, new IntConstant(val + ((IntConstant) l).getValue()));
-				} else {
-					variables.put((IntVariable) r, (IntConstant) l);
-				}
-				stack.push(new Operation(op, l, r));
-				inAssignment = false;
-				System.out.println("assignment is false");
-				return;
-			}
+			System.out.println("postprocessing operator " + op);
 			// complex assignment (1 +/- x) = 2, 2 = (1 +/- x)
 			// adds added/subtracted value to x in variables to prepere for simple assignment
-			//if (inAssignment == true) {
+			if (false) {
 				if (op == Operation.Operator.ADD
 						  && l instanceof IntConstant
 						  && r instanceof IntVariable) {
@@ -186,7 +161,7 @@ public class ConstantPropogation extends BasicService {
 					stack.push(l);
 					return;
 				}
-			//}
+			}
 			// replacement of variables
 			if (l instanceof IntVariable && variables.containsKey((IntVariable) l)) {
 				System.out.println("replacing variable " + l + " with value " + variables.get(l));
