@@ -227,7 +227,7 @@ public class ConstantPropagation extends BasicService {
 						conjuncts.add(x);
 					}
 				}
-				/* Process bounds returns the output conjuncts TODO: watch dis */
+				/* Process bounds returns the output conjuncts which only have '==' operator */
 				SortedSet<Expression> newConjuncts = processBounds();
 				// new TreeSet<Expression>();
 				Expression c = null;
@@ -414,7 +414,6 @@ public class ConstantPropagation extends BasicService {
 				if (!stack.isEmpty()) {
 					Expression x = stack.pop();
 					if (!x.equals(Operation.TRUE)) {
-						/* TODO: This collects all x <oper> constants */
 						conjuncts.add(x);
 					}
 				}
@@ -456,11 +455,11 @@ public class ConstantPropagation extends BasicService {
 							// unsatisfiable = true;
 						}
 					} else {
-						// TODO: this solves Test00 but breaks Test01
-						/* This is where something becomes x + 1 == 0 */
-						Operation oper = swippySwoppy(e, op);
-						// System.out.println("After swippy: " + oper);
-						stack.push(oper);
+						/* This is where something becomes x + c == 0 */
+						// New code:
+						stack.push(swippySwoppy(e, op));
+						// System.out.println("After swippy: " + swippySwoppy(e, op));
+						// Old code:
 						// stack.push(new Operation(op, e, Operation.ZERO));
 					}
 				}
