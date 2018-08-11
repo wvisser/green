@@ -83,6 +83,7 @@ public class ConstantPropogation extends BasicService {
         public ConstantPropogationVisitor() {
             this.stack = new Stack<Expression>();
             this.variables = new HashMap<IntVariable, IntConstant>();
+            this.partials = new HashMap<IntVariable, IntConstant>();
         }
 
         public Expression getExpression() {
