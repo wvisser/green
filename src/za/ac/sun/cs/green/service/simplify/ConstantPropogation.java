@@ -155,7 +155,7 @@ public class ConstantPropogation extends BasicService {
 			}
 			// complex assignment (1 +/- x) = 2, 2 = (1 +/- x)
 			// adds added/subtracted value to x in variables to prepere for simple assignment
-			if (inAssignment == true) {
+			//if (inAssignment == true) {
 				if (op == Operation.Operator.ADD
 						  && l instanceof IntConstant
 						  && r instanceof IntVariable) {
@@ -186,7 +186,7 @@ public class ConstantPropogation extends BasicService {
 					stack.push(l);
 					return;
 				}
-			}
+			//}
 			// replacement of variables
 			if (l instanceof IntVariable && variables.containsKey((IntVariable) l)) {
 				System.out.println("replacing variable " + l + " with value " + variables.get(l));
