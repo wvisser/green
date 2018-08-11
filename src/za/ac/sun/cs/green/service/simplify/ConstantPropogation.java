@@ -4,18 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.Stack;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.logging.Level;
-
-import com.sun.org.apache.xpath.internal.operations.Lt;
-
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
-import za.ac.sun.cs.green.expr.Constant;
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
@@ -44,7 +36,7 @@ public class ConstantPropogation extends BasicService {
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, IntConstant> map = new HashMap<Variable, IntConstant>();
-			final Expression e = canonize(instance.getFullExpression(), map);
+			final Expression e = Propogate(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -57,14 +49,14 @@ public class ConstantPropogation extends BasicService {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-	public Expression canonize(Expression expression,
+	public Expression Propogate(Expression expression,
 			Map<Variable, IntConstant> map) {
 		try {
-			log.log(Level.FINEST, "Before Renaming: " + expression);
+			log.log(Level.FINEST, "Before Propogation: " + expression);
 			invocations++;
 			Expression canonized = expression;
 			canonized = GetSimplifiedExpression(map, canonized);
-			log.log(Level.FINEST, "After Renaming: " + canonized);
+			log.log(Level.FINEST, "After Propogation: " + canonized);
 			return canonized;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
@@ -78,21 +70,18 @@ public class ConstantPropogation extends BasicService {
 		boolean changeMade = false;
 		boolean endExpressionFalse = false;
 		if (ex != null) {
-			System.out.println("--run renamer''\n");
 			Renamer re = new Renamer(map, changeMade);
 			ex = re.rename(ex);
 			changeMade = re.getChangeMade();
 			endExpressionFalse = re.getEndExpressionFalse();
 			while (changeMade == true) {
 				changeMade = false;
-				System.out.println("--run renamer''\n");
 				Renamer re2 = new Renamer(map, changeMade);
 				ex = re2.rename(ex);
 				changeMade = re2.getChangeMade();
 				endExpressionFalse = re.getEndExpressionFalse();
 			}
 		}
-		
 		if (endExpressionFalse == true) {
 			return Operation.FALSE;
 		} else {
@@ -130,15 +119,11 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
-			System.out.println("1: " + variable + "\n");
-			//changeMade = true;
 		}
 
 		@Override
 		public void postVisit(IntConstant constant) {
 			stack.push(constant);
-			System.out.println("2: " + constant + "\n");
-			//changeMade = true;
 		}
 
 		@Override
@@ -149,27 +134,15 @@ public class ConstantPropogation extends BasicService {
 			for (int i = arity; i > 0; i--) {
 				operands[i - 1] = stack.pop();
 			}
-//			
-//			for (int i = arity; i > 0; i--) {
-//				System.out.println("**" + i + ": " + operands[i - 1]);
-//			}
-//			System.out.println("sup: " + operands[0].getClass());
-//			System.out.println("sup: " + operands[1].getClass());
-			
-			
 			if (operands[0].getClass().equals(IntVariable.class) && operands[1].getClass().equals(IntConstant.class)) {
 				Operator operator = operation.getOperator();
 				switch (operator) {
 				case EQ:
 					IntConstant v = map.get(operands[0]);
-//					System.out.println("this is bad1: " + operands[0]);
-//					System.out.println("this is bad1: " + v);
 					if (v == null) {
 						IntConstant con = new IntConstant(Integer.parseInt(operands[1].toString()));
 						Variable var = new IntVariable(operands[0].toString(), 0, 99999);
 						map.put(var, con);
-						System.out.println("3: " + var + " : " + con +  "\n");
-						//System.out.println("changeMade1");
 						changeMade = true;
 					} else {
 						if (!v.equals(operands[1])) {
@@ -197,7 +170,6 @@ public class ConstantPropogation extends BasicService {
 						if (vLT.getValue() < (new IntConstant(Integer.parseInt(operands[1].toString()))).getValue()) {
 							stack.push(Operation.TRUE);
 							replacementMade = true;
-							System.out.println("cm4");
 							changeMade = true;
 						} else {
 							stack.push(Operation.FALSE);
@@ -287,14 +259,10 @@ public class ConstantPropogation extends BasicService {
 				switch (operator) {
 				case EQ:
 					IntConstant v = map.get(operands[1]);
-//					System.out.println("this is bad1: " + operands[0]);
-//					System.out.println("this is bad1: " + v);
 					if (v == null) {
 						IntConstant con = new IntConstant(Integer.parseInt(operands[0].toString()));
 						Variable var = new IntVariable(operands[1].toString(), 0, 99999);
 						map.put(var, con);
-						System.out.println("3: " + var + " : " + con +  "\n");
-						//System.out.println("changeMade1");
 						changeMade = true;
 					} 
 					break;
@@ -401,36 +369,19 @@ public class ConstantPropogation extends BasicService {
 				}
 			}
 			
-//			if (operands[1].getClass().equals(IntVariable.class) && operands[0].getClass().equals(IntConstant.class) && operation.getOperator().equals(Operation.Operator.EQ)) {
-//				IntConstant v = map.get(operands[1]);
-//				if (v == null) {
-//					IntConstant con = new IntConstant(Integer.parseInt(operands[0].toString()));
-//					Variable var = new IntVariable(operands[1].toString(), 0, 99999);
-//					map.put(var, con);
-//					System.out.println("4: " + var + " : " + con +  "\n");
-//					//System.out.println("changeMade2");
-//					changeMade = true;
-//				}
-//			}
-			
 			if (operands[1].getClass().equals(IntVariable.class) && operands[0].getClass().equals(IntVariable.class)) {
 				IntConstant v = map.get(operands[0]);
 				if (v != null) {
 					operands[0] = v;
-					//System.out.println("changeMade3");
 					changeMade = true;
 				}
 				v = map.get(operands[1]);
 				if (v != null) {
 					operands[1] = v;
-					//System.out.println("changeMade4");
 					changeMade = true;
 				}
 			}
-			
-			
-//////////// TEST
-			
+	
 			if (operands[0].getClass().equals(Operation.class) && operands[1].getClass().equals(IntConstant.class)) {
 				Operator operator = operation.getOperator();
 				switch (operator) {
@@ -440,8 +391,6 @@ public class ConstantPropogation extends BasicService {
 					case ADD:
 						if (opp.getOperand(0).getClass().equals(IntConstant.class)
 								&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) opp.getOperand(0);
 							int ans = const1.getValue() - const2.getValue();
@@ -463,8 +412,6 @@ public class ConstantPropogation extends BasicService {
 					case SUB:
 						if (opp.getOperand(0).getClass().equals(IntConstant.class)
 								&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) opp.getOperand(0);
 							int ans = const2.getValue() - const1.getValue();
@@ -473,7 +420,6 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var = new IntVariable(opp.getOperand(1).toString(), 0, 99999);
 							operands[1] = new IntConstant(ans);
 							map.put(var, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
 							changeMade = true;
 						} else if (opp.getOperand(1).getClass().equals(IntConstant.class)
 								&& opp.getOperand(0).getClass().equals(IntVariable.class)) {
@@ -485,15 +431,12 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var2 = new IntVariable(opp.getOperand(0).toString(), 0, 99999);
 							operands[1] = new IntConstant(ans);
 							map.put(var2, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
 							changeMade = true;
 						}
 						break;
 					case MUL:
 						if (opp.getOperand(0).getClass().equals(IntConstant.class)
 								&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) opp.getOperand(0);
 							int ans = const1.getValue() / const2.getValue();
@@ -515,8 +458,6 @@ public class ConstantPropogation extends BasicService {
 					case DIV:
 						if (opp.getOperand(0).getClass().equals(IntConstant.class)
 								&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) opp.getOperand(0);
 							int ans = const2.getValue() / const1.getValue();
@@ -540,7 +481,99 @@ public class ConstantPropogation extends BasicService {
 					}
 					break;
 				case NE:
-					// TODO
+					Operation oppNE = (Operation) operands[0];
+					switch (oppNE.getOperator()) {
+					case ADD:
+						if (oppNE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(1).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[1];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(0);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[0] = oppNE.getOperand(1);
+							operands[1] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppNE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[1];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(1);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[0] = oppNE.getOperand(0);
+							operands[1] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					case SUB:
+						if (oppNE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(1).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[1];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(0);
+							int ans = const2.getValue() - const1.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[0] = oppNE.getOperand(1);
+							IntVariable var = new IntVariable(oppNE.getOperand(1).toString(), 0, 99999);
+							operands[1] = new IntConstant(ans);
+							map.put(var, new IntConstant(ans));
+							changeMade = true;
+						} else if (oppNE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[1];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(1);
+							int ans = const1.getValue() + const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[0] = oppNE.getOperand(0);
+							IntVariable var2 = new IntVariable(oppNE.getOperand(0).toString(), 0, 99999);
+							operands[1] = new IntConstant(ans);
+							map.put(var2, new IntConstant(ans));
+							changeMade = true;
+						}
+						break;
+					case MUL:
+						if (oppNE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(1).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[1];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(0);
+							int ans = const1.getValue() / const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[0] = oppNE.getOperand(1);
+							operands[1] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppNE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[1];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(1);
+							int ans = const1.getValue() / const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[0] = oppNE.getOperand(0);
+							operands[1] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					case DIV:
+						if (oppNE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(1).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[1];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(0);
+							int ans = const2.getValue() / const1.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[0] = oppNE.getOperand(1);
+							operands[1] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppNE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[1];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(1);
+							int ans = const1.getValue() / const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[0] = oppNE.getOperand(0);
+							operands[1] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					default:
+						break;
+					}
 					break;
 				case LT:
 					Operation oppLT = (Operation) operands[0];
@@ -548,8 +581,6 @@ public class ConstantPropogation extends BasicService {
 					case ADD:
 						if (oppLT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
 							int ans = const1.getValue() - const2.getValue();
@@ -571,8 +602,6 @@ public class ConstantPropogation extends BasicService {
 					case SUB:
 						if (oppLT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
 							int ans = const2.getValue() - const1.getValue();
@@ -594,8 +623,6 @@ public class ConstantPropogation extends BasicService {
 					case MUL:
 						if (oppLT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -610,7 +637,6 @@ public class ConstantPropogation extends BasicService {
 								&& oppLT.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(1);
-
 							if (const2.getValue() < 0) {
 								operation.setOperator(Operator.GT);
 							}
@@ -624,11 +650,8 @@ public class ConstantPropogation extends BasicService {
 					case DIV:
 						if (oppLT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
-
 							if (const2.getValue() < 0) {
 								operation.setOperator(Operator.GT);
 							}
@@ -641,7 +664,6 @@ public class ConstantPropogation extends BasicService {
 								&& oppLT.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(1);
-
 							if (const2.getValue() < 0) {
 								operation.setOperator(Operator.GT);
 							}
@@ -662,8 +684,6 @@ public class ConstantPropogation extends BasicService {
 					case ADD:
 						if (oppLE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
 							int ans = const1.getValue() - const2.getValue();
@@ -685,8 +705,6 @@ public class ConstantPropogation extends BasicService {
 					case SUB:
 						if (oppLE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
 							int ans = const2.getValue() - const1.getValue();
@@ -695,7 +713,6 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var = new IntVariable(oppLE.getOperand(1).toString(), 0, 99999);
 							operands[1] = new IntConstant(ans);
 							map.put(var, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
 							changeMade = true;
 						} else if (oppLE.getOperand(1).getClass().equals(IntConstant.class)
 								&& oppLE.getOperand(0).getClass().equals(IntVariable.class)) {
@@ -707,15 +724,12 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var2 = new IntVariable(oppLE.getOperand(0).toString(), 0, 99999);
 							operands[1] = new IntConstant(ans);
 							map.put(var2, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
 							changeMade = true;
 						}
 						break;
 					case MUL:
 						if (oppLE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -743,8 +757,6 @@ public class ConstantPropogation extends BasicService {
 					case DIV:
 						if (oppLE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -779,8 +791,6 @@ public class ConstantPropogation extends BasicService {
 					case ADD:
 						if (oppGT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
 							int ans = const1.getValue() - const2.getValue();
@@ -802,8 +812,6 @@ public class ConstantPropogation extends BasicService {
 					case SUB:
 						if (oppGT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
 							int ans = const2.getValue() - const1.getValue();
@@ -812,7 +820,6 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var = new IntVariable(oppGT.getOperand(1).toString(), 0, 99999);
 							operands[1] = new IntConstant(ans);
 							map.put(var, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
 							changeMade = true;
 						} else if (oppGT.getOperand(1).getClass().equals(IntConstant.class)
 								&& oppGT.getOperand(0).getClass().equals(IntVariable.class)) {
@@ -824,15 +831,12 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var2 = new IntVariable(oppGT.getOperand(0).toString(), 0, 99999);
 							operands[1] = new IntConstant(ans);
 							map.put(var2, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
 							changeMade = true;
 						}
 						break;
 					case MUL:
 						if (oppGT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -860,8 +864,6 @@ public class ConstantPropogation extends BasicService {
 					case DIV:
 						if (oppGT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -896,8 +898,6 @@ public class ConstantPropogation extends BasicService {
 					case ADD:
 						if (oppGE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
 							int ans = const1.getValue() - const2.getValue();
@@ -919,8 +919,6 @@ public class ConstantPropogation extends BasicService {
 					case SUB:
 						if (oppGE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
 							int ans = const2.getValue() - const1.getValue();
@@ -929,7 +927,6 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var = new IntVariable(oppGE.getOperand(1).toString(), 0, 99999);
 							operands[1] = new IntConstant(ans);
 							map.put(var, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
 							changeMade = true;
 						} else if (oppGE.getOperand(1).getClass().equals(IntConstant.class)
 								&& oppGE.getOperand(0).getClass().equals(IntVariable.class)) {
@@ -941,15 +938,12 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var2 = new IntVariable(oppGE.getOperand(0).toString(), 0, 99999);
 							operands[1] = new IntConstant(ans);
 							map.put(var2, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
 							changeMade = true;
 						}
 						break;
 					case MUL:
 						if (oppGE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -977,8 +971,6 @@ public class ConstantPropogation extends BasicService {
 					case DIV:
 						if (oppGE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -1006,40 +998,20 @@ public class ConstantPropogation extends BasicService {
 					default:
 						break;
 					}
-					break;
-				case ADD:
-					break;
-				case SUB:
-					// TODO
-					break;
-				case MUL:
-					// TODO
-					break;
-				case NOT:
-					// TODO
-					break;
 				default:
 					break;
 				}
 			}
 			
-////////////////////
-			
 			if (operands[1].getClass().equals(Operation.class) && operands[0].getClass().equals(IntConstant.class)) {
 				Operator operator = operation.getOperator();
-				System.out.println("this far");
 				switch (operator) {
 				case EQ:
-					System.out.println("this far2");
 					Operation opp = (Operation) operands[1];
-					System.out.println("this far3");
 					switch (opp.getOperator()) {
 					case ADD:
-						System.out.println("this far4");
 						if (opp.getOperand(0).getClass().equals(IntConstant.class)
 								&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) opp.getOperand(0);
 							int ans = const1.getValue() - const2.getValue();
@@ -1049,7 +1021,6 @@ public class ConstantPropogation extends BasicService {
 							changeMade = true;
 						} else if (opp.getOperand(1).getClass().equals(IntConstant.class)
 								&& opp.getOperand(0).getClass().equals(IntVariable.class)) {
-							System.out.println("this far");
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) opp.getOperand(1);
 							int ans = const1.getValue() - const2.getValue();
@@ -1060,11 +1031,8 @@ public class ConstantPropogation extends BasicService {
 						}
 						break;
 					case SUB:
-						System.out.println("this far5");
 						if (opp.getOperand(0).getClass().equals(IntConstant.class)
 								&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) opp.getOperand(0);
 							int ans = const2.getValue() - const1.getValue();
@@ -1073,31 +1041,23 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var = new IntVariable(opp.getOperand(1).toString(), 0, 99999);
 							operands[0] = new IntConstant(ans);
 							map.put(var, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
 							changeMade = true;
 						} else if (opp.getOperand(1).getClass().equals(IntConstant.class)
 								&& opp.getOperand(0).getClass().equals(IntVariable.class)) {
-							System.out.println("this far6");
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) opp.getOperand(1);
-							System.out.println("this far7");
 							int ans = const1.getValue() + const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, opp.getOperand(1), new IntConstant(ans));
 							operands[1] = opp.getOperand(0);
-							System.out.println("this far8");
 							IntVariable var2 = new IntVariable(opp.getOperand(0).toString(), 0, 99999);
 							operands[0] = new IntConstant(ans);
 							map.put(var2, new IntConstant(ans));
-							System.out.println("this far9");
-							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
 							changeMade = true;
 						}
 						break;
 					case MUL:
 						if (opp.getOperand(0).getClass().equals(IntConstant.class)
 								&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) opp.getOperand(0);
 							int ans = const1.getValue() / const2.getValue();
@@ -1119,8 +1079,6 @@ public class ConstantPropogation extends BasicService {
 					case DIV:
 						if (opp.getOperand(0).getClass().equals(IntConstant.class)
 								&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) opp.getOperand(0);
 							int ans = const2.getValue() / const1.getValue();
@@ -1144,16 +1102,105 @@ public class ConstantPropogation extends BasicService {
 					}
 					break;
 				case NE:
-					// TODO
-					break;
+					Operation oppNE = (Operation) operands[1];
+					switch (oppNE.getOperator()) {
+					case ADD:
+						if (oppNE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(1).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(0);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppNE.getOperand(1);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppNE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(1);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppNE.getOperand(0);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					case SUB:
+						if (oppNE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(1).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(0);
+							int ans = const2.getValue() - const1.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppNE.getOperand(1);
+							IntVariable var = new IntVariable(oppNE.getOperand(1).toString(), 0, 99999);
+							operands[0] = new IntConstant(ans);
+							map.put(var, new IntConstant(ans));
+							changeMade = true;
+						} else if (oppNE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(1);
+							int ans = const1.getValue() + const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppNE.getOperand(0);
+							IntVariable var2 = new IntVariable(oppNE.getOperand(0).toString(), 0, 99999);
+							operands[0] = new IntConstant(ans);
+							map.put(var2, new IntConstant(ans));
+							changeMade = true;
+						}
+						break;
+					case MUL:
+						if (oppNE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(1).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(0);
+							int ans = const1.getValue() / const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppNE.getOperand(1);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppNE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(1);
+							int ans = const1.getValue() / const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppNE.getOperand(0);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					case DIV:
+						if (oppNE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(1).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(0);
+							int ans = const2.getValue() / const1.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppNE.getOperand(1);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppNE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppNE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[1];
+							IntConstant const2 = (IntConstant) oppNE.getOperand(1);
+							int ans = const1.getValue() / const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppNE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppNE.getOperand(0);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					default:
+						break;
+					}
 				case LT:
 					Operation oppLT = (Operation) operands[0];
 					switch (oppLT.getOperator()) {
 					case ADD:
 						if (oppLT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
 							int ans = const1.getValue() - const2.getValue();
@@ -1175,8 +1222,6 @@ public class ConstantPropogation extends BasicService {
 					case SUB:
 						if (oppLT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
 							int ans = const2.getValue() - const1.getValue();
@@ -1198,8 +1243,6 @@ public class ConstantPropogation extends BasicService {
 					case MUL:
 						if (oppLT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -1227,8 +1270,6 @@ public class ConstantPropogation extends BasicService {
 					case DIV:
 						if (oppLT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -1263,8 +1304,6 @@ public class ConstantPropogation extends BasicService {
 					case ADD:
 						if (oppLE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
 							int ans = const1.getValue() - const2.getValue();
@@ -1286,8 +1325,6 @@ public class ConstantPropogation extends BasicService {
 					case SUB:
 						if (oppLE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
 							int ans = const2.getValue() - const1.getValue();
@@ -1296,7 +1333,6 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var = new IntVariable(oppLE.getOperand(1).toString(), 0, 99999);
 							operands[0] = new IntConstant(ans);
 							map.put(var, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
 							changeMade = true;
 						} else if (oppLE.getOperand(1).getClass().equals(IntConstant.class)
 								&& oppLE.getOperand(0).getClass().equals(IntVariable.class)) {
@@ -1308,15 +1344,12 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var2 = new IntVariable(oppLE.getOperand(0).toString(), 0, 99999);
 							operands[0] = new IntConstant(ans);
 							map.put(var2, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
 							changeMade = true;
 						}
 						break;
 					case MUL:
 						if (oppLE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -1344,8 +1377,6 @@ public class ConstantPropogation extends BasicService {
 					case DIV:
 						if (oppLE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppLE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -1380,8 +1411,6 @@ public class ConstantPropogation extends BasicService {
 					case ADD:
 						if (oppGT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
 							int ans = const1.getValue() - const2.getValue();
@@ -1403,8 +1432,6 @@ public class ConstantPropogation extends BasicService {
 					case SUB:
 						if (oppGT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
 							int ans = const2.getValue() - const1.getValue();
@@ -1413,7 +1440,6 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var = new IntVariable(oppGT.getOperand(1).toString(), 0, 99999);
 							operands[0] = new IntConstant(ans);
 							map.put(var, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
 							changeMade = true;
 						} else if (oppGT.getOperand(1).getClass().equals(IntConstant.class)
 								&& oppGT.getOperand(0).getClass().equals(IntVariable.class)) {
@@ -1425,15 +1451,12 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var2 = new IntVariable(oppGT.getOperand(0).toString(), 0, 99999);
 							operands[0] = new IntConstant(ans);
 							map.put(var2, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
 							changeMade = true;
 						}
 						break;
 					case MUL:
 						if (oppGT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -1461,8 +1484,6 @@ public class ConstantPropogation extends BasicService {
 					case DIV:
 						if (oppGT.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGT.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -1497,8 +1518,6 @@ public class ConstantPropogation extends BasicService {
 					case ADD:
 						if (oppGE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
 							int ans = const1.getValue() - const2.getValue();
@@ -1520,8 +1539,6 @@ public class ConstantPropogation extends BasicService {
 					case SUB:
 						if (oppGE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
 							int ans = const2.getValue() - const1.getValue();
@@ -1530,7 +1547,6 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var = new IntVariable(oppGE.getOperand(1).toString(), 0, 99999);
 							operands[0] = new IntConstant(ans);
 							map.put(var, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
 							changeMade = true;
 						} else if (oppGE.getOperand(1).getClass().equals(IntConstant.class)
 								&& oppGE.getOperand(0).getClass().equals(IntVariable.class)) {
@@ -1542,15 +1558,12 @@ public class ConstantPropogation extends BasicService {
 							IntVariable var2 = new IntVariable(oppGE.getOperand(0).toString(), 0, 99999);
 							operands[0] = new IntConstant(ans);
 							map.put(var2, new IntConstant(ans));
-							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
 							changeMade = true;
 						}
 						break;
 					case MUL:
 						if (oppGE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -1578,8 +1591,6 @@ public class ConstantPropogation extends BasicService {
 					case DIV:
 						if (oppGE.getOperand(0).getClass().equals(IntConstant.class)
 								&& oppGE.getOperand(1).getClass().equals(IntVariable.class)) {
-							// System.out.println(operands[1].getClass().toString() +
-							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
 							if (const2.getValue() < 0) {
@@ -1607,146 +1618,10 @@ public class ConstantPropogation extends BasicService {
 					default:
 						break;
 					}
-					break;
-				case ADD:
-					break;
-				case SUB:
-					// TODO
-					break;
-				case MUL:
-					// TODO
-					break;
-				case NOT:
-					// TODO
-					break;
 				default:
 					break;
 				}
 			}			
-			
-//////////////////////			
-//			if (operands[0].getClass().equals(Operation.class) && operands[1].getClass().equals(IntConstant.class)
-//					&& operation.getOperator().equals(Operation.Operator.EQ)) {
-//
-//				Operation opp = (Operation) operands[0];
-//				switch (opp.getOperator()) {
-//				case EQ:
-//					break;
-//				case NE:
-//					// TODO
-//					break;
-//				case LT:
-//					// TODO
-//					break;
-//				case LE:
-//					// TODO
-//					break;
-//				case GT:
-//					// TODO
-//					break;
-//				case GE:
-//					// TODO
-//					break;
-//				case ADD:
-//					if (opp.getOperand(0).getClass().equals(IntConstant.class)
-//							&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
-//						// System.out.println(operands[1].getClass().toString() +
-//						// opp.getOperand(1).getClass());
-//						IntConstant const1 = (IntConstant) operands[1];
-//						IntConstant const2 = (IntConstant) opp.getOperand(0);
-//						int ans = const1.getValue() - const2.getValue();
-//						operation = new Operation(Operation.Operator.EQ, opp.getOperand(1), new IntConstant(ans));
-//						operands[0] = opp.getOperand(1);
-//						operands[1] = new IntConstant(ans);
-//						changeMade = true;
-//						System.out.println("changeMade5");
-//					} else if (opp.getOperand(1).getClass().equals(IntConstant.class)
-//							&& opp.getOperand(0).getClass().equals(IntVariable.class)) {
-//						IntConstant const1 = (IntConstant) operands[1];
-//						IntConstant const2 = (IntConstant) opp.getOperand(1);
-//						int ans = const1.getValue() - const2.getValue();
-//						operation = new Operation(Operation.Operator.EQ, opp.getOperand(1), new IntConstant(ans));
-//						operands[0] = opp.getOperand(0);
-//						operands[1] = new IntConstant(ans);
-//						System.out.println("changeMade6");
-//						changeMade = true;
-//					}
-//					break;
-//				case SUB:
-//					// TODO
-//					break;
-//				case MUL:
-//					// TODO
-//					break;
-//				case NOT:
-//					// TODO
-//					break;
-//				default:
-//					break;
-//				}
-//				System.out.println("11: " + operands[0] + " : " + operands[1] + "\n");
-////				System.out.println("changeMade7");
-////				changeMade = true;
-//			} else if (operands[1].getClass().equals(Operation.class) && operands[0].getClass().equals(IntConstant.class)
-//					&& operation.getOperator().equals(Operation.Operator.EQ)) {
-//				Operation opp = (Operation) operands[1];
-//				switch (opp.getOperator()) {
-//				case EQ:
-//					// TODO
-//					break;
-//				case NE:
-//					// TODO
-//					break;
-//				case LT:
-//					// TODO
-//					break;
-//				case LE:
-//					// TODO
-//					break;
-//				case GT:
-//					// TODO
-//					break;
-//				case GE:
-//					// TODO
-//					break;
-//				case ADD:
-//					if (opp.getOperand(0).getClass().equals(IntConstant.class)
-//							&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
-//						// System.out.println(operands[1].getClass().toString() +
-//						// opp.getOperand(1).getClass());
-//						IntConstant const1 = (IntConstant) operands[0];
-//						IntConstant const2 = (IntConstant) opp.getOperand(0);
-//						int ans = const1.getValue() - const2.getValue();
-//						operation = new Operation(Operation.Operator.EQ, opp.getOperand(1), new IntConstant(ans));
-//						operands[0] = opp.getOperand(1);
-//						operands[1] = new IntConstant(ans);
-//						changeMade = true;
-//						//System.out.println("changeMade8");
-//					} else if (opp.getOperand(1).getClass().equals(IntConstant.class)
-//							&& opp.getOperand(0).getClass().equals(IntVariable.class)) {
-//						IntConstant const1 = (IntConstant) operands[0];
-//						IntConstant const2 = (IntConstant) opp.getOperand(1);
-//						int ans = const1.getValue() - const2.getValue();
-//						operation = new Operation(Operation.Operator.EQ, opp.getOperand(1), new IntConstant(ans));
-//						operands[0] = opp.getOperand(0);
-//						operands[1] = new IntConstant(ans);
-//						changeMade = true;
-//						//System.out.println("changeMade9");
-//					}
-//					break;
-//				case SUB:
-//					// TODO
-//					break;
-//				case MUL:
-//					// TODO
-//					break;
-//				case NOT:
-//					// TODO
-//					break;
-//				default:
-//					break;
-//				}
-//			}
 			
 			if (operands[0].getClass().equals(IntConstant.class) && operands[1].getClass().equals(IntConstant.class)) {
 				Operator opp = operation.getOperator();
@@ -1754,14 +1629,12 @@ public class ConstantPropogation extends BasicService {
 				IntConstant constRight = (IntConstant) operands[1];
 				switch (opp) {
 				case EQ:
-					if ((constLeft.getValue() == constRight.getValue()) && (constLeft.getValue() != 0)) { // if infinite loop, add if the operand != 0 because of the 0==0 case for true
+					if ((constLeft.getValue() == constRight.getValue()) && (constLeft.getValue() != 0)) {
 						stack.push(Operation.TRUE);
 						replacementMade = true;
-						//changeMade = true;
 					} else if (!operands[0].equals(operands[1])) {
 						stack.push(Operation.FALSE);
 						replacementMade = true;
-						//changeMade = true;
 					}
 					break;
 				case LT:
@@ -1770,7 +1643,6 @@ public class ConstantPropogation extends BasicService {
 					} else {
 						stack.push(Operation.FALSE);
 					}
-					//changeMade = true;
 					replacementMade = true;
 					break;
 				case LE:
@@ -1779,7 +1651,6 @@ public class ConstantPropogation extends BasicService {
 					} else {
 						stack.push(Operation.FALSE);
 					}
-					//changeMade = true;
 					replacementMade = true;
 					break;
 				case GT:
@@ -1788,7 +1659,6 @@ public class ConstantPropogation extends BasicService {
 					} else {
 						stack.push(Operation.FALSE);
 					}
-					//changeMade = true;
 					replacementMade = true;
 					break;
 				case GE:
@@ -1797,7 +1667,6 @@ public class ConstantPropogation extends BasicService {
 					} else {
 						stack.push(Operation.FALSE);
 					}
-					//changeMade = true;
 					replacementMade = true;
 					break;
 				case NE:
@@ -1806,7 +1675,6 @@ public class ConstantPropogation extends BasicService {
 					} else {
 						stack.push(Operation.FALSE);
 					}
-					//changeMade = true;
 					replacementMade = true;
 					break;
 				case ADD:
@@ -1836,13 +1704,6 @@ public class ConstantPropogation extends BasicService {
 			}
 			
 			if (operands[0].getClass().equals(Operation.class) && operands[1].getClass().equals(IntVariable.class)) {
-				System.out.println("could split");
-				Expression leftBefore = operands[0];
-				Expression rightBefore = operands[1];
-				//for (int i; i < map.size(); i++) {
-					System.out.println(map.toString());
-				//}
-				
 				Expression left = GetSimplifiedExpression(map, operands[0]);
 				Expression right = GetSimplifiedExpression(map, operands[1]);	
 				operands[0] = left;
@@ -1850,14 +1711,8 @@ public class ConstantPropogation extends BasicService {
 			}
 			
 			if (operands[1].getClass().equals(Operation.class) && operands[0].getClass().equals(IntVariable.class)) {
-				
-				Expression leftBefore = operands[0];
-				Expression rightBefore = operands[1];
-				System.out.println("IN THIS SECTION: " + leftBefore + " " + rightBefore);
-				System.out.println(map.toString());
 				Expression left = GetSimplifiedExpression(map, operands[0]);
 				Expression right = GetSimplifiedExpression(map, operands[1]);	
-				System.out.println("IN THIS SECTION after: " + left + " " + right);
 				operands[0] = left;
 				operands[1] = right;
 			}
@@ -1876,47 +1731,11 @@ public class ConstantPropogation extends BasicService {
 					operation.setOperator(newopp.getOperator());
 					changeMade = true;
 				}
-				
-				
-//				System.out.println("could split");
-//				Map<Variable, IntConstant> mapLeft = new HashMap<Variable, IntConstant>();
-//				Map<Variable, IntConstant> mapRight = new HashMap<Variable, IntConstant>();
-//				Expression leftBefore = operands[0];
-//				Expression rightBefore = operands[1];
-//				
-//				Expression left = GetSimplifiedExpression(mapLeft, operands[0]);
-//				Expression right = GetSimplifiedExpression(mapRight, operands[1]);			
-//				System.out.println("leftBefore: " + leftBefore);
-//				System.out.println("rightBefore: " + rightBefore);
-//				System.out.println("leftAfter: " + left);
-//				System.out.println("rightAfter: " + right);
-				
-//				
-//				if (leftBefore.toString().equals(left.toString()) && rightBefore.toString().equals(right.toString())) {
-//					changeMade = false;
-//					System.out.println("changeMade10");
-//				} else {
-//					operands[0] = left;
-//					operands[1] = right;
-//					changeMade = true;
-//					System.out.println("changeMade11");
-//				}
-//				System.out.println("leffft: " + left);
-//				System.out.println("righhht: " + right);
 			}
-			
-			
-			
-			System.out.println("5: " + operation.getOperator() + "\n");
-			System.out.println("6: " + operands[0] + "\n");
-			System.out.println("7: " + operands[1] + "\n");
+		
 			if (replacementMade == false) {
 				stack.push(new Operation(operation.getOperator(), operands));
 			}
-			
-			
-			
 		}
-
 	}
 }
