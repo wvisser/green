@@ -18,7 +18,7 @@ RUN apt install libgomp1
 RUN git clone https://github.com/Dylan-Graham/green
 WORKDIR green
 RUN git fetch 
-RUN git checkout ConstantPropagation
+RUN git checkout tut2
 WORKDIR /
 
 # Download and extract Z3
