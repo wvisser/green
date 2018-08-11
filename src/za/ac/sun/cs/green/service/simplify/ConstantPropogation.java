@@ -250,9 +250,7 @@ public class ConstantPropogation extends BasicService {
 						if (r.equals(o_true) && l.equals(o_true)) {
 							stack.push(o_true);
 							return;
-						} else if ((r.equals(o_true) && l.equals(o_false))
-								  || (r.equals(o_false) && l.equals(o_true))
-								  || (r.equals(o_false) && l.equals(o_false))) {
+						} else if (r.equals(o_false) || l.equals(o_false)) {
 							stack.push(o_false);
 							return;
 						}
@@ -260,9 +258,7 @@ public class ConstantPropogation extends BasicService {
 						if (r.equals(o_false) && l.equals(o_false)) {
 							stack.push(o_false);
 							return;
-						} else if ((r.equals(o_true) && l.equals(o_false))
-								  || (r.equals(o_false) && l.equals(o_true))
-								  || (r.equals(o_true) && l.equals(o_true))) {
+						} else if (r.equals(o_true) || l.equals(o_true)) {
 							stack.push(o_true);
 							return;
 						}
