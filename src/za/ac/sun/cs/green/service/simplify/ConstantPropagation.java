@@ -2,6 +2,7 @@ package za.ac.sun.cs.green.service.simplify;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -20,6 +21,7 @@ import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
+import za.ac.sun.cs.green.expr.Operation.Operator;
 import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
@@ -57,14 +59,8 @@ public class ConstantPropagation extends BasicService {
 			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
 			expression.accept(canonizationVisitor);
 			Expression canonized = canonizationVisitor.getExpression();
-			log.log(Level.FINEST, "After canonization: " + canonized);
-			/* Simplify */
-			SimplificationVisitor simplificationVisitor = new SimplificationVisitor();
-			canonized.accept(simplificationVisitor);
-			Expression simplified = simplificationVisitor.getExpression();
-			log.log(Level.FINEST, "After simplification: " + simplified);
-
-			return simplified;
+			log.log(Level.FINEST, "After simplification: " + canonized);
+			return canonized;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
 		}
@@ -120,36 +116,39 @@ public class ConstantPropagation extends BasicService {
 			default:
 				break;
 			}
+
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
 
 				/* Map variables to their assigned constant */
 				if (nop.equals(Operation.Operator.EQ) && r instanceof IntVariable && l instanceof IntConstant) {
-					map.put(r, l);
+					map.put(l, r);
 				} else if (nop.equals(Operation.Operator.EQ) && l instanceof IntVariable && r instanceof IntConstant) {
 					map.put(l, r);
 				}
 
 				if ((r instanceof IntVariable) && (l instanceof IntVariable)
 						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+					stack.push(new Operation(nop, l, r));
+				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)
+						&& !nop.equals(Operation.Operator.EQ)) {
 					/* If the variable has constant assigned, replace it here */
 					if (map.containsKey(r)) {
 						stack.push(new Operation(nop, map.get(r), l));
 					} else {
 						stack.push(new Operation(nop, r, l));
 					}
-				} else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
+				} else if ((r instanceof IntConstant) && (l instanceof IntVariable)
+						&& !nop.equals(Operation.Operator.EQ)) {
 					/* If the variable has constant assigned, replace it here */
 					if (map.containsKey(l)) {
-						stack.push(new Operation(nop, map.get(l), r));
+						stack.push(new Operation(nop, r, map.get(l)));
 					} else {
-						stack.push(new Operation(nop, l, r));
+						stack.push(new Operation(nop, r, l));
 					}
 				} else {
-					stack.push(new Operation(nop, l, r));
+					stack.push(new Operation(nop, r, l));
 				}
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
@@ -228,6 +227,7 @@ public class ConstantPropagation extends BasicService {
 						conjuncts.add(x);
 					}
 				}
+				/* Process bounds returns the output conjuncts TODO: watch dis */
 				SortedSet<Expression> newConjuncts = processBounds();
 				// new TreeSet<Expression>();
 				Expression c = null;
@@ -242,13 +242,16 @@ public class ConstantPropagation extends BasicService {
 							e = new Operation(Operation.Operator.LE, scale(-1, o.getOperand(0)), o.getOperand(1));
 						}
 						o = (Operation) e;
+						/* TODO we found the issue with gt and lt. Took this away as it did not add value */
+						/*
 						if (o.getOperator() == Operation.Operator.GT) {
 							e = new Operation(Operation.Operator.GE, merge(o.getOperand(0), new IntConstant(-1)),
 									o.getOperand(1));
+							
 						} else if (o.getOperator() == Operation.Operator.LT) {
 							e = new Operation(Operation.Operator.LE, merge(o.getOperand(0), new IntConstant(1)),
 									o.getOperand(1));
-						}
+						}*/
 					}
 					if (c == null) {
 						c = e;
@@ -260,8 +263,20 @@ public class ConstantPropagation extends BasicService {
 			}
 		}
 
+		/**
+		 * Returns a processed version of the conjucts.
+		 * 
+		 * @return
+		 */
 		private SortedSet<Expression> processBounds() {
-			return conjuncts;
+			SortedSet<Expression> newConjuncts = new TreeSet<Expression>();
+			for (Expression exp : conjuncts) {
+				Operation oper = (Operation) exp;
+				if (oper.getOperator() == Operation.Operator.EQ) {
+					newConjuncts.add(exp);
+				}
+			}
+			return newConjuncts;
 		}
 
 		@SuppressWarnings("unused")
@@ -399,6 +414,7 @@ public class ConstantPropagation extends BasicService {
 				if (!stack.isEmpty()) {
 					Expression x = stack.pop();
 					if (!x.equals(Operation.TRUE)) {
+						/* TODO: This collects all x <oper> constants */
 						conjuncts.add(x);
 					}
 				}
@@ -440,7 +456,12 @@ public class ConstantPropagation extends BasicService {
 							// unsatisfiable = true;
 						}
 					} else {
-						stack.push(new Operation(op, e, Operation.ZERO));
+						// TODO: this solves Test00 but breaks Test01
+						/* This is where something becomes x + 1 == 0 */
+						Operation oper = swippySwoppy(e, op);
+						// System.out.println("After swippy: " + oper);
+						stack.push(oper);
+						// stack.push(new Operation(op, e, Operation.ZERO));
 					}
 				}
 				break;
@@ -515,6 +536,61 @@ public class ConstantPropagation extends BasicService {
 			default:
 				break;
 			}
+		}
+
+		/**
+		 * TODO does a swippy swoppy around an operand and removes 1 / -1 coefficient
+		 * 
+		 * @param oper
+		 */
+		private Operation swippySwoppy(Expression e, Operator op) {
+			// System.out.println("Doin a swippy swoppy on: " + e + " where oper is " + op);
+			Operation oper = (Operation) e;
+			Stack<Expression> sta = new Stack<Expression>();
+			for (Expression exp : oper.getOperands()) {
+				sta.push(exp);
+			}
+			Expression l = sta.pop();
+			Expression r = sta.pop();
+			// System.out.println("Left: " + l + "\tRight: " + r);
+
+			/* Get rid of coefficient */
+			if (r instanceof Operation) {
+				for (Expression exp : ((Operation) r).getOperands()) {
+					sta.push(exp);
+				}
+				IntVariable v = (IntVariable) sta.pop();
+				IntConstant c = (IntConstant) sta.pop();
+				r = v;
+				if (c.getValue() == -1) {
+					l = new IntConstant(((IntConstant) l).getValue() * -1);
+				}
+			} else if (l instanceof Operation) {
+				for (Expression exp : ((Operation) l).getOperands()) {
+					sta.push(exp);
+				}
+				IntVariable v = (IntVariable) sta.pop();
+				IntConstant c = (IntConstant) sta.pop();
+				l = v;
+				if (c.getValue() == -1) {
+					r = new IntConstant(((IntConstant) l).getValue() * -1);
+				}
+			}
+
+			/* Swip the swoppy */
+			if (r instanceof IntConstant) {
+				r = new IntConstant(((IntConstant) r).getValue() * -1);
+				return new Operation(op, l, r);
+			} else if (l instanceof IntConstant) {
+				IntVariable var = (IntVariable) r;
+				IntConstant cons = (IntConstant) l;
+//				if (var.getName().equals("y") && cons.getValue() == -3)
+//					System.out.println("Test yy " + r);
+				l = new IntConstant(((IntConstant) l).getValue() * -1);
+				return new Operation(op, r, l);
+			}
+
+			return new Operation(op, e, Operation.ZERO);
 		}
 
 		private Expression merge(Expression left, Expression right) {
@@ -630,6 +706,8 @@ public class ConstantPropagation extends BasicService {
 		}
 
 		private boolean isAddition(Expression expression) {
+			// TODO: isAddition test
+			// System.out.println("isAddition(" + expression + ")");
 			return ((Operation) expression).getOperator() == Operation.Operator.ADD;
 		}
 
@@ -652,127 +730,5 @@ public class ConstantPropagation extends BasicService {
 		}
 
 	}
-
-	private static class SimplificationVisitor extends Visitor {
-
-		private Stack<Expression> stack;
-
-		public SimplificationVisitor() {
-			stack = new Stack<Expression>();
-		}
-
-		public Expression getExpression() {
-			return stack.pop();
-		}
-
-		@Override
-		public void postVisit(IntConstant constant) {
-			stack.push(constant);
-		}
-
-		@Override
-		public void postVisit(IntVariable variable) {
-			stack.push(variable);
-		}
-
-		@Override
-		public void postVisit(Operation operation) throws VisitorException {
-			Operation.Operator op = operation.getOperator();
-			Operation.Operator nop = null;
-			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case NE:
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
-			default:
-				break;
-			}
-
-			if (nop != null) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-
-				/* Find <something> == 0 */
-				if (nop.equals(Operation.Operator.EQ) && (r.equals(Operation.ZERO))) {
-					stack.push(swippySwoppy(l, r));
-				} /* Find x <op> y */
-				else if ((r instanceof IntVariable) && (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, l, r));
-				} /* Find x <op> <const> */
-				else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, l, r));
-				} else {
-					stack.push(new Operation(nop, l, r));
-				}
-			} else if (op.getArity() == 2) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-
-				/* Get rid of (1*x) tokens with just the variable */
-				if (op.equals(Operation.Operator.MUL)) {
-					if ((r instanceof IntVariable) && (l.equals(Operation.ONE))) {
-						stack.push(r);
-					} else {
-						stack.push(new Operation(op, l, r));
-					}
-				} else {
-					stack.push(new Operation(op, l, r));
-				}
-			} else {
-				for (int i = op.getArity(); i > 0; i--) {
-					stack.pop();
-				}
-				stack.push(operation);
-			}
-		}
-
-		/**
-		 * Gets called for '<var> + [-]<const> == 0' and places the var on left
-		 * and const on right.
-		 * 
-		 * @param l
-		 *            <var> + [-]<const>
-		 * @param r
-		 *            0
-		 * @return <var> == [-]<const>
-		 */
-		private Operation swippySwoppy(Expression l, Expression r) {
-			/* Find variable */
-			Pattern ptrn = Pattern.compile("[a-zA-Z]");
-			Matcher mtchr = ptrn.matcher(l.toString());
-			String variable = "";
-			if (mtchr.find()) {
-				variable = mtchr.group();
-			}
-			/* Find constant */
-			ptrn = Pattern.compile("-[0-9]");
-			mtchr = ptrn.matcher(l.toString());
-			String constant = "";
-			if (mtchr.find()) {
-				constant = mtchr.group();
-			} else {
-				ptrn = Pattern.compile("[0-9]");
-				mtchr = ptrn.matcher(l.toString());
-			}
-
-			IntVariable var = new IntVariable(variable, 0, 99);
-			IntConstant cons = new IntConstant((-1) * Integer.parseInt(constant));
-			return new Operation(Operation.Operator.EQ, var, cons);
-		}
-	}
+	
 }

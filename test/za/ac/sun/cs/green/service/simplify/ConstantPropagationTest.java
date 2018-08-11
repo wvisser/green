@@ -84,23 +84,23 @@ public class ConstantPropagationTest {
 		check(o4, "(x==1)&&(y==9)");
 	}
 	
-//	@Test
-//	public void test01() {
-//		IntVariable x = new IntVariable("x", 0, 99);
-//		IntVariable y = new IntVariable("y", 0, 99);
-//		IntConstant c = new IntConstant(1);
-//		IntConstant c2 = new IntConstant(10);
-//		IntConstant c3 = new IntConstant(2);
-//		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
-//		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : x + y
-//		Operation o3 = new Operation(Operation.Operator.LT, o2, c2); // o3 : (x+y) < 10
-//		Operation oi = new Operation(Operation.Operator.SUB, y, c); // oi : y-1
-//		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
-//		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
-//		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
-//		// (x = 1) && (x+y < 10) && (y-1 = 2)
-//		check(o, "(x==1)&&(y==3)");
-//	}
+	@Test
+	public void test01() {
+		IntVariable x = new IntVariable("x", 0, 99);
+		IntVariable y = new IntVariable("y", 0, 99);
+		IntConstant c = new IntConstant(1);
+		IntConstant c2 = new IntConstant(10);
+		IntConstant c3 = new IntConstant(2);
+		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
+		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : x + y
+		Operation o3 = new Operation(Operation.Operator.LT, o2, c2); // o3 : (x+y) < 10
+		Operation oi = new Operation(Operation.Operator.SUB, y, c); // oi : y-1
+		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
+		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
+		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
+		// (x = 1) && (x+y < 10) && (y-1 = 2)
+		check(o, "(x==1)&&(y==3)");
+	}
 	
 //	@Test
 //	public void test02() {
@@ -164,18 +164,6 @@ public class ConstantPropagationTest {
 //		IntVariable x = new IntVariable("x", 0, 99);
 //		IntVariable y = new IntVariable("y", 0, 99);
 //		IntVariable z = new IntVariable("z", 0 , 99);
-//		IntConstant c = new IntConstant(2);//	@Test
-//	public void test08() {
-//	IntVariable x = new IntVariable("x", 0, 99);
-//	IntConstant c = new IntConstant(2);
-//	IntConstant c1 = new IntConstant(4);
-//	Operation o1 = new Operation(Operation.Operator.EQ, x, c);		
-//	Operation o2 = new Operation(Operation.Operator.EQ, x, c1);
-//	Operation o = new Operation(Operation.Operator.AND, o1, o2);
-//	
-//	check(o, "0==1");
-//}
-//		IntConstant c1 = new IntConstant(4);
 //		Operation o1 = new Operation(Operation.Operator.MUL, x, y);		
 //		Operation o2 = new Operation(Operation.Operator.EQ, z, o1); // z = x * y
 //		Operation o3 = new Operation(Operation.Operator.EQ, x, c); // x = 2
