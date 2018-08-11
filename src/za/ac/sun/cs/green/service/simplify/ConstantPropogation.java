@@ -103,9 +103,9 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void preVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
-			Expression r = stack.pop();
-			Expression l = stack.pop();
-			System.out.println("preprocessing operator " + op);
+			Expression r = stack.elementAt(0);
+			Expression l = stack.elementAt(1);
+			System.out.println("preprocessing operator " + op + " with operands " + l + " and " + r);
 			// simple assignment
 			if (op == Operation.Operator.EQ
 					  && (r instanceof IntConstant
@@ -118,8 +118,6 @@ public class ConstantPropogation extends BasicService {
 				System.out.println("adding variable " + r + " to list with value " + l);
 				variables.put((IntVariable) r, (IntConstant) l);
 			}
-			stack.push(l);
-			stack.push(r);
 		}
 
 		@Override
@@ -127,41 +125,39 @@ public class ConstantPropogation extends BasicService {
 			Operation.Operator op = operation.getOperator();
 			Expression r = stack.pop();
 			Expression l = stack.pop();
-			System.out.println("postprocessing operator " + op);
+			System.out.println("postprocessing operator " + op + " with operands " + l + " and " + r);
 			// complex assignment (1 +/- x) = 2, 2 = (1 +/- x)
 			// adds added/subtracted value to x in variables to prepere for simple assignment
-			if (false) {
-				if (op == Operation.Operator.ADD
-						  && l instanceof IntConstant
-						  && r instanceof IntVariable) {
-					System.out.println("partially assigning -" + l + " to variable " + r);
-					partials.put((IntVariable) r, new IntConstant(((IntConstant) l).getValue() * -1));
-					stack.push(r);
-					return;
-				} else if (op == Operation.Operator.ADD
-						  && l instanceof IntVariable
-						  && r instanceof IntConstant) {
-					System.out.println("partially assigning -" + l + " to variable " + r);
-					partials.put((IntVariable) l, new IntConstant(((IntConstant) r).getValue() * -1));
-					stack.push(l);
-					return;
-				}
-				if (op == Operation.Operator.SUB
-						  && l instanceof IntConstant
-						  && r instanceof IntVariable) {
-					System.out.println("partially assigning " + l + " to variable " + r);
-					partials.put((IntVariable) r, (IntConstant) l);
-					stack.push(r);
-					return;
-				} else if (op == Operation.Operator.ADD
-						  && l instanceof IntVariable
-						  && r instanceof IntConstant) {
-					System.out.println("partially assigning " + l + " to variable " + r);
-					partials.put((IntVariable) l, (IntConstant) r);
-					stack.push(l);
-					return;
-				}
+			/*if (op == Operation.Operator.ADD
+					  && l instanceof IntConstant
+					  && r instanceof IntVariable) {
+				System.out.println("partially assigning -" + l + " to variable " + r);
+				partials.put((IntVariable) r, new IntConstant(((IntConstant) l).getValue() * -1));
+				stack.push(r);
+				return;
+			} else if (op == Operation.Operator.ADD
+					  && l instanceof IntVariable
+					  && r instanceof IntConstant) {
+				System.out.println("partially assigning -" + l + " to variable " + r);
+				partials.put((IntVariable) l, new IntConstant(((IntConstant) r).getValue() * -1));
+				stack.push(l);
+				return;
 			}
+			if (op == Operation.Operator.SUB
+					  && l instanceof IntConstant
+					  && r instanceof IntVariable) {
+				System.out.println("partially assigning " + l + " to variable " + r);
+				partials.put((IntVariable) r, (IntConstant) l);
+				stack.push(r);
+				return;
+			} else if (op == Operation.Operator.ADD
+					  && l instanceof IntVariable
+					  && r instanceof IntConstant) {
+				System.out.println("partially assigning " + l + " to variable " + r);
+				partials.put((IntVariable) l, (IntConstant) r);
+				stack.push(l);
+				return;
+			}*/
 			// replacement of variables
 			if (l instanceof IntVariable && variables.containsKey((IntVariable) l)) {
 				System.out.println("replacing variable " + l + " with value " + variables.get(l));
