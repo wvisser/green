@@ -56,20 +56,20 @@ public class SimplificationConstantPropagationTest {
 		finalCheck(j.getExpression().toString(), expected);
 	}
 
-//	@Test
-//	public void test00() {
-//		IntVariable x = new IntVariable("x", 0, 99);
-//		IntVariable y = new IntVariable("y", 0, 99);
-//		IntVariable z = new IntVariable("z", 0, 99);
-//		IntConstant c = new IntConstant(1);
-//		IntConstant c10 = new IntConstant(10);
-//		IntConstant c3 = new IntConstant(3);
-//		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
-//		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
-//		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
-//		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
-//		check(o4, "(x==1)&&(y==9)");
-//	}
+	@Test
+	public void test00() {
+		IntVariable x = new IntVariable("x", 0, 99);
+		IntVariable y = new IntVariable("y", 0, 99);
+		IntVariable z = new IntVariable("z", 0, 99);
+		IntConstant c = new IntConstant(1);
+		IntConstant c10 = new IntConstant(10);
+		IntConstant c3 = new IntConstant(3);
+		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
+		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
+		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
+		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
+		check(o4, "(x==1)&&(y==9)");
+	}
 	
 	@Test
 	public void test01() {
@@ -89,13 +89,13 @@ public class SimplificationConstantPropagationTest {
 		check(o, "(x==1)&&(y==3)");
 	}
 
-//	@Test
-//		public void test02() {
-//			IntConstant c1 = new IntConstant(4);
-//			IntConstant c2 = new IntConstant(10);
-//			Operation o = new Operation(Operation.Operator.LT, c1, c2); //4 < 10
-//			check(o, "0==0");
-//		}
+	@Test
+		public void test02() {
+			IntConstant c1 = new IntConstant(4);
+			IntConstant c2 = new IntConstant(10);
+			Operation o = new Operation(Operation.Operator.LT, c1, c2); //4 < 10
+			check(o, "0==0");
+		}
 //
 //	@Test
 //		public void test03() {
