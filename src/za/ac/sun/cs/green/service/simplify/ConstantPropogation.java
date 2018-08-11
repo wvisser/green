@@ -71,6 +71,9 @@ public class ConstantPropogation extends BasicService {
         return null;
     }
 
+    /**
+     * Replaces variables with their assigned values
+     */
     private static class ConstantPropogationVisitor extends Visitor {
 
         private Stack<Expression> stack;
@@ -95,6 +98,11 @@ public class ConstantPropogation extends BasicService {
             stack.push(variable);
         }
 
+        /**
+         * Swaps out the variable with a value if possible
+         *
+         * @param variable
+         */
         @Override
         public void postVisit(IntVariable variable) {
             if (variables.containsKey(variable)) {
@@ -106,29 +114,77 @@ public class ConstantPropogation extends BasicService {
             }
         }
 
+        /**
+         * Assigns values to variables
+         *
+         * @param operation
+         */
         @Override
         public void postVisit(Operation operation) {
             Operation.Operator op = operation.getOperator();
             Expression r = stack.pop();
             Expression l = stack.pop();
+            // simple assignment (x = 1, 1 = x)
             if (op == Operation.Operator.EQ
                     && (r instanceof IntConstant
                     && l instanceof IntVariable)) {
                 System.out.println("adding variable " + l + " to list with value " + r);
-                variables.put((IntVariable) l, (IntConstant) r);
+                if (variables.containsKey((IntVariable) l)) {
+                    int val = variables.get((IntVariable) l).getValue();
+                    variables.replace((IntVariable) l, new IntConstant(val + ((IntConstant) r).getValue()));
+                } else {
+                    variables.put((IntVariable) l, (IntConstant) r);
+                }
                 stack.push(new Operation(op, l, r));
+                return;
             } else if (op == Operation.Operator.EQ
                     && (r instanceof IntVariable
                     && l instanceof IntConstant)) {
                 System.out.println("adding variable " + r + " to list with value " + r);
-                variables.put((IntVariable) r, (IntConstant) l);
+                if (variables.containsKey((IntVariable) r)) {
+                    int val = variables.get((IntVariable) r).getValue();
+                    variables.replace((IntVariable) r, new IntConstant(val + ((IntConstant) l).getValue()));
+                } else {
+                    variables.put((IntVariable) r, (IntConstant) l);
+                }
                 stack.push(new Operation(op, l, r));
-            } else {
-                stack.push(new Operation(op, l, r));
+                return;
             }
+            // complex assignment (1 +/- x) = 2, 2 = (1 +/- x)
+            // adds added/subtracted value to x in variables to prepere for simple assignment
+            if (op == Operation.Operator.ADD
+                    && l instanceof IntConstant
+                    && r instanceof IntVariable) {
+                variables.put((IntVariable) r, (IntConstant) l);
+                stack.push(r);
+                return;
+            } else if (op == Operation.Operator.ADD
+                    && l instanceof IntVariable
+                    && r instanceof IntConstant) {
+                variables.put((IntVariable) l, (IntConstant) r);
+                stack.push(l);
+                return;
+            }
+            if (op == Operation.Operator.SUB
+                    && l instanceof IntConstant
+                    && r instanceof IntVariable) {
+                variables.put((IntVariable) r, new IntConstant(((IntConstant) l).getValue() * -1));
+                stack.push(r);
+                return;
+            } else if (op == Operation.Operator.ADD
+                    && l instanceof IntVariable
+                    && r instanceof IntConstant) {
+                variables.put((IntVariable) l, new IntConstant(((IntConstant) r).getValue() * -1));
+                stack.push(l);
+                return;
+            }
+            stack.push(new Operation(op, l ,r));
         }
     }
 
+    /**
+     * Simplifies the equations
+     */
     private static class SimplificationVisitor extends Visitor {
 
         private Stack<Expression> stack;
@@ -155,11 +211,17 @@ public class ConstantPropogation extends BasicService {
             stack.push(variable);
         }
 
+        /**
+         * Simplifies operations
+         *
+         * @param operation
+         */
         @Override
         public void postVisit(Operation operation) {
             Operation.Operator op = operation.getOperator();
             Expression r = stack.pop();
             Expression l = stack.pop();
+            // Operations on two constants
             if (r instanceof IntConstant && l instanceof IntConstant) {
                 switch (op) {
                     case LT:
@@ -208,6 +270,7 @@ public class ConstantPropogation extends BasicService {
                         break;
                 }
             }
+            // Operations on two operations
             if (r instanceof Operation && l instanceof Operation) {
                 switch (op) {
                     case AND:
@@ -219,8 +282,6 @@ public class ConstantPropogation extends BasicService {
                                 || (r.equals(o_false) && l.equals(o_false))) {
                             stack.push(o_false);
                             return;
-                        } else {
-                            stack.push(new Operation(Operation.Operator.AND, new IntConstant(42), new IntConstant(42)));
                         }
                     case OR:
                         if (r.equals(o_false) && l.equals(o_false)) {
@@ -231,8 +292,6 @@ public class ConstantPropogation extends BasicService {
                                 || (r.equals(o_true) && l.equals(o_true))) {
                             stack.push(o_true);
                             return;
-                        } else {
-                            stack.push(new Operation(Operation.Operator.AND, new IntConstant(42), new IntConstant(42)));
                         }
                     default:
                         break;
