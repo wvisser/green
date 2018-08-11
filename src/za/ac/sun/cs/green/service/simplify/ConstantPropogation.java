@@ -598,6 +598,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLT.getOperand(1), new IntConstant(ans));
 							operands[0] = oppLT.getOperand(1);
@@ -607,6 +610,10 @@ public class ConstantPropogation extends BasicService {
 								&& oppLT.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(1);
+
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLT.getOperand(1), new IntConstant(ans));
 							operands[0] = oppLT.getOperand(0);
@@ -621,6 +628,10 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
+
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GT);
+							}
 							int ans = const2.getValue() / const1.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLT.getOperand(1), new IntConstant(ans));
 							operands[0] = oppLT.getOperand(1);
@@ -630,6 +641,10 @@ public class ConstantPropogation extends BasicService {
 								&& oppLT.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(1);
+
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLT.getOperand(1), new IntConstant(ans));
 							operands[0] = oppLT.getOperand(0);
@@ -703,6 +718,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
 							operands[0] = oppLE.getOperand(1);
@@ -712,6 +730,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppLE.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
 							operands[0] = oppLE.getOperand(0);
@@ -726,6 +747,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GE);
+							}
 							int ans = const2.getValue() / const1.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
 							operands[0] = oppLE.getOperand(1);
@@ -735,6 +759,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppLE.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
 							operands[0] = oppLE.getOperand(0);
@@ -808,6 +835,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
 							operands[0] = oppGT.getOperand(1);
@@ -817,6 +847,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppGT.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
 							operands[0] = oppGT.getOperand(0);
@@ -831,6 +864,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LT);
+							}
 							int ans = const2.getValue() / const1.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
 							operands[0] = oppGT.getOperand(1);
@@ -840,6 +876,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppGT.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
 							operands[0] = oppGT.getOperand(0);
@@ -913,6 +952,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
 							operands[0] = oppGE.getOperand(1);
@@ -922,6 +964,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppGE.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
 							operands[0] = oppGE.getOperand(0);
@@ -936,6 +981,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LE);
+							}
 							int ans = const2.getValue() / const1.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
 							operands[0] = oppGE.getOperand(1);
@@ -945,6 +993,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppGE.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[1];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
 							operands[0] = oppGE.getOperand(0);
@@ -1151,6 +1202,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLT.getOperand(1), new IntConstant(ans));
 							operands[1] = oppLT.getOperand(1);
@@ -1160,6 +1214,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppLT.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLT.getOperand(1), new IntConstant(ans));
 							operands[1] = oppLT.getOperand(0);
@@ -1174,6 +1231,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GT);
+							}
 							int ans = const2.getValue() / const1.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLT.getOperand(1), new IntConstant(ans));
 							operands[1] = oppLT.getOperand(1);
@@ -1183,6 +1243,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppLT.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLT.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLT.getOperand(1), new IntConstant(ans));
 							operands[1] = oppLT.getOperand(0);
@@ -1256,6 +1319,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
 							operands[1] = oppLE.getOperand(1);
@@ -1265,6 +1331,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppLE.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
 							operands[1] = oppLE.getOperand(0);
@@ -1279,6 +1348,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GE);
+							}
 							int ans = const2.getValue() / const1.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
 							operands[1] = oppLE.getOperand(1);
@@ -1288,6 +1360,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppLE.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppLE.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.GE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
 							operands[1] = oppLE.getOperand(0);
@@ -1361,6 +1436,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
 							operands[1] = oppGT.getOperand(1);
@@ -1370,6 +1448,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppGT.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
 							operands[1] = oppGT.getOperand(0);
@@ -1384,6 +1465,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LT);
+							}
 							int ans = const2.getValue() / const1.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
 							operands[1] = oppGT.getOperand(1);
@@ -1393,6 +1477,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppGT.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGT.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LT);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
 							operands[1] = oppGT.getOperand(0);
@@ -1466,6 +1553,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
 							operands[1] = oppGE.getOperand(1);
@@ -1475,6 +1565,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppGE.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
 							operands[1] = oppGE.getOperand(0);
@@ -1489,6 +1582,9 @@ public class ConstantPropogation extends BasicService {
 							// opp.getOperand(1).getClass());
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LE);
+							}
 							int ans = const2.getValue() / const1.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
 							operands[1] = oppGE.getOperand(1);
@@ -1498,6 +1594,9 @@ public class ConstantPropogation extends BasicService {
 								&& oppGE.getOperand(0).getClass().equals(IntVariable.class)) {
 							IntConstant const1 = (IntConstant) operands[0];
 							IntConstant const2 = (IntConstant) oppGE.getOperand(1);
+							if (const2.getValue() < 0) {
+								operation.setOperator(Operator.LE);
+							}
 							int ans = const1.getValue() / const2.getValue();
 							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
 							operands[1] = oppGE.getOperand(0);
