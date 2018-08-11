@@ -102,33 +102,36 @@ public class ConstantPropagationTest {
 		check(o, "(x==1)&&(y==3)");
 	}
 	
-//	@Test
-//	public void test02() {
-//		IntConstant c1 = new IntConstant(4);
-//		IntConstant c2 = new IntConstant(10);
-//		Operation o = new Operation(Operation.Operator.LT, c1, c2);
-//		check(o, "0==0");
-//	}
+	@Test
+	public void test02() {
+		IntConstant c1 = new IntConstant(4);
+		IntConstant c2 = new IntConstant(10);
+		Operation o = new Operation(Operation.Operator.LT, c1, c2);
+		// 4 < 10
+		check(o, "0==0");
+	}
 
-//	@Test
-//	public void test03() {
-//		IntConstant c1 = new IntConstant(4);
-//		IntConstant c2 = new IntConstant(10);
-//		Operation o = new Operation(Operation.Operator.GT, c1, c2);
-//		check(o, "0==1");
-//	}
+	@Test
+	public void test03() {
+		IntConstant c1 = new IntConstant(4);
+		IntConstant c2 = new IntConstant(10);
+		Operation o = new Operation(Operation.Operator.GT, c1, c2);
+		// 4 >= 10
+		check(o, "0==1");
+	}
 
-//	@Test
-//	public void test04() {
-//		IntConstant c1 = new IntConstant(4);
-//		IntConstant c2 = new IntConstant(10);
-//		Operation o1 = new Operation(Operation.Operator.LT, c1, c2);
-//		Operation o2 = new Operation(Operation.Operator.GT, c1, c2);
-//		Operation o = new Operation(Operation.Operator.AND, o1, o2);
-//		check(o, "0==1");
-//	}
+	@Test
+	public void test04() {
+		IntConstant c1 = new IntConstant(4);
+		IntConstant c2 = new IntConstant(10);
+		Operation o1 = new Operation(Operation.Operator.LT, c1, c2);
+		Operation o2 = new Operation(Operation.Operator.GT, c1, c2);
+		Operation o = new Operation(Operation.Operator.AND, o1, o2);
+		// (4<10)&&(4>10)
+		check(o, "0==1");
+	}
 
-//	@Test
+//	@Test /* TODO: This crashes my current implementation */
 //	public void test05() {
 //		IntVariable x = new IntVariable("x", 0, 99);
 //		IntVariable y = new IntVariable("y", 0, 99);		
@@ -145,7 +148,7 @@ public class ConstantPropagationTest {
 //		check(o, "(1==x)&&(3==y)");
 //	}
 
-//	@Test
+//	@Test /* TODO: This crashes my current implementation */
 //	public void test06() {
 //		IntVariable x = new IntVariable("x", 0, 99);
 //		IntVariable y = new IntVariable("y", 0, 99);
@@ -159,11 +162,13 @@ public class ConstantPropagationTest {
 //		check(o, "(x==1)&&((y==1)&&(z==1))");
 //	}
 
-//	@Test
+//	@Test /* TODO: This crashes my current implementation */
 //	public void test07() {
 //		IntVariable x = new IntVariable("x", 0, 99);
 //		IntVariable y = new IntVariable("y", 0, 99);
 //		IntVariable z = new IntVariable("z", 0 , 99);
+//		IntConstant c = new IntConstant(2);
+//		IntConstant c1 = new IntConstant(4);
 //		Operation o1 = new Operation(Operation.Operator.MUL, x, y);		
 //		Operation o2 = new Operation(Operation.Operator.EQ, z, o1); // z = x * y
 //		Operation o3 = new Operation(Operation.Operator.EQ, x, c); // x = 2
@@ -175,7 +180,7 @@ public class ConstantPropagationTest {
 //		check(o, "(z==4)&&((x==2)&&(y==2))");
 //	}
 
-//	@Test
+//	@Test /* TODO: This is low hanging fruit, simple variable assignment check */
 //	public void test08() {
 //		IntVariable x = new IntVariable("x", 0, 99);
 //		IntConstant c = new IntConstant(2);
