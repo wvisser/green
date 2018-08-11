@@ -194,6 +194,7 @@ public class ConstantPropogation extends BasicService {
 			Operation.Operator op = operation.getOperator();
 			Expression r = stack.pop();
 			Expression l = stack.pop();
+			System.out.println("postprocessing operator " + op + " with operands " + l + " and " + r);
 			// Operations on two constants
 			if (r instanceof IntConstant && l instanceof IntConstant) {
 				switch (op) {
