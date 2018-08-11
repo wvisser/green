@@ -129,6 +129,8 @@ public class Operation extends Expression {
 	private final Expression[] operands;
 
 	public Operation(final Operator operator, Expression... operands) {
+		// make use of ConstantPropagation here to make sure that there are no redundancies when 
+		// creating new operation that will then be expressions.		
 		this.operator = operator;
 		this.operands = operands;
 	}
