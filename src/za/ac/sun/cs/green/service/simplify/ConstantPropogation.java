@@ -138,8 +138,8 @@ public class ConstantPropogation extends BasicService {
 						r = l2;
 					}
 				} else if (l instanceof Operation && r instanceof IntConstant) {
-					Expression r2 = ((Operation) r).getOperand(1);
-					Expression l2 = ((Operation) r).getOperand(0);
+					Expression r2 = ((Operation) l).getOperand(1);
+					Expression l2 = ((Operation) l).getOperand(0);
 					if (r2 instanceof IntVariable && l2 instanceof IntConstant) {
 						r = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) l2).getValue() * 
 								  (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
