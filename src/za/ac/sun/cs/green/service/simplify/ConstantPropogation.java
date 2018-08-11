@@ -130,7 +130,7 @@ public class ConstantPropogation extends BasicService {
                     && (r instanceof IntConstant
                     && l instanceof IntVariable)) {
                 System.out.println("adding variable " + l + " to list with value " + r);
-                if (variables.containsKey((IntVariable) l)) {
+                if (partials.containsKey((IntVariable) l)) {
                     int val = partials.get((IntVariable) l).getValue();
                     System.out.println("variable " + l + " has partial assignment " + val + ", adjusting");
                     variables.put((IntVariable) l, new IntConstant(val + ((IntConstant) r).getValue()));
