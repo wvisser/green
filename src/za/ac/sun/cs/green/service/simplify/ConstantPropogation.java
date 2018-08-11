@@ -678,6 +678,358 @@ public class ConstantPropogation extends BasicService {
 			
 ////////////////////
 			
+			if (operands[1].getClass().equals(Operation.class) && operands[0].getClass().equals(IntConstant.class)) {
+				Operator operator = operation.getOperator();
+				System.out.println("this far");
+				switch (operator) {
+				case EQ:
+					System.out.println("this far2");
+					Operation opp = (Operation) operands[1];
+					System.out.println("this far3");
+					switch (opp.getOperator()) {
+					case ADD:
+						System.out.println("this far4");
+						if (opp.getOperand(0).getClass().equals(IntConstant.class)
+								&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
+							// System.out.println(operands[1].getClass().toString() +
+							// opp.getOperand(1).getClass());
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) opp.getOperand(0);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, opp.getOperand(1), new IntConstant(ans));
+							operands[1] = opp.getOperand(1);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						} else if (opp.getOperand(1).getClass().equals(IntConstant.class)
+								&& opp.getOperand(0).getClass().equals(IntVariable.class)) {
+							System.out.println("this far");
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) opp.getOperand(1);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, opp.getOperand(1), new IntConstant(ans));
+							operands[1] = opp.getOperand(0);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					case SUB:
+						System.out.println("this far5");
+						if (opp.getOperand(0).getClass().equals(IntConstant.class)
+								&& opp.getOperand(1).getClass().equals(IntVariable.class)) {
+							// System.out.println(operands[1].getClass().toString() +
+							// opp.getOperand(1).getClass());
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) opp.getOperand(0);
+							int ans = const2.getValue() - const1.getValue();
+							operation = new Operation(Operation.Operator.EQ, opp.getOperand(1), new IntConstant(ans));
+							operands[1] = opp.getOperand(1);
+							IntVariable var = new IntVariable(opp.getOperand(1).toString(), 0, 99999);
+							operands[0] = new IntConstant(ans);
+							map.put(var, new IntConstant(ans));
+							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
+							changeMade = true;
+						} else if (opp.getOperand(1).getClass().equals(IntConstant.class)
+								&& opp.getOperand(0).getClass().equals(IntVariable.class)) {
+							System.out.println("this far6");
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) opp.getOperand(1);
+							System.out.println("this far7");
+							int ans = const1.getValue() + const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, opp.getOperand(1), new IntConstant(ans));
+							operands[1] = opp.getOperand(0);
+							System.out.println("this far8");
+							IntVariable var2 = new IntVariable(opp.getOperand(0).toString(), 0, 99999);
+							operands[0] = new IntConstant(ans);
+							map.put(var2, new IntConstant(ans));
+							System.out.println("this far9");
+							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
+							changeMade = true;
+						}
+						break;
+					case MUL:
+						// TODO
+						break;
+					case DIV:
+						// TODO
+						break;
+					default:
+						break;
+					}
+					break;
+				case NE:
+					// TODO
+					break;
+				case LT:
+					Operation oppLT = (Operation) operands[0];
+					switch (oppLT.getOperator()) {
+					case ADD:
+						if (oppLT.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppLT.getOperand(1).getClass().equals(IntVariable.class)) {
+							// System.out.println(operands[1].getClass().toString() +
+							// opp.getOperand(1).getClass());
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.LT, oppLT.getOperand(1), new IntConstant(ans));
+							operands[1] = oppLT.getOperand(1);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppLT.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppLT.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppLT.getOperand(1);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.LT, oppLT.getOperand(1), new IntConstant(ans));
+							operands[1] = oppLT.getOperand(0);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					case SUB:
+						if (oppLT.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppLT.getOperand(1).getClass().equals(IntVariable.class)) {
+							// System.out.println(operands[1].getClass().toString() +
+							// opp.getOperand(1).getClass());
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppLT.getOperand(0);
+							int ans = const2.getValue() - const1.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppLT.getOperand(1), new IntConstant(ans));
+							operands[1] = oppLT.getOperand(1);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppLT.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppLT.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppLT.getOperand(1);
+							int ans = const1.getValue() + const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppLT.getOperand(1), new IntConstant(ans));
+							operands[1] = oppLT.getOperand(0);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					case MUL:
+						// TODO
+						break;
+					case DIV:
+						// TODO
+						break;
+					default:
+						break;
+					}
+					break;
+				case LE:
+					Operation oppLE = (Operation) operands[0];
+					switch (oppLE.getOperator()) {
+					case ADD:
+						if (oppLE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppLE.getOperand(1).getClass().equals(IntVariable.class)) {
+							// System.out.println(operands[1].getClass().toString() +
+							// opp.getOperand(1).getClass());
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppLE.getOperand(1);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppLE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppLE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppLE.getOperand(1);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppLE.getOperand(0);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					case SUB:
+						if (oppLE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppLE.getOperand(1).getClass().equals(IntVariable.class)) {
+							// System.out.println(operands[1].getClass().toString() +
+							// opp.getOperand(1).getClass());
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppLE.getOperand(0);
+							int ans = const2.getValue() - const1.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppLE.getOperand(1);
+							IntVariable var = new IntVariable(oppLE.getOperand(1).toString(), 0, 99999);
+							operands[0] = new IntConstant(ans);
+							map.put(var, new IntConstant(ans));
+							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
+							changeMade = true;
+						} else if (oppLE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppLE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppLE.getOperand(1);
+							int ans = const1.getValue() + const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppLE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppLE.getOperand(0);
+							IntVariable var2 = new IntVariable(oppLE.getOperand(0).toString(), 0, 99999);
+							operands[0] = new IntConstant(ans);
+							map.put(var2, new IntConstant(ans));
+							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
+							changeMade = true;
+						}
+						break;
+					case MUL:
+						// TODO
+						break;
+					case DIV:
+						// TODO
+						break;
+					default:
+						break;
+					}
+					break;
+				case GT:
+					Operation oppGT = (Operation) operands[0];
+					switch (oppGT.getOperator()) {
+					case ADD:
+						if (oppGT.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppGT.getOperand(1).getClass().equals(IntVariable.class)) {
+							// System.out.println(operands[1].getClass().toString() +
+							// opp.getOperand(1).getClass());
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
+							operands[1] = oppGT.getOperand(1);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppGT.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppGT.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppGT.getOperand(1);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
+							operands[1] = oppGT.getOperand(0);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					case SUB:
+						if (oppGT.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppGT.getOperand(1).getClass().equals(IntVariable.class)) {
+							// System.out.println(operands[1].getClass().toString() +
+							// opp.getOperand(1).getClass());
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppGT.getOperand(0);
+							int ans = const2.getValue() - const1.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
+							operands[1] = oppGT.getOperand(1);
+							IntVariable var = new IntVariable(oppGT.getOperand(1).toString(), 0, 99999);
+							operands[0] = new IntConstant(ans);
+							map.put(var, new IntConstant(ans));
+							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
+							changeMade = true;
+						} else if (oppGT.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppGT.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppGT.getOperand(1);
+							int ans = const1.getValue() + const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppGT.getOperand(1), new IntConstant(ans));
+							operands[1] = oppGT.getOperand(0);
+							IntVariable var2 = new IntVariable(oppGT.getOperand(0).toString(), 0, 99999);
+							operands[0] = new IntConstant(ans);
+							map.put(var2, new IntConstant(ans));
+							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
+							changeMade = true;
+						}
+						break;
+					case MUL:
+						// TODO
+						break;
+					case DIV:
+						// TODO
+						break;
+					default:
+						break;
+					}
+					break;
+				case GE:
+					Operation oppGE = (Operation) operands[0];
+					switch (oppGE.getOperator()) {
+					case ADD:
+						if (oppGE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppGE.getOperand(1).getClass().equals(IntVariable.class)) {
+							// System.out.println(operands[1].getClass().toString() +
+							// opp.getOperand(1).getClass());
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppGE.getOperand(1);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						} else if (oppGE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppGE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppGE.getOperand(1);
+							int ans = const1.getValue() - const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppGE.getOperand(0);
+							operands[0] = new IntConstant(ans);
+							changeMade = true;
+						}
+						break;
+					case SUB:
+						if (oppGE.getOperand(0).getClass().equals(IntConstant.class)
+								&& oppGE.getOperand(1).getClass().equals(IntVariable.class)) {
+							// System.out.println(operands[1].getClass().toString() +
+							// opp.getOperand(1).getClass());
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppGE.getOperand(0);
+							int ans = const2.getValue() - const1.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppGE.getOperand(1);
+							IntVariable var = new IntVariable(oppGE.getOperand(1).toString(), 0, 99999);
+							operands[0] = new IntConstant(ans);
+							map.put(var, new IntConstant(ans));
+							System.out.println("THIS WAS PRINTED: " + var + " : " + ans);
+							changeMade = true;
+						} else if (oppGE.getOperand(1).getClass().equals(IntConstant.class)
+								&& oppGE.getOperand(0).getClass().equals(IntVariable.class)) {
+							IntConstant const1 = (IntConstant) operands[0];
+							IntConstant const2 = (IntConstant) oppGE.getOperand(1);
+							int ans = const1.getValue() + const2.getValue();
+							operation = new Operation(Operation.Operator.EQ, oppGE.getOperand(1), new IntConstant(ans));
+							operands[1] = oppGE.getOperand(0);
+							IntVariable var2 = new IntVariable(oppGE.getOperand(0).toString(), 0, 99999);
+							operands[0] = new IntConstant(ans);
+							map.put(var2, new IntConstant(ans));
+							System.out.println("THIS WAS PRINTED: " + var2 + " : " + ans);
+							changeMade = true;
+						}
+						break;
+					case MUL:
+						// TODO
+						break;
+					case DIV:
+						// TODO
+						break;
+					default:
+						break;
+					}
+					break;
+				case ADD:
+					break;
+				case SUB:
+					// TODO
+					break;
+				case MUL:
+					// TODO
+					break;
+				case NOT:
+					// TODO
+					break;
+				default:
+					break;
+				}
+			}			
+			
+//////////////////////			
 //			if (operands[0].getClass().equals(Operation.class) && operands[1].getClass().equals(IntConstant.class)
 //					&& operation.getOperator().equals(Operation.Operator.EQ)) {
 //
