@@ -135,38 +135,38 @@ public class SimplificationConstantPropagationTest {
 			check(o, "(1==x)&&(3==y)");
 		}
 
-//	@Test
-//		public void test06() {
-//			IntVariable x = new IntVariable("x", 0, 99);
-//			IntVariable y = new IntVariable("y", 0, 99);
-//			IntVariable z = new IntVariable("z", 0 , 99);
-//			IntConstant c = new IntConstant(1);
-//			Operation o1 = new Operation(Operation.Operator.EQ, x, y);		
-//			Operation o2 = new Operation(Operation.Operator.EQ, y, z);
-//			Operation o3 = new Operation(Operation.Operator.EQ, z, c);
-//			Operation o = new Operation(Operation.Operator.AND, o1, o2);
-//			o = new Operation(Operation.Operator.AND, o, o3);
-//			check(o, "(x==1)&&((y==1)&&(z==1))");
-//		}
-//
-//	@Test
-//		public void test07() {
-//			IntVariable x = new IntVariable("x", 0, 99);
-//			IntVariable y = new IntVariable("y", 0, 99);
-//			IntVariable z = new IntVariable("z", 0 , 99);
-//			IntConstant c = new IntConstant(2);
-//			IntConstant c1 = new IntConstant(4);
-//			Operation o1 = new Operation(Operation.Operator.MUL, x, y);		
-//			Operation o2 = new Operation(Operation.Operator.EQ, z, o1); // z = x * y
-//			Operation o3 = new Operation(Operation.Operator.EQ, x, c); // x = 2
-//			Operation o4 = new Operation(Operation.Operator.ADD, y, x); 
-//			Operation o5 = new Operation(Operation.Operator.EQ, o4, c1); // x+y = 4
-//
-//			Operation o = new Operation(Operation.Operator.AND, o2, o3); // z = x * y && x = 2
-//			o = new Operation(Operation.Operator.AND, o, o5); // z = x * y && x = 2 && x+y = 4
-//			check(o, "(z==4)&&((x==2)&&(y==2))");
-//		}
-//
+	@Test
+		public void test06() {
+			IntVariable x = new IntVariable("x", 0, 99);
+			IntVariable y = new IntVariable("y", 0, 99);
+			IntVariable z = new IntVariable("z", 0 , 99);
+			IntConstant c = new IntConstant(1);
+			Operation o1 = new Operation(Operation.Operator.EQ, x, y);		
+			Operation o2 = new Operation(Operation.Operator.EQ, y, z);
+			Operation o3 = new Operation(Operation.Operator.EQ, z, c);
+			Operation o = new Operation(Operation.Operator.AND, o1, o2);
+			o = new Operation(Operation.Operator.AND, o, o3);
+			check(o, "(x==1)&&((y==1)&&(z==1))");
+		}
+
+	@Test
+		public void test07() {
+			IntVariable x = new IntVariable("x", 0, 99);
+			IntVariable y = new IntVariable("y", 0, 99);
+			IntVariable z = new IntVariable("z", 0 , 99);
+			IntConstant c = new IntConstant(2);
+			IntConstant c1 = new IntConstant(4);
+			Operation o1 = new Operation(Operation.Operator.MUL, x, y);		
+			Operation o2 = new Operation(Operation.Operator.EQ, z, o1); // z = x * y
+			Operation o3 = new Operation(Operation.Operator.EQ, x, c); // x = 2
+			Operation o4 = new Operation(Operation.Operator.ADD, y, x); 
+			Operation o5 = new Operation(Operation.Operator.EQ, o4, c1); // x+y = 4
+
+			Operation o = new Operation(Operation.Operator.AND, o2, o3); // z = x * y && x = 2
+			o = new Operation(Operation.Operator.AND, o, o5); // z = x * y && x = 2 && x+y = 4
+			check(o, "(z==4)&&((x==2)&&(y==2))");
+		}
+
 //	@Test
 //		public void test08() {
 //			IntVariable x = new IntVariable("x", 0, 99);
