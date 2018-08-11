@@ -132,10 +132,10 @@ public class ConstantPropogation extends BasicService {
     private static class SimplificationVisitor extends Visitor {
 
         private Stack<Expression> stack;
-        private final Operation o_true= new Operation(Operation.Operator.EQ,
-                    new IntConstant(0), new IntConstant(0));
+        private final Operation o_true = new Operation(Operation.Operator.EQ,
+                new IntConstant(0), new IntConstant(0));
         private final Operation o_false = new Operation(Operation.Operator.EQ,
-                    new IntConstant(0), new IntConstant(1));
+                new IntConstant(0), new IntConstant(1));
 
         public SimplificationVisitor() {
             this.stack = new Stack<Expression>();
@@ -214,17 +214,25 @@ public class ConstantPropogation extends BasicService {
                         if (r.equals(o_true) && l.equals(o_true)) {
                             stack.push(o_true);
                             return;
-                        } else {
+                        } else if ((r.equals(o_true) && l.equals(o_false))
+                                || (r.equals(o_false) && l.equals(o_true))
+                                || (r.equals(o_false) && l.equals(o_false))) {
                             stack.push(o_false);
                             return;
+                        } else {
+                            stack.push(new Operation(Operation.Operator.AND, new IntConstant(42), new IntConstant(42)));
                         }
                     case OR:
                         if (r.equals(o_false) && l.equals(o_false)) {
                             stack.push(o_false);
                             return;
-                        } else {
+                        } else if ((r.equals(o_true) && l.equals(o_false))
+                                || (r.equals(o_false) && l.equals(o_true))
+                                || (r.equals(o_true) && l.equals(o_true))) {
                             stack.push(o_true);
                             return;
+                        } else {
+                            stack.push(new Operation(Operation.Operator.AND, new IntConstant(42), new IntConstant(42)));
                         }
                     default:
                         break;
