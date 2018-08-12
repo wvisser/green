@@ -28,7 +28,7 @@ public class ConstantPropogation {
 
 
     public ConstantPropogation(Green solver) {
-        // super(solver);
+        super(solver);
     }
 
     public Operation propogate(Operation in) {
