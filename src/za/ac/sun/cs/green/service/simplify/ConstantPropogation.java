@@ -24,12 +24,12 @@ import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 
-public class ConstantPropagation extends BasicService {
+public class ConstantPropogation extends BasicService {
 
 
     private int invocations = 0;
 
-    public ConstantPropagation(Green solver) {
+    public ConstantPropogation(Green solver) {
         super(solver);
     }
 
