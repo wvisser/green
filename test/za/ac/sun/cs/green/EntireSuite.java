@@ -14,8 +14,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import com.microsoft.z3.Context;
-import za.ac.sun.cs.green.service.simplify.OnlyConstantPropagationTest;
-import za.ac.sun.cs.green.service.simplify.SimplificationConstantPropagationTest;
+import za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest;
+import za.ac.sun.cs.green.service.simplify.SimplificationConstantPropogationTest;
 import cvc3.ValidityChecker;
 import za.ac.sun.cs.green.parser.smtlib2.SMTLIB2Parser0Test;
 import za.ac.sun.cs.green.parser.smtlib2.SMTLIB2Scanner0Test;
