@@ -154,9 +154,9 @@ public class ConstantPropagation extends BasicService {
           Operation.Operator oper = op;
           if(oper.equals(Operation.Operator.EQ)){
               if((r instanceof IntVariable) && (r instanceof IntConstant)){
-                  map.put(l , r);
+                  map.put((IntVariable)l ,(IntConstant) r);
               }else if((r instanceof IntVariable) && (l instanceof IntConstant)){
-                  map.put(r,l);
+                  map.put((IntVariable)r,(IntConstant)l);
               }
               stack.push(new Operation(oper,l,r));
             } else if(!op.equals(Operation.Operator.EQ)){
