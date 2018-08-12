@@ -61,15 +61,7 @@ public class ConstantPropogation extends BasicService {
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
-			expression.accept(canonizationVisitor);
-			Expression canonized = canonizationVisitor.getExpression();
-			if (canonized != null) {
-				canonized = new Renamer(map,
-						canonizationVisitor.getVariableSet()).rename(canonized);
-			}
-			log.log(Level.FINEST, "After Simplify: " + canonized);
-			return canonized;
+			log.log(Level.FINEST, "After Simplify: " + expression);
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
 					"encountered an exception -- this should not be happening!",
