@@ -122,7 +122,54 @@ public class ConstantPropagation extends BasicService {
 
  		@Override
  		public void postVisit(Operation operation) throws VisitorException {
- 			return null;
+      Operation.Operator op = operation.getOperator();
+			Operation.Operator nop = null;
+			switch (op) {
+			case EQ:
+				nop = Operation.Operator.EQ;
+				break;
+			case NE:
+				nop = Operation.Operator.NE;
+				break;
+			case LT:
+				nop = Operation.Operator.GT;
+				break;
+			case LE:
+				nop = Operation.Operator.GE;
+				break;
+			case GT:
+				nop = Operation.Operator.LT;
+				break;
+			case GE:
+				nop = Operation.Operator.LE;
+				break;
+			default:
+				break;
+			}
+			if (nop != null) {}
+
+      if(stack.size()>1){
+          Expression r = stack.pop();
+          Expression l = stack.pop();
+          Operation.Operator oper = operation.getOperator();
+          if(oper.equals(Operation.Operator.EQ)){
+              if((r instanceof IntVariable) && (r instanceof IntConstant)){
+                  variableMap.put(l , r);
+              }else if((r instanceof IntVariable) && (l instanceof IntConstant)){
+                  variableMap.put(r,l);
+              }
+              stack.push(new Operation(oper,l,r));
+            } else if(!op.equals(Operation.Operator.EQ)){
+                  if (variableMap.containsKey(l)) {
+                      l = variableMap.get(l);
+                  } else if(variableMap.containsKey(r)){
+                      r = variableMap.get(r);
+                  }
+                  stack.push(new Operation(op , l , r));
+            }
+          }
+      }
+      //return null;
  		}
 
  	}
