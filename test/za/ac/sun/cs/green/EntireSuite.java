@@ -25,10 +25,12 @@ import za.ac.sun.cs.green.service.cvc3.SATCVC3Test;
 import za.ac.sun.cs.green.service.factorizer.SATFactorizerTest;
 import za.ac.sun.cs.green.service.latte.CountLattETest;
 import za.ac.sun.cs.green.service.latte.CountLattEWithBounderTest;
+import za.ac.sun.cs.green.service.simplify.ConstantPropogation;
 import za.ac.sun.cs.green.service.slicer.ParallelSATSlicerTest;
 import za.ac.sun.cs.green.service.slicer.SATSlicerTest;
 import za.ac.sun.cs.green.service.z3.SATZ3JavaTest;
 import za.ac.sun.cs.green.service.z3.SATZ3Test;
+import za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest;
 import za.ac.sun.cs.green.util.ParallelSATTest;
 import za.ac.sun.cs.green.util.SetServiceTest;
 import za.ac.sun.cs.green.util.SetTaskManagerTest;
@@ -36,7 +38,8 @@ import za.ac.sun.cs.green.util.SetTaskManagerTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	SATCanonizerTest.class,
-	SATZ3Test.class
+	SATZ3Test.class,
+	ConstantPropogation.class
 })
 
 public class EntireSuite {
