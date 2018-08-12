@@ -86,7 +86,6 @@ public class ConstantPropagation extends BasicService {
 
         @Override
         public void postVisit(IntConstant constant) {
-            System.out.println("Pushing constant to stack: " + constant);
             stack.push(constant);
         }
 
@@ -94,10 +93,8 @@ public class ConstantPropagation extends BasicService {
         public void postVisit(IntVariable variable) {
             //If variable exists in HashMap (it has been assigned a value)
             if (variables.containsKey(variable)) {
-                System.out.println("Pushing constant to stack (propagated). " + variable + " = " + variables.get(variable));
                 stack.push(variables.get(variable));
             } else {
-                System.out.println("Pushing variable to stack: " + variable + " doesn't have a value.");
                 stack.push(variable);
             }
         }
@@ -111,15 +108,12 @@ public class ConstantPropagation extends BasicService {
             //If operation is an EQ type. Add the equality to the HashMap to propagate in future
             if (op == Operation.Operator.EQ) {
                 if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
-                    System.out.println("Constant assignment - Map: " + l + " with value " + r);
                     variables.put((IntVariable) l, (IntConstant) r);
                     stack.push(new Operation(op, l, r));
                 } else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
-                    System.out.println("Constant assignment - Map: " + r + " with value " + l);
                     variables.put((IntVariable) r, (IntConstant) l);
                     stack.push(new Operation(op, l, r));
                 } else {
-                    System.out.println("Neither x = k or k = x :  " + l + op + r);
                     stack.push(new Operation(op, l, r));
                 }
             } else {
@@ -129,8 +123,6 @@ public class ConstantPropagation extends BasicService {
                 if (variables.containsKey(l)) {
                     l = variables.get(l);
                 }
-
-                System.out.println("Non equal operation: " + l + op + r);
                 stack.push(new Operation(op, l, r));
             }
         }
