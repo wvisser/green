@@ -33,7 +33,7 @@ public class OnlyConstantPropogationTest {
 					"za.ac.sun.cs.green.service.simplify.ConstantPropogation");
 			//props.setProperty("green.service.sat.canonize",
 			//		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
-			
+
 			props.setProperty("green.service.sat.sink",
 					"za.ac.sun.cs.green.service.sink.SinkService");
 			Configuration config = new Configuration(solver, props);
@@ -67,7 +67,7 @@ public class OnlyConstantPropogationTest {
 		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
 		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
-		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
+		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10
 		check(o4, "(x==1)&&((1+y)==10)");
 	}
 

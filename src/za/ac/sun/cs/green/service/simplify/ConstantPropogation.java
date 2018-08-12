@@ -1,4 +1,4 @@
-package za.ac.sun.cs.green.service;
+package za.ac.sun.cs.green.service.simplify;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,14 +24,14 @@ import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
 
-public class ConstantPropagation extends BasicService {
+public class ConstantPropogation extends BasicService {
 
   /**
   * Number of times the slicer has been invoked.
   */
   private int invocations = 0;
 
-  public ConstantPropagation(Green solver) {
+  public ConstantPropogation(Green solver) {
     super(solver);
   }
 
@@ -65,9 +65,7 @@ public class ConstantPropagation extends BasicService {
       log.log(Level.FINEST, "After Propagation: " + expression);
       return expression;
     } catch (VisitorException x) {
-      log.log(Level.SEVERE,
-      "encountered an exception -- this should not be happening!",
-      x);
+      log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
     }
     return null;
   }
@@ -75,6 +73,8 @@ public class ConstantPropagation extends BasicService {
   private static class OrderingVisitor extends Visitor {
 
     private Stack<Expression> stack;
+    private static Map<String, Expression> map = new HashMap<>();
+
 
     public OrderingVisitor() {
       stack = new Stack<Expression>();
@@ -123,13 +123,12 @@ public class ConstantPropagation extends BasicService {
       if (nop != null) {
         Expression r = stack.pop();
         Expression l = stack.pop();
-        if ((r instanceof IntVariable)
-        && (l instanceof IntVariable)
-        && (((IntVariable) r).getName().compareTo(
-        ((IntVariable) l).getName()) < 0)) {
+        System.out.println("r is: " + r.toString());
+        System.out.println("l is: " + l.toString());
+
+        if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
           stack.push(new Operation(nop, r, l));
-        } else if ((r instanceof IntVariable)
-        && (l instanceof IntConstant)) {
+        } else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
           stack.push(new Operation(nop, r, l));
         } else {
           stack.push(operation);
