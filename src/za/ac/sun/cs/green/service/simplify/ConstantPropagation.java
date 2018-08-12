@@ -11,6 +11,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
@@ -74,7 +75,7 @@ public class ConstantPropagation extends BasicService{
 	}
 
 	private static class PropagationVisitor extends Visitor {
-
+		
 		private Map<Variable, Constant> map;
 
 		private Stack<Expression> stack;
@@ -96,8 +97,7 @@ public class ConstantPropagation extends BasicService{
 				v = new IntVariable("v" + map.size(), variable.getLowerBound(),
 						variable.getUpperBound());
 				map.put(variable, v);
-			}*/
-			
+			}*/		
 			stack.push(variable);
 		}
 
@@ -108,14 +108,57 @@ public class ConstantPropagation extends BasicService{
 
 		@Override
 		public void postVisit(Operation operation) {
-            
-		}
-		
-		@Override
-		public void preVisit(Operation operation) {
-			if (operation.getOperator().equals(Operation.Operator.EQ)) {
-				
+			Operation.Operator op = operation.getOperator();
+			Operation.Operator nop = null;
+			switch (op) {
+			case EQ:
+				nop = Operation.Operator.EQ;
+				break;
+			case NE:
+				nop = Operation.Operator.NE;
+				break;
+			case LT:
+				nop = Operation.Operator.GT;
+				break;
+			case LE:
+				nop = Operation.Operator.GE;
+				break;
+			case GT:
+				nop = Operation.Operator.LT;
+				break;
+			case GE:
+				nop = Operation.Operator.LE;
+				break;
+			default:
+				break;
+			}
+			if (nop != null) {
+				System.out.println("POPPING THIS FROM STACK: " + stack.peek());
+				Expression r = stack.pop();
+				System.out.println("POPPING THIS FROM STACK: " + stack.peek());
+				Expression l = stack.pop();
+				if ((r instanceof IntVariable)
+						&& (l instanceof IntVariable)
+						&& (((IntVariable) r).getName().compareTo(
+								((IntVariable) l).getName()) < 0)) {
+					stack.push(new Operation(nop, r, l));
+				} else if ((r instanceof IntVariable)
+						&& (l instanceof IntConstant)) {
+					stack.push(new Operation(nop, r, l));
+				} else {
+					stack.push(operation);
+				}
+			} else if (op.getArity() == 2) {
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+				stack.push(new Operation(op, l, r));
+			} else {
+				for (int i = op.getArity(); i > 0; i--) {
+					stack.pop();
+				}
+				stack.push(operation);
 			}
 		}
+
 	}
 }
