@@ -57,7 +57,7 @@ public class ConstantPropagation extends BasicService {
 					 log.log(Level.FINEST, "Before Constant Propagation: " + expr);
 					 invocations++;
 
-					 constPropV cPv = new constPropV();
+					 cPvisitor cPv = new cPvisitor();
 					 expr.accept(cPv);
 					 Expression prop = cPv.getExpression();
 
@@ -71,27 +71,53 @@ public class ConstantPropagation extends BasicService {
 	 }
 
 
-	 
-	 private static class OrderingVisitor extends Visitor {
 
- 		private Stack<Expression> stack;
+	 private static class cPvisitor extends Visitor {
+		 		private Stack<Expression> stack;
+		 		private Map<IntVariable, IntConstant> map;
 
- 		public OrderingVisitor() {
- 			stack = new Stack<Expression>();
- 		}
+ 				public cPvisitor() {
+ 					stack = new Stack<Expression>();
+ 				}
 
  		public Expression getExpression() {
- 			return stack.pop();
+			Expression ex = null;
+			if(stack.isEmpty()){
+						return null;
+
+					}else{
+						ex = stack.pop();
+
+					}
+		 				return ex;
  		}
 
  		@Override
- 		public void postVisit(IntConstant constant) {
- 			stack.push(constant);
+ 		public void postVisit(Constant constant) {
+			if(constant instanceof IntConstant){
+				stack.push(constant);
+			} else {
+				if(stack.isEmpty()){
+					return;
+				}else{
+					stack.clear();
+				}
+
+			}
  		}
 
  		@Override
  		public void postVisit(IntVariable variable) {
- 			stack.push(variable);
+			if(variable instanceof IntVariable){
+				stack.push(variable);
+			} else {
+				if(stack.isEmpty()){
+					return;
+				}else{
+					stack.clear();
+				}
+
+			}
  		}
 
  		@Override
