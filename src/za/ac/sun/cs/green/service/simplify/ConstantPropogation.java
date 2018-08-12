@@ -78,6 +78,7 @@ public class ConstantPropogation extends BasicService {
 
  				public cPvisitor() {
  					stack = new Stack<Expression>();
+					 Vmap = new TreeMap<IntVariable, IntConstant>();
  				}
 
  		public Expression getExpression() {
