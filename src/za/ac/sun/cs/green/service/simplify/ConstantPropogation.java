@@ -160,10 +160,10 @@ public class ConstantPropogation extends BasicService {
               }
               stack.push(new Operation(oper,l,r));
             } else if(!op.equals(Operation.Operator.EQ)){
-		  log.log(Level.SEVERE, map.containsKey(l));
-                  if (map.containsKey(l)) {
+		  
+                  if (true) {
                       l = map.get(l);
-                  } else if(map.containsKey(r)){
+                  } else if(true){
                       r = map.get(r);
                   }
                   stack.push(new Operation(op , l , r));
