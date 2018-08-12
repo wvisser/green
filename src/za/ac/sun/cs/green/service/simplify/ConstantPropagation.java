@@ -466,6 +466,26 @@ public class ConstantPropagation extends BasicService {
                     insideOpp = (Operation) l;
                     switch (insideOpp.getOperator()) {
                     case SUB:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = outsideConstant.getValue() + constant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case ADD:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -488,6 +508,26 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     case DIV:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = constant.getValue() / outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case MUL:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -524,6 +564,26 @@ public class ConstantPropagation extends BasicService {
                     insideOpp = (Operation) l;
                     switch (insideOpp.getOperator()) {
                     case SUB:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = outsideConstant.getValue() + constant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case ADD:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -546,6 +606,26 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     case DIV:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = constant.getValue() / outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case MUL:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -582,6 +662,26 @@ public class ConstantPropagation extends BasicService {
                     insideOpp = (Operation) l;
                     switch (insideOpp.getOperator()) {
                     case SUB:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = outsideConstant.getValue() + constant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case ADD:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -604,6 +704,26 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     case DIV:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = constant.getValue() / outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) r;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case MUL:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -846,6 +966,26 @@ public class ConstantPropagation extends BasicService {
                     insideOpp = (Operation) r;
                     switch (insideOpp.getOperator()) {
                     case SUB:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() + constant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case ADD:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -868,6 +1008,26 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     case DIV:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() / outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case MUL:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -904,6 +1064,26 @@ public class ConstantPropagation extends BasicService {
                     insideOpp = (Operation) r;
                     switch (insideOpp.getOperator()) {
                     case SUB:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() + constant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case ADD:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -926,6 +1106,26 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     case DIV:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() / outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case MUL:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -962,6 +1162,26 @@ public class ConstantPropagation extends BasicService {
                     insideOpp = (Operation) r;
                     switch (insideOpp.getOperator()) {
                     case SUB:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() + constant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case ADD:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
@@ -984,6 +1204,26 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     case DIV:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() / outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
                     case MUL:
                         if (insideOpp.getOperand(0) instanceof IntConstant
                                 && insideOpp.getOperand(1) instanceof IntVariable) {
