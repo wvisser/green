@@ -75,7 +75,7 @@ public class SimplificationConstantPropogationTest {
 	public void test01() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
-		IntConstant c = new IntConDockerfilestant(1);
+		IntConstant c = new IntConstant(1);
 		IntConstant c2 = new IntConstant(10);
 		IntConstant c3 = new IntConstant(2);
 		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
