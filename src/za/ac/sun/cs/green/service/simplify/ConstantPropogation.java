@@ -32,9 +32,9 @@ public class ConstantPropogation {
     }
 
     public Operation propogate(Operation in) {
-        
+
         System.out.println(in);
 
-        return out;
+        return in;
     }
 }
