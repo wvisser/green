@@ -68,7 +68,7 @@ public class ConstantPropagation extends BasicService {
 
 
 
-    private static Expression GetSimplifiedExpression(Expression expression, OrderingVisitor orderingVisitor) throws VisitorException {
+    private Expression multipleSimplifications(Expression expression, OrderingVisitor orderingVisitor) throws VisitorException {
         SimplifyingVisitor simplifyingVisitor = new SimplifyingVisitor();
         expression.accept(simplifyingVisitor);
         expression = simplifyingVisitor.getExpression();
