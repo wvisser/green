@@ -31,7 +31,7 @@ public class ConstantPropagation extends BasicService {
 	*/
 	private int invocations = 0;
 
-	public ConstantPropogation(Green solver) {
+	public ConstantPropagation(Green solver) {
 		super(solver);
 	}
 
