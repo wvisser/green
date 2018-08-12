@@ -60,7 +60,7 @@ public class ConstantPropogation extends BasicService {
         log.log(Level.FINEST, "Before Constant Propogation: " + expression);
 
 
-        log.log(Level.FINEST, expression);
+        log.log(Level.FINEST, "" + expression);
 
 
         log.log(Level.FINEST, "After Constant Propogation: " + propogated);
