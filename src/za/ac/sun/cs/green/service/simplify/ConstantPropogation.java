@@ -39,7 +39,7 @@ public class ConstantPropogation extends BasicService {
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = canonize(instance.getFullExpression(), map);
+			final Expression e = propagateConstants(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -52,14 +52,14 @@ public class ConstantPropogation extends BasicService {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-	public Expression canonize(Expression expression, Map<Variable, Variable> map) {
+	public Expression propagateConstants(Expression expression, Map<Variable, Variable> map) {
 		try {
-			log.log(Level.FINEST, "Before Canonization: " + expression);
+			log.log(Level.FINEST, "Before constants are propagated: " + expression);
 			invocations++;
 			ConstantPropVisitor constantPropVisitor = new ConstantPropVisitor();
 			expression.accept(constantPropVisitor);
 			expression = constantPropVisitor.getExpression();
-			log.log(Level.FINEST, "After Canonization: " + expression);
+			log.log(Level.FINEST, "After constants are propagated: " + expression);
 			return expression;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
@@ -78,8 +78,6 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		public Expression getExpression() {
-			// Print HashMap
-			// System.out.println(Arrays.asList(map));
 			return stack.pop();
 		}
 
@@ -95,35 +93,35 @@ public class ConstantPropogation extends BasicService {
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
+			boolean detected = false;
 			Expression r = stack.pop();
 			Expression l = stack.pop();
 
-			if (operation.getOperator() == Operation.Operator.EQ
-				&& (((l instanceof IntVariable) && (r instanceof IntConstant))
-				||  ((r instanceof IntVariable) && (l instanceof IntConstant)))) {
-
+			if (operation.getOperator() == Operation.Operator.EQ) {
+				
 				// If we have an equality expression involving a variable and constant,
 				// assign variable to constant
 				if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
 					map.put(l.toString(), Integer.parseInt(r.toString()));
+					detected = true;
 				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
 					map.put(r.toString(), Integer.parseInt(l.toString()));
+					detected = true;
 				}
 
-				// Push operation back to stack
-				stack.push(operation);
-			} else {
-				// Check if variable in hashmap, and replace.
-				if ((r instanceof IntVariable && map.get(r.toString()) != null)) {
-					r = new IntConstant(map.get(r.toString()));
-				}
-
-				// Check if variable in hashmap, and replace.
-				if ((l instanceof IntVariable && map.get(l.toString()) != null)) {
-					l = new IntConstant(map.get(l.toString()));
-				}
-				stack.push(new Operation(operation.getOperator(), l, r));
 			}
+
+			// Check if variable in hashmap, and replace.
+			if (!detected && (r instanceof IntVariable && map.get(r.toString()) != null)) {
+				r = new IntConstant(map.get(r.toString()));
+			}
+
+			// Check if variable in hashmap, and replace.
+			if (!detected && (l instanceof IntVariable && map.get(l.toString()) != null)) {
+				l = new IntConstant(map.get(l.toString()));
+			}
+
+			stack.push(new Operation(operation.getOperator(), l, r));
 		}
 	}
 }
