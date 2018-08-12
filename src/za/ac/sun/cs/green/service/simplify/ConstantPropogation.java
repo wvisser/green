@@ -52,24 +52,22 @@ public class ConstantPropagation extends BasicService {
 			reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
+	public Expression propagateConstants(Expression expr, Map<Variable, Variable> map) {
+			 try {
+					 log.log(Level.FINEST, "Before Constant Propagation: " + expr);
+					 invocations++;
 
-	@Override
-	public Object childDone(Instance instance, Service subService,
-			Instance subInstance, Object result) {
-		@SuppressWarnings("unchecked")
-		HashMap<Variable,Object> r = (HashMap<Variable,Object>)result;
-		if (r == null) {
-			return null;
-		}
+					 ConstantPropagationVisitor cPv = new ConstantPropagationVisitor();
+					 expr.accept(cPv);
+					 Expression prop = cPv.getExpression();
 
-		@SuppressWarnings("unchecked")
-		HashMap<Variable, Variable> reverseMap = (HashMap<Variable, Variable>)instance.getData(RENAME);
+					 log.log(Level.FINEST, "After Constant Propagation: " + prop);
+					 return prop;
+			 } catch (VisitorException ex) {
+					 log.log(Level.SEVERE, "Something is not right.", ex);
+			 }
 
-		HashMap<Variable,Object> newResult = new HashMap<Variable,Object>();
-		for (Map.Entry<Variable,Object> m : r.entrySet()) {
-			newResult.put(reverseMap.get(m.getKey()), m.getValue());
-		}
-		return newResult;
-	}
+			 return null;
+	 }
 
-}
+ }
