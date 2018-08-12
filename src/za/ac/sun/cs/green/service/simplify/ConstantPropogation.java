@@ -55,4 +55,16 @@ public class ConstantPropogation extends BasicService {
         log.log(Level.FINEST, "\n\n\n\nIM WORKING, LOOK AT MEEE PLEASE\n\n\n\n");
         return expression;
     }
+
+    public class PropogateVisitor extends Visitor {
+        private Stack<Expression> stack;
+
+        public PropogateVisitor() {
+            stack = new Stack<Expression>();
+        }
+
+        public Expression getExpression() {
+			return stack.pop();
+		}
+    }
 }
