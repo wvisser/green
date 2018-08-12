@@ -57,7 +57,12 @@ public class ConstantPropagation extends BasicService {
             expression.accept(orderingVisitor);
             expression = orderingVisitor.getExpression();
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
-            return expression;
+
+            SimplifyingVisitor simplifyingVistor = new SimplifyingVisitor();
+            Expression simplifiedExpression = expression.accept(simplifyingVisitor);
+            simplifiedExpression = simplifyingVisitor.getExpression();
+            log.log(Level.FINEST, "After Simplification: " + simplifiedExpression);
+            return simplifiedExpression;
         } catch (VisitorException x) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
         }
@@ -128,6 +133,43 @@ public class ConstantPropagation extends BasicService {
                 System.out.println("Non equal operation: " + l + op + r);
                 stack.push(new Operation(op, l, r));
             }
+        }
+
+    }
+
+    private static class SimplifyingVisitor extends Visitor {
+        private Stack<Expression> stack;
+        private HashMap<IntVariable, IntConstant> variables;
+
+        public SimplifyingVisitor() {
+            stack = new Stack<Expression>();
+            variables = new HashMap<IntVariable, IntConstant>();
+            System.out.println("Starting Simplifier");
+        }
+
+        public Expression getExpression() {
+            Expression finalExp = stack.pop();
+            return finalExp;
+        }
+
+        @Override
+        public void postVisit(IntConstant constant) {
+            stack.push(constant);
+        }
+
+        @Override
+        public void postVisit(IntVariable variable) {
+            stack.push(variable);
+        }
+
+        @Override
+        public void postVisit(Operation operation) throws VisitorException {
+            Operation.Operator op = operation.getOperator();
+            Expression r = stack.pop();
+            Expression l = stack.pop();
+
+            System.out.println("Visiting operation: ");
+            System.out.println(l + op + r);
         }
 
     }
