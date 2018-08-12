@@ -20,7 +20,7 @@ RUN git clone https://github.com/clariceDB/green
 # Checkout the constant propagation branch
 WORKDIR /green
 RUN git fetch
-RUN git checkout constprop
+RUN git checkout origin/constprop
 WORKDIR /
 
 # Download and extract Z3
