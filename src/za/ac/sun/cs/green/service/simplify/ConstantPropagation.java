@@ -62,7 +62,7 @@ public class ConstantPropagation extends BasicService{
 			invocations++;
 			//OrderingVisitor orderingVisitor = new OrderingVisitor();
 			PropagationVisitor propVisitor = new PropagationVisitor();
-			expression.accept(orderingVisitor);
+			expression.accept(propVisitor);
 			//expression = orderingVisitor.getExpression();
 			//CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
 			//expression.accept(canonizationVisitor);
@@ -79,12 +79,12 @@ public class ConstantPropagation extends BasicService{
 
 	private static class PropagationVisitor extends Visitor {
 
-		private Map<Variable, Variable> map;
+		private Map<Variable, Constant> map;
 
 		private Stack<Expression> stack;
 
-		public PropagationVisitor(Map<Variable, Variable> map, SortedSet<IntVariable> variableSet) {
-			this.map = map;
+		public PropagationVisitor() {
+			map = new Map<Variable, Constant>();
 			stack = new Stack<Expression>();
 		}
 
