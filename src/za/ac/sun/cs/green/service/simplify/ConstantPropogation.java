@@ -79,7 +79,7 @@ public class ConstantPropogation extends BasicService {
 
 		public Expression getExpression() {
 			// Print HashMap
-			System.out.println(Arrays.asList(map));
+			// System.out.println(Arrays.asList(map));
 			return stack.pop();
 		}
 
@@ -99,8 +99,8 @@ public class ConstantPropogation extends BasicService {
 			Expression l = stack.pop();
 
 			if (operation.getOperator() == Operation.Operator.EQ
-				&& ((l instanceof IntVariable) && (r instanceof IntConstant)
-				|| (r instanceof IntVariable) && (l instanceof IntConstant))) {
+				&& (((l instanceof IntVariable) && (r instanceof IntConstant))
+				||  ((r instanceof IntVariable) && (l instanceof IntConstant)))) {
 
 				// If we have an equality expression involving a variable and constant,
 				// assign variable to constant

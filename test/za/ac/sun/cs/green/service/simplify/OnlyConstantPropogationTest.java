@@ -47,7 +47,6 @@ public class OnlyConstantPropogationTest {
 		assertNotNull(result);
 		assertEquals(Instance.class, result.getClass());
 		Instance j = (Instance) result;
-		System.out.println(j.getExpression().toString() + " | " + expected);
 		finalCheck(j.getExpression().toString(), expected);
 	}
 
@@ -64,6 +63,21 @@ public class OnlyConstantPropogationTest {
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10
 		check(o4, "(x==1)&&((1+y)==10)");
+	}
+
+	@Test
+	public void test01() {
+		IntVariable x = new IntVariable("x", 0, 99);
+		IntVariable y = new IntVariable("y", 0, 99);
+		IntVariable z = new IntVariable("z", 0, 99);
+		IntConstant c = new IntConstant(1);
+		IntConstant c10 = new IntConstant(10);
+		IntConstant c3 = new IntConstant(3);
+		Operation o1 = new Operation(Operation.Operator.EQ, x, c3); // o1 : x = 3
+		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
+		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
+		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10
+		check(o4, "(x==3)&&((3+y)==10)");
 	}
 
 }
