@@ -24,17 +24,30 @@ import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
 
-public class ConstantPropogation {
+public class ConstantPropogation extends BasicService {
 
 
-    public ConstantPropogation() {
-
+    public ConstantPropogation(Green solver){
+        super(solver);
     }
 
-    public Operation propogate(Operation in) {
+    @Override
+	public Set<Instance> processRequest(Instance instance) {
+		@SuppressWarnings("unchecked")
+		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
+		if (result == null) {
+			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
+			final Expression e = propogate(instance.getFullExpression(), map);
+			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
+			result = Collections.singleton(i);
+			instance.setData(getClass(), result);
+		}
+		return result;
+	}
 
-        System.out.println("*******\n" + in + "*******\n");
-
-        return in;
+    public Expression propogate(Expression expression,
+			Map<Variable, Variable> map) {
+            log.log(Level.FINEST, "Before propogation: " + expression);
+        return null;
     }
 }
