@@ -40,5 +40,93 @@ public class ConstantPropogation extends BasicService {
            	    final Instance ins = new Instance(getSolver(), instance.getSource(), null, expr);
           	    setResults = Collections.singleton(ins);
           	    instance.setData(getClass(), setResults);
+		}
+		return setResults;
 	}
+	
+	
+	@Override
+        public void report(Reporter reporter) {
+        reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
+        }
+	public Expression simplify(Expression expression, Map<Variable, Variable> map) {
+		try {
+			log.log(Level.FINEST, "Pre-simplification operation: " + expression);
+			invocations++;
+			SimplifyVisitor simplifyVisitor = new SimplifyVisitor();
+			expression.accept(simplifyVisitor);
+			expression = simplifyVisitor.getExpression();
+			log.log(Level.FINEST, "Post-simplification operation: " + expression);
+		} catch (VisitorException x) {
+			log.log(Level.SEVERE, "Error visitor exception encountered", x);
+		} finally {
+			return expression;
+		}		
+	}
+	
+	public class SimplifyVisitor extends Visitor {
+		private Map<IntVariable, IntConstant> map;
+		private Stack<Expression> Exprstack;
+		
+		public SimplifyVisitor() {
+			Exprstack = new Stack<Expression>();
+			map = new TreeMap<IntVariable, IntConstant>();
+		}
+
+		public Expression getExpression() {
+			return Exprstack.pop();
+		}
+
+		@Override
+		public void postVisit(IntConstant constant) {
+			Exprstack.push(constant);
+		}
+
+		@Override
+		public void preVisit(Operation operation) {
+			Operation.Operator opr = operation.getOperator();
+			if (opr.equals(Operation.Operator.EQ)) {
+				Expression opExpr = operation.getOperand(0);
+				Expression opR = operation.getOperand(1);
+				if ((opExpr instanceof IntVariable) && (opR instanceof IntConstant)) {
+					map.put((IntVariable) opExpr, (IntConstant) opR);
+				} else if ((opExpr instanceof IntConstant) && (opR instanceof IntVariable)) {
+					map.put((IntVariable) opR, (IntConstant) opExpr);
+				}
+			}
+		}
+
+		@Override
+		public void postVisit(IntVariable variable) {
+			Exprstack.push(variable);
+		}
+
+		@Override
+		public void postVisit(Operation operation) {
+			Operation.Operator op = operation.getOperator();
+
+			if (Exprstack.size() >= 2) {
+				Expression right = Exprstack.pop();
+				Expression left = Exprstack.pop();
+				if (!op.equals(Operation.Operator.EQ)) {
+					if (left instanceof IntVariable) {
+						if (map.containsKey(left)) {
+							left = map.get(left);
+						}
+					}
+					if (right instanceof IntVariable) {
+						if (map.containsKey(right)) {
+							right = map.get(right);
+						}
+					}
+				}
+				Operation eOP = new Operation(operation.getOperator(), left, right);
+				Exprstack.push(eOP);
+			}
+
+		}
+
+	}
+
+}
 }
