@@ -151,7 +151,7 @@ public class ConstantPropagation extends BasicService {
       if(stack.size()>1){
           Expression r = stack.pop();
           Expression l = stack.pop();
-          Operation.Operator oper = operation.getOperator();
+          Operation.Operator oper = op;
           if(oper.equals(Operation.Operator.EQ)){
               if((r instanceof IntVariable) && (r instanceof IntConstant)){
                   variableMap.put(l , r);
