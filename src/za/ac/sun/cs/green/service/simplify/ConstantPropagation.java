@@ -146,13 +146,11 @@ public class ConstantPropagation extends BasicService {
 
         @Override
         public void postVisit(IntConstant constant) {
-            System.out.println("Constant: " + constant);
             stack.push(constant);
         }
 
         @Override
         public void postVisit(IntVariable variable) {
-            System.out.println("Variable: " + variable);
             stack.push(variable);
         }
 
@@ -175,7 +173,6 @@ public class ConstantPropagation extends BasicService {
                     }
                     break;
                 case LT:
-                    System.out.println("With a LT");
                     if (((IntConstant) l).getValue() < ((IntConstant) r).getValue()) {
                         stack.push(Operation.TRUE);
                     } else {
@@ -238,6 +235,7 @@ public class ConstantPropagation extends BasicService {
             }
 
             else if (l instanceof Operation && r instanceof Operation) {
+                System.out.println("Have 2 ops");
                 switch (op) {
                 case AND:
                     if (l.equals(Operation.TRUE) && r.equals(Operation.TRUE)) {
@@ -261,6 +259,7 @@ public class ConstantPropagation extends BasicService {
             }
 
             else if (l instanceof Operation && r instanceof IntConstant) {
+                System.out.println("Have an op and a constant");
                 switch (op) {
                 case NE:
                 case EQ:
@@ -637,6 +636,7 @@ public class ConstantPropagation extends BasicService {
             }
 
             else {
+                System.out.println("Have none of the above");
                 stack.push(new Operation(op, l, r));
             }
         }
