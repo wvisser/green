@@ -20,7 +20,7 @@ RUN git clone https://github.com/MichelleM1398/green
 # Checkout the constant propagation branch
 WORKDIR /green
 RUN git fetch
-RUN git checkout origin/feature/ConstantPropagation
+RUN git checkout tree/feature/ConstantPropagation
 WORKDIR /
 
 # Download and extract Z3
