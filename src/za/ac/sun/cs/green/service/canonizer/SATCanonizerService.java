@@ -678,5 +678,4 @@ public class SATCanonizerService extends BasicService {
 		}
 
 	}
-
 }
