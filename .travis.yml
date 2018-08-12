@@ -1,5 +1,16 @@
+sudo: required
+
 language: java
 
+services:
+  - docker
+  
+before_install:
+  - docker build -t green .
+
 script:
- - ant;
- - ant test;
+  - docker run green /bin/sh -c "ant; ant test"; 
+  
+ # This travis.yml file was configured with the help of the page
+ # https://docs.travis-ci.com/user/docker/ and in asking the demi's
+ # Steyn and Phillip for guidance
