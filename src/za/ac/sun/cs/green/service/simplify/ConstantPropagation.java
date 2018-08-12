@@ -152,5 +152,5 @@ public class ConstantPropogation extends BasicService {
 				stack.push(operation);
 			}
 		}
-
 	}
+}
