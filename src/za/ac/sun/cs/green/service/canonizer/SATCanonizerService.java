@@ -349,7 +349,7 @@ public class SATCanonizerService extends BasicService {
 			System.out.println("Post visit constant: " + constant);
 			if (linearInteger && !unsatisfiable) {
 				if (constant instanceof IntConstant) {
-					System.out.prntln("pushed constant onto stack: " + constant)
+					System.out.println("pushed constant onto stack: " + constant);
 					stack.push(constant);
 				} else {
 					stack.clear();
@@ -363,10 +363,10 @@ public class SATCanonizerService extends BasicService {
 			if (linearInteger && !unsatisfiable) {
 				if (variable instanceof IntVariable) {
 					variableSet.add((IntVariable) variable);
-					Operation newOper = new Operation(Operation.Operator.MUL, Operation.ONE,
+					Operation newOper = new Operation(Operation.Operator.MUL, Operation.ONE, variable);
 					System.out.println("pushed operation onto stack: " + newOper);
-							variable)
-					stack.push(newOper));
+
+					stack.push(newOper);
 				} else {
 					stack.clear();
 					linearInteger = false;
@@ -429,7 +429,7 @@ public class SATCanonizerService extends BasicService {
 							// unsatisfiable = true;
 						}
 					} else {
-						new Operation(op, e, Operation.ZERO);
+						Operation pushOp = new Operation(op, e, Operation.ZERO);
 						System.out.println("pushed operation: " + pushOp);
 						stack.push(pushOp);
 					}
