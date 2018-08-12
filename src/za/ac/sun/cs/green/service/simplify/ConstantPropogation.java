@@ -26,6 +26,7 @@ import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropogation extends BasicService {
 
+    private int invocations = 0;
 
     public ConstantPropogation(Green solver){
         super(solver);
@@ -45,9 +46,13 @@ public class ConstantPropogation extends BasicService {
 		return result;
 	}
 
-    public Expression propogate(Expression expression,
-			Map<Variable, Variable> map) {
-            log.log(Level.FINEST, "\n\n\n\nIM WORKING, LOOK AT MEEE\n\n\n\n");
-        return null;
+    @Override
+    public void report(Reporter reporter) {
+        reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
+    }
+
+    public Expression propogate(Expression expression, Map<Variable, Variable> map) {
+        log.log(Level.FINEST, "\n\n\n\nIM WORKING, LOOK AT MEEE\n\n\n\n");
+        return expression;
     }
 }
