@@ -41,7 +41,7 @@ public class ConstantPropagation extends BasicService {
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
 		
-		basic_test();
+		test02();
 //		System.out.println(o4);
 //		constantVisitor ov = new constantVisitor();
 //		try {
@@ -98,10 +98,23 @@ public class ConstantPropagation extends BasicService {
 		IntConstant c1 = new IntConstant(2);
 		IntConstant c2 = new IntConstant(1);
 		IntConstant neg_c = new IntConstant(-2);
-		
-		Operation o1 = new Operation(Operation.Operator.ADD, c1, c2);
-		Operation o2 = new Operation(Operation.Operator.SUB, o2, x);
-		Operation o = new Operation(Operation.Operator.EQ, x, o1);
+		/* All tests passed
+		 * x = 2 + 1
+		 * x = -2 - 1
+		 * x + 1 = 2
+		 * x - 1 = 2
+		 * 1 - x = 2
+		 * 1 + x = 2
+		 * -x = 2 + 1
+		 * -x = 2 - 1
+		 * x + 1 = - 2
+		 * x - 1 = - 2
+		 * 1 - x = - 2
+		 * 1 + x = - 2
+		 */
+		Operation o1 = new Operation(Operation.Operator.SUB, Operation.ZERO, x);
+		//Operation o2 = new Operation(Operation.Operator.SUB, o2, x);
+		Operation o = new Operation(Operation.Operator.EQ, o1, neg_c);
 		System.out.println(o);
 		constantVisitor ov = new constantVisitor();
 		try {
@@ -276,22 +289,22 @@ public class ConstantPropagation extends BasicService {
 							int coeff = 1;
 							
 							if (((Operation) l).getOperand(0) instanceof IntConstant) {
+								variable = (IntVariable) ((Operation) l).getOperand(1);
 								if (((Operation) l).getOperator().equals(Operation.Operator.SUB)) {
 									System.out.println("Negative coeff");
 									coeff = -1;
 								}
-								variable = (IntVariable) ((Operation) l).getOperand(1);
+								
 								System.out.println("Left is constant " + ((Operation) l).getOperator());
 								constant = new IntConstant(coeff*(((IntConstant) r).getValue() - ((IntConstant) ((Operation) l).getOperand(0)).getValue()));
-								
 								
 							} else if (((Operation) l).getOperand(1) instanceof IntConstant) {
 								variable = (IntVariable) ((Operation) l).getOperand(0);
 								System.out.println("Right is constant " + ((Operation) l).getOperator());
-								if (((Operation) r).getOperator().equals(Operation.Operator.ADD)) {
-									constant = new IntConstant(((IntConstant) l).getValue() - ((IntConstant) ((Operation) r).getOperand(0)).getValue());
-								} else if (((Operation) r).getOperator().equals(Operation.Operator.SUB)) {
-									constant = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) ((Operation) r).getOperand(0)).getValue());
+								if (((Operation) l).getOperator().equals(Operation.Operator.ADD)) {
+									constant = new IntConstant(((IntConstant) r).getValue() - ((IntConstant) ((Operation) l).getOperand(1)).getValue());
+								} else if (((Operation) l).getOperator().equals(Operation.Operator.SUB)) {
+									constant = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) ((Operation) l).getOperand(1)).getValue());
 								}
 							}
 						
