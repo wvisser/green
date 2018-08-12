@@ -29,14 +29,16 @@ import za.ac.sun.cs.green.service.slicer.ParallelSATSlicerTest;
 import za.ac.sun.cs.green.service.slicer.SATSlicerTest;
 import za.ac.sun.cs.green.service.z3.SATZ3JavaTest;
 import za.ac.sun.cs.green.service.z3.SATZ3Test;
+import za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest;
 import za.ac.sun.cs.green.util.ParallelSATTest;
 import za.ac.sun.cs.green.util.SetServiceTest;
 import za.ac.sun.cs.green.util.SetTaskManagerTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	SATCanonizerTest.class,
-	SATZ3Test.class
+//	SATCanonizerTest.class,
+	// SATZ3Test.class
+	OnlyConstantPropogationTest.class
 })
 
 public class EntireSuite {
@@ -75,9 +77,9 @@ public class EntireSuite {
 		Z3_PATH = z3;
 		HAS_Z3 = checkZ3Presence();
 		if (!HAS_Z3) {
-		  System.out.println("Z3 Not Available, no tests for it will be executed");	
+		  System.out.println("Z3 Not Available, no tests for it will be executed");
 		}
-		
+
 	}
 
 	private static boolean checkCVC3Presence() {
