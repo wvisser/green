@@ -44,7 +44,7 @@ public class ConstantPropogation extends BasicService {
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = canonize(instance.getFullExpression(), map);
+			final Expression e = simplify(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -57,15 +57,13 @@ public class ConstantPropogation extends BasicService {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-	public Expression canonize(Expression expression,
-			Map<Variable, Variable> map) {
+	public Expression simplify(Expression expression, Map<Variable, Variable> map) {
 		try {
 			log.log(Level.FINEST, "Before Canonization: " + expression);
 			invocations++;
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			System.out.println("*-*-*-*-*-*-*-* Expression is:  " + expression + " *-*-*-*-*-*-*-*-*");
 			log.log(Level.FINEST, "After Canonization: " + expression);
 			return expression;
 		} catch (VisitorException x) {
@@ -83,7 +81,8 @@ public class ConstantPropogation extends BasicService {
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
-			HashMap<String, String> hmap = new HashMap<String, String>();		}
+			hmap = new HashMap<String, Integer>();		
+		}
 
 		public Expression getExpression() {
 			return stack.pop();
@@ -91,14 +90,11 @@ public class ConstantPropogation extends BasicService {
 
 		@Override
 		public void postVisit(IntConstant constant) {
-			System.out.println("/*/*/*/*/*/*/*/*/ Constant is: " + constant + " /*/*/*/*/*/*/*/*");
 			stack.push(constant);
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
-			System.out.println("/*/*/*/*/*/*/*/*/ Variable is: " + variable + " /*/*/*/*/*/*/*/*");
-
 			stack.push(variable);
 		}
 
@@ -106,6 +102,7 @@ public class ConstantPropogation extends BasicService {
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
 			Operation.Operator nop = null;
+			
 			switch (op) {
 			case EQ:
 				nop = Operation.Operator.EQ;
@@ -128,48 +125,40 @@ public class ConstantPropogation extends BasicService {
 			default:
 				break;
 			}
-			if (nop != null) {
 
+			if (op != null) {
 
 				Expression r = stack.pop();
 				Expression l = stack.pop();
+				Operation e; 
 
 				if (operation.getOperator() == Operation.Operator.EQ) {
+	
 					if (((l instanceof IntVariable) && (r instanceof IntConstant)) || ((r instanceof IntVariable) && (l instanceof IntConstant))) {
-						System.out.println("In Here");
 						if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
 							hmap.put(l.toString(), (Integer.parseInt(r.toString())));
-						// System.out.print("key is: "+ map.getKey() + " & Value is: " + map.getValue());
-					} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-						hmap.put(r.toString(), (Integer.parseInt(l.toString())));
+						} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+							hmap.put(r.toString(), (Integer.parseInt(l.toString())));
+						}
 
-					}
-				}
-
-				}
-
-				if ((r instanceof IntVariable)
-						&& (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(
-								((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
+					} 
+					e = new Operation(op, l, r);
+					
 				} else {
-					stack.push(operation);
+					if (r instanceof IntVariable) {
+						if (hmap.containsKey(r.toString())) {
+							r = new IntConstant(hmap.get(r.toString()));
+						}
+					}
+					if (l instanceof IntVariable) {
+						if (hmap.containsKey(l.toString())) {
+							l = new IntConstant(hmap.get(l.toString()));
+						}
+					}
+					e = new Operation(op, l, r);
 				}
-			} else if (op.getArity() == 2) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				stack.push(new Operation(op, l, r));
-			} else {
-				for (int i = op.getArity(); i > 0; i--) {
-					stack.pop();
-				}
-				stack.push(operation);
+				stack.push(e);
 			}
-		}
-
+		 }
 	}
 }
