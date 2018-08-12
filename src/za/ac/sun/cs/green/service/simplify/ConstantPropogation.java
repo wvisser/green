@@ -94,13 +94,11 @@ public class ConstantPropogation extends BasicService {
  		}
 
  		@Override
- 		public void postVisit(Constant constant) {
-			if(constant instanceof IntConstant){
-				stack.push(constant);
+ 		public void postVisit(Constant cons) {
+			if(cons instanceof IntConstant){
+				stack.push(cons);
 			} else {
-				if(stack.isEmpty()){
-					return;
-				}else{
+				
 					stack.clear();
 				}
 
@@ -108,13 +106,10 @@ public class ConstantPropogation extends BasicService {
  		}
 
  		@Override
- 		public void postVisit(Variable variable) {
-			if(variable instanceof IntVariable){
-				stack.push(variable);
+ 		public void postVisit(Variable var) {
+			if(var instanceof IntVariable){
+				stack.push(var);
 			} else {
-				if(stack.isEmpty()){
-					return;
-				}else{
 					stack.clear();
 				}
 
