@@ -376,7 +376,7 @@ public class ConstantPropagation extends BasicService {
                             IntConstant constant = (IntConstant) insideOpp.getOperand(1);
                             IntConstant outsideConstant = (IntConstant) r;
 
-                            int result = outsideConstant.getValue() - constant.getValue();
+                            int result = outsideConstant.getValue() + constant.getValue();
                             operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(0),
                                     new IntConstant(result));
                             stack.push(operation);
@@ -388,7 +388,7 @@ public class ConstantPropagation extends BasicService {
                             IntConstant constant = (IntConstant) insideOpp.getOperand(0);
                             IntConstant outsideConstant = (IntConstant) r;
 
-                            int result = constant.getValue() - outsideConstant.getValue();
+                            int result = outsideConstant.getValue() - constant.getValue();
                             operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(1),
                                     new IntConstant(result));
                             stack.push(operation);
@@ -397,7 +397,7 @@ public class ConstantPropagation extends BasicService {
                             IntConstant constant = (IntConstant) insideOpp.getOperand(1);
                             IntConstant outsideConstant = (IntConstant) r;
 
-                            int result = constant.getValue() - outsideConstant.getValue();
+                            int result = outsideConstant.getValue() - constant.getValue();
                             operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(0),
                                     new IntConstant(result));
                             stack.push(operation);
