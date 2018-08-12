@@ -17,7 +17,7 @@ import za.ac.sun.cs.green.taskmanager.TaskManager;
  * This is a utility class that takes an instance of {@link Properties} and
  * processes all the "{@code green.service}" properties to configure a green
  * solver.
- * 
+ *
  * @author jaco
  */
 public class Configuration {

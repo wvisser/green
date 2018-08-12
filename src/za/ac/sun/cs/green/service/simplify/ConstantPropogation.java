@@ -1,4 +1,4 @@
-package za.ac.sun.cs.green.simplify;
+package za.ac.sun.cs.green.service.simplify;
 
 import java.util.Collections;
 import java.util.HashMap;

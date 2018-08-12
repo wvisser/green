@@ -281,7 +281,7 @@
     
         cur['sun.io.unicode.encoding'] = 'UnicodeLittle';
     
-        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/19787065/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/19787065/Desktop/green/junitvmwatcher5362421400190470952.properties propsfile=/home/19787065/Desktop/green/junit8317046557480124539.properties';
+        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/19787065/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/19787065/Desktop/green/junitvmwatcher3636725855709401714.properties propsfile=/home/19787065/Desktop/green/junit3245924916246017378.properties';
     
         cur['sun.java.launcher'] = 'SUN_STANDARD';
     
@@ -351,21 +351,20 @@
 <tr valign="top">
 <th width="80%">Name</th><th>Tests</th><th>Errors</th><th>Failures</th><th>Skipped</th><th nowrap>Time(s)</th><th nowrap>Time Stamp</th><th>Host</th>
 </tr>
-<tr valign="top" class="Failure">
-<td><a title="Display all tests" href="0_EntireSuite.html">EntireSuite</a></td><td><a title="Display all tests" href="0_EntireSuite.html">1</a></td><td>0</td><td><a title="Display only failures" href="0_EntireSuite-fails.html">1</a></td><td>0</td><td>0.120</td><td>2018-08-12T10:47:31</td><td>localhost</td>
+<tr valign="top" class="Error">
+<td><a title="Display all tests" href="0_EntireSuite.html">EntireSuite</a></td><td><a title="Display all tests" href="0_EntireSuite.html">0</a></td><td><a title="Display only errors" href="0_EntireSuite-errors.html">1</a></td><td>0</td><td>0</td><td>0.041</td><td>2018-08-12T10:44:23</td><td>localhost</td>
 </tr>
 </table>
-<h2>Tests</h2>
+<h2>Errors</h2>
 <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
 <tr valign="top">
 <th>Name</th><th>Status</th><th width="80%">Type</th><th nowrap>Time(s)</th>
 </tr>
-<tr valign="top" class="Failure">
-<td><a name="test00"></a>test00</td><td>Failure</td><td>expected:&lt;([x==1)&amp;&amp;((1+y)==1]0)&gt; but was:&lt;([(((1*v0)+(1*v1))+-10)==0)&amp;&amp;(((1*v0)+-1)==]0)&gt;<br>
+<tr valign="top" class="Error">
+<td><a name="za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest"></a>za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest</td><td>Error</td><td>N/A<br>
 <br>
-<code>junit.framework.AssertionFailedError: expected:&lt;([x==1)&amp;&amp;((1+y)==1]0)&gt; but was:&lt;([(((1*v0)+(1*v1))+-10)==0)&amp;&amp;(((1*v0)+-1)==]0)&gt;<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.finalCheck(OnlyConstantPropogationTest.java:44)<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.check(OnlyConstantPropogationTest.java:56)<br>
-<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.test00(OnlyConstantPropogationTest.java:71)<br>
-</code></td><td>0.076</td>
+<code>java.lang.NullPointerException<br>	at za.ac.sun.cs.green.util.Configuration.createInstance(Configuration.java:109)<br>	at za.ac.sun.cs.green.util.Configuration.access$100(Configuration.java:23)<br>	at za.ac.sun.cs.green.util.Configuration$Parser.lookup(Configuration.java:232)<br>	at za.ac.sun.cs.green.util.Configuration$Parser.parse(Configuration.java:213))<br>	at za.ac.sun.cs.green.util.Configuration$Parser.parse(Configuration.java:1955)<br>	at za.ac.sun.cs.green.util.Configuuration.configure(Configuration.java:77)<br>	at za.ac.sun.cs.green.util.Configuration.configure(Configuration.java:66)<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropoggationTest.initialize(OnlyConstantPropogationTest.java:40)<br>
+</code></td><td>0.000</td>
 </tr>
 </table>
 <div class="Properties">
