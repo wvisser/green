@@ -10,7 +10,7 @@ RUN apt upgrade -y
 # These should be available on the NARGA machines.
 RUN apt install ant -y
 RUN apt install vim -y
-RUN apt install tmux -y
+# RUN apt install tmux -y
 RUN apt install patchelf -y
 RUN apt install libgomp1
 
