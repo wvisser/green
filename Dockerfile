@@ -20,7 +20,7 @@ RUN git clone https://github.com/Liso66/green
 # Checkout the constant propagation branch
 WORKDIR /green
 RUN git fetch
-RUN git checkout <branchname>
+RUN git checkout origin/ConstantProp
 WORKDIR /
 
 # Download and extract Z3
