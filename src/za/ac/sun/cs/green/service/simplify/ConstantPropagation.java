@@ -227,6 +227,7 @@ public class ConstantPropagation extends BasicService {
                     stack.push(divResult);
                     break;
                 default:
+                    System.out.println("Hit default 1... Weird");
                     stack.push(operation);
                     break;
                 }
@@ -237,20 +238,19 @@ public class ConstantPropagation extends BasicService {
                 case AND:
                     if (expressions[0].equals(Operation.TRUE) && expressions[1].equals(Operation.TRUE)) {
                         stack.push(Operation.TRUE);
-                        return;
                     } else {
                         stack.push(Operation.FALSE);
-                        return;
                     }
+                    break;
                 case OR:
                     if (expressions[0].equals(Operation.FALSE) && expressions[1].equals(Operation.FALSE)) {
                         stack.push(Operation.FALSE);
-                        return;
                     } else {
                         stack.push(Operation.TRUE);
-                        return;
                     }
+                    break;
                 default:
+                    System.out.println("Hit default 2... Weird");
                     break;
                 }
 
@@ -302,6 +302,9 @@ public class ConstantPropagation extends BasicService {
                             operation = new Operation(Operation.Operator.EQ, insideOpp.getOperand(0), new IntConstant(result));
                             stack.push(operation);
                         }
+                        break;
+                    default:
+                        System.out.println("Hit default 3... Weird");
                         break;
                     }
                     break;
@@ -355,6 +358,9 @@ public class ConstantPropagation extends BasicService {
                             stack.push(operation);
                         }
                         break;
+                    default:
+                        System.out.println("Hit default 4... Weird");
+                        break;
                     }
                     break;
                 case LE:
@@ -406,6 +412,9 @@ public class ConstantPropagation extends BasicService {
                             }
                             stack.push(operation);
                         }
+                        break;
+                    default:
+                        System.out.println("Hit default 5... Weird");
                         break;
                     }
                     break;
@@ -459,6 +468,9 @@ public class ConstantPropagation extends BasicService {
                             stack.push(operation);
                         }
                         break;
+                    default:
+                        System.out.println("Hit default 6... Weird");
+                        break;
                     }
                     break;
                 case GE:
@@ -510,6 +522,9 @@ public class ConstantPropagation extends BasicService {
                             }
                             stack.push(operation);
                         }
+                        break;
+                    default:
+                        System.out.println("Hit default 7... Weird");
                         break;
                     }
                     break;
