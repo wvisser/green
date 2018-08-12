@@ -58,16 +58,12 @@ public class ConstantPropagation extends BasicService{
 	public Expression propagateConstants(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
-			log.log(Level.FINEST, "Before Canonization: " + expression);
+			log.log(Level.FINEST, "Before Constant propagation: " + expression);
 			invocations++;
-			//OrderingVisitor orderingVisitor = new OrderingVisitor();
 			PropagationVisitor propVisitor = new PropagationVisitor();
 			expression.accept(propVisitor);
-			//expression = orderingVisitor.getExpression();
-			//CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
-			//expression.accept(canonizationVisitor);
 			Expression propagated = propVisitor.getExpression();
-			log.log(Level.FINEST, "After constant propagation: " + propagated);
+			log.log(Level.FINEST, "After Constant propagation: " + propagated);
 			return propagated;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
@@ -101,6 +97,7 @@ public class ConstantPropagation extends BasicService{
 						variable.getUpperBound());
 				map.put(variable, v);
 			}*/
+			
 			stack.push(variable);
 		}
 
@@ -111,19 +108,14 @@ public class ConstantPropagation extends BasicService{
 
 		@Override
 		public void postVisit(Operation operation) {
-			int arity = operation.getOperator().getArity();
-			Expression operands[] = new Expression[arity];
-			for (int i = arity; i > 0; i--) {
-				operands[i - 1] = stack.pop();
-			}
-			stack.push(new Operation(operation.getOperator(), operands));
+            
 		}
 		
 		@Override
 		public void preVisit(Operation operation) {
-			// TODO
+			if (operation.getOperator().equals(Operation.Operator.EQ)) {
+				
+			}
 		}
-
 	}
-
 }
