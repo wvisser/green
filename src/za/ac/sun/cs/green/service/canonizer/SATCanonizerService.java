@@ -668,16 +668,19 @@ public class SATCanonizerService extends BasicService {
 		@Override
 		public void postVisit(IntVariable variable) {
 			Variable v = map.get(variable);
+			System.out.println("Post visit IntVariable: " + variable);
 			if (v == null) {
 				v = new IntVariable("v" + map.size(), variable.getLowerBound(),
 						variable.getUpperBound());
 				map.put(variable, v);
 			}
+			System.out.println("pushed IntVariable onto stack: " + v);
 			stack.push(v);
 		}
 
 		@Override
 		public void postVisit(IntConstant constant) {
+			System.out.println("Post visit pushed constant: " + constant);
 			stack.push(constant);
 		}
 
@@ -688,7 +691,9 @@ public class SATCanonizerService extends BasicService {
 			for (int i = arity; i > 0; i--) {
 				operands[i - 1] = stack.pop();
 			}
-			stack.push(new Operation(operation.getOperator(), operands));
+			Operation pushOp = new Operation(operation.getOperator(), operands);
+			System.out.println("pushed operation onto stack: " + pushOp);
+			stack.push(pushOp);
 		}
 
 	}
