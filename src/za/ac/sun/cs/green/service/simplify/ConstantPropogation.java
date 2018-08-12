@@ -11,6 +11,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
+import com.sun.javafx.binding.IntegerConstant;
+
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.expr.Expression;
@@ -23,6 +25,7 @@ import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
+import za.ac.sun.cs.green.expr.Operation.Operator;
 
 public class ConstantPropogation extends BasicService {
 
@@ -62,6 +65,7 @@ public class ConstantPropogation extends BasicService {
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
+			System.out.println("*-*-*-*-*-*-*-* Expression is:  " + expression + " *-*-*-*-*-*-*-*-*");
 			log.log(Level.FINEST, "After Canonization: " + expression);
 			return expression;
 		} catch (VisitorException x) {
@@ -75,10 +79,11 @@ public class ConstantPropogation extends BasicService {
 	private static class OrderingVisitor extends Visitor {
 
 		private Stack<Expression> stack;
+		private HashMap<String, Integer> hmap;
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
-		}
+			HashMap<String, String> hmap = new HashMap<String, String>();		}
 
 		public Expression getExpression() {
 			return stack.pop();
@@ -86,11 +91,14 @@ public class ConstantPropogation extends BasicService {
 
 		@Override
 		public void postVisit(IntConstant constant) {
+			System.out.println("/*/*/*/*/*/*/*/*/ Constant is: " + constant + " /*/*/*/*/*/*/*/*");
 			stack.push(constant);
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
+			System.out.println("/*/*/*/*/*/*/*/*/ Variable is: " + variable + " /*/*/*/*/*/*/*/*");
+
 			stack.push(variable);
 		}
 
@@ -122,10 +130,24 @@ public class ConstantPropogation extends BasicService {
 			}
 			if (nop != null) {
 
-                System.out.println("************NOP is: " + nop + " ****************");
 
 				Expression r = stack.pop();
 				Expression l = stack.pop();
+
+				if (operation.getOperator() == Operation.Operator.EQ) {
+					if (((l instanceof IntVariable) && (r instanceof IntConstant)) || ((r instanceof IntVariable) && (l instanceof IntConstant))) {
+						System.out.println("In Here");
+						if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+							hmap.put(l.toString(), (Integer.parseInt(r.toString())));
+						// System.out.print("key is: "+ map.getKey() + " & Value is: " + map.getValue());
+					} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+						hmap.put(r.toString(), (Integer.parseInt(l.toString())));
+
+					}
+				}
+
+				}
+
 				if ((r instanceof IntVariable)
 						&& (l instanceof IntVariable)
 						&& (((IntVariable) r).getName().compareTo(

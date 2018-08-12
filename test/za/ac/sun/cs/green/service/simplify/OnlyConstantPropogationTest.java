@@ -1,4 +1,4 @@
-package za.ac.sun.cs.green.service.simplify;
+//package za.ac.sun.cs.green.service.simplify;
 
 import static org.junit.Assert.*;
 
