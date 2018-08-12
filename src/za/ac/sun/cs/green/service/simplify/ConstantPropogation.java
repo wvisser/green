@@ -32,8 +32,7 @@ public class ConstantPropogation {
     }
 
     public Operation propogate(Operation in) {
-        Operation.Operator out = in.getOperator();
-
+        
         System.out.println(in);
 
         return out;
