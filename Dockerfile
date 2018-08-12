@@ -20,7 +20,7 @@ RUN git clone https://github.com/MacBeth97/green
 # Checkout the constant propagation branch
 WORKDIR /green
 RUN git fetch
-RUN git checkout origin/feature/ConstProp
+RUN git checkout tree/feautre/constProp
 WORKDIR /
 
 # Download and extract Z3
