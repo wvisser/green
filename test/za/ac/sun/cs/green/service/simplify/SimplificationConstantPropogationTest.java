@@ -18,7 +18,7 @@ import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.util.Configuration;
 
-public class SimplificationConstantPropagationTest {
+public class SimplificationConstantPropogationTest {
 
 	public static Green solver;
 
@@ -30,7 +30,7 @@ public class SimplificationConstantPropagationTest {
 			props.setProperty("green.service.sat", "(simplify sink)");
 			//props.setProperty("green.service.sat", "(canonize sink)");
 			props.setProperty("green.service.sat.simplify",
-					"za.ac.sun.cs.green.service.simplify.ConstantPropagation");
+					"za.ac.sun.cs.green.service.simplify.ConstantPropogation");
 			//props.setProperty("green.service.sat.canonize",
 			//		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
 			
@@ -141,10 +141,10 @@ public class SimplificationConstantPropagationTest {
 			IntVariable y = new IntVariable("y", 0, 99);
 			IntVariable z = new IntVariable("z", 0 , 99);
 			IntConstant c = new IntConstant(1);
-			Operation o1 = new Operation(Operation.Operator.EQ, x, y);		
-			Operation o2 = new Operation(Operation.Operator.EQ, y, z);
-			Operation o3 = new Operation(Operation.Operator.EQ, z, c);
-			Operation o = new Operation(Operation.Operator.AND, o1, o2);
+			Operation o1 = new Operation(Operation.Operator.EQ, x, y);	// x = y
+			Operation o2 = new Operation(Operation.Operator.EQ, y, z);  // y = z
+			Operation o3 = new Operation(Operation.Operator.EQ, z, c);  // z = 1
+			Operation o = new Operation(Operation.Operator.AND, o1, o2);//(x==y) && (y==z)
 			o = new Operation(Operation.Operator.AND, o, o3);
 			check(o, "(x==1)&&((y==1)&&(z==1))");
 		}

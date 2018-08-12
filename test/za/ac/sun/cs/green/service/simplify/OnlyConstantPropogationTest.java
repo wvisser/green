@@ -18,7 +18,7 @@ import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.util.Configuration;
 
-public class OnlyConstantPropagationTest {
+public class OnlyConstantPropogationTest {
 
     public static Green solver;
 
@@ -30,7 +30,7 @@ public class OnlyConstantPropagationTest {
         props.setProperty("green.service.sat", "(simplify sink)");
         //props.setProperty("green.service.sat", "(canonize sink)");
         props.setProperty("green.service.sat.simplify",
-                "za.ac.sun.cs.green.service.simplify.ConstantPropagation");
+                "za.ac.sun.cs.green.service.simplify.ConstantPropogation");
         //props.setProperty("green.service.sat.canonize",
         //		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
 
