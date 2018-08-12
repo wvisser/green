@@ -59,10 +59,10 @@ public class ConstantPropagation extends BasicService {
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
 
             SimplifyingVisitor simplifyingVistor = new SimplifyingVisitor();
-            Expression simplifiedExpression = expression.accept(simplifyingVisitor);
-            simplifiedExpression = simplifyingVisitor.getExpression();
-            log.log(Level.FINEST, "After Simplification: " + simplifiedExpression);
-            return simplifiedExpression;
+            expression = expression.accept(simplifyingVisitor);
+            expression = simplifyingVisitor.getExpression();
+            log.log(Level.FINEST, "After Simplification: " + expression);
+            return expression;
         } catch (VisitorException x) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
         }
@@ -139,16 +139,15 @@ public class ConstantPropagation extends BasicService {
 
     private static class SimplifyingVisitor extends Visitor {
         private Stack<Expression> stack;
-        private HashMap<IntVariable, IntConstant> variables;
 
         public SimplifyingVisitor() {
             stack = new Stack<Expression>();
-            variables = new HashMap<IntVariable, IntConstant>();
             System.out.println("Starting Simplifier");
         }
 
         public Expression getExpression() {
             Expression finalExp = stack.pop();
+            System.out.println("Final expression: " + finalExp);
             return finalExp;
         }
 
@@ -169,7 +168,7 @@ public class ConstantPropagation extends BasicService {
             Expression l = stack.pop();
 
             System.out.println("Visiting operation: ");
-            System.out.println(l + op + r);
+            System.out.println(l + " " + op + " " + r);
         }
 
     }
