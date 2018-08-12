@@ -169,61 +169,61 @@ public class ConstantPropagation extends BasicService {
             if (expressions[0] instanceof IntConstant && expressions[1] instanceof IntConstant) {
                 switch (op) {
                 case EQ:
-                    if (((IntConstant)expressions[0].getValue() == (IntConstant)expressions[1].getValue())) {
+                    if ((((IntConstant)expressions[0]).getValue() == ((IntConstant)expressions[1]).getValue())) {
                         stack.push(Operation.TRUE);
                     } else {
                         stack.push(Operation.FALSE);
                     }
                     break;
                 case LT:
-                    if ((IntConstant)expressions[0].getValue() < (IntConstant)expressions[1].getValue()) {
+                    if (((IntConstant)expressions[0]).getValue() < ((IntConstant)expressions[1]).getValue()) {
                         stack.push(Operation.TRUE);
                     } else {
                         stack.push(Operation.FALSE);
                     }
                     break;
                 case LE:
-                    if ((IntConstant)expressions[0].getValue() <= (IntConstant)expressions[1].getValue()) {
+                    if (((IntConstant)expressions[0]).getValue() <= ((IntConstant)expressions[1]).getValue()) {
                         stack.push(Operation.TRUE);
                     } else {
                         stack.push(Operation.FALSE);
                     }
                     break;
                 case GT:
-                    if ((IntConstant)expressions[0].getValue() > (IntConstant)expressions[1].getValue()) {
+                    if (((IntConstant)expressions[0]).getValue() > ((IntConstant)expressions[1]).getValue()) {
                         stack.push(Operation.TRUE);
                     } else {
                         stack.push(Operation.FALSE);
                     }
                     break;
                 case GE:
-                    if ((IntConstant)expressions[0].getValue() >= (IntConstant)expressions[1].getValue()) {
+                    if (((IntConstant)expressions[0]).getValue() >= ((IntConstant)expressions[1]).getValue()) {
                         stack.push(Operation.TRUE);
                     } else {
                         stack.push(Operation.FALSE);
                     }
                     break;
                 case NE:
-                    if ((IntConstant)expressions[0].getValue() != (IntConstant)expressions[1].getValue()) {
+                    if (((IntConstant)expressions[0]).getValue() != ((IntConstant)expressions[1]).getValue()) {
                         stack.push(Operation.TRUE);
                     } else {
                         stack.push(Operation.FALSE);
                     }
                     break;
                 case ADD:
-                    IntConstant addResult = new IntConstant((IntConstant)expressions[0].getValue() + (IntConstant)expressions[1].getValue());
+                    IntConstant addResult = new IntConstant(((IntConstant)expressions[0]).getValue() + ((IntConstant)expressions[1]).getValue());
                     stack.push(addResult);
                     break;
                 case SUB:
-                    IntConstant subResult = new IntConstant((IntConstant)expressions[0].getValue() - (IntConstant)expressions[1].getValue());
+                    IntConstant subResult = new IntConstant(((IntConstant)expressions[0]).getValue() - ((IntConstant)expressions[1]).getValue());
                     stack.push(subResult);
                     break;
                 case MUL:
-                    IntConstant mulResult = new IntConstant((IntConstant)expressions[0].getValue() * (IntConstant)expressions[1].getValue());
+                    IntConstant mulResult = new IntConstant(((IntConstant)expressions[0]).getValue() * ((IntConstant)expressions[1]).getValue());
                     stack.push(mulResult);
                     break;
                 case DIV:
-                    IntConstant divResult = new IntConstant((IntConstant)expressions[0].getValue() / (IntConstant)expressions[1].getValue());
+                    IntConstant divResult = new IntConstant(((IntConstant)expressions[0]).getValue() / ((IntConstant)expressions[1]).getValue());
                     stack.push(divResult);
                     break;
                 default:
