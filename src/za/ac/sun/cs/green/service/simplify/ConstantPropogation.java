@@ -36,11 +36,11 @@ public class ConstantPropogation extends BasicService {
        @SuppressWarnings("unchecked")
        Set<Instance> result = (Set<Instance>) instance.getData(getClass());
        if (result == null) {
-          // final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-          // final Expression e = canonize(instance.getFullExpression(), map);
-          // final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
-          // result = Collections.singleton(i);
-          // instance.setData(getClass(), result);
+           final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
+           final Expression e = propogateConstants(instance.getFullExpression(), map);
+           final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
+           result = Collections.singleton(i);
+           instance.setData(getClass(), result);
        }
        return result;
    }
@@ -49,7 +49,26 @@ public class ConstantPropogation extends BasicService {
 	public void report(Reporter reporter) {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
    }
+public Expression propogateConstants(Expression expression,
+           Map<Variable, Variable> map) {
+               //Use the visitor to propogate constants
+               try {
+                   log.log(Level.FINEST, "Before ConstantPropogation: " + expression);
+       			    invocations++;
 
+                    ConstantPropogationVisitor propogationVisitor = new ConstantPropogationVisitor();
+        			expression.accept(propogationVisitor);
+        			expression = propogationVisitor.getExpression();
+
+                    log.log(Level.FINEST, "After ConstantPropogation: " + canonized);
+        			return expression;
+               } catch (VisitorException x) {
+                   log.log(Level.SEVERE,
+       					"encountered an exception -- this should not be happening!",
+       					x);
+               }
+               return null;
+           }
 private static class ConstantPropogationVisitor extends Visitor {
    private Stack<Expression> stack;
 
@@ -57,10 +76,16 @@ private static class ConstantPropogationVisitor extends Visitor {
 	   stack = new Stack<Expression>();
    }
    public Expression getExpression() {
-    //TODO
-    	Expression ex = stack.pop();
+       if (!stack.isEmpty()) {
+           Expression x = stack.pop();
+           log.log(Level.FINEST, "stack.pop(): " + x);
+       }
 
-	return ex;
+       Expression c = null;
+
+       //TODO
+
+       return (c == null) ? Operation.TRUE : c;
    }
    @Override
    public void postVisit(Constant constant) {
