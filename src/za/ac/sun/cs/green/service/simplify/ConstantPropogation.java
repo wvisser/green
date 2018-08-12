@@ -52,8 +52,9 @@ public class ConstantPropogation extends BasicService {
     }
 
     public Expression propogate(Expression expression, Map<Variable, Variable> map) {
-        log.log(Level.FINEST, "\n\n\n\nIM WORKING, LOOK AT MEEE PLEASE\n\n\n\n");
-        
+        log.log(Level.FINEST, "\n\n\n\n**********\n");
+        log.log(Level.FINEST, expression)
+        log.log(Level.FINEST, "\n**********\n\n\n\n");
         return expression;
     }
 
