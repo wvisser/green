@@ -31,7 +31,7 @@ public class ConstantPropogation extends BasicService {
 	 */
 	private int invocations = 0;
 
-	public SATCanonizerService(Green solver) {
+	public ConstantPropogation(Green solver) {
 		super(solver);
 	}
 
