@@ -58,7 +58,7 @@ public class ConstantPropagation extends BasicService {
             expression = orderingVisitor.getExpression();
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
             
-            expression = multipleSimplifications(expression);
+            expression = multipleSimplifications(expression, orderingVisitor);
             return expression;
         } catch (VisitorException x) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
@@ -68,14 +68,14 @@ public class ConstantPropagation extends BasicService {
 
 
 
-    private static Expression GetSimplifiedExpression(Expression expression) throws VisitorException {
+    private static Expression GetSimplifiedExpression(Expression expression, OrderingVisitor orderingVisitor) throws VisitorException {
 
         SimplifyingVisitor simplifyingVisitor = new SimplifyingVisitor();
         expression.accept(simplifyingVisitor);
         expression = simplifyingVisitor.getExpression();
         log.log(Level.FINEST, "After Simplification: " + expression);
         while(expression.getSimplified()) {
-            OrderingVisitor orderingVisitor = new OrderingVisitor();
+            orderingVisitor = new OrderingVisitor();
             expression.accept(orderingVisitor);
             expression = orderingVisitor.getExpression();
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
