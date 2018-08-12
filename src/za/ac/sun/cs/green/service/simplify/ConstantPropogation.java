@@ -24,7 +24,7 @@ import za.ac.sun.cs.green.expr.VisitorException;
 import za.ac.sun.cs.green.util.Reporter;
 
 
-public class ConstantPropagation extends BasicService {
+public class ConstantPropogation extends BasicService {
    private int invocations = 0;
 
    public ConstantPropagation(Green solver) {
@@ -50,10 +50,10 @@ public class ConstantPropagation extends BasicService {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
    }
 
-private static class ConstantPropagationVisitor extends Visitor {
+private static class ConstantPropogationVisitor extends Visitor {
    private Stack<Expression> stack;
 
-   public ConstantPropagationVisitor() {
+   public ConstantPropogationVisitor() {
 	   stack = new Stack<Expression>();
    }
    public Expression getExpression() {
