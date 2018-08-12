@@ -143,6 +143,8 @@ public class ConstantPropogation extends BasicService {
 						&& (((IntVariable) r).getName().compareTo(
 								((IntVariable) l).getName()) < 0)) {
 					stack.push(new Operation(nop, r, l));
+					System.out.println("l: ");
+
 				}
 				//Variable has been assigned a value
 				 else if ((r instanceof IntVariable)
