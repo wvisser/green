@@ -1,6 +1,7 @@
 sudo: required
 language: java
-
+notifications:
+  email: false
 services:
   -docker
 
