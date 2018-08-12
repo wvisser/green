@@ -22,6 +22,7 @@ import za.ac.sun.cs.green.expr.Constant;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
+import za.ac.sun.cs.green.expr.Operation.Operator;
 import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
@@ -43,7 +44,7 @@ public class ConstantPropagation extends BasicService{
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = propagateConstants(instance.getFullExpression(), map);
+			final Expression e = simplify(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -56,7 +57,8 @@ public class ConstantPropagation extends BasicService{
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-	public Expression propagateConstants(Expression expression,
+	//public Expression propagateConstants(Expression expression,
+	public Expression simplify(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
 			log.log(Level.FINEST, "Before Constant propagation: " + expression);
@@ -91,14 +93,7 @@ public class ConstantPropagation extends BasicService{
 
 		@Override
 		public void postVisit(IntVariable variable) {
-            /*
-			Variable v = map.get(variable);
-			if (v == null) {
-				v = new IntVariable("v" + map.size(), variable.getLowerBound(),
-						variable.getUpperBound());
-				map.put(variable, v);
-			}*/		
-			stack.push(variable);
+				stack.push(variable);
 		}
 
 		@Override
@@ -132,8 +127,7 @@ public class ConstantPropagation extends BasicService{
 			default:
 				break;
 			}
-			System.out.println("NOP VALUE: " + nop);
-			if (false) {
+			/*if (false) {
 				//System.out.println("POPPING THIS FROM STACK: " + stack.peek());
 				Expression r = stack.pop();
 				//System.out.println("POPPING THIS FROM STACK: " + stack.peek());
@@ -149,17 +143,43 @@ public class ConstantPropagation extends BasicService{
 				} else {
 					stack.push(operation);
 				}
-			} else if (op.getArity() == 2) {
-				System.out.println("R=: " + stack.peek());
+			} else */
+			if (op.equals(Operation.Operator.EQ)) {
+				// Extract constant
 				Expression r = stack.pop();
-				System.out.println("L=: " + stack.peek());
 				Expression l = stack.pop();
+				
+				// save the assignment
+				if (l instanceof Variable && r instanceof Constant) {
+					map.put((Variable)l, (Constant)r);
+					System.out.println("Stuck <" + l + "," + r + "> into map");
+				}
+				if (r instanceof Variable && l instanceof Constant) {
+					map.put((Variable)r, (Constant)l);
+					System.out.println("Stuck <" + r + "," + l + "> into map");
+				}
 				stack.push(new Operation(op, l, r));
+				//stack.push(new Operation(Operation.Operator.NE, r, r));
+				//stack.push(new Operation(Operation.Operator.NE, l, r)); // wrong push for testing
 			} else {
+				// TODO sniff out variables and replace with saved constants
+				/*
+				System.out.println("Non assignment operator: " + op);
 				for (int i = op.getArity(); i > 0; i--) {
+					System.out.println("I want to die " + stack.peek());
 					stack.pop();
 				}
-				stack.push(operation);
+				stack.push(operation);*/
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+				if (map.containsKey(r)) {
+					r = map.get(r);
+				}
+				if (map.containsKey(l)) {
+					l = map.get(l);
+				}
+				
+				stack.push(new Operation(op, l, r));
 			}
 		}
 
