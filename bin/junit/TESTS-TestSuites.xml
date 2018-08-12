@@ -1,336 +1,286 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testsuites>
-  <testsuite errors="1" failures="0" hostname="localhost" id="0" name="EntireSuite" package="za.ac.sun.cs.green" skipped="0" tests="1" time="0.061" timestamp="2018-08-12T15:57:21">
+  <testsuite errors="0" failures="0" hostname="matthew-XPS-15-9550" id="0" name="EntireSuite" package="za.ac.sun.cs.green" skipped="0" tests="1" time="0.054" timestamp="2018-08-12T17:46:26">
       <properties>
-          <property name="env.DESKTOP_SESSION" value="ubuntu" />
+          <property name="java.vendor" value="Oracle Corporation" />
 
-          <property name="env.OLDPWD" value="/home/19787065" />
+          <property name="env.SESSION_MANAGER" value="local/matthew-XPS-15-9550:@/tmp/.ICE-unix/3107,unix/matthew-XPS-15-9550:/tmp/.ICE-unix/3107" />
 
-          <property name="file.encoding.pkg" value="sun.io" />
+          <property name="env.IM_CONFIG_PHASE" value="2" />
 
-          <property name="ant.file.green" value="/home/19787065/Desktop/green/build.xml" />
-
-          <property name="java.home" value="/usr/lib/jvm/java-8-oracle/jre" />
-
-          <property name="env.QT_LINUX_ACCESSIBILITY_ALWAYS_ON" value="1" />
-
-          <property name="env.DISPLAY" value=":0" />
-
-          <property name="env.XDG_VTNR" value="7" />
-
-          <property name="env.XDG_GREETER_DATA_DIR" value="/var/lib/lightdm-data/19787065" />
-
-          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/endorsed" />
-
-          <property name="env.LOGNAME" value="19787065" />
-
-          <property name="debuglevel" value="source,lines,vars" />
-
-          <property name="env.XDG_SEAT" value="seat0" />
-
-          <property name="sun.os.patch.level" value="unknown" />
-
-          <property name="env.UNITY_HAS_3D_SUPPORT" value="true" />
-
-          <property name="java.vendor.url" value="http://java.oracle.com/" />
-
-          <property name="env.XDG_SEAT_PATH" value="/org/freedesktop/DisplayManager/Seat0" />
-
-          <property name="env.MANDATORY_PATH" value="/usr/share/gconf/ubuntu.mandatory.path" />
-
-          <property name="java.version" value="1.8.0_111" />
-
-          <property name="bootpath" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/jre/lib/rt.jar" />
-
-          <property name="env.J2SDKDIR" value="/usr/lib/jvm/java-8-oracle" />
-
-          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
-
-          <property name="env.LANGUAGE" value="en_ZA:en" />
-
-          <property name="env.XDG_MENU_PREFIX" value="gnome-" />
-
-          <property name="ant.project.invoked-targets" value="test" />
-
-          <property name="env.XDG_DATA_DIRS" value="/usr/share/ubuntu:/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop:/var/lib/snapd/desktop" />
-
-          <property name="env.GNOME_KEYRING_CONTROL" value="" />
-
-          <property name="env.UPSTART_SESSION" value="unix:abstract=/com/ubuntu/upstart-session/19787065/9315" />
-
-          <property name="user.name" value="19787065" />
-
-          <property name="env.LANG" value="en_ZA.UTF-8" />
-
-          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
-
-          <property name="sun.jnu.encoding" value="UTF-8" />
-
-          <property name="env.DBUS_SESSION_BUS_ADDRESS" value="unix:abstract=/tmp/dbus-JMZ9DXXQc0" />
-
-          <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
-
-          <property name="output.dir" value="bin" />
-
-          <property name="green.srcpath" value="/home/19787065/Desktop/green/src:/home/19787065/Desktop/green/test" />
-
-          <property name="java.specification.name" value="Java Platform API Specification" />
-
-          <property name="user.timezone" value="" />
-
-          <property name="path.separator" value=":" />
-
-          <property name="env.XMODIFIERS" value="@im=ibus" />
-
-          <property name="file.encoding" value="UTF-8" />
-
-          <property name="ant.project.default-target" value="build" />
-
-          <property name="env.HOME" value="/home/19787065" />
-
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/19787065/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/19787065/Desktop/green/junitvmwatcher6735729326713831027.properties propsfile=/home/19787065/Desktop/green/junit6773601272346881566.properties" />
-
-          <property name="ant.file" value="/home/19787065/Desktop/green/build.xml" />
-
-          <property name="z3path" value="/Users/jaco/Documents/RESEARCH/SYMEXE/Z3/build/z3" />
-
-          <property name="env._" value="/usr/bin/ant" />
-
-          <property name="env.GTK2_MODULES" value="overlay-scrollbar" />
-
-          <property name="java.io.tmpdir" value="/tmp" />
-
-          <property name="env.GNOME_KEYRING_PID" value="" />
-
-          <property name="user.language" value="en" />
-
-          <property name="env.UPSTART_EVENTS" value="xsession started" />
-
-          <property name="line.separator" value="&#xa;" />
-
-          <property name="target" value="1.8" />
-
-          <property name="ant.file.type" value="file" />
-
-          <property name="env.J2REDIR" value="/usr/lib/jvm/java-8-oracle/jre" />
-
-          <property name="env.CLUTTER_IM_MODULE" value="xim" />
-
-          <property name="lattepath" value="/Users/jaco/Documents/RESEARCH/latte-integrale-1.7.3/latte-int-1.7.3/code/latte/count" />
-
-          <property name="java.vm.info" value="mixed mode" />
-
-          <property name="source" value="1.8" />
-
-          <property name="sun.desktop" value="gnome" />
-
-          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
-
-          <property name="env.IM_CONFIG_PHASE" value="1" />
-
-          <property name="env.GDMSESSION" value="ubuntu" />
-
-          <property name="ant.file.type.green" value="file" />
-
-          <property name="env.QT_ACCESSIBILITY" value="1" />
-
-          <property name="env.XDG_SESSION_DESKTOP" value="ubuntu" />
-
-          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
-
-          <property name="env.VTE_VERSION" value="4205" />
-
-          <property name="env.DEFAULTS_PATH" value="/usr/share/gconf/ubuntu.default.path" />
-
-          <property name="ant.version" value="Apache Ant(TM) version 1.9.6 compiled on July 8 2015" />
-
-          <property name="env.XDG_SESSION_TYPE" value="x11" />
-
-          <property name="env.WINDOWID" value="62915898" />
-
-          <property name="env.COMPIZ_CONFIG_PROFILE" value="ubuntu" />
-
-          <property name="env.XDG_SESSION_PATH" value="/org/freedesktop/DisplayManager/Session5" />
-
-          <property name="env.JOB" value="unity-settings-daemon" />
-
-          <property name="os.name" value="Linux" />
-
-          <property name="java.specification.vendor" value="Oracle Corporation" />
-
-          <property name="env.TERM" value="xterm-256color" />
-
-          <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM" />
-
-          <property name="env.QT_IM_MODULE" value="ibus" />
-
-          <property name="java.library.path" value="/home/19787065/Desktop/green/lib:/Users/jaco/Documents/RESEARCH/SYMEXE/cvc3-2.4.1/java/lib" />
-
-          <property name="env.PATH" value="/home/19787065/.nvm/versions/node/v9.5.0/bin:/home/19787065/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/opt/openmpi-2.1.2/.openmpi/bin" />
-
-          <property name="ant.java.version" value="1.8" />
-
-          <property name="basedir" value="/home/19787065/Desktop/green" />
-
-          <property name="cvc3lib" value="/Users/jaco/Documents/RESEARCH/SYMEXE/cvc3-2.4.1/java/lib" />
-
-          <property name="java.class.version" value="52.0" />
-
-          <property name="env.SHLVL" value="1" />
-
-          <property name="env.LD_LIBRARY_PATH" value=":/opt/openmpi-2.1.2/.openmpi/lib/" />
-
-          <property name="ant.home" value="/usr/share/ant" />
-
-          <property name="env.NVM_DIR" value="/home/19787065/.nvm" />
-
-          <property name="env.MATHEMATICA_HOME" value="/opt/Wolfram/Mathematica/11.0" />
-
-          <property name="env.UPSTART_JOB" value="unity7" />
-
-          <property name="env.NVM_BIN" value="/home/19787065/.nvm/versions/node/v9.5.0/bin" />
-
-          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/amd64" />
-
-          <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers" />
-
-          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
-
-          <property name="env.USER" value="19787065" />
-
-          <property name="env.GTK_IM_MODULE" value="ibus" />
-
-          <property name="env.GTK_MODULES" value="gail:atk-bridge:unity-gtk-module" />
-
-          <property name="env.UNITY_DEFAULT_PROFILE" value="unity" />
-
-          <property name="ant.project.name" value="green" />
-
-          <property name="env.SESSIONTYPE" value="gnome-session" />
-
-          <property name="java.vm.specification.version" value="1.8" />
-
-          <property name="env.NLSPATH" value="/usr/dt/lib/nls/msg/%L/%N.cat" />
-
-          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
-
-          <property name="sun.cpu.isalist" value="" />
-
-          <property name="env.COMPIZ_BIN_PATH" value="/usr/bin/" />
-
-          <property name="java.ext.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/ext:/usr/java/packages/lib/ext" />
-
-          <property name="os.version" value="4.4.0-130-generic" />
-
-          <property name="env.QT_QPA_PLATFORMTHEME" value="appmenu-qt5" />
-
-          <property name="user.home" value="/home/19787065" />
-
-          <property name="env.XDG_CURRENT_DESKTOP" value="Unity" />
-
-          <property name="java.vm.vendor" value="Oracle Corporation" />
-
-          <property name="jar.file" value="green.jar" />
-
-          <property name="env.SESSION" value="ubuntu" />
-
-          <property name="env.JAVA_HOME" value="/usr/lib/jvm/java-8-oracle" />
-
-          <property name="env.XDG_SESSION_ID" value="c12" />
-
-          <property name="env.XAUTHORITY" value="/home/19787065/.Xauthority" />
-
-          <property name="user.dir" value="/home/19787065/Desktop/green" />
-
-          <property name="env.XFILESEARCHPATH" value="/usr/dt/app-defaults/%L/Dt" />
-
-          <property name="env.PWD" value="/home/19787065/Desktop/green" />
-
-          <property name="sun.cpu.endian" value="little" />
-
-          <property name="java.vm.version" value="25.111-b14" />
-
-          <property name="java.class.path" value="/home/19787065/Desktop/green/bin:/home/19787065/Desktop/green/lib/apfloat.jar:/home/19787065/Desktop/green/lib/commons-exec-1.2.jar:/home/19787065/Desktop/green/lib/junit_4.8.2.jar:/home/19787065/Desktop/green/lib/org.hamcrest.core_1.1.0.jar:/home/19787065/Desktop/green/lib/choco-solver-3.3.1.jar:/home/19787065/Desktop/green/lib/slf4j-api-1.7.12.jar:/home/19787065/Desktop/green/lib/slf4j-simple-1.7.12.jar:/home/19787065/Desktop/green/lib/trove-3.1a1.jar:/home/19787065/Desktop/green/lib/choco-solver-2.1.3.jar:/home/19787065/Desktop/green/lib/libcvc3.jar:/home/19787065/Desktop/green/lib/com.microsoft.z3.jar:/home/19787065/Desktop/green/lib/jedis-2.0.0.jar:/usr/share/ant/lib/junit.jar:/usr/share/java/ant-launcher-1.9.6.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
-
-          <property name="env.DERBY_HOME" value="/usr/lib/jvm/java-8-oracle/db" />
-
-          <property name="ant.library.dir" value="/usr/share/ant/lib" />
-
-          <property name="os.arch" value="amd64" />
-
-          <property name="junit.dir" value="bin/junit" />
+          <property name="env.LESSOPEN" value="| /usr/bin/lesspipe %s" />
 
           <property name="sun.java.launcher" value="SUN_STANDARD" />
 
-          <property name="ant.core.lib" value="/usr/share/ant/lib/ant.jar" />
+          <property name="env.QT_IM_MODULE" value="xim" />
 
-          <property name="env.UPSTART_INSTANCE" value="" />
+          <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers" />
 
-          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
-
-          <property name="file.separator" value="/" />
-
-          <property name="java.runtime.version" value="1.8.0_111-b14" />
-
-          <property name="env.SSH_AUTH_SOCK" value="/run/user/19787065/keyring/ssh" />
+          <property name="os.name" value="Linux" />
 
           <property name="sun.boot.class.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/resources.jar:/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jsse.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jce.jar:/usr/lib/jvm/java-8-oracle/jre/lib/charsets.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jfr.jar:/usr/lib/jvm/java-8-oracle/jre/classes" />
 
-          <property name="z3lib" value="/home/19787065/Desktop/green/lib" />
+          <property name="env.PWD" value="/home/matthew/Desktop/green" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="env.LANG" value="en_ZA.UTF-8" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="env.XDG_MENU_PREFIX" value="gnome-" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.8.0_181-b13" />
+
+          <property name="env.GTK_IM_MODULE" value="ibus" />
+
+          <property name="env.XDG_VTNR" value="2" />
+
+          <property name="env.DISPLAY" value=":0" />
+
+          <property name="env.GJS_DEBUG_TOPICS" value="JS ERROR;JS LOG" />
+
+          <property name="user.name" value="matthew" />
 
           <property name="env.QT4_IM_MODULE" value="xim" />
 
-          <property name="env.XDG_CONFIG_DIRS" value="/etc/xdg/xdg-ubuntu:/usr/share/upstart/xdg:/etc/xdg" />
+          <property name="env._" value="/usr/bin/ant" />
 
-          <property name="env.XDG_RUNTIME_DIR" value="/run/user/19787065" />
-
-          <property name="user.country" value="ZA" />
+          <property name="env.USER" value="matthew" />
 
           <property name="env.SHELL" value="/bin/bash" />
 
-          <property name="env.INSTANCE" value="" />
+          <property name="env.GNOME_SHELL_SESSION_MODE" value="ubuntu" />
 
-          <property name="env.NVM_CD_FLAGS" value="" />
+          <property name="env.DESKTOP_SESSION" value="ubuntu" />
 
-          <property name="java.vendor" value="Oracle Corporation" />
+          <property name="env.XDG_DATA_DIRS" value="/usr/share/ubuntu:/usr/local/share:/usr/share:/var/lib/snapd/desktop" />
 
-          <property name="env.GPG_AGENT_INFO" value="/home/19787065/.gnupg/S.gpg-agent:0:1" />
+          <property name="env.GJS_DEBUG_OUTPUT" value="stderr" />
 
-          <property name="java.specification.version" value="1.8" />
+          <property name="env.PATH" value="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin" />
+
+          <property name="env.XDG_CURRENT_DESKTOP" value="ubuntu:GNOME" />
+
+          <property name="user.language" value="en" />
+
+          <property name="env.XDG_SESSION_DESKTOP" value="ubuntu" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/amd64" />
+
+          <property name="env.TEXTDOMAIN" value="im-config" />
+
+          <property name="ant.project.default-target" value="build" />
+
+          <property name="ant.project.name" value="green" />
+
+          <property name="env.GNOME_TERMINAL_SERVICE" value=":1.70" />
+
+          <property name="java.version" value="1.8.0_181" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="env.DBUS_SESSION_BUS_ADDRESS" value="unix:path=/run/user/1000/bus" />
 
           <property name="sun.arch.data.model" value="64" />
 
+          <property name="env.SSH_AGENT_PID" value="3200" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/endorsed" />
+
+          <property name="env.DERBY_HOME" value="/usr/lib/jvm/java-8-oracle/db" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="green.srcpath" value="/home/matthew/Desktop/green/src:/home/matthew/Desktop/green/test" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="env.SHLVL" value="1" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
           <property name="env.GNOME_DESKTOP_SESSION_ID" value="this-is-deprecated" />
+
+          <property name="java.class.version" value="52.0" />
+
+          <property name="env.GDMSESSION" value="ubuntu" />
+
+          <property name="env.GNOME_TERMINAL_SCREEN" value="/org/gnome/Terminal/screen/ebdf1657_4927_42e3_9cc3_d3b4018e3bf7" />
+
+          <property name="user.country" value="ZA" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-8-oracle/jre" />
+
+          <property name="z3lib" value="/home/matthew/Desktop/green/lib" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="env.LOGNAME" value="matthew" />
+
+          <property name="ant.file" value="/home/matthew/Desktop/green/build.xml" />
+
+          <property name="os.version" value="4.15.0-30-generic" />
+
+          <property name="ant.file.type.green" value="file" />
+
+          <property name="env.J2REDIR" value="/usr/lib/jvm/java-8-oracle/jre" />
+
+          <property name="ant.file.green" value="/home/matthew/Desktop/green/build.xml" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="25.181-b13" />
+
+          <property name="cvc3lib" value="/Users/jaco/Documents/RESEARCH/SYMEXE/cvc3-2.4.1/java/lib" />
+
+          <property name="env.TEXTDOMAINDIR" value="/usr/share/locale/" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="output.dir" value="bin" />
+
+          <property name="env.JAVA_HOME" value="/usr/lib/jvm/java-8-oracle" />
+
+          <property name="env.XDG_SESSION_TYPE" value="x11" />
+
+          <property name="env.TERM" value="xterm-256color" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="env.WINDOWPATH" value="2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="env.XMODIFIERS" value="@im=ibus" />
+
+          <property name="target" value="1.8" />
+
+          <property name="user.home" value="/home/matthew" />
+
+          <property name="env.OLDPWD" value="/home/matthew/Desktop" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="jar.file" value="green.jar" />
+
+          <property name="env.VTE_VERSION" value="5202" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.library.path" value="/home/matthew/Desktop/green/lib:/Users/jaco/Documents/RESEARCH/SYMEXE/cvc3-2.4.1/java/lib" />
+
+          <property name="junit.dir" value="bin/junit" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="env.XDG_SEAT" value="seat0" />
+
+          <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.10.3 compiled on July 19 2018" />
+
+          <property name="java.class.path" value="/home/matthew/Desktop/green/bin:/home/matthew/Desktop/green/lib/apfloat.jar:/home/matthew/Desktop/green/lib/commons-exec-1.2.jar:/home/matthew/Desktop/green/lib/junit_4.8.2.jar:/home/matthew/Desktop/green/lib/org.hamcrest.core_1.1.0.jar:/home/matthew/Desktop/green/lib/choco-solver-3.3.1.jar:/home/matthew/Desktop/green/lib/slf4j-api-1.7.12.jar:/home/matthew/Desktop/green/lib/slf4j-simple-1.7.12.jar:/home/matthew/Desktop/green/lib/trove-3.1a1.jar:/home/matthew/Desktop/green/lib/choco-solver-2.1.3.jar:/home/matthew/Desktop/green/lib/libcvc3.jar:/home/matthew/Desktop/green/lib/com.microsoft.z3.jar:/home/matthew/Desktop/green/lib/jedis-2.0.0.jar:/usr/share/ant/lib/junit.jar:/usr/share/java/ant-launcher-1.10.3.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/matthew/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/matthew/Desktop/green/junitvmwatcher2617501207505407334.properties propsfile=/home/matthew/Desktop/green/junit5000366425198776542.properties" />
+
+          <property name="env.XDG_SESSION_ID" value="2" />
+
+          <property name="env.QT_ACCESSIBILITY" value="1" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.8" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="env.HOME" value="/home/matthew" />
+
+          <property name="debuglevel" value="source,lines,vars" />
+
+          <property name="lattepath" value="/Users/jaco/Documents/RESEARCH/latte-integrale-1.7.3/latte-int-1.7.3/code/latte/count" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="env.LS_COLORS" value="rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="env.SSH_AUTH_SOCK" value="/run/user/1000/keyring/ssh" />
+
+          <property name="env.CLUTTER_IM_MODULE" value="xim" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="amd64" />
+
+          <property name="env.XDG_RUNTIME_DIR" value="/run/user/1000" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/matthew/Desktop/green" />
+
+          <property name="env.XAUTHORITY" value="/run/user/1000/gdm/Xauthority" />
+
+          <property name="env.GTK_MODULES" value="gail:atk-bridge" />
+
+          <property name="env.J2SDKDIR" value="/usr/lib/jvm/java-8-oracle" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM" />
+
+          <property name="env.COLORTERM" value="truecolor" />
+
+          <property name="basedir" value="/home/matthew/Desktop/green" />
+
+          <property name="ant.java.version" value="1.8" />
+
+          <property name="ant.core.lib" value="/usr/share/ant/lib/ant.jar" />
+
+          <property name="env.USERNAME" value="matthew" />
+
+          <property name="source" value="1.8" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="bootpath" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/jre/lib/rt.jar" />
+
+          <property name="z3path" value="/Users/jaco/Documents/RESEARCH/SYMEXE/Z3/build/z3" />
+
+          <property name="env.GPG_AGENT_INFO" value="/run/user/1000/gnupg/S.gpg-agent:0:1" />
+
+          <property name="java.specification.version" value="1.8" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+          <property name="env.XDG_CONFIG_DIRS" value="/etc/xdg/xdg-ubuntu:/etc/xdg" />
+
+          <property name="env.LESSCLOSE" value="/usr/bin/lesspipe %s %s" />
 
       </properties>
 
-      <testcase classname="za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest" name="test00" time="0.011">
-          <error type="java.util.EmptyStackException">java.util.EmptyStackException
-	at java.util.Stack.peek(Stack.java:102)
-	at java.util.Stack.pop(Stack.java:84)
-	at za.ac.sun.cs.green.service.simplify.ConstantPropogation$OrderingVisitor.postVisit(ConstantPropogation.java:129)
-	at za.ac.sun.cs.green.expr.Operation.accept(Operation.java:205)
-	at za.ac.sun.cs.green.service.simplify.ConstantPropogation.canonize(ConstantPropogation.java:65)
-	at za.ac.sun.cs.green.service.simplify.ConstantPropogation.processRequest(ConstantPropogation.java:46)
-	at za.ac.sun.cs.green.taskmanager.SerialTaskManager.execute0(SerialTaskManager.java:43)
-	at za.ac.sun.cs.green.taskmanager.SerialTaskManager.execute(SerialTaskManager.java:29)
-	at za.ac.sun.cs.green.taskmanager.SerialTaskManager.process(SerialTaskManager.java:65)
-	at za.ac.sun.cs.green.Green.handleRequest(Green.java:253)
-	at za.ac.sun.cs.green.Instance.request(Instance.java:64)
-	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.check(OnlyConstantPropogationTest.java:54)
-	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.test00(OnlyConstantPropogationTest.java:73)
-</error>
-
-      </testcase>
+      <testcase classname="za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest" name="test00" time="0.006" />
 
       <system-out><![CDATA[Z3 Not Available, no tests for it will be executed
-[20180812 17:57:21][za.ac.sun.cs.green.Green <init>][FINEST] Solver("anonymous1") created
-[20180812 17:57:21][za.ac.sun.cs.green.Green registerService][INFO] register service: name="sat", subservice=za.ac.sun.cs.green.service.simplify.ConstantPropogation
-[20180812 17:57:21][za.ac.sun.cs.green.Green registerService][INFO] register service: name="za.ac.sun.cs.green.service.simplify.ConstantPropogation", subservice=za.ac.sun.cs.green.service.sink.SinkService
-[20180812 17:57:21][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180812 17:57:21][za.ac.sun.cs.green.service.simplify.ConstantPropogation canonize][FINEST] Before Canonization: (x==1)&&((x+y)==10)
-Hello World3
-Hello World2
+[20180812 19:46:26][za.ac.sun.cs.green.Green <init>][FINEST] Solver("anonymous1") created
+[20180812 19:46:26][za.ac.sun.cs.green.Green registerService][INFO] register service: name="sat", subservice=za.ac.sun.cs.green.service.simplify.ConstantPropogation
+[20180812 19:46:26][za.ac.sun.cs.green.Green registerService][INFO] register service: name="za.ac.sun.cs.green.service.simplify.ConstantPropogation", subservice=za.ac.sun.cs.green.service.sink.SinkService
+[20180812 19:46:26][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180812 19:46:26][za.ac.sun.cs.green.service.simplify.ConstantPropogation canonize][FINEST] Before Canonization: (x==1)&&((x+y)==10)
+[20180812 19:46:26][za.ac.sun.cs.green.service.simplify.ConstantPropogation canonize][FINEST] After Canonization: (x==1)&&((1+y)==10)
 ]]></system-out>
 
       <system-err><![CDATA[]]></system-err>

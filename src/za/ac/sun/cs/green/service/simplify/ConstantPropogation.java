@@ -84,7 +84,6 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		public Expression getExpression() {
-			System.out.println(Arrays.asList(var));
 			return stack.pop();
 		}
 
@@ -101,61 +100,35 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			Operation.Operator nop = null;
-			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case NE:
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
-			default:
-				break;
-			}
 
 			Expression r = stack.pop();
 			Expression l = stack.pop();
 
-			if(op.equals(Operation.Operator.EQ) && (r instanceof IntVariable && l instanceof IntConstant) || (l instanceof IntVariable && r instanceof IntConstant)){
+			if(op.equals(Operation.Operator.EQ) && ((r instanceof IntVariable && l instanceof IntConstant) || (r instanceof IntConstant && l instanceof IntVariable))){
 
 				if(r instanceof IntVariable && l instanceof IntConstant){
 						var.put(r.toString(), Integer.parseInt(l.toString()));
 					}	 else if(l instanceof IntVariable && r instanceof IntConstant){
 						var.put(l.toString() , Integer.parseInt(r.toString()));
 					}
-					//stack.push(new Operation(op, l, r));
-					System.out.println("Hello World3");
 					stack.push(new Operation(op, l, r));
 			}
 
-
-			else if(var.containsKey(r.toString()) && var.containsKey(l.toString())){
-				//l = new IntConstant(7);
-				System.out.println("Hello World");
+			else if(var.get(r.toString()) != null && var.get(l.toString()) != null){
+				l = new IntConstant(var.get(l.toString()));
+				r = new IntConstant(var.get(r.toString()));
 				stack.push(new Operation(op, l, r));
 
 			}	else if(var.get(r.toString()) != null){
-				System.out.println("Hello World1");
 				r = new IntConstant(var.get(r.toString()));
 				stack.push(new Operation(op, l, r));
 
 			}	else if(var.get(l.toString()) != null){
-				System.out.println("Hello World2");
 				l = new IntConstant(var.get(l.toString()));
 				stack.push(new Operation(op, l, r));
 
+			} else {
+				stack.push(new Operation(op, l, r));
 			}
 		}
 	}
