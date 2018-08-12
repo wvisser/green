@@ -29,4 +29,16 @@ public class ConstantPropogation extends BasicService {
  	public ConstantPropogation(Green solver) {
 		super(solver);
 	}
+	
+	@Override
+	public Set<Instance> processRequest(Instance instance) {
+	@SuppressWarnings("unchecked")
+		Set<Instance> setResults = (Set<Instance>) instance.getData(getClass());
+		if (setResults==null) {
+		    final Map<Variable, Variable> varMap = new HashMap<Variable, Variable>();
+           	    final Expression expr = simplify(instance.getFullExpression(), varMap);
+           	    final Instance ins = new Instance(getSolver(), instance.getSource(), null, expr);
+          	    setResults = Collections.singleton(ins);
+          	    instance.setData(getClass(), setResults);
+	}
 }
