@@ -2,16 +2,11 @@ package za.ac.sun.cs.green.service.simplify;
 
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
-import za.ac.sun.cs.green.expr.Expression;
-import za.ac.sun.cs.green.expr.Variable;
-import za.ac.sun.cs.green.expr.VisitorException;
+import za.ac.sun.cs.green.expr.*;
 import za.ac.sun.cs.green.service.BasicService;
 import za.ac.sun.cs.green.service.canonizer.SATCanonizerService;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 
 public class ConstantPropagation extends BasicService {
@@ -50,13 +45,14 @@ public class ConstantPropagation extends BasicService {
         try {
             log.log(Level.FINEST, "Before Simplification: " + expression);
             invocations++;
+
             if (map == null) {
                 throw new VisitorException("");
             }
-            //expression.
-//            SATCanonizerService.OrderingVisitor orderingVisitor = new SATCanonizerService.OrderingVisitor();
-//            expression.accept(orderingVisitor);
-//            expression = orderingVisitor.getExpression();
+
+            ConstantPropagation.ConstantPropagationVisitor conProgVisitor = new ConstantPropagation.ConstantPropagationVisitor();
+            expression.accept(conProgVisitor);
+            return conProgVisitor.getExpression();
 //            SATCanonizerService.CanonizationVisitor canonizationVisitor = new SATCanonizerService.CanonizationVisitor();
 //            expression.accept(canonizationVisitor);
 //            Expression canonized = canonizationVisitor.getExpression();
@@ -65,7 +61,7 @@ public class ConstantPropagation extends BasicService {
 //                        canonizationVisitor.getVariableSet()).rename(canonized);
 //            }
 //            log.log(Level.FINEST, "After Canonization: " + canonized);
-            return null;
+            //return null;
         } catch (VisitorException x) {
             log.log(Level.SEVERE,
                     "encountered an exception -- this should not be happening!",
@@ -74,5 +70,88 @@ public class ConstantPropagation extends BasicService {
         return null;
     }
 
+    private static class ConstantPropagationVisitor extends Visitor {
+
+        private Stack<Expression> stack;
+        private Map<IntVariable, IntConstant> vars;
+
+        public ConstantPropagationVisitor() {
+            stack = new Stack<>();
+            vars = new HashMap<>();
+        }
+
+        public Expression getExpression() {
+            return stack.pop();
+        }
+
+        @Override
+        public void postVisit(IntConstant constant) {
+            stack.push(constant);
+        }
+
+        @Override
+        public void postVisit(IntVariable variable) {
+            stack.push(variable);
+        }
+
+        @Override
+        public void postVisit(Operation operation) {
+            Operation.Operator op = operation.getOperator();
+//            Operation.Operator nop = null;
+//            switch (op) {
+//                case EQ:
+//                    nop = Operation.Operator.EQ;
+//                    break;
+//                case NE:
+//                    nop = Operation.Operator.NE;
+//                    break;
+//                case LT:
+//                    nop = Operation.Operator.GT;
+//                    break;
+//                case LE:
+//                    nop = Operation.Operator.GE;
+//                    break;
+//                case GT:
+//                    nop = Operation.Operator.LT;
+//                    break;
+//                case GE:
+//                    nop = Operation.Operator.LE;
+//                    break;
+//                default:
+//                    break;
+//            }
+
+            if (op.getArity() == 2) {
+                Expression r = stack.pop();
+                Expression l = stack.pop();
+
+                if (op == Operation.Operator.EQ) {
+                    if (r instanceof IntVariable && l instanceof IntConstant) {
+                        vars.put((IntVariable) r, (IntConstant) l);
+                    } else if (l instanceof IntVariable && r instanceof IntConstant) {
+                        vars.put((IntVariable) l, (IntConstant) r);
+                    }
+                    stack.push(operation);
+                } else if (r instanceof IntVariable && l instanceof  IntVariable) {
+                    if (vars.containsKey(r)) {
+                        r = vars.get(r);
+                    }
+
+                    if (vars.containsKey(l)) {
+                        l = vars.get(l);
+                    }
+                    stack.push(new Operation(op, l, r));
+                } else {
+                    stack.push(operation);
+                }
+            } else {
+                for (int i = op.getArity(); i > 0; i--) {
+                    stack.pop();
+                }
+                stack.push(operation);
+            }
+        }
+
+    }
 
 }
