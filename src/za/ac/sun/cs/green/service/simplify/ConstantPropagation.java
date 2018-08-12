@@ -167,6 +167,7 @@ public class ConstantPropagation extends BasicService {
             }
 
             if (expressions[0] instanceof IntConstant && expressions[1] instanceof IntConstant) {
+                System.out.println("Have 2 constants");
                 switch (op) {
                 case EQ:
                     if ((((IntConstant) expressions[0]).getValue() == ((IntConstant) expressions[1]).getValue())) {
@@ -176,6 +177,7 @@ public class ConstantPropagation extends BasicService {
                     }
                     break;
                 case LT:
+                    System.out.println("With a LT");
                     if (((IntConstant) expressions[0]).getValue() < ((IntConstant) expressions[1]).getValue()) {
                         stack.push(Operation.TRUE);
                     } else {
