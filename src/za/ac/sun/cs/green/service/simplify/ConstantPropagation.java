@@ -359,7 +359,7 @@ public class ConstantPropagation extends BasicService {
                     }
                     break;
                 case LT:
-                    insideOpp = (Operation) r;
+                    insideOpp = (Operation) l;
                     switch (insideOpp.getOperator()) {
                     case SUB:
                         if (insideOpp.getOperand(0) instanceof IntConstant
@@ -463,7 +463,7 @@ public class ConstantPropagation extends BasicService {
                     }
                     break;
                 case LE:
-                    insideOpp = (Operation) r;
+                    insideOpp = (Operation) l;
                     switch (insideOpp.getOperator()) {
                     case SUB:
                     case ADD:
@@ -521,7 +521,7 @@ public class ConstantPropagation extends BasicService {
                     }
                     break;
                 case GT:
-                    insideOpp = (Operation) r;
+                    insideOpp = (Operation) l;
                     switch (insideOpp.getOperator()) {
                     case SUB:
                     case ADD:
@@ -579,7 +579,7 @@ public class ConstantPropagation extends BasicService {
                     }
                     break;
                 case GE:
-                    insideOpp = (Operation) r;
+                    insideOpp = (Operation) l;
                     switch (insideOpp.getOperator()) {
                     case SUB:
                     case ADD:
