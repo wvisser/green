@@ -39,10 +39,10 @@ public class ConstantPropagation extends BasicService {
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = propogateConstants(instance.getFullExpression(), map);
+			final Expression e = propagateConstants(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
-			instance.setData(RENAME, reverseMap);
+			instance.setData(getClass(), result);
 		}
 		return result;
 	}
@@ -154,16 +154,16 @@ public class ConstantPropagation extends BasicService {
           Operation.Operator oper = op;
           if(oper.equals(Operation.Operator.EQ)){
               if((r instanceof IntVariable) && (r instanceof IntConstant)){
-                  variableMap.put(l , r);
+                  map.put(l , r);
               }else if((r instanceof IntVariable) && (l instanceof IntConstant)){
-                  variableMap.put(r,l);
+                  map.put(r,l);
               }
               stack.push(new Operation(oper,l,r));
             } else if(!op.equals(Operation.Operator.EQ)){
-                  if (variableMap.containsKey(l)) {
-                      l = variableMap.get(l);
-                  } else if(variableMap.containsKey(r)){
-                      r = variableMap.get(r);
+                  if (map.containsKey(l)) {
+                      l = map.get(l);
+                  } else if(map.containsKey(r)){
+                      r = map.get(r);
                   }
                   stack.push(new Operation(op , l , r));
             }
