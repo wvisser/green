@@ -75,6 +75,11 @@ public class ConstantPropagation extends BasicService {
         expression = simplifyingVisitor.getExpression();
         log.log(Level.FINEST, "After Simplification: " + expression);
         while(expression.getSimplified()) {
+            OrderingVisitor orderingVisitor = new OrderingVisitor();
+            expression.accept(orderingVisitor);
+            expression = orderingVisitor.getExpression();
+            log.log(Level.FINEST, "After Constant Propagation: " + expression);
+
             expression.accept(simplifyingVisitor);
             expression = simplifyingVisitor.getExpression();
             log.log(Level.FINEST, "After Simplification: " + expression);
