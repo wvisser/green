@@ -74,7 +74,7 @@ public class ConstantPropogation extends BasicService {
 
 	 private static class cPvisitor extends Visitor {
 		 		private Stack<Expression> stack;
-		 		private Map<IntVariable, IntConstant> map;
+		 		private Map<IntVariable, IntConstant> Vmap;
 
  				public cPvisitor() {
  					stack = new Stack<Expression>();
@@ -122,7 +122,7 @@ public class ConstantPropogation extends BasicService {
 
  		@Override
  		public void postVisit(Operation operation) throws VisitorException {
-      Operation.Operator op = operation.getOperator();
+      			/*Operation.Operator op = operation.getOperator();
 			Operation.Operator nop = null;
 			switch (op) {
 			case EQ:
@@ -147,24 +147,25 @@ public class ConstantPropogation extends BasicService {
 				break;
 			}
 			if (nop != null) {}
+	*/
 
-      if(stack.size()>1){
+      if(stack.size()=>2){
           Expression r = stack.pop();
           Expression l = stack.pop();
-          Operation.Operator oper = op;
+          Operation.Operator oper = operation.getOperator();
           if(oper.equals(Operation.Operator.EQ)){
               if((r instanceof IntVariable) && (r instanceof IntConstant)){
-                  map.put((IntVariable)l ,(IntConstant) r);
+                  Vmap.put((IntVariable)l ,(IntConstant) r);
               }else if((r instanceof IntVariable) && (l instanceof IntConstant)){
-                  map.put((IntVariable)r,(IntConstant)l);
+                  Vmap.put((IntVariable)r,(IntConstant)l);
               }
               stack.push(new Operation(oper,l,r));
             } else if(!op.equals(Operation.Operator.EQ)){
 		  
-                  if (true) {
-                      l = map.get(l);
-                  } else if(true){
-                      r = map.get(r);
+                  if (Vmap.containsKey(l)) {
+                      l = Vmap.get(l);
+                  } else if(Vmap.containsKey(r)){
+                      r = Vmap.get(r);
                   }
                   stack.push(new Operation(op , l , r));
             }
