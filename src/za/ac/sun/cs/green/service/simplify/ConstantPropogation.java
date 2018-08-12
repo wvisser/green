@@ -72,7 +72,7 @@ public class ConstantPropogation extends BasicService {
         } catch (VisitorException ve) {
             log.log(Level.SEVERE,
 					"encountered an exception -- this should not be happening!",
-					x);
+					ve);
         }
 
         return null;
