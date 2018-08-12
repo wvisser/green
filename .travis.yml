@@ -1,5 +1,17 @@
+sudo: required
+
 language: java
 
+services:
+  - docker
+
+before_install:
+  - docker build -t green .
+
 script:
- - ant;
- - ant test;
+  - docker run green /bin/sh -c "ant; ant test"
+
+branches:
+	only:
+		-master
+		-feature/constantPropagation
