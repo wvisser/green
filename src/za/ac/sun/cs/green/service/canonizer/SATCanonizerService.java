@@ -85,6 +85,7 @@ public class SATCanonizerService extends BasicService {
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
+
 		}
 
 		public Expression getExpression() {
@@ -94,16 +95,19 @@ public class SATCanonizerService extends BasicService {
 		@Override
 		public void postVisit(IntConstant constant) {
 			stack.push(constant);
+
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
+
 		}
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
+
 			Operation.Operator nop = null;
 			switch (op) {
 			case EQ:
@@ -130,6 +134,7 @@ public class SATCanonizerService extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
+
 				if ((r instanceof IntVariable)
 						&& (l instanceof IntVariable)
 						&& (((IntVariable) r).getName().compareTo(
