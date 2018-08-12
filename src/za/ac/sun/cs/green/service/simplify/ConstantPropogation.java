@@ -27,13 +27,13 @@ import za.ac.sun.cs.green.expr.VisitorException;
 public class ConstantPropogation {
 
 
-    public ConstantPropogation(Green solver) {
-        super(solver);
+    public ConstantPropogation() {
+
     }
 
     public Operation propogate(Operation in) {
 
-        System.out.println(in);
+        System.out.println("*******\n" + in + "*******\n");
 
         return in;
     }
