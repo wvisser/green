@@ -47,7 +47,7 @@ public class ConstantPropogation extends BasicService {
 
     public Expression propogate(Expression expression,
 			Map<Variable, Variable> map) {
-            log.log(Level.FINEST, "Before propogation: " + expression);
+            log.log(Level.FINEST, "\n\n\n\nIM WORKING, LOOK AT MEEE\n\n\n\n");
         return null;
     }
 }
