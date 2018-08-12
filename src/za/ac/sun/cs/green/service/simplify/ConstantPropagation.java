@@ -158,13 +158,11 @@ public class ConstantPropagation extends BasicService {
             Operation.Operator op = operation.getOperator();
             Expression[] expressions = new Expression[op.getArity()];
 
-            for(int i = arity; i > 0; i--) {
+            for(int i = op.getArity(); i > 0; i--) {
                 expressions[i-1] = stack.pop();
-                System.out.println(expressions[i-1]);
+                System.out.println(i + " " + expressions[i-1]);
             }
-            
+
         }
-
     }
-
 }
