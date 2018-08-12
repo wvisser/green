@@ -28,12 +28,11 @@ public class ConstantPropogation {
 
 
     public ConstantPropogation(Green solver) {
-        super(solver);
+        // super(solver);
     }
 
-    @Override
     public Operation propogate(Operation in) {
-        Operation.operator out = in.getOperator();
+        Operation.Operator out = in.getOperator();
 
         System.out.println(in);
 
