@@ -97,29 +97,6 @@ public class ConstantPropagation extends BasicService {
         @Override
         public void postVisit(Operation operation) {
             Operation.Operator op = operation.getOperator();
-//            Operation.Operator nop = null;
-//            switch (op) {
-//                case EQ:
-//                    nop = Operation.Operator.EQ;
-//                    break;
-//                case NE:
-//                    nop = Operation.Operator.NE;
-//                    break;
-//                case LT:
-//                    nop = Operation.Operator.GT;
-//                    break;
-//                case LE:
-//                    nop = Operation.Operator.GE;
-//                    break;
-//                case GT:
-//                    nop = Operation.Operator.LT;
-//                    break;
-//                case GE:
-//                    nop = Operation.Operator.LE;
-//                    break;
-//                default:
-//                    break;
-//            }
 
             if (op.getArity() == 2) {
                 Expression r = stack.pop();
@@ -131,8 +108,8 @@ public class ConstantPropagation extends BasicService {
                     } else if (l instanceof IntVariable && r instanceof IntConstant) {
                         vars.put((IntVariable) l, (IntConstant) r);
                     }
-                    stack.push(operation);
-                } else if (r instanceof IntVariable && l instanceof  IntVariable) {
+                    stack.push(new Operation(op, l, r));
+                } else if (r instanceof IntVariable || l instanceof  IntVariable) {
                     if (vars.containsKey(r)) {
                         r = vars.get(r);
                     }
@@ -142,7 +119,7 @@ public class ConstantPropagation extends BasicService {
                     }
                     stack.push(new Operation(op, l, r));
                 } else {
-                    stack.push(operation);
+                    stack.push(new Operation(op, l, r));
                 }
             } else {
                 for (int i = op.getArity(); i > 0; i--) {
