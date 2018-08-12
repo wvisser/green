@@ -84,7 +84,7 @@ public class ConstantPropagation extends BasicService{
 		private Stack<Expression> stack;
 
 		public PropagationVisitor() {
-			map = new Map<Variable, Constant>();
+			map = new HashMap<Variable, Constant>();
 			stack = new Stack<Expression>();
 		}
 
@@ -94,13 +94,14 @@ public class ConstantPropagation extends BasicService{
 
 		@Override
 		public void postVisit(IntVariable variable) {
+            /*
 			Variable v = map.get(variable);
 			if (v == null) {
 				v = new IntVariable("v" + map.size(), variable.getLowerBound(),
 						variable.getUpperBound());
 				map.put(variable, v);
-			}
-			stack.push(v);
+			}*/
+			stack.push(variable);
 		}
 
 		@Override
