@@ -160,14 +160,14 @@ public class ConstantPropogation extends BasicService {
                   Vmap.put((IntVariable)r,(IntConstant)l);
               }
               stack.push(new Operation(oper,l,r));
-            } else if(!op.equals(Operation.Operator.EQ)){
+            } else if(!oper.equals(Operation.Operator.EQ)){
 		  
                   if (Vmap.containsKey(l)) {
                       l = Vmap.get(l);
                   } else if(Vmap.containsKey(r)){
                       r = Vmap.get(r);
                   }
-                  stack.push(new Operation(op , l , r));
+                  stack.push(new Operation(oper , l , r));
             }
           }
       }
