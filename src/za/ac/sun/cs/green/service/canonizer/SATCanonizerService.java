@@ -88,7 +88,9 @@ public class SATCanonizerService extends BasicService {
 		}
 
 		public Expression getExpression() {
-			return stack.pop();
+			Expression popExpr = stack.pop();
+			System.out.println("Expression popped: " + popExpr);
+			return popExpr;
 		}
 
 		@Override
@@ -344,8 +346,10 @@ public class SATCanonizerService extends BasicService {
 
 		@Override
 		public void postVisit(Constant constant) {
+			System.out.println("Post visit constant: " + constant);
 			if (linearInteger && !unsatisfiable) {
 				if (constant instanceof IntConstant) {
+					System.out.prntln("pushed constant onto stack: " + constant)
 					stack.push(constant);
 				} else {
 					stack.clear();
@@ -359,8 +363,10 @@ public class SATCanonizerService extends BasicService {
 			if (linearInteger && !unsatisfiable) {
 				if (variable instanceof IntVariable) {
 					variableSet.add((IntVariable) variable);
-					stack.push(new Operation(Operation.Operator.MUL, Operation.ONE,
-							variable));
+					Operation newOper = new Operation(Operation.Operator.MUL, Operation.ONE,
+					System.out.println("pushed operation onto stack: " + newOper);
+							variable)
+					stack.push(newOper));
 				} else {
 					stack.clear();
 					linearInteger = false;
@@ -374,6 +380,7 @@ public class SATCanonizerService extends BasicService {
 				return;
 			}
 			Operation.Operator op = operation.getOperator();
+			System.out.println("Post visit operator: " + op);
 			switch (op) {
 			case AND:
 				if (!stack.isEmpty()) {
@@ -414,13 +421,17 @@ public class SATCanonizerService extends BasicService {
 							b = v >= 0;
 						}
 						if (b) {
+							System.out.println("pushed true");
 							stack.push(Operation.TRUE);
 						} else {
+							System.out.println("pushed false");
 							stack.push(Operation.FALSE);
 							// unsatisfiable = true;
 						}
 					} else {
-						stack.push(new Operation(op, e, Operation.ZERO));
+						new Operation(op, e, Operation.ZERO);
+						System.out.println("pushed operation: " + pushOp);
+						stack.push(pushOp);
 					}
 				}
 				break;
