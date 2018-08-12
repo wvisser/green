@@ -281,7 +281,7 @@
     
         cur['sun.io.unicode.encoding'] = 'UnicodeLittle';
     
-        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/19787065/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/19787065/Desktop/green/junitvmwatcher5362421400190470952.properties propsfile=/home/19787065/Desktop/green/junit8317046557480124539.properties';
+        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/19787065/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/19787065/Desktop/green/junitvmwatcher6727638743929450974.properties propsfile=/home/19787065/Desktop/green/junit5488973381246614579.properties';
     
         cur['sun.java.launcher'] = 'SUN_STANDARD';
     
@@ -352,7 +352,7 @@
 <th width="80%">Name</th><th>Tests</th><th>Errors</th><th>Failures</th><th>Skipped</th><th nowrap>Time(s)</th><th nowrap>Time Stamp</th><th>Host</th>
 </tr>
 <tr valign="top" class="Failure">
-<td><a title="Display all tests" href="0_EntireSuite.html">EntireSuite</a></td><td><a title="Display all tests" href="0_EntireSuite.html">1</a></td><td>0</td><td><a title="Display only failures" href="0_EntireSuite-fails.html">1</a></td><td>0</td><td>0.120</td><td>2018-08-12T10:47:31</td><td>localhost</td>
+<td><a title="Display all tests" href="0_EntireSuite.html">EntireSuite</a></td><td><a title="Display all tests" href="0_EntireSuite.html">1</a></td><td>0</td><td><a title="Display only failures" href="0_EntireSuite-fails.html">1</a></td><td>0</td><td>0.060</td><td>2018-08-12T15:49:51</td><td>localhost</td>
 </tr>
 </table>
 <h2>Failures</h2>
@@ -361,11 +361,10 @@
 <th>Name</th><th>Status</th><th width="80%">Type</th><th nowrap>Time(s)</th>
 </tr>
 <tr valign="top" class="Failure">
-<td><a name="test00"></a>test00</td><td>Failure</td><td>expected:&lt;([x==1)&amp;&amp;((1+y)==1]0)&gt; but was:&lt;([(((1*v0)+(1*v1))+-10)==0)&amp;&amp;(((1*v0)+-1)==]0)&gt;<br>
+<td><a name="test00"></a>test00</td><td>Failure</td><td>expected:&lt;[(x==1)&amp;&amp;((1+y)==10)]&gt; but was:&lt;[x==1]&gt;<br>
 <br>
-<code>junit.framework.AssertionFailedError: expected:&lt;([x==1)&amp;&amp;((1+y)==1]0)&gt; but was:&lt;([(((1*v0)+(1*v1))+-10)==0)&amp;&amp;(((1*v0)+-1)==]0)&gt;<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.finalCheck(OnlyConstantPropogationTest.java:44)<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.check(OnlyConstantPropogationTest.java:56)<br>
-<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.test00(OnlyConstantPropogationTest.java:71)<br>
-</code></td><td>0.076</td>
+<code>junit.framework.AssertionFailedError: expected:&lt;[(x==1)&amp;&amp;((1+y)==10)]&gt; but was:&lt;[x==1]&gt;<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.ffinalCheck(OnlyConstantPropogationTest.java:46)<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.check(OnlyConstantPropogationTest.java:58)<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantProppogationTest.test00(OnlyConstantPropogationTest.java:73)<br>
+</code></td><td>0.013</td>
 </tr>
 </table>
 <div class="Properties">

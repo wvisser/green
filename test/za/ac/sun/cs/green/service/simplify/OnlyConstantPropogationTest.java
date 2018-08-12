@@ -41,6 +41,8 @@ public class OnlyConstantPropogationTest {
 		}
 
 	private void finalCheck(String observed, String expected) {
+		System.out.println("Observed: " + observed);
+		System.out.println("Expected: " + expected);
 		assertEquals(expected, observed);
 	}
 

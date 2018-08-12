@@ -281,7 +281,7 @@
     
         cur['sun.io.unicode.encoding'] = 'UnicodeLittle';
     
-        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/19787065/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/19787065/Desktop/green/junitvmwatcher5362421400190470952.properties propsfile=/home/19787065/Desktop/green/junit8317046557480124539.properties';
+        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/19787065/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/19787065/Desktop/green/junitvmwatcher6735729326713831027.properties propsfile=/home/19787065/Desktop/green/junit6773601272346881566.properties';
     
         cur['sun.java.launcher'] = 'SUN_STANDARD';
     
@@ -351,8 +351,8 @@
 <tr valign="top">
 <th width="80%">Name</th><th>Tests</th><th>Errors</th><th>Failures</th><th>Skipped</th><th nowrap>Time(s)</th><th nowrap>Time Stamp</th><th>Host</th>
 </tr>
-<tr valign="top" class="Failure">
-<td><a title="Display all tests" href="0_EntireSuite.html">EntireSuite</a></td><td><a title="Display all tests" href="0_EntireSuite.html">1</a></td><td>0</td><td><a title="Display only failures" href="0_EntireSuite-fails.html">1</a></td><td>0</td><td>0.120</td><td>2018-08-12T10:47:31</td><td>localhost</td>
+<tr valign="top" class="Error">
+<td><a title="Display all tests" href="0_EntireSuite.html">EntireSuite</a></td><td><a title="Display all tests" href="0_EntireSuite.html">1</a></td><td><a title="Display only errors" href="0_EntireSuite-errors.html">1</a></td><td>0</td><td>0</td><td>0.061</td><td>2018-08-12T15:57:21</td><td>localhost</td>
 </tr>
 </table>
 <h2>Tests</h2>
@@ -360,12 +360,13 @@
 <tr valign="top">
 <th>Name</th><th>Status</th><th width="80%">Type</th><th nowrap>Time(s)</th>
 </tr>
-<tr valign="top" class="Failure">
-<td><a name="test00"></a>test00</td><td>Failure</td><td>expected:&lt;([x==1)&amp;&amp;((1+y)==1]0)&gt; but was:&lt;([(((1*v0)+(1*v1))+-10)==0)&amp;&amp;(((1*v0)+-1)==]0)&gt;<br>
+<tr valign="top" class="Error">
+<td><a name="test00"></a>test00</td><td>Error</td><td>N/A<br>
 <br>
-<code>junit.framework.AssertionFailedError: expected:&lt;([x==1)&amp;&amp;((1+y)==1]0)&gt; but was:&lt;([(((1*v0)+(1*v1))+-10)==0)&amp;&amp;(((1*v0)+-1)==]0)&gt;<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.finalCheck(OnlyConstantPropogationTest.java:44)<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.check(OnlyConstantPropogationTest.java:56)<br>
-<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.test00(OnlyConstantPropogationTest.java:71)<br>
-</code></td><td>0.076</td>
+<code>java.util.EmptyStackException<br>	at java.util.Stack.peek(Stack.java:102)<br>	at java.util.Stack.pop(Stack.java:84)<br>	at za.ac.sun.cs.green.service.simplify.ConstantPropogation$OrderingVisitor.postVisit(ConstantPropogation.java:129)<br>	at za.ac.sun.cs.green.expr.Operation.accept(Operation.java:205)<br>
+<br>	at za.ac.sun.cs.green.service.simplify.ConstantPropogation.canonize(ConstantPropogation.java:65)<br>	at za.ac.sun.cs.green.service.simplify.ConstantPropogation.processRequest(ConstantPropogation.java:46)<br>	at za.ac.sun.cs.green.taskmanager.SerialTaskManager.exeecute0(SerialTaskManager.java:43)<br>	at za.ac.sun.cs.green.taskmanager.SerialTaskManager.execute(SerialTaskManager.java:29)<br>	at za.ac.sun.cs.green.taskmanager.SerialTaskManager.process(SerialTaskManager.java:65)<br>	at za.ac.sun.cs.green.Green.handleRequest(Green.java:253)<br>	at za.ac.sun.cs.green..Instance.request(Instance.java:64)<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.check(OnlyConstantPropogationTest.java:54)<br>
+<br>	at za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest.test00(OnlyConstantPropogationTest.java:73)<br>
+</code></td><td>0.011</td>
 </tr>
 </table>
 <div class="Properties">
