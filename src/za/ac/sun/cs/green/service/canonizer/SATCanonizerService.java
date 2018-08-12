@@ -85,7 +85,6 @@ public class SATCanonizerService extends BasicService {
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
-			System.out.println("Created Stack");
 
 		}
 
@@ -96,21 +95,18 @@ public class SATCanonizerService extends BasicService {
 		@Override
 		public void postVisit(IntConstant constant) {
 			stack.push(constant);
-			System.out.println("Constant added: " +constant.toString());
 
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
-			System.out.println("Variable added: " +variable.getName());
 
 		}
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			System.out.println("op " + op);
 
 			Operation.Operator nop = null;
 			switch (op) {
@@ -137,9 +133,7 @@ public class SATCanonizerService extends BasicService {
 			}
 			if (nop != null) {
 				Expression r = stack.pop();
-				System.out.println("r: " + r.toString());
 				Expression l = stack.pop();
-				System.out.println("l: " + l.toString());
 
 				if ((r instanceof IntVariable)
 						&& (l instanceof IntVariable)

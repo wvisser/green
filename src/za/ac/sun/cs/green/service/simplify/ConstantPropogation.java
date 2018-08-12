@@ -57,12 +57,12 @@ public class ConstantPropogation extends BasicService {
 	public Expression simplify(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
-			log.log(Level.FINEST, "Before Canonization: " + expression);
+			log.log(Level.FINEST, "Before Propagation: " + expression);
 			invocations++;
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			log.log(Level.FINEST, "After Canonization: " + expression);
+			log.log(Level.FINEST, "After Propagation: " + expression);
 			return expression;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
@@ -138,17 +138,24 @@ public class ConstantPropogation extends BasicService {
 				} else {
 					finale = new Operation(op, l, r);
 					if (r instanceof IntVariable) {
-								if (hmap.containsKey(r.toString())) {
-									IntConstant replaces = new IntConstant(hmap.get(r.toString()));
-									finale = new Operation(op, l, replaces);
-								}
+						for (Map.Entry<String, Integer> entry : hmap.entrySet()) {
+    					String key = entry.getKey();
+    					Integer value = entry.getValue();
+							if (r.toString().contains(key)) {
+								IntConstant replaces = new IntConstant(value);
+								finale = new Operation(op, l, replaces);
+							}
+						}
 					}
 					if (l instanceof IntVariable) {
-								if (hmap.containsKey(l.toString())) {
-									IntConstant replaces = new IntConstant(hmap.get(l.toString()));
-									finale = new Operation(op, replaces, r);
-
-								}
+						for (Map.Entry<String, Integer> entry : hmap.entrySet()) {
+    					String key = entry.getKey();
+    					Integer value = entry.getValue();
+							if (l.toString().contains(key)) {
+								IntConstant replaces = new IntConstant(value);
+								finale = new Operation(op, replaces, r);
+							}
+						}
 					}
 				}
 				stack.push(finale);
