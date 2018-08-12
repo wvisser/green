@@ -236,44 +236,42 @@ public class ConstantPropagation extends BasicService {
 
             else if (l instanceof Operation && r instanceof Operation) {
                 System.out.println("Have 2 ops");
-                // switch (op) {
-                // case AND:
-                //     if (l.equals(Operation.TRUE) && r.equals(Operation.TRUE)) {
-                //         stack.push(Operation.TRUE);
-                //     } else if (l.equals(Operation.FALSE) || r.equals(Operation.FALSE)) {
-                //         stack.push(Operation.FALSE);
-                //     } else {
-                //         stack.push(new Operation(op, l, r));
-                //     }
-                //     break;
-                // case OR:
-                //     if (l.equals(Operation.FALSE) && r.equals(Operation.FALSE)) {
-                //         stack.push(Operation.FALSE);
-                //     } else if (l.equals(Operation.TRUE) || r.equals(Operation.TRUE)) {
-                //         stack.push(Operation.TRUE);
-                //     } else {
-                //         stack.push(new Operation(op, l, r));
-                //     }
-                //     break;
-                // default:
-                //     System.out.println("Hit default 2... Weird");
-                //     break;
-                // }
-                if (l.equals(Operation.TRUE) && !r.equals(Operation.TRUE) && op.equals(Operator.AND)) {
-					Operation newOpp = (Operation) r;
-                    stack.push(new Operation(newOpp, r.getOperand(0), r.getOperand(1)));
-				} else if (r.equals(Operation.TRUE) && !l.equals(Operation.TRUE) && op.equals(Operator.AND)) {
-					Operation newOpp = (Operation)l;
-                    stack.push(new Operation(newOpp, l.getOperand(0), l.getOperand(1)));
-				}
+                switch (op) {
+                case AND:
+                    if (l.equals(Operation.TRUE) && r.equals(Operation.TRUE)) {
+                        stack.push(Operation.TRUE);
+                    } else if (l.equals(Operation.TRUE) && !r.equals(Operation.TRUE)) {
+                        stack.push(r);
+                    } else if (r.equals(Operation.TRUE) && !l.equals(Operation.TRUE)) {
+                        stack.push(l);
+                    } else if (l.equals(Operation.FALSE) || r.equals(Operation.FALSE)) {
+                        stack.push(Operation.FALSE);
+                    } else {
+                        stack.push(new Operation(op, l, r));
+                    }
+                    break;
+                case OR:
+                    if (l.equals(Operation.FALSE) && r.equals(Operation.FALSE)) {
+                        stack.push(Operation.FALSE);
+                    } else if (l.equals(Operation.TRUE) || r.equals(Operation.TRUE)) {
+                        stack.push(Operation.TRUE);
+                    } else {
+                        stack.push(new Operation(op, l, r));
+                    }
+                    break;
+                default:
+                    System.out.println("Hit default 2... Weird");
+                    break;
+                }
 
             }
 
-            else if ((l instanceof Operation && r instanceof IntConstant) || (l instanceof IntConstant && r instanceof Operation)) {
+            else if ((l instanceof Operation && r instanceof IntConstant)
+                    || (l instanceof IntConstant && r instanceof Operation)) {
                 System.out.println("Have an op and a constant");
                 Operation insideOpp;
                 IntConstant outsideConstant;
-                if(l instanceof Operation) {
+                if (l instanceof Operation) {
                     insideOpp = (Operation) l;
                     outsideConstant = (IntConstant) r;
                 } else {
