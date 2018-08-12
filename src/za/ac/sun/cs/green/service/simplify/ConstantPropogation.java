@@ -102,7 +102,7 @@ public class ConstantPropogation extends BasicService {
 					stack.clear();
 				}
 
-			}
+			
  		}
 
  		@Override
@@ -113,7 +113,7 @@ public class ConstantPropogation extends BasicService {
 					stack.clear();
 				}
 
-			}
+			
  		}
 
  		@Override
