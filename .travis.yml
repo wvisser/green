@@ -10,3 +10,8 @@ before_install:
 
 script:
   - docker run green /bin/sh -c "ant; ant test"
+
+branches:
+	only:
+		-master
+		-feature/ConstantPropagation
