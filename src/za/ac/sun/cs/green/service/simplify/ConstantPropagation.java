@@ -132,10 +132,11 @@ public class ConstantPropagation extends BasicService{
 			default:
 				break;
 			}
-			if (nop != null) {
-				System.out.println("POPPING THIS FROM STACK: " + stack.peek());
+			System.out.println("NOP VALUE: " + nop);
+			if (false) {
+				//System.out.println("POPPING THIS FROM STACK: " + stack.peek());
 				Expression r = stack.pop();
-				System.out.println("POPPING THIS FROM STACK: " + stack.peek());
+				//System.out.println("POPPING THIS FROM STACK: " + stack.peek());
 				Expression l = stack.pop();
 				if ((r instanceof IntVariable)
 						&& (l instanceof IntVariable)
@@ -149,7 +150,9 @@ public class ConstantPropagation extends BasicService{
 					stack.push(operation);
 				}
 			} else if (op.getArity() == 2) {
+				System.out.println("R=: " + stack.peek());
 				Expression r = stack.pop();
+				System.out.println("L=: " + stack.peek());
 				Expression l = stack.pop();
 				stack.push(new Operation(op, l, r));
 			} else {
