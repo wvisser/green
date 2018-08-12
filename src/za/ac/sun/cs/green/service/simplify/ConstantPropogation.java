@@ -62,9 +62,9 @@ public class ConstantPropogation extends BasicService {
 
             PropogateVisitor propogateVisitor = new PropogateVisitor();
             expression.accept(propogateVisitor);
-            // expression =  propogateVisitor.getExpression();
+            expression =  propogateVisitor.getExpression();
 
-            log.log(Level.FINEST, "" + expression.getValue());
+            log.log(Level.FINEST, "" + expression);
 
 
             log.log(Level.FINEST, "After Constant Propogation: " + expression);
