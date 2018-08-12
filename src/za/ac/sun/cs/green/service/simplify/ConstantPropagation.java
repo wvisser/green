@@ -145,11 +145,13 @@ public class ConstantPropagation extends BasicService {
 
         @Override
         public void postVisit(IntConstant constant) {
+            System.out.println("Constant: " + constant);
             stack.push(constant);
         }
 
         @Override
         public void postVisit(IntVariable variable) {
+            System.out.println("Variable: " + variable);
             stack.push(variable);
         }
 
@@ -163,6 +165,71 @@ public class ConstantPropagation extends BasicService {
                 System.out.println(i + " " + expressions[i-1]);
             }
 
+			if (operands[0] instanceof IntConstant && operands[1] instanceof IntConstant) {
+				switch (op) {
+                    case EQ:
+                        if ((operands[0].getValue() == operands[1].getValue())) {
+                            stack.push(Operation.TRUE);
+                        } else {
+                            stack.push(Operation.FALSE);
+                        }
+                        break;
+                    case LT:
+                        if(operands[0].getValue() < expressions[1].getValue()) {
+                            stack.push(Operation.TRUE);
+                        } else {
+                            stack.push(Operation.FALSE);
+                        }
+                        break;
+                    case LE:
+                        if(operands[0].getValue() <= expressions[1].getValue()) {
+                            stack.push(Operation.TRUE);
+                        } else {
+                            stack.push(Operation.FALSE);
+                        }
+                        break;
+                    case GT:
+                        if(operands[0].getValue() > expressions[1].getValue()) {
+                            stack.push(Operation.TRUE);
+                        } else {
+                            stack.push(Operation.FALSE);
+                        }
+                        break;
+                    case GE:
+                        if(operands[0].getValue() >= expressions[1].getValue()) {
+                            stack.push(Operation.TRUE);
+                        } else {
+                            stack.push(Operation.FALSE);
+                        }
+                        break;
+                    case NE:
+                        if(expressions[0].getValue() != expressions[1].getValue()) {
+                            stack.push(Operation.TRUE);
+                        } else {
+                            stack.push(Operation.FALSE);
+                        }
+                        break;
+                    case ADD:
+                        IntConstant operationToConstantADD = new IntConstant(expressions[0].getValue() + expressions[1].getValue());
+                        stack.push(operationToConstantADD);
+                        break;
+                    case SUB:
+                        IntConstant operationToConstantSUB = new IntConstant(expressions[0].getValue() - expressions[1].getValue());
+                        stack.push(operationToConstantSUB);
+                        break;
+                    case MUL:
+                        IntConstant operationToConstantMUL = new IntConstant(expressions[0].getValue() * expressions[1].getValue());
+                        stack.push(operationToConstantMUL);
+                        break;
+                    case DIV:
+                        IntConstant operationToConstantDIV = new IntConstant(expressions[0].getValue() / expressions[1].getValue());
+                        stack.push(operationToConstantDIV);
+                        break;
+                    default:
+                        stack.push(operation);
+                        break;
+				}
+			}
         }
     }
 }
