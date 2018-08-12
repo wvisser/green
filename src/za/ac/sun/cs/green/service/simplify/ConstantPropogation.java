@@ -22,39 +22,36 @@ import za.ac.sun.cs.green.util.Reporter;
 import za.ac.sun.cs.green.expr.Constant;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
-import za.ac.sun.cs.green.expr.Operation
+import za.ac.sun.cs.green.expr.Operation;
 
-public class ConstansPropogation extends BasicService {
+public class ConstantPropagation extends BasicService {
 
-	private static final String RENAME = "RENAME";
-	
-	public ModelCanonizerService(Green solver) {
-		super(solver);
-	}
 
-	private Map<Variable, Variable> reverseMap(Map<Variable, Variable> map) {
-		Map<Variable, Variable> revMap = new HashMap<Variable, Variable>();
-		for (Map.Entry<Variable,Variable> m : map.entrySet()) {
-			revMap.put(m.getValue(), m.getKey());
-		}
-		return revMap;
-	}
-	
+    private int invocations = 0;
+
+    public ConstantPropagation(Green solver) {
+        super(solver);
+    }
+
 	@Override
 	public Set<Instance> processRequest(Instance instance) {
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = canonize(instance.getFullExpression(), map);
-			Map<Variable, Variable> reverseMap = reverseMap(map);
+			final Expression e = propogateConstants(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
-			instance.setData(getClass(), result);
 			instance.setData(RENAME, reverseMap);
 		}
 		return result;
 	}
+
+	@Override
+	public void report(Reporter reporter) {
+			reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
+	}
+
 
 	@Override
 	public Object childDone(Instance instance, Service subService,
@@ -64,7 +61,7 @@ public class ConstansPropogation extends BasicService {
 		if (r == null) {
 			return null;
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		HashMap<Variable, Variable> reverseMap = (HashMap<Variable, Variable>)instance.getData(RENAME);
 
@@ -74,5 +71,5 @@ public class ConstansPropogation extends BasicService {
 		}
 		return newResult;
 	}
-	
+
 }
