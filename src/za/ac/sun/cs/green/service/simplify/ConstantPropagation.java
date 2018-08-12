@@ -163,7 +163,7 @@ public class ConstantPropagation extends BasicService {
             Expression l = stack.pop();
 
             System.out.println("Processing: " + l + " " + op + " " + r);
-            
+
             if (l instanceof IntConstant && r instanceof IntConstant) {
                 System.out.println("Have 2 constants");
                 switch (op) {
@@ -237,7 +237,7 @@ public class ConstantPropagation extends BasicService {
                 }
             }
 
-            if (l instanceof Operation && r instanceof Operation) {
+            else if (l instanceof Operation && r instanceof Operation) {
                 switch (op) {
                 case AND:
                     if (l.equals(Operation.TRUE) && r.equals(Operation.TRUE)) {
@@ -260,7 +260,7 @@ public class ConstantPropagation extends BasicService {
 
             }
 
-            if (l instanceof Operation && r instanceof IntConstant) {
+            else if (l instanceof Operation && r instanceof IntConstant) {
                 switch (op) {
                 case NE:
                 case EQ:
