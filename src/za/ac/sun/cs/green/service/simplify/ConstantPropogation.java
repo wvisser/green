@@ -59,12 +59,12 @@ public class ConstantPropogation extends BasicService {
 
 	public Expression simplify(Expression expression, Map<Variable, Variable> map) {
 		try {
-			log.log(Level.FINEST, "Before Canonization: " + expression);
+			log.log(Level.FINEST, "Before Propagation: " + expression);
 			invocations++;
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			log.log(Level.FINEST, "After Canonization: " + expression);
+			log.log(Level.FINEST, "After Propagation: " + expression);
 			return expression;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
