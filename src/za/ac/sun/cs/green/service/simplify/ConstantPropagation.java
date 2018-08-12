@@ -530,6 +530,10 @@ public class ConstantPropagation extends BasicService {
                     break;
                 }
             }
+
+            else {
+                stack.push(operation);
+            }
         }
     }
 }
