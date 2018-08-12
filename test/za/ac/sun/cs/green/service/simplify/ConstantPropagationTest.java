@@ -131,22 +131,22 @@ public class ConstantPropagationTest {
 		check(o, "0==1");
 	}
 
-//	@Test /* TODO: This crashes my current implementation */
-//	public void test05() {
-//		IntVariable x = new IntVariable("x", 0, 99);
-//		IntVariable y = new IntVariable("y", 0, 99);		
-//		IntConstant c = new IntConstant(1);
-//		IntConstant c2 = new IntConstant(10);
-//		IntConstant c3 = new IntConstant(2);
-//		Operation o1 = new Operation(Operation.Operator.EQ, c, x);
-//		Operation o2 = new Operation(Operation.Operator.ADD, x, y);
-//		Operation o3 = new Operation(Operation.Operator.LT, o2, c2);
-//		Operation oi = new Operation(Operation.Operator.SUB, y, c);		
-//		Operation o4 = new Operation(Operation.Operator.EQ, c3, oi);
-//		Operation o5 = new Operation(Operation.Operator.AND, o1, o3);
-//		Operation o = new Operation(Operation.Operator.AND, o5, o4);
-//		check(o, "(1==x)&&(3==y)");
-//	}
+	@Test
+	public void test05() {
+		IntVariable x = new IntVariable("x", 0, 99);
+		IntVariable y = new IntVariable("y", 0, 99);		
+		IntConstant c = new IntConstant(1);
+		IntConstant c2 = new IntConstant(10);
+		IntConstant c3 = new IntConstant(2);
+		Operation o1 = new Operation(Operation.Operator.EQ, c, x);
+		Operation o2 = new Operation(Operation.Operator.ADD, x, y);
+		Operation o3 = new Operation(Operation.Operator.LT, o2, c2);
+		Operation oi = new Operation(Operation.Operator.SUB, y, c);		
+		Operation o4 = new Operation(Operation.Operator.EQ, c3, oi);
+		Operation o5 = new Operation(Operation.Operator.AND, o1, o3);
+		Operation o = new Operation(Operation.Operator.AND, o5, o4);
+		check(o, "(1==x)&&(3==y)");
+	}
 
 //	@Test /* TODO: This crashes my current implementation */
 //	public void test06() {

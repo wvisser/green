@@ -28,6 +28,8 @@ import za.ac.sun.cs.green.expr.VisitorException;
 import za.ac.sun.cs.green.service.BasicService;
 
 public class ConstantPropagation extends BasicService {
+	
+	private static boolean varLeft;
 
 	public ConstantPropagation(Green solver) {
 		super(solver);
@@ -56,7 +58,7 @@ public class ConstantPropagation extends BasicService {
 			expression = variableVisitor.getExpression();
 			log.log(Level.FINEST, "After variable mapping: " + expression);
 			/* Canonize */
-			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
+			SimplificationVisitor canonizationVisitor = new SimplificationVisitor();
 			expression.accept(canonizationVisitor);
 			Expression canonized = canonizationVisitor.getExpression();
 			log.log(Level.FINEST, "After simplification: " + canonized);
@@ -123,8 +125,10 @@ public class ConstantPropagation extends BasicService {
 
 				/* Map variables to their assigned constant */
 				if (nop.equals(Operation.Operator.EQ) && r instanceof IntVariable && l instanceof IntConstant) {
-					map.put(l, r);
+					varLeft = true;
+					map.put(r, l);
 				} else if (nop.equals(Operation.Operator.EQ) && l instanceof IntVariable && r instanceof IntConstant) {
+					varLeft = false;
 					map.put(l, r);
 				}
 
@@ -169,17 +173,9 @@ public class ConstantPropagation extends BasicService {
 				stack.push(operation);
 			}
 		}
-
-		/**
-		 * @return Returns true if the stack is empty, false otherwise.
-		 */
-		public boolean isEmpty() {
-			return stack.isEmpty();
-		}
-
 	}
 
-	private static class CanonizationVisitor extends Visitor {
+	private static class SimplificationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
 
@@ -201,7 +197,7 @@ public class ConstantPropagation extends BasicService {
 
 		private boolean linearInteger;
 
-		public CanonizationVisitor() {
+		public SimplificationVisitor() {
 			stack = new Stack<Expression>();
 			conjuncts = new TreeSet<Expression>();
 			variableSet = new TreeSet<IntVariable>();
@@ -241,9 +237,11 @@ public class ConstantPropagation extends BasicService {
 						} else if (o.getOperator() == Operation.Operator.GE) {
 							e = new Operation(Operation.Operator.LE, scale(-1, o.getOperand(0)), o.getOperand(1));
 						}
-						o = (Operation) e;
-						/* TODO we found the issue with gt and lt. Took this away as it did not add value */
+						// New code
+						/* Empty */
+						// Old code
 						/*
+						o = (Operation) e;
 						if (o.getOperator() == Operation.Operator.GT) {
 							e = new Operation(Operation.Operator.GE, merge(o.getOperand(0), new IntConstant(-1)),
 									o.getOperand(1));
@@ -251,7 +249,8 @@ public class ConstantPropagation extends BasicService {
 						} else if (o.getOperator() == Operation.Operator.LT) {
 							e = new Operation(Operation.Operator.LE, merge(o.getOperand(0), new IntConstant(1)),
 									o.getOperand(1));
-						}*/
+						}
+						*/
 					}
 					if (c == null) {
 						c = e;
@@ -264,7 +263,7 @@ public class ConstantPropagation extends BasicService {
 		}
 
 		/**
-		 * Returns a processed version of the conjucts.
+		 * Returns a processed version of the conjuncts.
 		 * 
 		 * @return
 		 */
@@ -388,9 +387,6 @@ public class ConstantPropagation extends BasicService {
 		}
 
 		@Override
-		/**
-		 * This adds the 1 multiplied by variable.
-		 */
 		public void postVisit(Variable variable) {
 			if (linearInteger && !unsatisfiable) {
 				if (variable instanceof IntVariable) {
@@ -543,7 +539,7 @@ public class ConstantPropagation extends BasicService {
 		 * @param oper
 		 */
 		private Operation swippySwoppy(Expression e, Operator op) {
-			// System.out.println("Doin a swippy swoppy on: " + e + " where oper is " + op);
+			System.out.println("Doin a swippy swoppy on: " + e + " where oper is " + op);
 			Operation oper = (Operation) e;
 			Stack<Expression> sta = new Stack<Expression>();
 			for (Expression exp : oper.getOperands()) {
@@ -551,7 +547,7 @@ public class ConstantPropagation extends BasicService {
 			}
 			Expression l = sta.pop();
 			Expression r = sta.pop();
-			// System.out.println("Left: " + l + "\tRight: " + r);
+			System.out.println("Left: " + l + "\tRight: " + r);
 
 			/* Get rid of coefficient */
 			if (r instanceof Operation) {
@@ -579,14 +575,20 @@ public class ConstantPropagation extends BasicService {
 			/* Swip the swoppy */
 			if (r instanceof IntConstant) {
 				r = new IntConstant(((IntConstant) r).getValue() * -1);
-				return new Operation(op, l, r);
+				if (varLeft)
+					return new Operation(op, l, r);
+				else
+					return new Operation(op, r, l);
 			} else if (l instanceof IntConstant) {
 				IntVariable var = (IntVariable) r;
 				IntConstant cons = (IntConstant) l;
-//				if (var.getName().equals("y") && cons.getValue() == -3)
-//					System.out.println("Test yy " + r);
+				if (var.getName().equals("y") && cons.getValue() == -3)
+					System.out.println("Test yy " + r);
 				l = new IntConstant(((IntConstant) l).getValue() * -1);
-				return new Operation(op, r, l);
+				if (varLeft)
+					return new Operation(op, l, r);
+				else
+					return new Operation(op, r, l);
 			}
 
 			return new Operation(op, e, Operation.ZERO);
