@@ -57,17 +57,30 @@ public class ConstantPropagation extends BasicService {
             expression.accept(orderingVisitor);
             expression = orderingVisitor.getExpression();
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
-
-            SimplifyingVisitor simplifyingVisitor = new SimplifyingVisitor();
-            expression.accept(simplifyingVisitor);
-            expression = simplifyingVisitor.getExpression();
-            log.log(Level.FINEST, "After Simplification: " + expression);
+            
+            expression = multipleSimplifications(expression);
             return expression;
         } catch (VisitorException x) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
         }
         return null;
     }
+
+
+
+    private static Expression GetSimplifiedExpression(Expression expression) throws VisitorException {
+
+        SimplifyingVisitor simplifyingVisitor = new SimplifyingVisitor();
+        expression.accept(simplifyingVisitor);
+        expression = simplifyingVisitor.getExpression();
+        log.log(Level.FINEST, "After Simplification: " + expression);
+        while(expression.getSimplified()) {
+            expression.accept(simplifyingVisitor);
+            expression = simplifyingVisitor.getExpression();
+            log.log(Level.FINEST, "After Simplification: " + expression);
+        }
+        return expression;
+	}
 
     private static class OrderingVisitor extends Visitor {
         private Stack<Expression> stack;
@@ -132,9 +145,11 @@ public class ConstantPropagation extends BasicService {
 
     private static class SimplifyingVisitor extends Visitor {
         private Stack<Expression> stack;
+        private Boolean simplified;
 
         public SimplifyingVisitor() {
             stack = new Stack<Expression>();
+            simplified = false;
             System.out.println("Starting Simplifier");
         }
 
@@ -142,6 +157,10 @@ public class ConstantPropagation extends BasicService {
             Expression finalExp = stack.pop();
             System.out.println("Final expression: " + finalExp);
             return finalExp;
+        }
+
+        public Boolean getSimplified() {
+            return simplified;
         }
 
         @Override
@@ -164,6 +183,8 @@ public class ConstantPropagation extends BasicService {
 
             if (l instanceof IntConstant && r instanceof IntConstant) {
                 System.out.println("Have 2 constants");
+                simplified = true;
+
                 switch (op) {
                 case EQ:
                     if ((((IntConstant) l).getValue() == ((IntConstant) r).getValue())) {
@@ -236,6 +257,8 @@ public class ConstantPropagation extends BasicService {
 
             else if (l instanceof Operation && r instanceof Operation) {
                 System.out.println("Have 2 ops");
+                simplified = true;
+
                 switch (op) {
                 case AND:
                     if (l.equals(Operation.TRUE) && r.equals(Operation.TRUE)) {
@@ -247,6 +270,7 @@ public class ConstantPropagation extends BasicService {
                     } else if (l.equals(Operation.FALSE) || r.equals(Operation.FALSE)) {
                         stack.push(Operation.FALSE);
                     } else {
+                        simplified = false;
                         stack.push(new Operation(op, l, r));
                     }
                     break;
@@ -256,6 +280,7 @@ public class ConstantPropagation extends BasicService {
                     } else if (l.equals(Operation.TRUE) || r.equals(Operation.TRUE)) {
                         stack.push(Operation.TRUE);
                     } else {
+                        simplified = false;
                         stack.push(new Operation(op, l, r));
                     }
                     break;
@@ -269,6 +294,7 @@ public class ConstantPropagation extends BasicService {
             else if ((l instanceof Operation && r instanceof IntConstant)
                     || (l instanceof IntConstant && r instanceof Operation)) {
                 System.out.println("Have an op and a constant");
+                simplified = true;
                 Operation insideOpp;
                 IntConstant outsideConstant;
                 if (l instanceof Operation) {
@@ -732,6 +758,7 @@ public class ConstantPropagation extends BasicService {
                 }
             } else {
                 System.out.println("Have none of the above");
+                simplified = false;
                 stack.push(new Operation(op, l, r));
             }
         }
