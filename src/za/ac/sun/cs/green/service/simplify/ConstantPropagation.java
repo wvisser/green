@@ -240,15 +240,19 @@ public class ConstantPropagation extends BasicService {
                 case AND:
                     if (l.equals(Operation.TRUE) && r.equals(Operation.TRUE)) {
                         stack.push(Operation.TRUE);
-                    } else {
+                    } else if(l.equals(Operation.FALSE) || r.equals(Operation.FALSE)) {
                         stack.push(Operation.FALSE);
+                    } else {
+                        stack.push(new Operation(op, l, r));
                     }
                     break;
                 case OR:
                     if (l.equals(Operation.FALSE) && r.equals(Operation.FALSE)) {
                         stack.push(Operation.FALSE);
-                    } else {
+                    } else if(l.equals(Operation.TRUE) || r.equals(Operation.TRUE)){
                         stack.push(Operation.TRUE);
+                    } else {
+                        stack.push(new Operation(op, l, r));
                     }
                     break;
                 default:
