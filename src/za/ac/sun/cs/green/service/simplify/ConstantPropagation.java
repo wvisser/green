@@ -259,11 +259,11 @@ public class ConstantPropagation extends BasicService {
                 //     System.out.println("Hit default 2... Weird");
                 //     break;
                 // }
-                if (l.equals(Operation.TRUE) && !r.equals(Operation.TRUE) && operation.getOperator().equals(Operator.AND)) {
-					Operation newopp = (Operation) r;
+                if (l.equals(Operation.TRUE) && !r.equals(Operation.TRUE) && op.equals(Operator.AND)) {
+					Operation newOpp = (Operation) r;
                     stack.push(new Operation(newOpp, r.getOperand(0), r.getOperand(1)));
-				} else if (r.equals(Operation.TRUE) && !l.equals(Operation.TRUE) && operation.getOperator().equals(Operator.AND)) {
-					Operation newopp = (Operation)l;
+				} else if (r.equals(Operation.TRUE) && !l.equals(Operation.TRUE) && op.equals(Operator.AND)) {
+					Operation newOpp = (Operation)l;
                     stack.push(new Operation(newOpp, l.getOperand(0), l.getOperand(1)));
 				}
 
