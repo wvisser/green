@@ -14,7 +14,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import com.microsoft.z3.Context;
-
+import za.ac.sun.cs.green.service.simplify.OnlyConstantPropagationTest;
+import za.ac.sun.cs.green.service.simplify.SimplificationConstantPropagationTest;
 import cvc3.ValidityChecker;
 import za.ac.sun.cs.green.parser.smtlib2.SMTLIB2Parser0Test;
 import za.ac.sun.cs.green.parser.smtlib2.SMTLIB2Scanner0Test;
@@ -36,8 +37,8 @@ import za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	SATCanonizerTest.class,
-	SATZ3Test.class
+	//SATCanonizerTest.class,
+	//SATZ3Test.class
 	OnlyConstantPropogationTest.class
 })
 
