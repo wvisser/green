@@ -240,7 +240,7 @@ public class ConstantPropagation extends BasicService {
                 case AND:
                     if (l.equals(Operation.TRUE) && r.equals(Operation.TRUE)) {
                         stack.push(Operation.TRUE);
-                    } else if(l.equals(Operation.FALSE) || r.equals(Operation.FALSE)) {
+                    } else if (l.equals(Operation.FALSE) || r.equals(Operation.FALSE)) {
                         stack.push(Operation.FALSE);
                     } else {
                         stack.push(new Operation(op, l, r));
@@ -249,7 +249,7 @@ public class ConstantPropagation extends BasicService {
                 case OR:
                     if (l.equals(Operation.FALSE) && r.equals(Operation.FALSE)) {
                         stack.push(Operation.FALSE);
-                    } else if(l.equals(Operation.TRUE) || r.equals(Operation.TRUE)){
+                    } else if (l.equals(Operation.TRUE) || r.equals(Operation.TRUE)) {
                         stack.push(Operation.TRUE);
                     } else {
                         stack.push(new Operation(op, l, r));
@@ -326,7 +326,7 @@ public class ConstantPropagation extends BasicService {
                             IntConstant constant = (IntConstant) insideOpp.getOperand(1);
                             IntConstant outsideConstant = (IntConstant) r;
 
-                            int result = constant.getValue() / outsideConstant.getValue();
+                            int result = outsideConstant.getValue() / constant.getValue();
                             operation = new Operation(Operation.Operator.EQ, insideOpp.getOperand(0),
                                     new IntConstant(result));
                             stack.push(operation);
@@ -641,7 +641,386 @@ public class ConstantPropagation extends BasicService {
                     break;
                 }
             }
-            else {
+
+            else if (l instanceof IntConstant && r instanceof Operation) {
+                System.out.println("Have a constant and an operation");
+                switch (op) {
+                case NE:
+                case EQ:
+                    Operation insideOpp = (Operation) r;
+                    switch (insideOpp.getOperator()) {
+                    case SUB:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.EQ, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() + constant.getValue();
+                            operation = new Operation(Operation.Operator.EQ, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
+                    case ADD:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() - constant.getValue();
+                            operation = new Operation(Operation.Operator.EQ, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() - constant.getValue();
+                            operation = new Operation(Operation.Operator.EQ, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
+                    case DIV:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() / outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.EQ, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.EQ, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
+                    case MUL:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.EQ, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.EQ, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
+                    default:
+                        System.out.println("Hit default 3... Weird");
+                        break;
+                    }
+                    break;
+                case LT:
+                    insideOpp = (Operation) r;
+                    switch (insideOpp.getOperator()) {
+                    case SUB:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() + constant.getValue();
+                            operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
+                    case ADD:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() - constant.getValue();
+                            operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() - constant.getValue();
+                            operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
+                    case DIV:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() / outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            if (constant.getValue() < 0) {
+                                operation.setOperator(Operation.Operator.GT);
+                            }
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() / outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            if (constant.getValue() < 0) {
+                                operation.setOperator(Operation.Operator.GT);
+                            }
+                            stack.push(operation);
+                        }
+                        break;
+                    case MUL:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            if (constant.getValue() < 0) {
+                                operation.setOperator(Operation.Operator.GT);
+                            }
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.LT, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            if (constant.getValue() < 0) {
+                                operation.setOperator(Operation.Operator.GT);
+                            }
+                            stack.push(operation);
+                        }
+                        break;
+                    default:
+                        System.out.println("Hit default 4... Weird");
+                        break;
+                    }
+                    break;
+                case LE:
+                    insideOpp = (Operation) r;
+                    switch (insideOpp.getOperator()) {
+                    case SUB:
+                    case ADD:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
+                    case DIV:
+                    case MUL:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            if (constant.getValue() < 0) {
+                                operation.setOperator(Operation.Operator.GE);
+                            }
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.LE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            if (constant.getValue() < 0) {
+                                operation.setOperator(Operation.Operator.GE);
+                            }
+                            stack.push(operation);
+                        }
+                        break;
+                    default:
+                        System.out.println("Hit default 5... Weird");
+                        break;
+                    }
+                    break;
+                case GT:
+                    insideOpp = (Operation) r;
+                    switch (insideOpp.getOperator()) {
+                    case SUB:
+                    case ADD:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
+                    case DIV:
+                    case MUL:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            if (constant.getValue() < 0) {
+                                operation.setOperator(Operation.Operator.LT);
+                            }
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.GT, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            if (constant.getValue() < 0) {
+                                operation.setOperator(Operation.Operator.LT);
+                            }
+                            stack.push(operation);
+                        }
+                        break;
+                    default:
+                        System.out.println("Hit default 6... Weird");
+                        break;
+                    }
+                    break;
+                case GE:
+                    insideOpp = (Operation) r;
+                    switch (insideOpp.getOperator()) {
+                    case SUB:
+                    case ADD:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = constant.getValue() - outsideConstant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            stack.push(operation);
+                        }
+                        break;
+                    case DIV:
+                    case MUL:
+                        if (insideOpp.getOperand(0) instanceof IntConstant
+                                && insideOpp.getOperand(1) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(0);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(1),
+                                    new IntConstant(result));
+                            if (constant.getValue() < 0) {
+                                operation.setOperator(Operation.Operator.LE);
+                            }
+                            stack.push(operation);
+                        } else if (insideOpp.getOperand(1) instanceof IntConstant
+                                && insideOpp.getOperand(0) instanceof IntVariable) {
+                            IntConstant constant = (IntConstant) insideOpp.getOperand(1);
+                            IntConstant outsideConstant = (IntConstant) l;
+
+                            int result = outsideConstant.getValue() / constant.getValue();
+                            operation = new Operation(Operation.Operator.GE, insideOpp.getOperand(0),
+                                    new IntConstant(result));
+                            if (constant.getValue() < 0) {
+                                operation.setOperator(Operation.Operator.LE);
+                            }
+                            stack.push(operation);
+                        }
+                        break;
+                    default:
+                        System.out.println("Hit default 7... Weird");
+                        break;
+                    }
+                    break;
+                default:
+                    System.out.println("Hit the default here too. Odd");
+                    break;
+                }
+            } else {
                 System.out.println("Have none of the above");
                 stack.push(new Operation(op, l, r));
             }
