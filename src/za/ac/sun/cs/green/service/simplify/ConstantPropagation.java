@@ -156,12 +156,12 @@ public class ConstantPropagation extends BasicService {
         @Override
         public void postVisit(Operation operation) throws VisitorException {
             Operation.Operator op = operation.getOperator();
-            Expression r = stack.pop();
-            Expression l = stack.pop();
+            Expression[] expressions = new Expression[operation.getArity()];
 
-            System.out.println("Visiting operation: ");
-            System.out.println(l + " " + op + " " + r);
-
+            for(int i = arity; i > 0; i--) {
+                expressions[i-1] = stack.pop();
+                System.out.println(expressions[i-1]);
+            }
             
         }
 
