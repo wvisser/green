@@ -41,7 +41,7 @@ public class ConstantPropogation extends BasicService {
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = canonize(instance.getFullExpression(), map);
+			final Expression e = simplify(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -54,10 +54,9 @@ public class ConstantPropogation extends BasicService {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-	public Expression canonize(Expression expression,
-			Map<Variable, Variable> map) {
+	public Expression simplify(Expression expression,Map<Variable, Variable> map) {
 		try {
-			log.log(Level.FINEST, "Before Canonization: " + expression);
+			log.log(Level.FINEST, "Before Simplify: " + expression);
 			invocations++;
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
@@ -69,7 +68,7 @@ public class ConstantPropogation extends BasicService {
 				canonized = new Renamer(map,
 						canonizationVisitor.getVariableSet()).rename(canonized);
 			}
-			log.log(Level.FINEST, "After Canonization: " + canonized);
+			log.log(Level.FINEST, "After Simplify: " + canonized);
 			return canonized;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
