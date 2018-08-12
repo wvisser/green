@@ -632,9 +632,11 @@ public class ConstantPropagation extends BasicService {
                         break;
                     }
                     break;
+                default:
+                    System.out.println("Hit the default here. Odd");
+                    break;
                 }
             }
-
             else {
                 System.out.println("Have none of the above");
                 stack.push(new Operation(op, l, r));
