@@ -264,6 +264,7 @@ public class ConstantPropagation extends BasicService {
 
             else if (l instanceof Operation && r instanceof IntConstant) {
                 System.out.println("Have an op and a constant");
+                Operation insideOpp = (Operation) l;
                 switch (op) {
                 case NE:
                 case EQ:
