@@ -107,7 +107,7 @@ public class ConstantPropagation extends BasicService {
  		}
 
  		@Override
- 		public void postVisit(IntVariable variable) {
+ 		public void postVisit(Variable variable) {
 			if(variable instanceof IntVariable){
 				stack.push(variable);
 			} else {
