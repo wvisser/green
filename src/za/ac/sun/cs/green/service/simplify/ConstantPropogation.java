@@ -22,3 +22,11 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import za.ac.sun.cs.green.expr.VisitorException;
+
+public class ConstantPropogation extends BasicService {
+	
+	private int invocations = 0;
+ 	public ConstantPropogation(Green solver) {
+		super(solver);
+	}
+}
