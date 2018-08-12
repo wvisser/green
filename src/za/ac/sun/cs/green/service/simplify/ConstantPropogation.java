@@ -149,7 +149,7 @@ public class ConstantPropogation extends BasicService {
 			if (nop != null) {}
 	*/
 
-      if(stack.size()=>2){
+      if(stack.size()>=2){
           Expression r = stack.pop();
           Expression l = stack.pop();
           Operation.Operator oper = operation.getOperator();
