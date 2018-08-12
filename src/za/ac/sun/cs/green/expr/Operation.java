@@ -148,6 +148,10 @@ public class Operation extends Expression {
 		default:
 			return new Operation(operator, operands);
 		}
+    }
+    
+    public void setOperator(Operator opp) {
+		operator = opp;
 	}
 
 	public Operator getOperator() {
