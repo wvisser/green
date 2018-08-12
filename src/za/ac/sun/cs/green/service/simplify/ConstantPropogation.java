@@ -2,7 +2,7 @@ package za.ac.sun.cs.green.service.simplify;
 /* TODO: implemement
    1. propagating one equality
    2. adding simplification, which could introduce more equalities to propagate
-   3. do full propagation until you reach a fixpoint
+   3. do full propagotion until you reach a fixpoint
 
 */
 /* External */
@@ -27,7 +27,7 @@ import za.ac.sun.cs.green.util.Reporter;
 public class ConstantPropogation extends BasicService {
    private int invocations = 0;
 
-   public ConstantPropagation(Green solver) {
+   public ConstantPropogation(Green solver) {
        super(solver);
    }
 
