@@ -122,12 +122,12 @@ public class ConstantPropagation extends BasicService {
         @Override
         public void postVisit(IntVariable variable) {
             // If variable exists in HashMap (it has been assigned a value)
-            // if (variables.containsKey(variable)) {
-            //     stack.push(variables.get(variable));
-            // } else {
-            //     stack.push(variable);
-            // }
-            stack.push(variable);
+            if (variables.containsKey(variable)) {
+                stack.push(variables.get(variable));
+            } else {
+                stack.push(variable);
+            }
+            // stack.push(variable);
         }
 
         @Override
