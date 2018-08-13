@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testsuites>
-  <testsuite errors="0" failures="0" hostname="matthew-XPS-15-9550" id="0" name="EntireSuite" package="za.ac.sun.cs.green" skipped="0" tests="1" time="0.054" timestamp="2018-08-12T17:46:26">
+  <testsuite errors="0" failures="0" hostname="matthew-XPS-15-9550" id="0" name="EntireSuite" package="za.ac.sun.cs.green" skipped="0" tests="2" time="0.058" timestamp="2018-08-12T18:04:46">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -190,7 +190,7 @@
 
           <property name="java.class.path" value="/home/matthew/Desktop/green/bin:/home/matthew/Desktop/green/lib/apfloat.jar:/home/matthew/Desktop/green/lib/commons-exec-1.2.jar:/home/matthew/Desktop/green/lib/junit_4.8.2.jar:/home/matthew/Desktop/green/lib/org.hamcrest.core_1.1.0.jar:/home/matthew/Desktop/green/lib/choco-solver-3.3.1.jar:/home/matthew/Desktop/green/lib/slf4j-api-1.7.12.jar:/home/matthew/Desktop/green/lib/slf4j-simple-1.7.12.jar:/home/matthew/Desktop/green/lib/trove-3.1a1.jar:/home/matthew/Desktop/green/lib/choco-solver-2.1.3.jar:/home/matthew/Desktop/green/lib/libcvc3.jar:/home/matthew/Desktop/green/lib/com.microsoft.z3.jar:/home/matthew/Desktop/green/lib/jedis-2.0.0.jar:/usr/share/ant/lib/junit.jar:/usr/share/java/ant-launcher-1.10.3.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/matthew/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/matthew/Desktop/green/junitvmwatcher2617501207505407334.properties propsfile=/home/matthew/Desktop/green/junit5000366425198776542.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner za.ac.sun.cs.green.EntireSuite skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/matthew/Desktop/green/bin/junit/TEST-za.ac.sun.cs.green.EntireSuite.xml crashfile=/home/matthew/Desktop/green/junitvmwatcher3202654846272033347.properties propsfile=/home/matthew/Desktop/green/junit4890492879815958628.properties" />
 
           <property name="env.XDG_SESSION_ID" value="2" />
 
@@ -274,13 +274,18 @@
 
       <testcase classname="za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest" name="test00" time="0.006" />
 
+      <testcase classname="za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest" name="test01" time="0.001" />
+
       <system-out><![CDATA[Z3 Not Available, no tests for it will be executed
-[20180812 19:46:26][za.ac.sun.cs.green.Green <init>][FINEST] Solver("anonymous1") created
-[20180812 19:46:26][za.ac.sun.cs.green.Green registerService][INFO] register service: name="sat", subservice=za.ac.sun.cs.green.service.simplify.ConstantPropogation
-[20180812 19:46:26][za.ac.sun.cs.green.Green registerService][INFO] register service: name="za.ac.sun.cs.green.service.simplify.ConstantPropogation", subservice=za.ac.sun.cs.green.service.sink.SinkService
-[20180812 19:46:26][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
-[20180812 19:46:26][za.ac.sun.cs.green.service.simplify.ConstantPropogation canonize][FINEST] Before Canonization: (x==1)&&((x+y)==10)
-[20180812 19:46:26][za.ac.sun.cs.green.service.simplify.ConstantPropogation canonize][FINEST] After Canonization: (x==1)&&((1+y)==10)
+[20180812 20:04:46][za.ac.sun.cs.green.Green <init>][FINEST] Solver("anonymous1") created
+[20180812 20:04:46][za.ac.sun.cs.green.Green registerService][INFO] register service: name="sat", subservice=za.ac.sun.cs.green.service.simplify.ConstantPropogation
+[20180812 20:04:46][za.ac.sun.cs.green.Green registerService][INFO] register service: name="za.ac.sun.cs.green.service.simplify.ConstantPropogation", subservice=za.ac.sun.cs.green.service.sink.SinkService
+[20180812 20:04:46][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180812 20:04:46][za.ac.sun.cs.green.service.simplify.ConstantPropogation canonize][FINEST] Before Canonization: (x==1)&&((x+y)==10)
+[20180812 20:04:46][za.ac.sun.cs.green.service.simplify.ConstantPropogation canonize][FINEST] After Canonization: (x==1)&&((1+y)==10)
+[20180812 20:04:46][za.ac.sun.cs.green.taskmanager.SerialTaskManager process][INFO] processing serviceName="sat"
+[20180812 20:04:46][za.ac.sun.cs.green.service.simplify.ConstantPropogation canonize][FINEST] Before Canonization: ((x==1)&&(y==1))&&((x+y)==10)
+[20180812 20:04:46][za.ac.sun.cs.green.service.simplify.ConstantPropogation canonize][FINEST] After Canonization: ((x==1)&&(y==1))&&((1+1)==10)
 ]]></system-out>
 
       <system-err><![CDATA[]]></system-err>

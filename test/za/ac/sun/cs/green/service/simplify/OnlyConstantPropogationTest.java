@@ -28,11 +28,8 @@ public class OnlyConstantPropogationTest {
 			Properties props = new Properties();
 			props.setProperty("green.services", "sat");
 			props.setProperty("green.service.sat", "(simplify sink)");
-			//props.setProperty("green.service.sat", "(canonize sink)");
 			props.setProperty("green.service.sat.simplify",
 					"za.ac.sun.cs.green.service.simplify.ConstantPropogation");
-			//props.setProperty("green.service.sat.canonize",
-			//		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
 
 			props.setProperty("green.service.sat.sink",
 					"za.ac.sun.cs.green.service.sink.SinkService");
@@ -71,4 +68,20 @@ public class OnlyConstantPropogationTest {
 		check(o4, "(x==1)&&((1+y)==10)");
 	}
 
+	@Test
+	public void test01() {
+		IntVariable x = new IntVariable("x", 0, 99);
+		IntVariable y = new IntVariable("y", 0, 99);
+		IntVariable z = new IntVariable("z", 0, 99);
+		IntConstant c = new IntConstant(1);
+		IntConstant c10 = new IntConstant(10);
+		IntConstant c3 = new IntConstant(3);
+		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
+		Operation o2 = new Operation(Operation.Operator.EQ, y, c);// 02 : y = 1
+		Operation o3 = new Operation(Operation.Operator.AND, o1, o2); // x = 1 && y = 1
+		Operation o4 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
+		Operation o5 = new Operation(Operation.Operator.EQ, o4, c10); // o3 : x+y = 10
+		Operation o6 = new Operation(Operation.Operator.AND, o3, o5); // o4 : x = 1 && (x+y) = 10
+		check(o6, "((x==1)&&(y==1))&&((1+1)==10)");
+	}
 }

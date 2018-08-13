@@ -104,7 +104,9 @@ public class ConstantPropogation extends BasicService {
 			Expression r = stack.pop();
 			Expression l = stack.pop();
 
-			if(op.equals(Operation.Operator.EQ) && ((r instanceof IntVariable && l instanceof IntConstant) || (r instanceof IntConstant && l instanceof IntVariable))){
+			if(op.equals(Operation.Operator.EQ)
+			&& ((r instanceof IntVariable && l instanceof IntConstant)
+			|| (r instanceof IntConstant && l instanceof IntVariable))){
 
 				if(r instanceof IntVariable && l instanceof IntConstant){
 						var.put(r.toString(), Integer.parseInt(l.toString()));

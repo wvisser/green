@@ -1,0 +1,8 @@
+Why is continuous integration so important?
+Code can be checked very quickly, which makes it easier to solve issues as if a problem is found, the code is still fresh on the developers mind. There are less conflicts when integrating code as code is frequently merged. Unit tests as well as integration tests can be performend automatically on the code. CI allows Continuous delivery, which allows new features do be deployed rapidly.
+
+article: https://medium.com/the-making-of-appear-in/why-continuous-integration-is-so-important-7bb63ba5dc57
+
+Repo: https://github.com/MBrederode/green
+
+
