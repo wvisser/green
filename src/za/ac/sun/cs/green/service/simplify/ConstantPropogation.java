@@ -73,11 +73,12 @@ public class ConstantPropogation extends BasicService {
   private static class OrderingVisitor extends Visitor {
 
     private Stack<Expression> stack;
-    private static Map<String, Expression> map = new HashMap<>();
+    private static Map<String, Integer> map;
 
 
     public OrderingVisitor() {
       stack = new Stack<Expression>();
+      map = new HashMap<>();
     }
 
     public Expression getExpression() {
@@ -123,19 +124,36 @@ public class ConstantPropogation extends BasicService {
       if (nop != null) {
         Expression r = stack.pop();
         Expression l = stack.pop();
-        System.out.println("r is: " + r.toString());
         System.out.println("l is: " + l.toString());
+        System.out.println("r is: " + r.toString());
 
-        if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
-          stack.push(new Operation(nop, r, l));
-        } else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-          stack.push(new Operation(nop, r, l));
+        if (op == Operation.Operator.EQ) {
+          if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+            map.put(r.toString(), Integer.parseInt(l.toString()));
+          } else if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+            map.put(l.toString(), Integer.parseInt(r.toString()));
+          }
+          stack.push(new Operation(nop, l, r));
         } else {
-          stack.push(operation);
+          if (map.containsKey(l.toString())) {
+            l = new IntConstant(map.get(l.toString()));
+          }
+          if (map.containsKey(r.toString())) {
+            r = new IntConstant(map.get(r.toString()));
+          }
+          stack.push(new Operation(nop, l, r));
         }
+
       } else if (op.getArity() == 2) {
         Expression r = stack.pop();
         Expression l = stack.pop();
+
+        if (map.containsKey(l.toString())) {
+          l = new IntConstant(map.get(l.toString()));
+        }
+        if (map.containsKey(r.toString())) {
+          r = new IntConstant(map.get(r.toString()));
+        }
         stack.push(new Operation(op, l, r));
       } else {
         for (int i = op.getArity(); i > 0; i--) {
