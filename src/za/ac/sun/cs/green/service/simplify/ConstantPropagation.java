@@ -103,8 +103,8 @@ public class ConstantPropagation extends BasicService {
 						Expression Right = operation.getOperand(1);
 						if ((left instanceof IntConstant) && (right instanceof IntVariable)) {
 							hash.put((IntVariable) right, (IntConstant) left);
-						} else if ((left instanceof IntVariable) && (right instanceof IntConstant){
-							hash.put((IntVariable left, (IntConstant) right);
+						} else if ((left instanceof IntVariable) && (right instanceof IntConstant)){
+							hash.put((IntVariable) left, (IntConstant) right);
 						}
 				}
 		}
@@ -117,10 +117,10 @@ public class ConstantPropagation extends BasicService {
 				Expression right = stack.pop();
 				Expression left = stack.pop();
 				if (!operator.equals(Operation.Operator.EQ)) {
-					if ((left instanceof IntVariable) && (hash.containsKey(left)) {
+					if ((left instanceof IntVariable) && (hash.containsKey(left))) {
 						left = map.get(left);						
 					}
-					if ((right instanceof IntVariable) && (hash.containsKey(right)){
+					if ((right instanceof IntVariable) && (hash.containsKey(right))){
 						right = map.get(right);
 					}
 				}
