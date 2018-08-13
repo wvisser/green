@@ -30,7 +30,10 @@ public class ConstantPropagation extends BasicService {
 	public ConstantPropagation(Green solver) {
 		super(solver);
 	}
-  
+  	
+	/**
+	* Taken from SATCanonizerService.java
+	*/
   	@Override
 	public Set<Instance> processRequest(Instance instance) {
 		@SuppressWarnings("unchecked")
@@ -44,7 +47,10 @@ public class ConstantPropagation extends BasicService {
 		}
 		return result;
 	}
-  
+	
+  	/**
+	* Taken from SATCanonizerService.java
+	*/
   	@Override
 	public void report(Reporter reporter) {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
@@ -78,12 +84,12 @@ public class ConstantPropagation extends BasicService {
 
 	private static class OrderingVisitor extends Visitor {
 		
-		private Map<IntVariable, IntConstant> map;
+		private Map<IntVariable, IntConstant> hashmap;
 		private Stack<Expression> stack;
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
-			map = new HashMap<IntVariable, IntConstant>();
+			hashmap = new HashMap<IntVariable, IntConstant>();
 		}
 
 		public Expression getExpression() {
@@ -109,18 +115,16 @@ public class ConstantPropagation extends BasicService {
 				if (op == Operation.Operator.EQ) {
 					
 					if (right instanceof IntConstant && left instanceof IntVariable) {
-						map.put((IntVariable) left, (IntConstant) right);
+						hashmap.put((IntVariable) left, (IntConstant) right);
 					}
 					
 					Operation nop = new Operation(operation.getOperator(), left, right);
-					System.out.println(">>>>>>>>>>>>>>>>>>>>>>"+left + " "+ nop + " " + right+"<<<<<<<<<<<<<<<<<<<<<");
-
 					stack.push(nop);
 				} else if (left instanceof IntVariable || right instanceof IntVariable) {
-					if (map.containsKey(left)) {
-						 left = map.get(left);
+					if (hashmap.containsKey(left)) {
+						 left = hashmap.get(left);
 					} else if (map.containsKey(right)) {
-						right = map.get(right);	
+						right = hashmap.get(right);	
 					}
 					Operation nop = new Operation(operation.getOperator(), left, right);
 					stack.push(nop);
@@ -128,12 +132,7 @@ public class ConstantPropagation extends BasicService {
 					Operation nop = new Operation(operation.getOperator(), left, right);
 					stack.push(nop);
 				}
-			} else {
-				 for (int i = op.getArity(); i > 0; i--) {
-                    			stack.pop();
-                		}
-                		stack.push(operation);
-			}
+			} 
 		}
 	}
 }
