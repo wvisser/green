@@ -41,7 +41,7 @@ public class ConstantPropagation extends BasicService {
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
 		
-		test02();
+		testo();
 //		System.out.println(o4);
 //		constantVisitor ov = new constantVisitor();
 //		try {
@@ -116,6 +116,26 @@ public class ConstantPropagation extends BasicService {
 		//Operation o2 = new Operation(Operation.Operator.SUB, o2, x);
 		Operation o = new Operation(Operation.Operator.EQ, o1, neg_c);
 		System.out.println(o);
+		constantVisitor ov = new constantVisitor();
+		try {
+			o.accept(ov);
+			ov.print();
+		} catch (VisitorException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void testo() {
+		IntVariable x = new IntVariable("x", 0, 99);
+		IntVariable y = new IntVariable("y", 0, 99);
+		IntVariable z = new IntVariable("z", 0 , 99);
+		IntConstant c = new IntConstant(1);
+		Operation o1 = new Operation(Operation.Operator.EQ, x, y);		
+		Operation o2 = new Operation(Operation.Operator.EQ, y, z);
+		Operation o3 = new Operation(Operation.Operator.EQ, z, c);
+		Operation o = new Operation(Operation.Operator.AND, o1, o2);
+		o = new Operation(Operation.Operator.AND, o, o3);
+		//check(o, "(x==1)&&((y==1)&&(z==1))");
 		constantVisitor ov = new constantVisitor();
 		try {
 			o.accept(ov);
@@ -207,7 +227,7 @@ public class ConstantPropagation extends BasicService {
 	static class constantVisitor extends Visitor {
 		
 		private Stack<Expression> stack;
-		 
+		private static Map<Expression, Expression> specialMap = new HashMap<>();
 		public constantVisitor() {
 			stack = new Stack<Expression>();
 		}
@@ -228,7 +248,52 @@ public class ConstantPropagation extends BasicService {
 			stack.push(variable);
 		}
 		
+		@Override
+		public void preVisit(IntConstant constant) throws VisitorException {
+			System.out.println(constant + " constant preVisit");
+		}
+		
+		@Override
+		public void preVisit(IntVariable variable) throws VisitorException {
+			System.out.println(variable + " variable preVisit");
+		}
+		
+		@Override
+		public void preVisit(Operation operation) throws VisitorException {
+			if (operation.getOperator().equals(Operation.Operator.EQ)) {
+				if (operation.getOperand(0) instanceof IntVariable && operation.getOperand(1) instanceof IntConstant) {
+					System.out.println("PRE VISIT 1 " + operation);
+					specialMap.put(operation.getOperand(0), operation.getOperand(1));
+				} else if (operation.getOperand(0) instanceof IntConstant && operation.getOperand(1) instanceof IntVariable) {
+					System.out.println("PRE VISIT 2 " + operation);
+					specialMap.put(operation.getOperand(1), operation.getOperand(0));
+				} else if (operation.getOperand(0) instanceof IntVariable && operation.getOperand(1) instanceof IntVariable) {
+					specialMap.put(operation.getOperand(0), operation.getOperand(1));
+				}
+				
+			}
+			if (operation.getOperand(0) instanceof IntVariable || operation.getOperand(1) instanceof IntVariable) {
+				System.out.println("OPER : " + operation);
+				System.out.println(specialMap + " SM");
+				Object t[] = specialMap.keySet().toArray();
+			
+				for (int i = t.length-1; i >= 0; i--) {
+					//System.out.println(specialMap.get(specialMap.keySet()));
+					if (specialMap.containsKey(specialMap.get(t[i]))) {
+						System.out.println(t[i] + " ---> " + specialMap.get(specialMap.get(t[i])));
+						specialMap.replace((IntVariable) t[i], specialMap.get(specialMap.get(t[i])));
+					}
+					
+					//specialMap.replace(t[i], );
+					
+				}
+				
+			}
+			
+		}
+		
 		public void print() {
+			System.out.println("Special map " + specialMap);
 			System.out.println(stack);
 		}
 
@@ -263,9 +328,9 @@ public class ConstantPropagation extends BasicService {
 				Expression l = stack.pop();
 				
 				if (nop.equals(Operation.Operator.EQ) && r instanceof IntVariable && l instanceof IntConstant) {
-					map.put(r, l);
+					//map.put(r, l);
 				} else if (nop.equals(Operation.Operator.EQ) && l instanceof IntVariable && r instanceof IntConstant) {
-					map.put(l, r);
+					//map.put(l, r);
 				} 
 				IntConstant constant = null;
 				IntVariable variable = null;
@@ -384,10 +449,10 @@ public class ConstantPropagation extends BasicService {
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				if (map.containsKey(r)) {
-					stack.push(new Operation(op, l, map.get(r)));
-				} else if (map.containsKey(l)) {
-					stack.push(new Operation(op, map.get(l) , r));
+				if (specialMap.containsKey(r)) {
+					stack.push(new Operation(op, l, specialMap.get(r)));
+				} else if (specialMap.containsKey(l)) {
+					stack.push(new Operation(op, specialMap.get(l) , r));
 				} else {
 					stack.push(new Operation(op, l, r));
 				} 
@@ -525,12 +590,10 @@ public class ConstantPropagation extends BasicService {
 					}
 					System.out.println("ORIG:" + orig + " CONSTANT: " + constant);
 					//exp.put(orig, constant);
-					System.out.println(map);
+			
 					System.out.println("WHAT");
 					Operation fin = new Operation(Operation.Operator.EQ, orig, constant);
-					if (map == null) {
-						System.out.println("WHY");
-					}
+				
 					System.out.println(fin + " WHAT!");
 					stack.push(fin);
 					//exp.put(fin.getOperand(0), fin.getOperand(1));
