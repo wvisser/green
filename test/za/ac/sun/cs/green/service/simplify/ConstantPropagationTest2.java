@@ -115,9 +115,6 @@ public class ConstantPropagationTest2 {
 			check(o, "0==1");
 		}
 
-
-
-
 	@Test
 		public void test05() {
 			IntVariable x = new IntVariable("x", 0, 99);

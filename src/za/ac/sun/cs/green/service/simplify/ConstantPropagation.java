@@ -25,6 +25,7 @@ import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation extends BasicService {
+
 	/**
 	 * Number of times the slicer has been invoked.
 	 */
@@ -132,7 +133,109 @@ public class ConstantPropagation extends BasicService {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
 
-				if (nop == Operation.Operator.EQ) {
+				switch (op) {
+					case EQ:
+						if ((r instanceof IntVariable) && (l instanceof IntConstant)) {							
+							System.out.println("Variables placed in hashmap, " + operation);
+							stack.push(new Operation(nop, r, l));
+							variables.put((IntVariable) r, (IntConstant) l);												
+						} else if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+							System.out.println("Variables placed in hashmap, " + operation);
+							stack.push(new Operation(nop, l, r));
+							variables.put((IntVariable) l, (IntConstant) r);											
+						} else {
+							stack.push(new Operation(nop, l, r));
+						}
+						break;
+					
+					case LT:
+						if (variables.containsKey(r)) {
+							r = variables.get(r);
+						}
+						if (variables.containsKey(l)) {
+							l = variables.get(l);
+						}
+
+						if ((r instanceof IntConstant) && (l instanceof IntConstant)) {
+							if (((IntConstant)r).getValue() < ((IntConstant)l).getValue()) {
+								stack.push(Operation.TRUE);
+							} else {
+								stack.push(Operation.FALSE);
+							}
+						} else {
+							stack.push(new Operation(nop, l, r));
+						}
+						break;
+
+					case LE:
+						if (variables.containsKey(r)) {
+							r = variables.get(r);
+						}
+						if (variables.containsKey(l)) {
+							l = variables.get(l);
+						}
+
+						if ((r instanceof IntConstant) && (l instanceof IntConstant)) {
+							if (((IntConstant)r).getValue() <= ((IntConstant)l).getValue()) {
+								stack.push(Operation.TRUE);
+							} else {
+								stack.push(Operation.FALSE);
+							}
+						} else {
+							stack.push(new Operation(nop, l, r));
+						}
+						break;
+
+						
+					case GT:
+						if (variables.containsKey(r)) {
+							r = variables.get(r);
+						}
+						if (variables.containsKey(l)) {
+							l = variables.get(l);
+						}
+
+						if ((r instanceof IntConstant) && (l instanceof IntConstant)) {
+							if (((IntConstant)r).getValue() > ((IntConstant)l).getValue()) {
+								stack.push(Operation.TRUE);
+							} else {
+								stack.push(Operation.FALSE);
+							}
+						} else {
+							stack.push(new Operation(nop, l, r));
+						}
+						break;
+
+					case GE:
+						if (variables.containsKey(r)) {
+							r = variables.get(r);
+						}
+						if (variables.containsKey(l)) {
+							l = variables.get(l);
+						}
+
+						if ((r instanceof IntConstant) && (l instanceof IntConstant)) {
+							if (((IntConstant)r).getValue() >= ((IntConstant)l).getValue()) {
+								stack.push(Operation.TRUE);
+							} else {
+								stack.push(Operation.FALSE);
+							}
+						} else {
+							stack.push(new Operation(nop, l, r));
+						}
+						break;
+
+					default:
+						if (variables.containsKey(r)) {
+							r = variables.get(r);
+						}
+						if (variables.containsKey(l)) {
+							l = variables.get(l);
+						}
+						stack.push(new Operation(nop, l, r));
+						break;
+				}
+				/*if (nop == Operation.Operator.EQ) {
 					if ((r instanceof IntVariable) && (l instanceof IntConstant)) {							
 						System.out.println("Variables placed in hashmap, " + operation);
 						stack.push(new Operation(nop, r, l));
@@ -152,7 +255,7 @@ public class ConstantPropagation extends BasicService {
 						l = variables.get(l);
 					}
 					stack.push(new Operation(nop, l, r));
-				}
+				}*/
 				
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
