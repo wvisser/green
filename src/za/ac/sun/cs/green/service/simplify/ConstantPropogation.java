@@ -10,7 +10,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
-
+import java.util.ArrayList;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.expr.Expression;
@@ -212,7 +212,7 @@ public class ConstantPropogation extends BasicService {
 			while (!stack.isEmpty()) {
 			Expression var = stack.pop();
 			if (var instanceof Operation) {
-				if (var.operator == Operation.Operator.EQ) {
+				if (var.getOperator() == Operation.Operator.EQ) {
 					Expression var2 = stack.pop();
 					Expression var3 = stack.pop();
 					if (var2 instanceof Constant && var3 instanceof IntVariable)  {
