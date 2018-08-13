@@ -52,7 +52,7 @@ public class ConstantPropagation  extends BasicService {
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			PropagationVisitor propogationVisitor = new PropagationVisitor();
+			PropagationVisitor propagationVisitor = new PropagationVisitor();
 			expression.accept(propagationVisitor);
 			Expression propagated = propagationVisitor.getExpression();
 			if (propagated != null) {
