@@ -322,26 +322,50 @@ public class SimplificationService extends BasicService {
         public void postVisit(Operation operation) {
             Operation.Operator op = operation.getOperator();
 
+            // Only Operate if we have two Operands
             if (op.getArity() == 2) {
                 Expression r = stack.pop();
                 Expression l = stack.pop();
 
+                // Create Mapping if we have var == const
                 if (op == Operation.Operator.EQ) {
+
+                    // const == var
                     if (r instanceof IntVariable && l instanceof IntConstant) {
                         vars.put((IntVariable) r, (IntConstant) l);
+
+                    // var == const
                     } else if (l instanceof IntVariable && r instanceof IntConstant) {
                         vars.put((IntVariable) l, (IntConstant) r);
                     }
+
+                    // place op back onto stack before we lose it.
                     stack.push(new Operation(op, l, r));
+
+                // Do we have any vars we can replace?
                 } else if (r instanceof IntVariable || l instanceof IntVariable) {
+
+                    // Replace RHS
                     if (vars.containsKey(r)) {
                         r = vars.get(r);
                     }
 
+                    // Replace LHS
                     if (vars.containsKey(l)) {
                         l = vars.get(l);
                     }
+
+                    // place op back onto stack before we lose it.
                     stack.push(new Operation(op, l, r));
+
+                   // Dangerous Simplification Stuff
+                   // which does not belong here. YOLO.
+
+                    // Collapses ops as follows
+
+                    // T && T -> T
+                    // T && F -> F
+                    // F && T -> F
                 } else if (op == Operation.Operator.AND) {
                     if (l.equals(Operation.FALSE) || r.equals(Operation.FALSE)) {
                         stack.push(Operation.FALSE);
@@ -355,9 +379,12 @@ public class SimplificationService extends BasicService {
                     } else {
                         stack.push(new Operation(op, l, r));
                     }
+                // Shove everything else back onto the op stack
                 } else {
                     stack.push(new Operation(op, l, r));
                 }
+
+            // Catch for some random edge case. Stole from SATCan.
             } else {
                 for (int i = op.getArity(); i > 0; i--) {
                     stack.pop();
