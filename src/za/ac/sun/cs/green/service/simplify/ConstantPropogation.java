@@ -108,26 +108,21 @@ public class ConstantPropogation extends BasicService {
             Operation.Operator op = operation.getOperator();
             Expression r = stack.pop();
             Expression l = stack.pop();
-            System.out.println("postprocessing operator " + op + " with operands " + l + " and " + r);
             if (op == Operation.Operator.EQ) {
                 // simple assignment
                 // 1 = x
                 if (r instanceof IntConstant && l instanceof IntVariable) {
                     if (variables.containsKey(l.toString())) {
-                        System.out.println("variable " + l + " exists");
                         stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
                         return;
                     }
-                    System.out.println("adding variable " + l + " to list with value " + r);
                     variables.put(l.toString(), (IntConstant) r);
                     // x = 1
                 } else if (r instanceof IntVariable && l instanceof IntConstant) {
                     if (variables.containsKey(r.toString())) {
-                        System.out.println("variable " + r + " exists");
                         stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
                         return;
                     }
-                    System.out.println("adding variable " + r + " to list with value " + l);
                     variables.put(r.toString(), (IntConstant) l);
                 }
                 // complex assignment (1 +/- x) = 2, 2 = (1 +/- x):
@@ -142,12 +137,10 @@ public class ConstantPropogation extends BasicService {
 
                         // check to see if the variable is already set
                         if (variables.containsKey(r.toString())) {
-                            System.out.println("variable " + r + " exists");
                             stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
                             return;
                         }
 
-                        System.out.println("adding variable " + r + " to list with value " + l);
                         variables.put(r.toString(), (IntConstant) l);
                         // 2 = (1+x)
                     } else if (r2 instanceof IntConstant && l2 instanceof IntVariable) {
@@ -157,12 +150,10 @@ public class ConstantPropogation extends BasicService {
 
                         // check to see if the variable is already set
                         if (variables.containsKey(r.toString())) {
-                            System.out.println("variable " + r + " exists");
                             stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
                             return;
                         }
 
-                        System.out.println("adding variable " + r + " to list with value " + l);
                         variables.put(r.toString(), (IntConstant) l);
                     }
                 } else if (l instanceof Operation && r instanceof IntConstant) {
@@ -176,12 +167,10 @@ public class ConstantPropogation extends BasicService {
 
                         // check to see if the variable is already set
                         if (variables.containsKey(l.toString())) {
-                            System.out.println("variable " + l + " exists");
                             stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
                             return;
                         }
 
-                        System.out.println("adding variable " + l + " to list with value " + r);
                         variables.put(l.toString(), (IntConstant) r);
                         // (1+x) = 2
                     } else if (r2 instanceof IntConstant && l2 instanceof IntVariable) {
@@ -191,12 +180,10 @@ public class ConstantPropogation extends BasicService {
 
                         // check to see if the variable is already set
                         if (variables.containsKey(l.toString())) {
-                            System.out.println("variable " + l + " exists");
                             stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
                             return;
                         }
 
-                        System.out.println("adding variable " + l + " to list with value " + r);
                         variables.put(l.toString(), (IntConstant) r);
                     }
                 }
@@ -239,13 +226,11 @@ public class ConstantPropogation extends BasicService {
             if (operation.getOperator() != Operation.Operator.EQ) {
                 if (l instanceof Variable) {
                     if (variables.containsKey(l.toString())) {
-                        System.out.println("replacing variable " + l);
                         l = variables.get(l.toString());
                     }
                 }
                 if (r instanceof Variable) {
                     if (variables.containsKey(r.toString())) {
-                        System.out.println("replacing variable " + r);
                         r = variables.get(r.toString());
                     }
                 }
@@ -293,7 +278,6 @@ public class ConstantPropogation extends BasicService {
             Operation.Operator op = operation.getOperator();
             Expression r = stack.pop();
             Expression l = stack.pop();
-            System.out.println("postprocessing operator " + op + " with operands " + l + " and " + r);
             // Operations on two constants
             if (r instanceof IntConstant && l instanceof IntConstant) {
                 switch (op) {
@@ -357,44 +341,35 @@ public class ConstantPropogation extends BasicService {
                 switch (op) {
                     case AND:
                         if (r.equals(o_true) && l.equals(o_true)) {
-                            System.out.println("both true and");
                             stack.push(o_true);
                             return;
                         } else if ((r.equals(o_false) && l.equals(o_false))
                                 || r.equals(o_false) && l.equals(o_true)
                                 || r.equals(o_true) && l.equals(o_false)) {
-                            System.out.println("either false and");
                             stack.push(o_false);
                             return;
                         } else if (r.equals(o_false) || l.equals(o_false)) {
-                            System.out.println("one false and");
                             stack.push(o_false);
                             return;
                         } else if (r.equals(o_true)) {
-                            System.out.println("one true and");
                             stack.push(l);
                             return;
                         } else if (l.equals(o_true)) {
-                            System.out.println("one true and");
                             stack.push(r);
                             return;
                         }
                     case OR:
                         if (r.equals(o_false) && l.equals(o_false)) {
-                            System.out.println("both false or");
                             stack.push(o_false);
                             return;
                         } else if ((r.equals(o_true) && l.equals(o_true))
                                 || r.equals(o_false) && l.equals(o_true)
                                 || r.equals(o_true) && l.equals(o_false)) {
-                            System.out.println("either true or");
                             stack.push(o_true);
                             return;
                         } else if (r.equals(o_true)) {
-                            System.out.println("one true or");
                             stack.push(l);
                         } else if (l.equals(o_true)) {
-                            System.out.println("one true or");
                             stack.push(r);
                         }
                     default:
