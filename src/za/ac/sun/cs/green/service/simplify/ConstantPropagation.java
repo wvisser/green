@@ -69,17 +69,23 @@ public class ConstantPropagation extends BasicService {
 
 
     private Expression multipleSimplifications(Expression expression, OrderingVisitor orderingVisitor) throws VisitorException {
+        Boolean simplified = false;
+
         SimplifyingVisitor simplifyingVisitor = new SimplifyingVisitor();
         expression.accept(simplifyingVisitor);
         expression = simplifyingVisitor.getExpression();
+        simplified = simplifyingVisitor.getSimplified();
         log.log(Level.FINEST, "After Simplification: " + expression);
-        while(simplifyingVisitor.getSimplified()) {
+
+        while(simplified == true) {
             expression.accept(orderingVisitor);
             expression = orderingVisitor.getExpression();
             //log.log(Level.FINEST, "After Constant Propagation: " + expression);
                     // DOUBLE CHECK WHAT CHANGES WERE MADE. MAY HAVE SOMETHING TO DO WITH STATIC OR BECAUSE IM USING LOG. TRY SOUT
+            simplifyingVisitor = new SimplifyingVisitor();
             expression.accept(simplifyingVisitor);
             expression = simplifyingVisitor.getExpression();
+            simplified = simplifyingVisitor.getSimplified();
             // log.log(Level.FINEST, "After Simplification: " + expression);
         }
         return expression;
