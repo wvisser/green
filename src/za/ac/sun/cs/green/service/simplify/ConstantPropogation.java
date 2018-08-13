@@ -82,14 +82,14 @@ public class ConstantPropogation extends BasicService {
 
 		public PropogateVisitor() {
 			stack = new Stack<Expression>();
-			map = new Map<IntVariable, IntConstant>();
+			map = new HashMap<IntVariable, IntConstant>();
 		}
 
 		public Expression getExpression() {
 			return stack.pop();
 		}
 
-		@OverrideOrderingVisitor
+		@Override
 		public void postVisit(IntConstant constant) {
 			stack.push(constant);
 		}
@@ -130,10 +130,10 @@ public class ConstantPropogation extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				if ((r instanceof IntVariable) && (l instanceof IntConstant) && op = EQ) {
+				if ((r instanceof IntVariable) && (l instanceof IntConstant) && op == EQ) {
 					stack.push(new Operation(nop, r, l));
 				} 
-				else if ((r instanceof IntVariable) && (l instanceof IntConstant) && op = EQ) {
+				else if ((r instanceof IntVariable) && (l instanceof IntConstant) && op == EQ) {
 					stack.push(new Operation(nop, r, l));
 				} else {
 					stack.push(operation);
