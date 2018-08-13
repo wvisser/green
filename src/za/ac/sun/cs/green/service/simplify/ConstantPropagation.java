@@ -57,19 +57,10 @@ public class ConstantPropagation extends BasicService{
 			log.log(Level.FINEST, "Before PROPAGATION: " + expression);
 			invocations++;
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
+
 			expression.accept(orderingVisitor);
-			expression = orderingVisitor.getExpression();
-			/*
-			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
-			expression.accept(canonizationVisitor);
-			Expression canonized = canonizationVisitor.getExpression();
-			if (canonized != null) {
-				canonized = new Renamer(map,
-						canonizationVisitor.getVariableSet()).rename(canonized);
-			}
-			log.log(Level.FINEST, "After Canonization: " + canonized);
-			return canonized;
-			*/
+		    expression = orderingVisitor.getExpression();
+                      
 			log.log(Level.FINEST, "After PROPAGATION: " + expression);
 			return expression;
 		} catch (VisitorException x) {
@@ -84,9 +75,11 @@ public class ConstantPropagation extends BasicService{
 	private static class OrderingVisitor extends Visitor {
 
 		private Stack<Expression> stack;
+        private Map<Variable, Constant> map;
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
+            map = new HashMap<Variable, Constant> ();
 		}
 
 		public Expression getExpression() {
@@ -106,54 +99,35 @@ public class ConstantPropagation extends BasicService{
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			Operation.Operator nop = null;
+            
+            //Pop the left and right side of stack into a seperate expression
+            Expression RIGHT = stack.pop();
+			Expression LEFT = stack.pop();	
+            //If == to sign then insert the change into the map
 			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case NE:
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
-			default:
-				break;
-			}
-			if (nop != null) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				if ((r instanceof IntVariable)
-						&& (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(
-								((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
-				} else {
-					stack.push(operation);
-				}
-			} else if (op.getArity() == 2) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				stack.push(new Operation(op, l, r));
-			} else {
-				for (int i = op.getArity(); i > 0; i--) {
-					stack.pop();
-				}
-				stack.push(operation);
+              	case EQ:
+			    	if (LEFT instanceof Variable && RIGHT instanceof Constant) {
+				    	map.put((Variable)LEFT, (Constant)RIGHT);
+				    	System.out.println("Inserted: " + LEFT + " as " + RIGHT);
+			    	}
+			    	if (RIGHT instanceof Variable && LEFT instanceof Constant) {
+				    	map.put((Variable)RIGHT, (Constant)LEFT);
+				    	System.out.println("Inserted " + RIGHT + " as " + LEFT);
+			    	}
+			    	stack.push(new Operation(op, LEFT, RIGHT));
+           
+			    	break;
+            default:
+                //Add it to the reset of the equation but pushing it back
+			   	if (map.containsKey(RIGHT)) {
+				   	RIGHT = map.get(RIGHT);
+			   	}
+			   	if (map.containsKey(LEFT)) {
+			   		LEFT = map.get(LEFT);
+			   	}	
+			   	stack.push(new Operation(op, LEFT, RIGHT));
+                break;
 			}
 		}
-
 	}
 }
