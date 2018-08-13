@@ -61,10 +61,10 @@ public class ConstantPropogation extends BasicService {
 			invocations++;
 
 			//Removed unneccessary code.
-			OrderingVisitor orderingVisitor = new OrderingVisitor();
-			expression.accept(orderingVisitor);
-			expression = orderingVisitor.getExpression();
-			log.log(Level.FINEST, "After Propogation: " + canonized);
+			PropogateVisitor propVisitor = new PropogateVisitor();
+			expression.accept(propVisitor);
+			expression = propVisitor.getExpression();
+			log.log(Level.FINEST, "After Propogation: " + expression);
 			return expression;
 
 		} catch (VisitorException x) {
@@ -75,12 +75,12 @@ public class ConstantPropogation extends BasicService {
 		return null;
 	}
 
-	private static class OrderingVisitor extends Visitor {
+	private static class PropogateVisitor extends Visitor {
 
 		private Stack<Expression> stack;
 		private Map<IntVariable, IntConstant> map;
 
-		public OrderingVisitor() {
+		public PropogateVisitor() {
 			stack = new Stack<Expression>();
 			map = new Map<IntVariable, IntConstant>();
 		}
