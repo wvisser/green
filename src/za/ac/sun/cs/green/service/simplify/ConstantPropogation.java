@@ -27,7 +27,7 @@ public class ConstantPropogation extends BasicService {
 
     private int invocations = 0;
     private HashMap<IntVariable, IntConstant> variables = new HashMap<>();
-    
+
     public ConstantPropogation(Green solver) {
         super(solver);
     }
@@ -151,50 +151,54 @@ public class ConstantPropogation extends BasicService {
             stack.push(new Operation(op, l, r));
         }
     }
-    
+
     /*
      * Replaces variables
-    */
+     */
     private static class ReplacementVisitor extends Visitor {
-        
+
         private Stack<Expression> stack;
         private HashMap<IntVariable, IntConstant> variables;
 
         public Expression getExpression() {
             return stack.pop();
         }
-        
+
         public ReplacementVisitor(HashMap<IntVariable, IntConstant> variables) {
             this.stack = new Stack<>();
             this.variables = variables;
         }
-        
+
         @Override
         public void postVisit(IntConstant constant) {
             stack.push(constant);
         }
-        
+
         @Override
         public void postVisit(IntVariable variable) {
             stack.push(variable);
         }
-        
+
         @Override
         public void postVisit(Operation operation) {
             Expression l = stack.pop();
             Expression r = stack.pop();
             if (operation.getOperator() != Operation.Operator.EQ) {
                 if (l instanceof Variable) {
-                    if (variables.containsKey((IntVariable) l)) l = variables.get((IntVariable) l);
+                    if (variables.containsKey((IntVariable) l)) {
+                        l = variables.get((IntVariable) l);
+                    }
                 }
                 if (r instanceof Variable) {
-                    if (variables.containsKey((IntVariable) r)) r = variables.get((IntVariable) r);
+                    if (variables.containsKey((IntVariable) r)) {
+                        r = variables.get((IntVariable) r);
+                    }
                 }
             }
             stack.push(new Operation(operation.getOperator(), r, l));
         }
     }
-    
+
     /**
      * Simplifies the equations
      */
@@ -279,6 +283,15 @@ public class ConstantPropogation extends BasicService {
                         } else {
                             stack.push(o_false);
                         }
+                        return;
+                    case ADD:
+                        stack.push(new IntConstant(((IntConstant) r).getValue() + ((IntConstant) l).getValue()));
+                        return;
+                    case SUB:
+                        stack.push(new IntConstant(((IntConstant) r).getValue() - ((IntConstant) l).getValue()));
+                        return;
+                    case MUL:
+                        stack.push(new IntConstant(((IntConstant) r).getValue() * ((IntConstant) l).getValue()));
                         return;
                     default:
                         break;
