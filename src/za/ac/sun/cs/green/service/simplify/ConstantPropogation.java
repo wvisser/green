@@ -24,14 +24,14 @@ import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
 
-public class OnlyConstantPropogationService extends BasicService {
+public class ConstantPropogation extends BasicService {
 
 	/**
 	 * Number of times the slicer has been invoked.
 	 */
 	private int invocations = 0;
 
-	public OnlyConstantPropogationService(Green solver) {
+	public ConstantPropogation(Green solver) {
 		super(solver);
 	}
 

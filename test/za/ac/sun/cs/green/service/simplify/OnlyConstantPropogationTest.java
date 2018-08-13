@@ -25,6 +25,7 @@ public class OnlyConstantPropogationTest {
 	@BeforeClass
 		public static void initialize() {
 			solver = new Green();
+			System.out.println("hello llaow");
 			Properties props = new Properties();
 			props.setProperty("green.services", "sat");
 			props.setProperty("green.service.sat", "(simplify sink)");
