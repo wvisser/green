@@ -28,8 +28,8 @@ import za.ac.sun.cs.green.expr.VisitorException;
 public class ConstantPropagation extends BasicService{
 
 	private int invocations = 0;
-    
-	public ConstantPropagation(Green solver) {	
+
+	public ConstantPropagation(Green solver) {
 		super(solver);
 	}
 
@@ -56,30 +56,23 @@ public class ConstantPropagation extends BasicService{
 		try {
 			log.log(Level.FINEST, "Before PROPAGATION: " + expression);
 			invocations++;
-
-            Map<Variable, Constant> mapVC;
-
-            mapVC = new HashMap<Variable, Constant> ();
-            boolean flag = true;
-            boolean flag1 = true;
-            while(flag1){
-                //System.out.println("----------New round");
-		    	OrderingVisitor orderingVisitor = new OrderingVisitor(mapVC);
-		    	expression.accept(orderingVisitor);
-		        expression = orderingVisitor.getExpression();
-                mapVC = orderingVisitor.getMap();
-                
-                if(!flag){
-                    flag1 = false;
-                }
-                
-                if(!orderingVisitor.getFlag()){
-                    flag = false;
-                }
-                
-
-            }
-
+			Map<Variable, Constant> mapVC;
+			mapVC = new HashMap<Variable, Constant> ();
+			boolean flag = true;
+			boolean flag1 = true;
+			while(flag1){
+				/*System.out.println("----------New round");*/
+				OrderingVisitor orderingVisitor = new OrderingVisitor(mapVC);
+				expression.accept(orderingVisitor);
+				expression = orderingVisitor.getExpression();
+				mapVC = orderingVisitor.getMap();
+				if(!flag){
+					flag1 = false;
+				}
+				if(!orderingVisitor.getFlag()){
+					flag = false;
+				}
+			}
 			log.log(Level.FINEST, "After PROPAGATION: " + expression);
 			return expression;
 		} catch (VisitorException x) {
@@ -88,28 +81,25 @@ public class ConstantPropagation extends BasicService{
 		return null;
 	}
 
-
-
-
 	private static class OrderingVisitor extends Visitor {
 
 		private Stack<Expression> stack;
-        private Map<Variable, Constant> map;
-        private boolean flag = true;
+		private Map<Variable, Constant> map;
+		private boolean flag = true;
 
 		public OrderingVisitor(Map<Variable, Constant> maps) {
 			stack = new Stack<Expression>();
-            map = new HashMap<Variable, Constant> ();
-            map = maps;
+			map = new HashMap<Variable, Constant> ();
+			map = maps;
 		}
 
-        public Map<Variable, Constant> getMap(){
-            return map;
-        }
+		public Map<Variable, Constant> getMap(){
+			return map;
+		}
 
-        public boolean getFlag(){
-            return flag;
-        }
+		public boolean getFlag(){
+			return flag;
+		}
 
 		public Expression getExpression() {
 			return stack.pop();
@@ -128,79 +118,70 @@ public class ConstantPropagation extends BasicService{
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-            
-            //Pop the left and right side of stack into a seperate expression
-            Expression RIGHT = stack.pop();
+			/*Pop the left and right side of the operation into a seperate sides*/
+			Expression RIGHT = stack.pop();
 			Expression LEFT = stack.pop();
-            //System.out.println("Operation checking");
-            //If == to sign then insert the change into the map
+			/*System.out.println("Operation checking");*/
+
 			switch (op) {
-              	case EQ:
-                  	if (LEFT instanceof Variable && RIGHT instanceof Constant) {
-                        //Check for dup keys on left
-                        if(map.containsKey(LEFT)){
-                            //System.out.println("Duped keys: " + LEFT + " as " + RIGHT + " NOT ADDED");
-                            flag = false;
-                            stack.push(new Operation(op, LEFT, RIGHT));
-                            
-                        }else{
-                            flag = true;
-				        	map.put((Variable)LEFT, (Constant)RIGHT);
-				    	    //System.out.println("Inserted: " + LEFT + " as " + RIGHT);
-                            stack.push(new Operation(op, LEFT, RIGHT));
-                        }
-			    	}else if (RIGHT instanceof Variable && LEFT instanceof Constant) {
-                        //Check for dup keys on right
-                        if(map.containsKey(RIGHT)){
-                            //System.out.println("Duped keys: " + RIGHT + " as " + LEFT + " NOT ADDED");
-                            flag = false;
-                            stack.push(new Operation(op, LEFT, RIGHT));
-                            
-                        }else{
-                            flag = true;
-				    	    map.put((Variable)RIGHT, (Constant)LEFT);
-				    	    //System.out.println("Inserted " + RIGHT + " as " + LEFT);
-                            stack.push(new Operation(op, RIGHT, LEFT));
-                        }
-			    	}else if(LEFT instanceof Variable && RIGHT instanceof Variable){
-                        
-                        /*
-                         for use case x == y
-                         ex.
-
-                         We have x == 1
-                         then x == y ---> 1 == y
-                         */
-                        if (map.containsKey(LEFT)) {
-                          	map.put((Variable)RIGHT, (Constant)map.get(LEFT));
-				    	   // System.out.println("Inserted: " + RIGHT + " as " + map.get(LEFT));
-                            stack.push(new Operation(op, RIGHT, map.get(LEFT)));
-
-                        }else if (map.containsKey(RIGHT)) {
-                            
-                          	map.put((Variable)LEFT, (Constant)map.get(RIGHT));
-				    	    //System.out.println("Inserted: " + LEFT + " as " + map.get(RIGHT));
-                            stack.push(new Operation(op, LEFT, map.get(RIGHT)));
-                            
-                        }else{
-                            stack.push(new Operation(op, LEFT, RIGHT));
-                        }
-                    }else{
-                    
-			            stack.push(new Operation(op, LEFT, RIGHT));
-                    }
-
-			    	break;
-                default:
-                    //Add it to the reset of the equation but pushing it back
-			    	if (map.containsKey(RIGHT)) {
-				       	RIGHT = map.get(RIGHT);
-			   	    }
-			   	    if (map.containsKey(LEFT)) {
-			   		    LEFT = map.get(LEFT);
-			   	    }	
-			   	    stack.push(new Operation(op, LEFT, RIGHT));
-                break;
+				/*If EQ then insert the change into the map and add to the stack*/
+				case EQ:
+					if (LEFT instanceof Variable && RIGHT instanceof Constant) {
+						/*Check for duplicate keys on left */
+						if(map.containsKey(LEFT)){
+							/*System.out.println("Duplicate keys: " + LEFT + " as " + RIGHT + " NOT ADDED");*/
+							flag = false;
+							stack.push(new Operation(op, LEFT, RIGHT));
+						}else{
+							flag = true;
+							map.put((Variable)LEFT, (Constant)RIGHT);
+							/*System.out.println("Inserted: " + LEFT + " as " + RIGHT);*/
+							stack.push(new Operation(op, LEFT, RIGHT));
+						}
+					}else if (RIGHT instanceof Variable && LEFT instanceof Constant) {
+						/*Check for duplicate keys on right*/
+						if(map.containsKey(RIGHT)){
+							/*System.out.println("Duplicate keys: " + RIGHT + " as " + LEFT + " NOT ADDED");*/
+							flag = false;
+							stack.push(new Operation(op, LEFT, RIGHT));
+						}else{
+							flag = true;
+							map.put((Variable)RIGHT, (Constant)LEFT);
+							/*System.out.println("Inserted " + RIGHT + " as " + LEFT);*/
+							stack.push(new Operation(op, RIGHT, LEFT));
+						}
+					}else if(LEFT instanceof Variable && RIGHT instanceof Variable){
+						/*
+						for use case x == y
+						ex.
+						We have x == 1
+						then x == y ---> 1 == y
+						*/
+						if (map.containsKey(LEFT)) {
+							/* System.out.println("Inserted: " + RIGHT + " as " + map.get(LEFT));*/
+							map.put((Variable)RIGHT, (Constant)map.get(LEFT));
+							stack.push(new Operation(op, RIGHT, map.get(LEFT)));
+						}else if (map.containsKey(RIGHT)) {
+							/*System.out.println("Inserted: " + LEFT + " as " + map.get(RIGHT));*/
+							map.put((Variable)LEFT, (Constant)map.get(RIGHT));
+							stack.push(new Operation(op, LEFT, map.get(RIGHT)));
+						}else{
+							stack.push(new Operation(op, LEFT, RIGHT));
+						}
+					}else{
+						stack.push(new Operation(op, LEFT, RIGHT));
+					}
+					break;
+				default:
+					/*Adds the operation if not EQ to the stack*/
+					if (map.containsKey(RIGHT)) {
+						RIGHT = map.get(RIGHT);
+					}
+					if (map.containsKey(LEFT)) {
+						LEFT = map.get(LEFT);
+					}
+					stack.push(new Operation(op, LEFT, RIGHT));
+					break;
 			}
 		}
 	}
