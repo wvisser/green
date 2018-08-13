@@ -132,7 +132,7 @@ public class ConstantPropogation extends BasicService {
 				break;
 			case ADD:
 				System.out.println("need to check for addition");
-				stack.push(new IntConstant(((IntConstant) left).getValue() + ((IntConstant) right).getValue()););
+				stack.push( new IntConstant( ((IntConstant) left).getValue() + ((IntConstant) right).getValue() ) );
 				break;
 			case AND:
 				System.out.println("need to check for and");
