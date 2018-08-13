@@ -132,7 +132,7 @@ public class ConstantPropogation extends BasicService {
 					}
 				}
 				Operation e = new Operation(operation.getOperator(), left, right);
-                log.log(left + operation.getOperator() + right);
+                log.log(left operation.getOperator() right);
 				stack.push(e);
 			}
 
