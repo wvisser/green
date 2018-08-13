@@ -28,12 +28,11 @@ public class OnlyConstantPropagationTest {
 			Properties props = new Properties();
 			props.setProperty("green.services", "sat");
 			props.setProperty("green.service.sat", "(simplify sink)");
-			//props.setProperty("green.service.sat", "(canonize sink)");
+			/*props.setProperty("green.service.sat", "(canonize sink)");*/
 			props.setProperty("green.service.sat.simplify",
 					"za.ac.sun.cs.green.service.simplify.ConstantPropagation");
-			//props.setProperty("green.service.sat.canonize",
-			//		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
-			
+			/*props.setProperty("green.service.sat.canonize",
+			/		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");*/
 			props.setProperty("green.service.sat.sink",
 					"za.ac.sun.cs.green.service.sink.SinkService");
 			Configuration config = new Configuration(solver, props);
@@ -67,12 +66,11 @@ public class OnlyConstantPropagationTest {
 		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
 		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
-		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
+		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10
 		check(o4, "(x==1)&&((1+y)==10)");
 	}
 
-
-    @Test
+  @Test
 	public void test01() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
@@ -83,11 +81,11 @@ public class OnlyConstantPropagationTest {
 		Operation o1 = new Operation(Operation.Operator.EQ, c, x); // o1 : x = 1
 		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
-		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
+		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10
 		check(o4, "(x==1)&&((1+y)==10)");
 	}
 
-   	@Test
+   @Test
 	public void test02() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
@@ -98,12 +96,12 @@ public class OnlyConstantPropagationTest {
 		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
 		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
-		Operation o4 = new Operation(Operation.Operator.AND, o3, o1); // o4 : x = 1 && (x+y) = 10 
+		Operation o4 = new Operation(Operation.Operator.AND, o3, o1); // o4 : x = 1 && (x+y) = 10
 		check(o4, "((1+y)==10)&&(x==1)");
 	}
 
 
-    @Test
+	@Test
 	public void test03() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
@@ -113,12 +111,11 @@ public class OnlyConstantPropagationTest {
 		Operation o2 = new Operation(Operation.Operator.EQ, x, y); // o2 : (x == y)
 		Operation o3 = new Operation(Operation.Operator.EQ, y, z); // o3 : (y == z)
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o2); // o4 :(x==1) && (x==y)
-        Operation o5 = new Operation(Operation.Operator.AND, o4, o3); // o4 :(x==1) && (x==y) && (y == z)
-
-        check(o5, "((x==1)&&(y==1))&&(z==1)");
+    Operation o5 = new Operation(Operation.Operator.AND, o4, o3); // o4 :(x==1) && (x==y) && (y == z)
+		check(o5, "((x==1)&&(y==1))&&(z==1)");
 	}
 
-    @Test
+  @Test
 	public void test04() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
@@ -128,12 +125,11 @@ public class OnlyConstantPropagationTest {
 		Operation o2 = new Operation(Operation.Operator.EQ, y, x); // o2 : (y == x)
 		Operation o3 = new Operation(Operation.Operator.EQ, x, c); // o3 : (x == 1)
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o2); // o4 :(z==y) && (y==x)
-        Operation o5 = new Operation(Operation.Operator.AND, o4, o3); // o4 :(z==y) && (y==x) && (x == 1)
-
-        check(o5, "((z==1)&&(y==1))&&(x==1)");
+    Operation o5 = new Operation(Operation.Operator.AND, o4, o3); // o4 :(z==y) && (y==x) && (x == 1)
+		check(o5, "((z==1)&&(y==1))&&(x==1)");
 	}
 
-    @Test
+  @Test
 	public void test05() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
@@ -143,12 +139,11 @@ public class OnlyConstantPropagationTest {
 		Operation o2 = new Operation(Operation.Operator.EQ, x, y); // o2 : (x == y)
 		Operation o3 = new Operation(Operation.Operator.EQ, c, x); // o3 : (1 == x)
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o2); // o4 :(z==y) && (y==x)
-        Operation o5 = new Operation(Operation.Operator.AND, o4, o3); // o4 :(z==y) && (y==x) && (x == 1)
-
-        check(o5, "((z==1)&&(y==1))&&(x==1)");
+    Operation o5 = new Operation(Operation.Operator.AND, o4, o3); // o4 :(z==y) && (y==x) && (x == 1)
+    check(o5, "((z==1)&&(y==1))&&(x==1)");
 	}
 
-    @Test
+	@Test
 	public void test06() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
@@ -158,11 +153,7 @@ public class OnlyConstantPropagationTest {
 		Operation o2 = new Operation(Operation.Operator.EQ, x, y); // o2 : (x == y)
 		Operation o3 = new Operation(Operation.Operator.EQ, y, z); // o3 : (y == z)
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o2); // o4 :(1==x) && (x==y)
-        Operation o5 = new Operation(Operation.Operator.AND, o4, o3); // o4 :(1==x) && (x==y) && (y == z)
-
-        check(o5, "((x==1)&&(y==1))&&(z==1)");
+    Operation o5 = new Operation(Operation.Operator.AND, o4, o3); // o4 :(1==x) && (x==y) && (y == z)
+  	check(o5, "((x==1)&&(y==1))&&(z==1)");
 	}
-
-
 }
-
