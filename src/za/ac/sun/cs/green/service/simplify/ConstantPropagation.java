@@ -81,6 +81,13 @@ public class ConstantPropagation extends BasicService {
             stack = new Stack<>();
         }
 
+        /*
+         * Called when one side is an operation and the other a constant value. This function
+         * takes the constant values over to one side and simplifies them
+         *
+         * @param exp: Expression array with the operation in the first index and the constant in the second
+         * @out exp: Expression array with the constant in the first index and the variable in the second
+         */
         public Expression[] takeOver(Expression exp[]) {
             Expression op = exp[0];
             Expression constant = exp[1];
@@ -113,6 +120,14 @@ public class ConstantPropagation extends BasicService {
                         exp[0] = new IntConstant(((IntConstant) exp[1]).getValue() + varVal);
                         exp[1] = var;
                         break;
+                    case MUL:
+                        exp[0] = new IntConstant(((IntConstant) exp[1]).getValue() / varVal);
+                        exp[1] = var;
+                        break;
+                    case DIV:
+                        exp[0] = new IntConstant(((IntConstant) exp[1]).getValue() * varVal);
+                        exp[1] = var;
+                        break;
                     default:
                         break;
                 }
@@ -121,6 +136,15 @@ public class ConstantPropagation extends BasicService {
             return exp;
         }
 
+        /*
+         * Called when two constant operate on each other in some way (Mathematical operator)
+         *
+         * @param r: Right constant
+         * @param l: Left constant
+         * @param op: Operator that operates on both
+         *
+         * @out: the constant result of the two constants operated on each other
+         */
         public int simplifyConstants(Expression r, Expression l, Operation.Operator op) {
             l = (IntConstant) l;
             r = (IntConstant) r;
@@ -175,7 +199,6 @@ public class ConstantPropagation extends BasicService {
             Operation.Operator op = operation.getOperator();
             if (op.getArity() == 2) {
                 // Left and right expressions are popped from the top of the stack
-                // 1 - x
                 Expression l = stack.pop();
                 Expression r = stack.pop();
                 Expression take[];
@@ -190,7 +213,6 @@ public class ConstantPropagation extends BasicService {
                     }
                     // Both left and right side are constants, some constant operation
                     if (l instanceof IntConstant) {
-                        // 1 == 1, 1 < 10, 1 + 1 1 && 1
                         switch(op) {
                             case AND:
                                 if (((IntConstant) r).getValue() == 1 && ((IntConstant) l).getValue() == 1) {
@@ -332,7 +354,7 @@ public class ConstantPropagation extends BasicService {
                                 break;
                         }
                         return;
-                     // Left side is operation, right side is
+                     // One side is constant, one side is operation: Take constants over
                     } else if (r instanceof Operation) {
                         take = takeOver(new Expression[]{r, l});
                         l =  take[0];
@@ -343,6 +365,7 @@ public class ConstantPropagation extends BasicService {
                                 constantValueMap.put(((IntVariable) r).getName(), (IntConstant) l);
                             }
                         }
+                    // One side is constant, other side is variable. Put in HashMap if its the `==' operation
                     } else if (r instanceof IntVariable) {
                         if (op.name().equals("EQ")) {
                             constantValueMap.put(((IntVariable) r).getName(), (IntConstant) l);
@@ -350,8 +373,10 @@ public class ConstantPropagation extends BasicService {
                             r = constantValueMap.get(((IntVariable) r).getName());
                         }
                     }
+                 // Check if left side is variable
                 } else if (l instanceof IntVariable) {
-                    if (r instanceof  IntVariable) {
+                    // Both sides are variables
+                    if (r instanceof IntVariable) {
                         if (constantValueMap.containsKey(((IntVariable) l).getName())) {
                             l = constantValueMap.get(((IntVariable) l).getName());
                         }
@@ -361,8 +386,9 @@ public class ConstantPropagation extends BasicService {
                             constantValueMap.put(((IntVariable) r).getName(), (IntConstant) l);
                         }
                     }
+                }
 
-                
+                // Push new operation to the stack
                 stack.push(new Operation(op, r, l));
             }
 
