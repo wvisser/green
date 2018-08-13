@@ -112,7 +112,7 @@ public class ConstantPropagation extends BasicService {
             return finalExp;
         }
 
-        public Boolean getSimplified() {
+        public Boolean getPropagated() {
             return propagated;
         }
 
