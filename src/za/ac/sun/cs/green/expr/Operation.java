@@ -49,11 +49,11 @@ public class Operation extends Expression {
 		// String Operations
 		SUBSTRING("SUBSTRING", 3, Fix.POSTFIX),
 		CONCAT("CONCAT", 2, Fix.POSTFIX),
-		TRIM("TRIM", 1, Fix.POSTFIX), 
+		TRIM("TRIM", 1, Fix.POSTFIX),
 		REPLACE("REPLACE", 3, Fix.POSTFIX),
-		REPLACEFIRST("REPLACEFIRST", 3, Fix.POSTFIX),  
+		REPLACEFIRST("REPLACEFIRST", 3, Fix.POSTFIX),
 		TOLOWERCASE("TOLOWERCASE", 2, Fix.POSTFIX),
-		TOUPPERCASE("TOUPPERCASE", 2, Fix.POSTFIX), 
+		TOUPPERCASE("TOUPPERCASE", 2, Fix.POSTFIX),
 		VALUEOF("VALUEOF", 2, Fix.POSTFIX),
 		// String Comparators
 		NOTCONTAINS("NOTCONTAINS", 2, Fix.POSTFIX),
@@ -131,6 +131,7 @@ public class Operation extends Expression {
 	public Operation(final Operator operator, Expression... operands) {
 		this.operator = operator;
 		this.operands = operands;
+		ConstantPropogation.propagate(operator, operands);
 	}
 
 	public static Expression apply(Operator operator, Expression... operands) {
