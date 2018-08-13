@@ -123,6 +123,22 @@ public class ConstantPropogation extends BasicService {
 						Expression r = stack.pop();
 						Expression l = stack.pop();
 						System.out.println(r + " " + l);
+						if (stack.size() >= 2) {
+							Expression r = stack.pop();
+							Expression l = stack.pop();
+							if (left instanceof IntVariable) {
+								if (map.containsKey(l)) {
+									left = map.get(l);
+								}
+							}
+							if (right instanceof IntVariable) {
+								if (map.containsKey(r)) {
+									right = map.get(r);
+								}
+							}
+							Operation e = new Operation(operation.getOperator(), l, r);
+							stack.push(e);
+						}
 					}
 					break;
 				case AND:
