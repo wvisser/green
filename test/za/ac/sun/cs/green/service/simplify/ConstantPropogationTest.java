@@ -18,7 +18,7 @@ import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.util.Configuration;
 
-public class OnlyConstantPropogationTest {
+public class ConstantPropogationTest {
 
 	public static Green solver;
 
