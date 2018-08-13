@@ -5,6 +5,7 @@ import java.util.Map;
 
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.Operation;
+import za.ac.sun.cs.green.service.simplify.ConstantPropagation;
 
 public class Instance {
 
@@ -47,6 +48,7 @@ public class Instance {
 	}
 	
 	public Expression getExpression() {
+		expression = ConstantPropagation.constantPropagation(expression);
 		return expression;
 	}
 
