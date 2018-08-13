@@ -87,14 +87,14 @@ public class ConstantPropagation extends BasicService {
         //Propagate and simplify loop
         // while(simplified == true) {
         // propagationVisitor = new PropagationVisitor();
-        expression.accept(propagationVisitor);
-        expression = propagationVisitor.getExpression();
-        log.log(Level.FINEST, "After Constant Propagation: " + expression);
-        simplifyingVisitor = new SimplifyingVisitor();
-        expression.accept(simplifyingVisitor);
-        expression = simplifyingVisitor.getExpression();
+        // expression.accept(propagationVisitor);
+        // expression = propagationVisitor.getExpression();
+        // log.log(Level.FINEST, "After Constant Propagation: " + expression);
+        // simplifyingVisitor = new SimplifyingVisitor();
+        // expression.accept(simplifyingVisitor);
+        // expression = simplifyingVisitor.getExpression();
         // simplified = simplifyingVisitor.getSimplified();
-        log.log(Level.FINEST, "After Simplification: " + expression);
+        // log.log(Level.FINEST, "After Simplification: " + expression);
         // }
         return expression;
     }
@@ -127,7 +127,6 @@ public class ConstantPropagation extends BasicService {
             } else {
                 stack.push(variable);
             }
-            // stack.push(variable);
         }
 
         @Override
