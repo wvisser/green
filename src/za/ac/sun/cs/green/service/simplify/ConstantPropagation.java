@@ -88,52 +88,9 @@ public class ConstantPropagation  extends BasicService {
 		}
 
 		public Expression getExpression() {
-			if (!linearInteger) {
-				return null;
-			} else if (unsatisfiable) {
-				return Operation.FALSE;
-			} else {
-				if (!stack.isEmpty()) {
-					Expression x = stack.pop();
-					if (x.equals(Operation.FALSE)) {
-						return Operation.FALSE;
-					} else if (!x.equals(Operation.TRUE)) {
-						conjuncts.add(x);
-					}
-				}
-				SortedSet<Expression> newConjuncts = new TreeSet<Expression>();
-				Expression c = null;
-				for (Expression e : newConjuncts) {
-					if (e.equals(Operation.FALSE)) {
-						return Operation.FALSE;
-					} else if (e instanceof Operation) {
-						Operation o = (Operation) e;
-						if (o.getOperator() == Operation.Operator.GT) {
-							e = new Operation(Operation.Operator.LT, scale(-1,
-									o.getOperand(0)), o.getOperand(1));
-						} else if (o.getOperator() == Operation.Operator.GE) {
-							e = new Operation(Operation.Operator.LE, scale(-1,
-									o.getOperand(0)), o.getOperand(1));
-						}
-						o = (Operation) e;
-						if (o.getOperator() == Operation.Operator.GT) {
-							e = new Operation(Operation.Operator.GE, merge(
-									o.getOperand(0), new IntConstant(-1)),
-									o.getOperand(1));
-						} else if (o.getOperator() == Operation.Operator.LT) {
-							e = new Operation(Operation.Operator.LE, merge(
-									o.getOperand(0), new IntConstant(1)),
-									o.getOperand(1));
-						}
-					}
-					if (c == null) {
-						c = e;
-					} else {
-						c = new Operation(Operation.Operator.AND, c, e);
-					}
-				}
-				return (c == null) ? Operation.TRUE : c;
-			}
+
+			
+
 		}
 
 	}
