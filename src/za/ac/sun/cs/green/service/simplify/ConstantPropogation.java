@@ -54,7 +54,7 @@ public class ConstantPropogation extends BasicService {
             expression.accept(propogateVisitor);
             propogated =  propogateVisitor.getExpression();
 
-            log.log(Level.FINEST, "After Constant Propogation: " + expression);
+            log.log(Level.FINEST, "After Constant Propogation: " + propogated);
             return propogated;
         } catch (VisitorException ve) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", ve);
