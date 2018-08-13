@@ -26,8 +26,6 @@ import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropogation extends BasicService {
 
-    private int invocations = 0;
-
     public ConstantPropogation(Green solver){
         super(solver);
     }
@@ -37,22 +35,15 @@ public class ConstantPropogation extends BasicService {
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
-			// final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
 			final Expression e = propogate(instance.getFullExpression());
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
 		}
 		return result;
-	}
 
-    @Override
-    public void report(Reporter reporter) {
-        reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
-    }
 
     public Expression propogate(Expression expression) {
-        invocations ++;
         Expression propogated = null;
 
         try {
@@ -61,6 +52,7 @@ public class ConstantPropogation extends BasicService {
 
             PropogateVisitor propogateVisitor = new PropogateVisitor();
             expression.accept(propogateVisitor);
+            propogateVisitor.PropogateVisitor();
             expression =  propogateVisitor.getExpression();
 
             log.log(Level.FINEST, "After Constant Propogation: " + expression);
@@ -89,6 +81,7 @@ public class ConstantPropogation extends BasicService {
 
         @Override
 		public void preVisit(Operation operation) {
+
 			Operation.Operator op = operation.getOperator();
 			if (op.equals(Operation.Operator.EQ)) {
 				Expression opL = operation.getOperand(0);
@@ -111,7 +104,7 @@ public class ConstantPropogation extends BasicService {
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
         }
-        
+
         @Override
 		public void postVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
