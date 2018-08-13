@@ -35,7 +35,8 @@ public class ConstantPropagation extends BasicService {
 	* Taken from SATCanonizerService.java
 	*/
   	@Override
-	public Set<Instance> processRequest(Instance instance) {
+	public Set<Instance> processRequest(Instance instance,
+					   HashMap<Variable, Variable> map) {
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
