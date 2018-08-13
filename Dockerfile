@@ -17,6 +17,12 @@ RUN apt install libgomp1
 # Clone down the GreenSolver repository
 RUN git clone https://github.com/WinandMey/green
 
+# Checkout the constant propagation <branchname>
+WORKDIR /green
+RUN git fetch
+RUN git checkout master
+WORKDIR /
+
 # Download and extract Z3
 RUN mkdir z3
 WORKDIR z3

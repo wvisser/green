@@ -62,14 +62,17 @@ public class ConstantPropogation extends BasicService {
 			//OrderingVisitor orderingVisitor = new OrderingVisitor();
 			//expression.accept(orderingVisitor);
 			//expression = orderingVisitor.getExpression();
-			CPropogationVisitor cpropogationVisitor = new CPropogationVisitor();
+			ListVisitor listVisitor = new ListVisitor();
+			expression.accept(listVisitor);
+			ArrayList<Expression> varsandvals = listVisitor.getList();
+			CPropogationVisitor cpropogationVisitor = new CPropogationVisitor(varsandvals);
 			expression.accept(cpropogationVisitor);
 			Expression simplified = cpropogationVisitor.getExpression();
 			//if (simplified != null) {
 				//simplified = new Renamer(map,
 					//	cpropogationVisitor.getVariableSet()).rename(canonized);
 			//}
-			log.log(Level.FINEST, "After cpropogation: " + canonized);
+			log.log(Level.FINEST, "After cpropogation: " + simplified);
 			return simplified;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
@@ -157,6 +160,88 @@ public class ConstantPropogation extends BasicService {
 
 	private static class CPropogationVisitor extends Visitor { //this is where we write the functions used to propogate the constants
 		private Stack<Expression> stack;
+		private int[] count;
+		ArrayList<Expression> varsandvals;
+		
+		public CPropogationVisitor(ArrayList<Expression> varsandvals) {
+			stack = new Stack<Expression>();
+			this.varsandvals = varsandvals;
+			count = new int[varsandvals.size()];  
+		}
+		
+		public Expression getExpression() {
+			Expression exp = stack.pop()
+			return exp;
+		}		
+		
+   @Override
+   public void postVisit(Constant constant) {
+        stack.push(constant);
+   }
+   @Override
+   public void postVisit(Variable variable) {
+   			if (varsandvals.contains(variable)) {
+   				int index = varsandvals.indexOf(variable)/2;
+   				if (count[index] > 0) {
+   					stack.push(varsandvals.get(index+1);
+   				} else {
+   					stack.push(variable);
+   				}
+   				count[index]++;
+   			} else {
+   				stack.push(variable);
+   			}
+   }
+	@Override
+	 public void postVisit(Operation operation) throws VisitorException {
+        stack.push(operation);
+   }
+
+	}
+	
+	private static class ListVisitor extends Visitor { //this is where we write the functions used to propogate the constants
+		private Stack<Expression> stack;
+		private ArrayList<Expression> varsandvals;
+		
+		public listVisitor() {
+			stack = new Stack<Expression>();
+			varsandvals = new ArrayList<Expression>();
+		}
+		
+		public ArrayList<Expression> getList() {
+			while (!stack.isEmpty()) {
+			Expression var = stack.pop();
+			if (var instanceof Operation) {
+				if (var.operator == Operation.Operator.EQ) {
+					Expression var2 = stack.pop();
+					Expression var3 = stack.pop();
+					if (var2 instanceof Constant && var3 instanceof IntVariable)  {
+							varsandvals.add(var3);
+							varsandvals.add(var2);
+					} else if (var2 instanceof IntVariable && var3 instanceof Constant) {
+						varsandvals.add(var2);
+						varsandvals.add(var3);
+						}
+					}
+				}
+			}
+			return varsandvals;
+		}		
+		
+   @Override
+   public void postVisit(Constant constant) {
+        stack.push(constant);
+   }
+   @Override
+   public void postVisit(Variable variable) {
+        stack.push(variable);
+   }
+   @Override
+	 public void postVisit(Operation operation) throws VisitorException {
+        stack.push(operation);
+   }
+	}
+		/*
 		private SortedSet<Expression> conjuncts;
 		private SortedSet<IntVariable> variableSet;
 		private Map<IntVariable, Integer> lowerBounds;
@@ -173,10 +258,6 @@ public class ConstantPropogation extends BasicService {
 			variableSet = new TreeSet<IntVariable>();
 			unsatisfiable = false;
 			linearInteger = true;
-		}
-
-		public SortedSet<IntVariable> getVariableSet() {
-			return variableSet;
 		}
 
 		public Expression getExpression() {
@@ -229,9 +310,6 @@ public class ConstantPropogation extends BasicService {
 			}
 		}
 
-		private SortedSet<Expression> processBounds() {
-			return conjuncts;
-		}
 
 		@SuppressWarnings("unused")
 		private void extractBound(Expression e) throws VisitorException {
@@ -621,10 +699,10 @@ public class ConstantPropogation extends BasicService {
 				return new Operation(p, l, r);
 			}
 		}
+*/
+	
 
-	}
-
-	private static class Renamer extends Visitor {
+	/*private static class Renamer extends Visitor {
 
 		private Map<Variable, Variable> map;
 
@@ -667,6 +745,6 @@ public class ConstantPropogation extends BasicService {
 			stack.push(new Operation(operation.getOperator(), operands));
 		}
 
-	}
+	}*/
 
 }
