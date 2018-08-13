@@ -146,8 +146,8 @@ public class ConstantPropagation extends BasicService {
                     System.out.println("Assignment: Giving " + r + " value " + l);
                     variables.put((IntVariable) r, (IntConstant) l);
                 }
-                stack.push(new Operation(op, l, r));
             }
+            stack.push(new Operation(op, l, r));
         }
 
     }
