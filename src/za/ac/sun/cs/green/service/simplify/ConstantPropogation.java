@@ -51,7 +51,7 @@ public class ConstantPropogation extends BasicService {
         reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
     }
 
-    public Expression propogate(Expression expression, Map<Variable, Variable> map) {
+    public Expression propogate(Expression expression) {
         invocations ++;
         Expression propogated = null;
 
@@ -63,9 +63,6 @@ public class ConstantPropogation extends BasicService {
             PropogateVisitor propogateVisitor = new PropogateVisitor();
             expression.accept(propogateVisitor);
             expression =  propogateVisitor.getExpression();
-
-            log.log(Level.FINEST, "Map: " + map);
-
 
             log.log(Level.FINEST, "After Constant Propogation: " + expression);
             log.log(Level.FINEST, "\n\n**********\n\n\n\n");
