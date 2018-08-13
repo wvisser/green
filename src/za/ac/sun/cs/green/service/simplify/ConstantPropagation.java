@@ -70,41 +70,50 @@ public class ConstantPropagation extends BasicService {
 
     private Expression multipleSimplifications(Expression expression, OrderingVisitor orderingVisitor) throws VisitorException {
         Boolean simplified = false;
+        Boolean propagated = false;
 
         SimplifyingVisitor simplifyingVisitor = new SimplifyingVisitor();
         expression.accept(simplifyingVisitor);
         expression = simplifyingVisitor.getExpression();
         simplified = simplifyingVisitor.getSimplified();
+        
         log.log(Level.FINEST, "After Simplification: " + expression);
 
-        // while(simplified == true) {
+        while(simplified || propagated) {
             orderingVisitor = new OrderingVisitor();
             expression.accept(orderingVisitor);
             expression = orderingVisitor.getExpression();
+            propagated = orderingVisitor.getPropagated();
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
                     // DOUBLE CHECK WHAT CHANGES WERE MADE. MAY HAVE SOMETHING TO DO WITH STATIC OR BECAUSE IM USING LOG. TRY SOUT
             simplifyingVisitor = new SimplifyingVisitor();
             expression.accept(simplifyingVisitor);
             expression = simplifyingVisitor.getExpression();
-            // simplified = simplifyingVisitor.getSimplified();
+            simplified = simplifyingVisitor.getSimplified();
             log.log(Level.FINEST, "After Simplification: " + expression);
-        // }
+        }
         return expression;
 	}
 
     private static class OrderingVisitor extends Visitor {
         private Stack<Expression> stack;
         private HashMap<IntVariable, IntConstant> variables;
+        private Boolean propagated;
 
         public OrderingVisitor() {
             stack = new Stack<Expression>();
             variables = new HashMap<IntVariable, IntConstant>();
+            propagated = false;
         }
 
         public Expression getExpression() {
             Expression finalExp = stack.pop();
             System.out.println("Final expression is " + finalExp);
             return finalExp;
+        }
+
+        public Boolean getSimplified() {
+            return propagated;
         }
 
         @Override
@@ -117,6 +126,7 @@ public class ConstantPropagation extends BasicService {
             // If variable exists in HashMap (it has been assigned a value)
             if (variables.containsKey(variable)) {
                 stack.push(variables.get(variable));
+                propagated = true;
             } else {
                 stack.push(variable);
             }
