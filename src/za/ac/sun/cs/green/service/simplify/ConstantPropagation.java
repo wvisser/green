@@ -25,13 +25,13 @@ import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation extends BasicService {
-  private int invocations = 0;
+  	private int invocations = 0;
 
-	public ConstantPropagtion(Green solver) {
+	public ConstantPropagation(Green solver) {
 		super(solver);
 	}
   
-  @Override
+  	@Override
 	public Set<Instance> processRequest(Instance instance) {
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
@@ -45,12 +45,12 @@ public class ConstantPropagation extends BasicService {
 		return result;
 	}
   
-  @Override
+  	@Override
 	public void report(Reporter reporter) {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
   
-  public Expression propagate(Expression expression,
+  	public Expression propagate(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
 			log.log(Level.FINEST, "Before Propagation: " + expression);
