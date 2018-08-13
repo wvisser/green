@@ -48,7 +48,7 @@ public class ConstantPropogation  extends BasicService{
 
         if (result == null) {
             // final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-            final Expression e = simplify(instance.getFullExpression(), map);
+            final Expression e = simplify(instance.getFullExpression());
             final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
             result = Collections.singleton(i);
             instance.setData(getClass(), result);
