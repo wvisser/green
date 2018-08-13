@@ -107,15 +107,15 @@ public class ConstantPropagation extends BasicService {
 				if (op == EQ) {
 					Expression right = stack.pop();
 					Expression left = stack.pop();
-					if (left instanceOf IntVariable) {
+					if (left instanceof IntVariable) {
 						if (map.containsKey(left)) {
-							left = map.get(left)
+							left = map.get(left);
 						}
 					}
 					
-					if (right instanceOf IntVariable) {
+					if (right instanceof IntVariable) {
 						if (map.containsKey(right)) {
-							right = map.get(right)
+							right = map.get(right);
 						}
 					}
 				}
