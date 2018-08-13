@@ -179,7 +179,6 @@ public class SimplificationConstantPropogationTest {
         Operation o1 = new Operation(Operation.Operator.EQ, x, c);
         Operation o2 = new Operation(Operation.Operator.EQ, x, c1);
         Operation o = new Operation(Operation.Operator.AND, o1, o2);
-
         check(o, "0==1");
     }
 
