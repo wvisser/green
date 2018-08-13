@@ -130,25 +130,34 @@ public class ConstantPropagation extends BasicService {
 			default:
 				break;
 			}
-      Expression r = stack.pop();
-      Expression l = stack.pop();
-      if (nop == Operation.Operator.EQ) {
-        if (r instanceof Variable && l instanceof Constant) {
-          var = r;
-          const = l;
-        } else if (l instanceof Variable && r instanceof Constant) {
-          var = l;
-          const = r;
+      if (nop != null) {
+        Expression r = stack.pop();
+        Expression l = stack.pop();
+        if (nop == Operation.Operator.EQ) {
+          if (r instanceof Variable && l instanceof Constant) {
+            var = r;
+            const = l;
+          } else if (l instanceof Variable && r instanceof Constant) {
+            var = l;
+            const = r;
+          }
+        } else {
+          if (r instanceof Variable) {
+            if (((IntVariable) r).getName().equals(var.getName())) {
+              stack.push(new Operation(nop, l, const));
+            }
+          } else if (l instanceof Variable) {
+            if (((IntVariable) l).getName().equals(var.getName())) {
+              stack.push(new Operation(nop, const, r));
+            }
+          }
         }
       } else {
-        if (r instanceof Variable) {
-          if (((IntVariable) r).getName().equals(var.getName())) {
-            stack.push(new Operation(nop, l, const));
-          }
-        } else if (l instanceof Variable) {
-          if (((IntVariable) l).getName().equals(var.getName())) {
-            stack.push(new Operation(nop, const, r));
-          }
+        for (int i = op.getArity(); i > 0; i--) {
+					stack.pop();
+				}
+				stack.push(operation);
       }
+    }
   }
 }
