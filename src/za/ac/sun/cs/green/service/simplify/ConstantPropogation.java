@@ -120,7 +120,6 @@ public class ConstantPropogation extends BasicService {
 					op = operation.getOperator();
 
 					if (stack.size() >= 2) {
-						System.out.println(r + " " + l);
 						Expression r = stack.pop();
 						Expression l = stack.pop();
 						if (l instanceof IntVariable) {
