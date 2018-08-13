@@ -99,7 +99,7 @@ public class ConstantPropogation extends BasicService {
 			if (op.equals(Operation.Operator.EQ)) {
 				Expression opL = operation.getOperand(0);
 				Expression opR = operation.getOperand(1);
-                log.log(Level.FINEST, opL + " " + op + " " + opR);
+                log.log(Level.FINEST, opL + " " + opR);
 				if ((opL instanceof IntConstant) && (opR instanceof IntVariable)) {
 					map.put((IntVariable) opR, (IntConstant) opL);
 				} else if ((opL instanceof IntVariable) && (opR instanceof IntConstant)) {
