@@ -143,7 +143,7 @@ public class ConstantPropogation extends BasicService {
 				Expression l = stack.pop();
 
 				if(map.containsKey(r)) r = map.get(r);
-				else(map.containsKey(l)) l = map.get(l);
+				else(map.containsKey(l)) l = map.get(l);//test
 				stack.push(new Operation(op, l, r));
 			} else {
 				for (int i = op.getArity(); i > 0; i--) {
