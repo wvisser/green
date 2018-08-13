@@ -123,7 +123,11 @@ public class ConstantPropogation extends BasicService {
 				break;
 			case ADD:
 				System.out.println("need to check for addition");
-				nop = Operation.Operator.LE;
+				nop = Operation.Operator.ADD;
+				break;
+			case AND:
+				System.out.println("need to check for and");
+				nop = Operation.Operator.AND;
 				break;
 			default:
 				System.out.println("Default case!");
