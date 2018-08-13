@@ -100,7 +100,7 @@ public class ConstantPropogation extends BasicService {
 			System.out.println("Left:" + left + " Right: " + right);
 
 			Operation.Operator nop = null;
-			if (stack.size() >= 2) {
+			if (stack.size() >= 3) {
 				switch (op) {
 				case EQ:
 					System.out.println("need to check for equality");
