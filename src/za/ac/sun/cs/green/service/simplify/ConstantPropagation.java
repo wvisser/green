@@ -36,7 +36,7 @@ public class ConstantPropagation  extends BasicService {
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = simplify(instance.getFullExpression(), map);
+			final Expression e = propagate(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -44,23 +44,24 @@ public class ConstantPropagation  extends BasicService {
 		return result;
 	}
 
-	public Expression simplify(Expression expression,
+	public Expression propagate(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
 			log.log(Level.FINEST, "Before Simplification:\n" + expression + "\n");
 			
-			//OrderingVisitor orderingVisitor = new OrderingVisitor();
-			//expression.accept(orderingVisitor);
-			//expression = orderingVisitor.getExpression();
-			//CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
-			//expression.accept(canonizationVisitor);
-			//Expression canonized = canonizationVisitor.getExpression();
-			//if (canonized != null) {
-			//	canonized = new Renamer(map,
-			//			canonizationVisitor.getVariableSet()).rename(canonized);
-			//}
-			log.log(Level.FINEST, "After Simplification:\n" + /*canonized*/ + "\n");
-			//return canonized;
+			OrderingVisitor orderingVisitor = new OrderingVisitor();
+			expression.accept(orderingVisitor);
+			expression = orderingVisitor.getExpression();
+			PropagationVisitor propogationVisitor = new propagationVisitor();
+			expression.accept(propagationVisitor);
+			Expression propagated = propagationVisitor.getExpression();
+			if (propagated != null) {
+				propagated = new Renamer(map,
+						propagationVisitor.getVariableSet()).rename(propagated);
+			}
+
+			log.log(Level.FINEST, "After Simplification:\n" + propagated + "\n");
+			return propagated;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
 					"encountered an exception -- this should not be happening!",
@@ -145,7 +146,7 @@ public class ConstantPropagation  extends BasicService {
 
 	}
 
-	private static class CanonizationVisitor extends Visitor {
+	private static class PropagationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
 
@@ -667,6 +668,6 @@ public class ConstantPropagation  extends BasicService {
 			stack.push(new Operation(operation.getOperator(), operands));
 		}
 
-	}	
-////////////////////////////////////////////////////////////////////////////////////////////////
+	}
+
 }
