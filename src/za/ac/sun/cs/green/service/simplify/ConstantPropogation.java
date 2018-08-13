@@ -172,19 +172,21 @@ public class ConstantPropogation extends BasicService {
         
         @Override
         public void postVisit(IntVariable variable) {
-            if (variables.containsKey(variable)) {
-                System.out.println("replacing variable " + variable + " with " + variables.get(variable));
-                stack.push(variables.get(variable));
-            } else {
-                System.out.println("not replacing variable " + variable);
-                stack.push(variable);
-            }
+            stack.push(variable);
         }
         
         @Override
         public void postVisit(Operation operation) {
             Expression l = stack.pop();
             Expression r = stack.pop();
+            if (operation.getOperator() != Operation.Operator.EQ) {
+                if (l instanceof Variable) {
+                    if (variables.containsKey((IntVariable) l)) l = variables.get((IntVariable) l);
+                }
+                if (r instanceof Variable) {
+                    if (variables.containsKey((IntVariable) r)) r = variables.get((IntVariable) r);
+                }
+            }
             stack.push(new Operation(operation.getOperator(), l, r));
         }
     }
