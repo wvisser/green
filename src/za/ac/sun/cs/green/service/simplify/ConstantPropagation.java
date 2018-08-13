@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
+import sun.util.logging.resources.logging;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Constant;
@@ -18,6 +19,7 @@ import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
+import za.ac.sun.cs.green.expr.Operation.Operator;
 import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
@@ -393,7 +395,9 @@ public class ConstantPropagation extends BasicService {
 			case GT:
 			case GE:
 				if (!stack.isEmpty()) {
-					Expression e = merge(scale(-1, stack.pop()), stack.pop());
+					Expression op1 = stack.pop();
+					Expression op2 = stack.pop();
+					Expression e = merge(scale(-1, op1), op2);
 					if (e instanceof IntConstant) {
 						int v = ((IntConstant) e).getValue();
 						boolean b = true;
@@ -417,7 +421,8 @@ public class ConstantPropagation extends BasicService {
 							// unsatisfiable = true;
 						}
 					} else {
-						stack.push(new Operation(op, e, Operation.ZERO));
+						stack.push(swippySwoppy(op, e));
+						// stack.push(new Operation(op, e, Operation.ZERO));
 					}
 				}
 				break;
@@ -431,6 +436,7 @@ public class ConstantPropagation extends BasicService {
 				if (stack.size() >= 2) {
 					Expression r = stack.pop();
 					Expression l = stack.pop();
+
 					if ((l instanceof IntConstant) && (r instanceof IntConstant)) {
 						int li = ((IntConstant) l).getValue();
 						int ri = ((IntConstant) r).getValue();
@@ -492,6 +498,37 @@ public class ConstantPropagation extends BasicService {
 			default:
 				break;
 			}
+		}
+
+		private Expression swippySwoppy(Operator op, Expression e) {
+			if (!(e instanceof Operation)) {
+				new Operation(op, e, Operation.ZERO);
+			}
+
+			Operation operation = (Operation) e;
+			Expression left = operation.getOperand(0);
+			Expression right = operation.getOperand(1);
+			if (left instanceof Operation) {
+				if (right instanceof IntConstant) {
+					if (((Operation) left).getOperand(0).equals(new IntConstant(1))) {
+						return new Operation(op, ((Operation) left).getOperand(1), new IntConstant(-1 * ((IntConstant) right).getValue()));
+					}
+					return new Operation(op, left, new IntConstant(-1 * ((IntConstant) right).getValue()));
+				} else {
+
+				}
+			} else if (right instanceof Operation) {
+				if (left instanceof IntConstant) {
+					if (((Operation) right).getOperand(0).equals(new IntConstant(1))) {
+						return new Operation(op, ((Operation) right).getOperand(1), new IntConstant(-1 * ((IntConstant) left).getValue()));
+					}
+					return new Operation(op, right, new IntConstant(-1 * ((IntConstant) left).getValue()));
+				} else {
+
+				}
+			}
+
+			return new Operation(op, e, Operation.ZERO);
 		}
 
 		private Expression merge(Expression left, Expression right) {
@@ -665,14 +702,54 @@ public class ConstantPropagation extends BasicService {
 			int arity = operation.getOperator().getArity();
 			Expression operands[] = new Expression[arity];
 			for (int i = arity; i > 0; i--) {
-				operands[i - 1] = stack.pop();
+				Expression e = stack.pop();
+				operands[i - 1] = e;
 			}
+
 			if (operation.getOperand(0).equals(Operation.ONE)
 					&& operation.getOperator().equals(Operation.Operator.MUL)) {
 				stack.push(operation.getOperand(1));
+			} else if (operation.getOperand(0).equals(new IntConstant(-1))
+					&& operation.getOperator().equals(Operation.Operator.MUL)) {
+				stack.push(new Operation(Operator.NEG, operation.getOperand(1)));
+			} else if (isNegative(operation.getOperand(0))) {
+				Operation op1 = (Operation) operation.getOperand(0);
+				if (isNegative(operation.getOperand(1))) {
+					if (operation.getOperand(1) instanceof IntConstant) {
+						IntConstant op2 = (IntConstant) operation.getOperand(1);
+						stack.push(new Operation(operation.getOperator(), op1.getOperand(1),
+								new IntConstant(op2.getValue() * -1)));
+
+					} else {
+						Operation op2 = (Operation) operation.getOperand(1);
+						stack.push(new Operation(operation.getOperator(), op1.getOperand(1), op2.getOperand(1)));
+					}
+				} else {
+					stack.push(new Operation(operation.getOperator(), op1.getOperand(1), operation.getOperand(1)));
+				}
 			} else {
 				stack.push(new Operation(operation.getOperator(), operands));
 			}
+		}
+
+		public boolean isNegative(Expression op) {
+			if (op instanceof IntConstant) {
+				if (((IntConstant) op).getValue() < 0) {
+					return true;
+				}
+			}
+			if (!(op instanceof Operation)) {
+				return false;
+			}
+
+			if (((Operation) op).getOperand(0).toString().equals("-1")
+					&& (((Operation) op).getOperand(1) instanceof IntVariable)) {
+				return true;
+			} else if (((Operation) op).getOperand(0).toString().equals("-1")
+					&& (((Operation) op).getOperand(1) instanceof IntConstant)) {
+				return true;
+			}
+			return false;
 		}
 
 	}
