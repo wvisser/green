@@ -1,4 +1,4 @@
-package za.ac.sun.cs.green.service.canonizer;
+package za.ac.sun.cs.green.service.simplify;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,14 +58,14 @@ public class ConstantPropagation extends BasicService {
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			PropagationVisitor canonizationVisitor = new PropagationVisitor();
-			expression.accept(canonizationVisitor);
+			PropagationVisitor propagationVisitor = new PropagationVisitor();
+			expression.accept(propagationVisitor);
 			Expression propagated = propagationVisitor.getExpression();
 			if (propagated != null) {
 				propagated = new Renamer(map,
-						propagationVisitor.getVariableSet()).rename(canonized);
+						propagationVisitor.getVariableSet()).rename(propagated);
 			}
-			log.log(Level.FINEST, "After Canonization: " + propagated);
+			log.log(Level.FINEST, "After Propagation: " + propagated);
 			return propagated;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
