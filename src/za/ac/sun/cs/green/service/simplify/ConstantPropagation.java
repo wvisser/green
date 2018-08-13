@@ -135,6 +135,7 @@ public class ConstantPropagation extends BasicService {
                     			stack.pop();
                 		}
                 		stack.push(operation);
+			}
 		/*	Operation.Operator nop = null;
 			switch (op) {
 			case EQ:
