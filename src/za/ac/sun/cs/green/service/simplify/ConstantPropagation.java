@@ -25,7 +25,7 @@ import za.ac.sun.cs.green.expr.Variable;
 public class ConstantPropagation extends BasicService {
   private int invocations = 0;
 
-	public ConstantPropapagtion(Green solver) {
+	public ConstantPropagtion(Green solver) {
 		super(solver);
 	}
   
