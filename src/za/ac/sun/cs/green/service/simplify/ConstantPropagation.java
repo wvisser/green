@@ -95,4 +95,35 @@ public class ConstantPropagation  extends BasicService {
 
 	}
 
+	private static class MapVisitor extends Visitor {
+
+		private Stack<Expression> stack;
+
+		private SortedSet<Expression> conjuncts;
+
+		private SortedSet<IntVariable> variableSet;
+
+		private boolean unsatisfiable;
+
+		private boolean linearInteger;
+
+		public MapVisitor() {
+			stack = new Stack<Expression>();
+			conjuncts = new TreeSet<Expression>();
+			variableSet = new TreeSet<IntVariable>();
+			unsatisfiable = false;
+			linearInteger = true;
+		}
+
+		public SortedSet<IntVariable> getVariableSet() {
+			return variableSet;
+		}
+
+		public Expression getExpression() {
+
+			
+
+		}
+
+	}
 }
