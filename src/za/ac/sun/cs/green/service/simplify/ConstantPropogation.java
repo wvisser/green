@@ -217,7 +217,7 @@ public class ConstantPropogation extends BasicService {
                     }
                 }
             }
-            stack.push(new Operation(operation.getOperator(), r, l));
+            stack.push(new Operation(operation.getOperator(), l, r));
         }
     }
 
