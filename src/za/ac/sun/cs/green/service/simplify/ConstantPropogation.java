@@ -124,8 +124,6 @@ public class ConstantPropogation extends BasicService {
       if (nop != null) {
         Expression r = stack.pop();
         Expression l = stack.pop();
-        System.out.println("l is: " + l.toString());
-        System.out.println("r is: " + r.toString());
 
         if (op == Operation.Operator.EQ) {
           if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
