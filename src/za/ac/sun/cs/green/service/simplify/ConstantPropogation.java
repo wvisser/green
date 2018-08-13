@@ -121,6 +121,10 @@ public class ConstantPropogation extends BasicService {
 				System.out.println("need to check for greater than equals");
 				nop = Operation.Operator.LE;
 				break;
+			case ADD:
+				System.out.println("need to check for addition");
+				nop = Operation.Operator.LE;
+				break;
 			default:
 				System.out.println("Default case!");
 				break;
