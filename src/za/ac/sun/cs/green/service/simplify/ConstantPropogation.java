@@ -116,6 +116,31 @@ public class ConstantPropogation extends BasicService {
         @Override
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
+        }
+        
+        @Override
+		public void postVisit(Operation operation) {
+			Operation.Operator op = operation.getOperator();
+
+			if (stack.size() >= 2) {
+				Expression right = stack.pop();
+				Expression left = stack.pop();
+				if (!op.equals(Operation.Operator.EQ)) {
+					if (left instanceof IntVariable) {
+						if (map.containsKey(left)) {
+							left = map.get(left);
+						}
+					}
+					if (right instanceof IntVariable) {
+						if (map.containsKey(right)) {
+							right = map.get(right);
+						}
+					}
+				}
+				Operation e = new Operation(operation.getOperator(), left, right);
+				stack.push(e);
+			}
+
 		}
     }
 }
