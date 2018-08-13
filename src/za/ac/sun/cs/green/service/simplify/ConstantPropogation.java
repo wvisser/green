@@ -41,6 +41,7 @@ public class ConstantPropogation extends BasicService {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
 			final Expression e = propagateConstants(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
+			final Instance f = new Instance(getSolver(), instance.getSource(), null , e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
 		}
@@ -56,11 +57,11 @@ public class ConstantPropogation extends BasicService {
 			 try {
 					 log.log(Level.FINEST, "Before Constant Propagation: " + expr);
 					 invocations++;
-
 					 cPvisitor cPv = new cPvisitor();
+				 	 cPvisitor cpVVtest = new cPvisitor();
 					 expr.accept(cPv);
+				 	 Expression propTest;
 					 Expression prop = cPv.getExpression();
-
 					 log.log(Level.FINEST, "After Constant Propagation: " + prop);
 					 return prop;
 			 } catch (VisitorException ex) {
@@ -74,11 +75,15 @@ public class ConstantPropogation extends BasicService {
 
 	 private static class cPvisitor extends Visitor {
 		 		private Stack<Expression> stack;
+		 		private Stack<Expression> stackyMcStackStack;
 		 		private Map<IntVariable, IntConstant> Vmap;
-
+				private Map<IntVariable , IntConstant> mappy;
+		 
  				public cPvisitor() {
- 					stack = new Stack<Expression>();
+ 					 stack = new Stack<Expression>();
+					 stackyMcStackStack = new Stack<Expression>();
 					 Vmap = new TreeMap<IntVariable, IntConstant>();
+					 mappy = new TreeMap<IntVariable , IntConstant>();
  				}
 
  		public Expression getExpression() {
@@ -88,7 +93,7 @@ public class ConstantPropogation extends BasicService {
 
 					}else{
 						ex = stack.pop();
-
+						
 					}
 		 				return ex;
  		}
@@ -97,9 +102,11 @@ public class ConstantPropogation extends BasicService {
  		public void postVisit(Constant cons) {
 			if(cons instanceof IntConstant){
 				stack.push(cons);
+				stackyMcStackStack.push(cons);
 			} else {
 				
 					stack.clear();
+					stackyMcStackStack.clear();
 				}
 
 			
@@ -109,8 +116,10 @@ public class ConstantPropogation extends BasicService {
  		public void postVisit(Variable var) {
 			if(var instanceof IntVariable){
 				stack.push(var);
+				stackyMcStackStack.push(var);
 			} else {
 					stack.clear();
+					stackyMcStackStack.clear();
 				}
 
 			
@@ -147,7 +156,9 @@ public class ConstantPropogation extends BasicService {
 
       if(stack.size()>=2){
           Expression r = stack.pop();
+	  Expression rR = stackyMcStackStack.pop();
           Expression l = stack.pop();
+	  Expression lL = stackyMcStackStack.pop();
           Operation.Operator oper = op;
           if(oper.equals(Operation.Operator.EQ)){
               if((l instanceof IntVariable) && (r instanceof IntConstant)){
