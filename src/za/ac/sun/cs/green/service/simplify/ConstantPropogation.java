@@ -125,13 +125,15 @@ public class ConstantPropogation extends BasicService {
                         l = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) l2).getValue()
                                 * (((Operation) r).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         r = r2;
+                        System.out.println("adding variables " + r + " to list with value " + l);
+                        variables.put((IntVariable) r, (IntConstant) l);
                     } else if (r2 instanceof IntConstant && l2 instanceof IntVariable) {
                         l = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) r2).getValue()
                                 * (((Operation) r).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         r = l2;
+                        System.out.println("adding variables " + r + " to list with value " + l);
+                        variables.put((IntVariable) r, (IntConstant) l);
                     }
-                    System.out.println("adding variables " + r + " to list with value " + l);
-                    variables.put((IntVariable) r, (IntConstant) l);
                 } else if (l instanceof Operation && r instanceof IntConstant) {
                     Expression r2 = ((Operation) l).getOperand(1);
                     Expression l2 = ((Operation) l).getOperand(0);
@@ -139,13 +141,15 @@ public class ConstantPropogation extends BasicService {
                         r = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) l2).getValue()
                                 * (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         l = r2;
+                        System.out.println("adding variables " + l + " to list with value " + r);
+                        variables.put((IntVariable) l, (IntConstant) r);
                     } else if (r2 instanceof IntConstant && l2 instanceof IntVariable) {
                         r = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) r2).getValue()
                                 * (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         l = l2;
+                        System.out.println("adding variables " + l + " to list with value " + r);
+                        variables.put((IntVariable) l, (IntConstant) r);
                     }
-                    System.out.println("adding variables " + l + " to list with value " + r);
-                    variables.put((IntVariable) l, (IntConstant) r);
                 }
             }
             stack.push(new Operation(op, l, r));
@@ -224,7 +228,7 @@ public class ConstantPropogation extends BasicService {
         }
 
         @Override
-        public void postVisit(Variable variable) {
+        public void postVisit(Variable variable) {System.out.println("true-true and");
             stack.push(variable);
         }
 
@@ -242,7 +246,7 @@ public class ConstantPropogation extends BasicService {
             // Operations on two constants
             if (r instanceof IntConstant && l instanceof IntConstant) {
                 switch (op) {
-                    case LT:
+                    case LT:System.out.println("true-true and");
                         if (r.compareTo(l) < 0) {
                             stack.push(o_true);
                         } else {
@@ -302,17 +306,27 @@ public class ConstantPropogation extends BasicService {
                 switch (op) {
                     case AND:
                         if (r.equals(o_true) && l.equals(o_true)) {
+                            System.out.println("both true and");
                             stack.push(o_true);
                             return;
-                        } else if (r.equals(o_false) || l.equals(o_false)) {
+                        } else if ((
+                                r.equals(o_false) && l.equals(o_false)) ||
+                                r.equals(o_false) && l.equals(o_true) ||
+                                r.equals(o_true) && l.equals(o_false)) {
+                            System.out.println("either false and");
                             stack.push(o_false);
                             return;
                         }
                     case OR:
                         if (r.equals(o_false) && l.equals(o_false)) {
+                            System.out.println("both false or");
                             stack.push(o_false);
                             return;
-                        } else if (r.equals(o_true) || l.equals(o_true)) {
+                        } else if ((
+                                r.equals(o_true) && l.equals(o_true)) ||
+                                r.equals(o_false) && l.equals(o_true) ||
+                                r.equals(o_true) && l.equals(o_false)) {
+                            System.out.println("either true or");
                             stack.push(o_true);
                             return;
                         }
