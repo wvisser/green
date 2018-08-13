@@ -69,20 +69,11 @@ public Expression propogateConstants(Expression expression, Map<Variable, Variab
                     ConstantPropogationVisitor propogationVisitor =
                     new ConstantPropogationVisitor(var_map);
                     expression.accept(propogationVisitor);
-                    log.log(Level.FINEST, "\n__getExpression__\n " +
-                    propogationVisitor.getLogStr());
+                    //log.log(Level.FINEST, "\n__getExpression__\n " +
+                    //propogationVisitor.getLogStr());
                     expression = propogationVisitor.getExpression();
-                    log.log(Level.FINEST, "\n after \n " +
-                    propogationVisitor.getLogStr());
-
-                    //SimplificationVisitor simplificationVisitor =
-                    //new SimplificationVisitor();
-
-                    //expression.accept(simplificationVisitor);
-                    //log.log(Level.FINEST, "\nSimplification\n " +
-                    //simplificationVisitor.getLogStr());
-
-                    //expression = simplificationVisitor.getExpression();
+                    //log.log(Level.FINEST, "\n after \n " +
+                    //propogationVisitor.getLogStr());
                     log.log(Level.FINEST, "\n After Simplification\n " + expression);
 
                     log.log(Level.FINEST, "After ConstantPropogation: " + expression);
@@ -232,177 +223,258 @@ private static class ConstantPropogationVisitor extends Visitor {
         logstr += ("left = " + l + "\n");
         Expression n;
 
-            if ((r instanceof Variable)
-                    && (l instanceof Variable)) {
-                /* Check if the variables have been assigned */
-                boolean chk = false;
-                if (variables.contains(r)) {
-                    r = map.get(r);
-                    chk = !chk;
-                }
-                if (variables.contains(l)) {
-                    l = map.get(l);
-                    chk = !chk;
-                }
+        if ((r instanceof Variable)
+                && (l instanceof Variable)) {
+            /* Check if the variables have been assigned */
+            boolean chk = false;
+            if (variables.contains(r)) {
+                r = map.get(r);
+                chk = !chk;
+            }
+            if (variables.contains(l)) {
+                l = map.get(l);
+                chk = !chk;
+            }
 
-                if (op.equals(Operation.Operator.EQ)) {
-                    if (chk) {
-                        if (r instanceof Constant) {
-                            map.put((Variable) l, (Constant) r);
-                            l = r;
-                        } else if (l instanceof Constant) {
-                            map.put((Variable) r, (Constant) l);
-                            r = l;
-                        }
-                        /* both l and r are constants now expect simplify */
+            if (op.equals(Operation.Operator.EQ)) {
+                if (chk) {
+                    if (r instanceof Constant) {
+                        map.put((Variable) l, (Constant) r);
+                        l = r;
+                    } else if (l instanceof Constant) {
+                        map.put((Variable) r, (Constant) l);
+                        r = l;
                     }
+                    /* both l and r are constants now expect simplify */
                 }
+            }
 
-                logstr += "\nX==Y ASSIGNMENT : ";
-                n = new Operation(op, l, r);
-                logstr += (n + "\n");
-            } else if ((r instanceof Constant)
-                    && (l instanceof Variable)
-                    && op.equals(Operation.Operator.EQ)) {
-                /* Its a variable assignment */
-                logstr += "\nX==0 ASSIGNMENT : ";
+            logstr += "\nX==Y ASSIGNMENT : ";
+            n = new Operation(op, l, r);
+            logstr += (n + "\n");
+        } else if ((r instanceof Constant)
+                && (l instanceof Variable)
+                && op.equals(Operation.Operator.EQ)) {
+            /* Its a variable assignment */
+            logstr += "\nX==0 ASSIGNMENT : ";
 
-                n = new Operation(op, l, r);
-                logstr += (n + "\n");
-            } else if ((r instanceof Constant)
-                    && (l instanceof Variable)) {
-                /* Check if the variables have been assigned */
-                if (variables.contains(l)) {
-                    l = map.get(l);
+            n = new Operation(op, l, r);
+            logstr += (n + "\n");
+        } else if ((r instanceof Constant)
+                && (l instanceof Variable)) {
+            /* Check if the variables have been assigned */
+            if (variables.contains(l)) {
+                l = map.get(l);
+            }
+            logstr += "\nX+1 ASSIGNMENT : ";
+
+            n = new Operation(op, l, r);
+            logstr += (n + "\n");
+        } else if ((r instanceof Operation)
+                && (l instanceof Constant)) {
+            logstr += "\nLeft is a constant, right is an operation : ";
+            //n = new Operation(op, l, r);
+            //logstr += (n + "\n");
+            Constant X = null;
+
+            Iterator<Expression> ops = ((Operation) r).getOperands().iterator();
+            Operation.Operator O = ((Operation) r).getOperator();
+
+            logstr += "Operands \n";
+            logstr += ("Operator : " + O.toString());
+
+            Expression op1 = ops.next();
+            Expression op2 = ops.next();
+
+            if (op1 instanceof Constant) {
+                X = (Constant) op1;
+                r = op2;
+            } else if (op2 instanceof Constant) {
+                X = (Constant) op2;
+                r = op1;
+            }
+
+            if (X != null) { /* We can simplify! */
+                Operation.Operator nop = getNOP(O);
+                Operation temp = new Operation(nop, l, X);
+
+                if (nop == null) {
+                    logstr += "NOP is null! \n";
+                } else if (l == null) {
+                    logstr += "l is null \n";
+                } else if (X == null) {
+                    logstr += "X is null \n";
                 }
-                logstr += "\nX+1 ASSIGNMENT : ";
+                l = temp.apply(nop, r, X);
+                logstr += ("new right =  " + r + "\n");
+                logstr += ("new left =  " + l + "\n");
+            }
 
-                n = new Operation(op, l, r);
-                logstr += (n + "\n");
-            } else if ((r instanceof Operation)
-                    && (l instanceof Constant)) {
-                logstr += "\nLeft is a constant, right is an operation : ";
-                //n = new Operation(op, l, r);
-                //logstr += (n + "\n");
-                Constant X = null;
+            n = new Operation(op, l, r);
+            logstr += (n + "\n");
+        }  else if ((r instanceof Constant)
+                && (l instanceof Operation)
+                && (op.equals(Operation.Operator.EQ))) {
+            logstr += "\nLeft is an Operation, right is an constant : ";
 
-                Iterator<Expression> ops = ((Operation) r).getOperands().iterator();
-                Operation.Operator O = ((Operation) r).getOperator();
+            Constant X = null;
 
-                logstr += "Operands \n";
-                logstr += ("Operator : " + O.toString());
+            Iterator<Expression> ops = ((Operation) l).getOperands().iterator();
+            Operation.Operator O = ((Operation) l).getOperator();
 
-                Expression op1 = ops.next();
-                Expression op2 = ops.next();
+            logstr += "Operands \n";
+            logstr += ("Operator : " + O.toString());
 
-                if (op1 instanceof Constant) {
-                    X = (Constant) op1;
-                    r = op2;
-                } else if (op2 instanceof Constant) {
-                    X = (Constant) op2;
-                    r = op1;
+            Expression op1 = ops.next();
+            Expression op2 = ops.next();
+
+            if (op1 instanceof Constant) {
+                X = (Constant) op1;
+                l = op2;
+            } else if (op2 instanceof Constant) {
+                X = (Constant) op2;
+                l = op1;
+            }
+
+            if (X != null) { /* We can simplify! */
+                Operation.Operator nop = getNOP(O);
+                Operation temp = new Operation(nop, r, X);
+
+                if (nop == null) {
+                    logstr += "NOP is null! \n";
+                } else if (r == null) {
+                    logstr += "r is null \n";
+                } else if (X == null) {
+                    logstr += "X is null \n";
                 }
+                r = temp.apply(nop, r, X);
+                logstr += ("new right =  " + r + "\n");
+                logstr += ("new left =  " + l + "\n");
+            }
 
-                if (X != null) { /* We can simplify! */
-                    Operation.Operator nop = getNOP(O);
-                    Operation temp = new Operation(nop, l, X);
-
-                    if (nop == null) {
-                        logstr += "NOP is null! \n";
-                    } else if (l == null) {
-                        logstr += "l is null \n";
-                    } else if (X == null) {
-                        logstr += "X is null \n";
+            n = new Operation(op, l, r);
+            logstr += (n + "\n");
+        }  else if ((r instanceof Operation)
+                && (l instanceof Operation)
+                && (op.equals(Operation.Operator.AND))) {
+            logstr += "op && op : \n";
+            if (r.equals(Operation.FALSE) || l.equals(Operation.FALSE)){
+                n = Operation.FALSE;
+            } else if (r.equals(Operation.TRUE) || l.equals(Operation.TRUE)){
+                n = Operation.TRUE;
+            } else if (((Operation)l).like((Operation)r)) {
+                /* x==2 && 2==x becomes 0==0*/
+                n = Operation.TRUE;
+            } else if (isAssignment((Operation) l) && isAssignment((Operation) r)
+                        && op.equals(Operation.Operator.AND)){
+                if (sameVariables((Operation)l, (Operation)r)) {
+                    logstr += "Same Variables detected\n";
+                    if (sameConstants((Operation)l, (Operation)r)) {
+                        n = Operation.TRUE;
+                        logstr += "Same Constants detected\n";
+                    } else {
+                        n = Operation.FALSE;
+                        logstr += "different Constants detected\n";
                     }
-                    l = temp.apply(nop, r, X);
-                    logstr += ("new right =  " + r + "\n");
-                    logstr += ("new left =  " + l + "\n");
-                }
-
-                n = new Operation(op, l, r);
-                logstr += (n + "\n");
-            } else if ((r instanceof Operation)
-                    && (l instanceof Operation)
-                    && (op.equals(Operation.Operator.AND))) {
-                if (r.equals(Operation.FALSE) || l.equals(Operation.FALSE)){
-                    n = Operation.FALSE;
-                } else if (r.equals(Operation.TRUE) || l.equals(Operation.TRUE)){
-                    n = Operation.TRUE;
-                } else {
-                    n = new Operation(Operation.Operator.AND, l, r);
-                }
-            } else if ((r instanceof Constant)
-                    && (l instanceof Operation)
-                    && (op.equals(Operation.Operator.EQ))) {
-                logstr += "\nLeft is an Operation, right is an constant : ";
-
-                Constant X = null;
-
-                Iterator<Expression> ops = ((Operation) l).getOperands().iterator();
-                Operation.Operator O = ((Operation) l).getOperator();
-
-                logstr += "Operands \n";
-                logstr += ("Operator : " + O.toString());
-
-                Expression op1 = ops.next();
-                Expression op2 = ops.next();
-
-                if (op1 instanceof Constant) {
-                    X = (Constant) op1;
-                    l = op2;
-                } else if (op2 instanceof Constant) {
-                    X = (Constant) op2;
-                    l = op1;
-                }
-
-                if (X != null) { /* We can simplify! */
-                    Operation.Operator nop = getNOP(O);
-                    Operation temp = new Operation(nop, r, X);
-
-                    if (nop == null) {
-                        logstr += "NOP is null! \n";
-                    } else if (r == null) {
-                        logstr += "r is null \n";
-                    } else if (X == null) {
-                        logstr += "X is null \n";
-                    }
-                    r = temp.apply(nop, r, X);
-                    logstr += ("new right =  " + r + "\n");
-                    logstr += ("new left =  " + l + "\n");
-                }
-
-                n = new Operation(op, l, r);
-                logstr += (n + "\n");
-            } else if ((r instanceof Operation)
-                    && (l instanceof Operation)
-                    && (op.equals(Operation.Operator.AND))) {
-                if (r.equals(Operation.FALSE) || l.equals(Operation.FALSE)){
-                    n = Operation.FALSE;
-                } else if (r.equals(Operation.TRUE) || l.equals(Operation.TRUE)){
-                    n = Operation.TRUE;
-                } else {
-                    n = new Operation(Operation.Operator.AND, l, r);
-                }
+                } else { n = new Operation(Operation.Operator.AND, l, r);}
+            }else {
+                n = new Operation(Operation.Operator.AND, l, r);
+            }
+            /*if (r.equals(Operation.FALSE) || l.equals(Operation.FALSE)){
+                n = Operation.FALSE;
+            } else if (r.equals(Operation.TRUE) || l.equals(Operation.TRUE)){
+                n = Operation.TRUE;
             } else {
-                logstr += "\nUNKNOWN ASSIGNMENT : ";
+                n = new Operation(Operation.Operator.AND, l, r);
+            }*/
+        } else {
+            logstr += "\nUNKNOWN ASSIGNMENT : ";
 
-                n = new Operation(op, l, r);
-                logstr += (n + "\n");
-            }
+            n = new Operation(op, l, r);
+            logstr += (n + "\n");
+        }
 
-            /* Simplify if possible */
-            if ((r instanceof Constant)
-                    && (l instanceof Constant)) {
-                /* opportunity to simplify */
-                logstr += "\n1+1 SIMPLIFICATION : ";
-                 n = operation.apply(op, l, r);
+        /* Simplify if possible */
+        if ((r instanceof Constant)
+                && (l instanceof Constant)) {
+            /* opportunity to simplify */
+            logstr += "\n1+1 SIMPLIFICATION : ";
+             n = operation.apply(op, l, r);
 
-                 logstr += (l + op.toString() + r + " = " + n.toString() + "\n");
-            }
+             logstr += (l + op.toString() + r + " = " + n.toString() + "\n");
+        }
 
-            stack.push(n);
-            logstr += "\n__________\n";
+        stack.push(n);
+        logstr += "\n__________\n";
     }// end post visit
+
+    private boolean isAssignment(Operation o) {
+        Operation.Operator operator = o.getOperator();
+        Iterator<Expression> iter = o.getOperands().iterator();
+        Expression o0 = iter.next();
+        Expression o1 = iter.next();
+
+        if (!operator.equals(Operation.Operator.EQ)){
+            return false;
+        }
+
+        if (o0 instanceof Variable && o1 instanceof Constant) {return true;}
+        else  if (o0 instanceof Constant && o1 instanceof Variable){return true;}
+        return false;
+    }
+
+    /* to compare expressions of form (x==2)&&(x==4) vs (x==2)&&(y==4) */
+    private boolean sameVariables(Operation l, Operation r) {
+        Iterator<Expression> loperands = l.getOperands().iterator();
+        Iterator<Expression> roperands = r.getOperands().iterator();
+
+        Expression l0 = loperands.next();
+        Expression l1 = loperands.next();
+        Expression r0 = roperands.next();
+        Expression r1 = roperands.next();
+
+        Variable lvar, rvar;
+        Constant lcon, rcon;
+
+        if (l0 instanceof Variable) {lvar = (Variable)l0; lcon = (Constant) l1;}
+        else  {lvar = (Variable)l1; lcon = (Constant) l0;}
+
+        if (r0 instanceof Variable) {rvar = (Variable)r0; rcon = (Constant)r1;}
+        else  {rvar = (Variable)r1; rcon = (Constant)r0;}
+
+        if (((IntVariable)lvar).equals((IntVariable)rvar)) {
+            return true;
+        }
+        return false;
+    }
+
+    /* to compare expressions of form (x==2)&&(x==2) vs (x==2)&&(x==4) */
+    private boolean sameConstants(Operation l, Operation r) {
+        Iterator<Expression> loperands = l.getOperands().iterator();
+        Iterator<Expression> roperands = r.getOperands().iterator();
+
+        Expression l0 = loperands.next();
+        Expression l1 = loperands.next();
+        Expression r0 = roperands.next();
+        Expression r1 = roperands.next();
+
+        Variable lvar, rvar;
+        Constant lcon, rcon;
+
+        if (l0 instanceof Variable) {lvar = (Variable)l0; lcon = (Constant) l1;}
+        else  {lvar = (Variable)l1; lcon = (Constant) l0;}
+
+        if (r0 instanceof Variable) {rvar = (Variable)r0; rcon = (Constant)r1;}
+        else  {rvar = (Variable)r1; rcon = (Constant)r0;}
+
+        if (((IntVariable)lvar).equals((IntVariable)rvar)) {
+            if (((IntConstant)lcon).equals((IntConstant)rcon)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private Operation.Operator getNOP(Operation.Operator op) {
         Operation.Operator nop = null;

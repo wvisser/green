@@ -1,5 +1,6 @@
 package za.ac.sun.cs.green.expr;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -327,6 +328,26 @@ public class Operation extends Expression {
 //		}
 //		return 0;
 //	}
+
+    public boolean like(Object object) {
+        if (object instanceof Operation) {
+			Operation operation = (Operation) object;
+			if (operator != operation.operator) {
+				return false;
+			}
+			if (operands.length != operation.operands.length) {
+				return false;
+			}
+			for (int i = 0; i < operands.length; i++) {
+				if (!Arrays.asList(operands).contains(operation.operands[i])) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+    }
 
 	@Override
 	public boolean equals(Object object) {
