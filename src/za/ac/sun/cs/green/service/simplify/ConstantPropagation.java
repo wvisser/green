@@ -168,7 +168,7 @@ public class ConstantPropagation  extends BasicService {
 
 		private boolean linearInteger;
 
-		public CanonizationVisitor() {
+		public PropagationVisitor() {
 			stack = new Stack<Expression>();
 			conjuncts = new TreeSet<Expression>();
 			variableSet = new TreeSet<IntVariable>();
