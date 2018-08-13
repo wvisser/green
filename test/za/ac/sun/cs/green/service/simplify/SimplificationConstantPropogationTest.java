@@ -33,7 +33,7 @@ public class SimplificationConstantPropogationTest {
 					"za.ac.sun.cs.green.service.simplify.ConstantPropogation");
 			//props.setProperty("green.service.sat.canonize",
 			//		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
-			
+
 			props.setProperty("green.service.sat.sink",
 					"za.ac.sun.cs.green.service.sink.SinkService");
 			Configuration config = new Configuration(solver, props);
@@ -67,10 +67,10 @@ public class SimplificationConstantPropogationTest {
 		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
 		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
-		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
+		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10
 		check(o4, "(x==1)&&(y==9)");
 	}
-	
+
 	@Test
 	public void test01() {
 		IntVariable x = new IntVariable("x", 0, 99);
@@ -93,7 +93,7 @@ public class SimplificationConstantPropogationTest {
 		public void test02() {
 			IntConstant c1 = new IntConstant(4);
 			IntConstant c2 = new IntConstant(10);
-			Operation o = new Operation(Operation.Operator.LT, c1, c2);
+			Operation o = new Operation(Operation.Operator.LT, c1, c2); // 4 < 10
 			check(o, "0==0");
 		}
 
@@ -107,11 +107,11 @@ public class SimplificationConstantPropogationTest {
 
 	@Test
 		public void test04() {
-			IntConstant c1 = new IntConstant(4);
-			IntConstant c2 = new IntConstant(10);
-			Operation o1 = new Operation(Operation.Operator.LT, c1, c2);
-			Operation o2 = new Operation(Operation.Operator.GT, c1, c2);
-			Operation o = new Operation(Operation.Operator.AND, o1, o2);
+			IntConstant c1 = new IntConstant(4); //c1 = 4
+			IntConstant c2 = new IntConstant(10); // c2 = 10
+			Operation o1 = new Operation(Operation.Operator.LT, c1, c2); // c1 < c2
+			Operation o2 = new Operation(Operation.Operator.GT, c1, c2); // c1 > c2
+			Operation o = new Operation(Operation.Operator.AND, o1, o2); // (4<10) && (4>10)
 			check(o, "0==1");
 		}
 
@@ -121,17 +121,17 @@ public class SimplificationConstantPropogationTest {
 	@Test
 		public void test05() {
 			IntVariable x = new IntVariable("x", 0, 99);
-			IntVariable y = new IntVariable("y", 0, 99);		
+			IntVariable y = new IntVariable("y", 0, 99);
 			IntConstant c = new IntConstant(1);
 			IntConstant c2 = new IntConstant(10);
 			IntConstant c3 = new IntConstant(2);
-			Operation o1 = new Operation(Operation.Operator.EQ, c, x);
-			Operation o2 = new Operation(Operation.Operator.ADD, x, y);
-			Operation o3 = new Operation(Operation.Operator.LT, o2, c2);
-			Operation oi = new Operation(Operation.Operator.SUB, y, c);		
-			Operation o4 = new Operation(Operation.Operator.EQ, c3, oi);
-			Operation o5 = new Operation(Operation.Operator.AND, o1, o3);
-			Operation o = new Operation(Operation.Operator.AND, o5, o4);
+			Operation o1 = new Operation(Operation.Operator.EQ, c, x);   // x==1
+			Operation o2 = new Operation(Operation.Operator.ADD, x, y);  // x+y
+			Operation o3 = new Operation(Operation.Operator.LT, o2, c2); // (x+y)<10
+			Operation oi = new Operation(Operation.Operator.SUB, y, c);  // (y-1)
+			Operation o4 = new Operation(Operation.Operator.EQ, c3, oi); // 2 == (y-1)
+			Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // (x==1) && (x+y)<10
+			Operation o = new Operation(Operation.Operator.AND, o5, o4);  // ((x==1) && (x+y)<10) && (2 == (y-1))
 			check(o, "(1==x)&&(3==y)");
 		}
 
@@ -141,7 +141,7 @@ public class SimplificationConstantPropogationTest {
 			IntVariable y = new IntVariable("y", 0, 99);
 			IntVariable z = new IntVariable("z", 0 , 99);
 			IntConstant c = new IntConstant(1);
-			Operation o1 = new Operation(Operation.Operator.EQ, x, y);		
+			Operation o1 = new Operation(Operation.Operator.EQ, x, y);
 			Operation o2 = new Operation(Operation.Operator.EQ, y, z);
 			Operation o3 = new Operation(Operation.Operator.EQ, z, c);
 			Operation o = new Operation(Operation.Operator.AND, o1, o2);
@@ -156,10 +156,10 @@ public class SimplificationConstantPropogationTest {
 			IntVariable z = new IntVariable("z", 0 , 99);
 			IntConstant c = new IntConstant(2);
 			IntConstant c1 = new IntConstant(4);
-			Operation o1 = new Operation(Operation.Operator.MUL, x, y);		
+			Operation o1 = new Operation(Operation.Operator.MUL, x, y);
 			Operation o2 = new Operation(Operation.Operator.EQ, z, o1); // z = x * y
 			Operation o3 = new Operation(Operation.Operator.EQ, x, c); // x = 2
-			Operation o4 = new Operation(Operation.Operator.ADD, y, x); 
+			Operation o4 = new Operation(Operation.Operator.ADD, y, x);
 			Operation o5 = new Operation(Operation.Operator.EQ, o4, c1); // x+y = 4
 
 			Operation o = new Operation(Operation.Operator.AND, o2, o3); // z = x * y && x = 2
@@ -172,10 +172,10 @@ public class SimplificationConstantPropogationTest {
 			IntVariable x = new IntVariable("x", 0, 99);
 			IntConstant c = new IntConstant(2);
 			IntConstant c1 = new IntConstant(4);
-			Operation o1 = new Operation(Operation.Operator.EQ, x, c);		
+			Operation o1 = new Operation(Operation.Operator.EQ, x, c);
 			Operation o2 = new Operation(Operation.Operator.EQ, x, c1);
 			Operation o = new Operation(Operation.Operator.AND, o1, o2);
-			
+
 			check(o, "0==1");
 		}
 

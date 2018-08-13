@@ -8,6 +8,7 @@ package za.ac.sun.cs.green.service.simplify;
 /* External */
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -68,20 +69,20 @@ public Expression propogateConstants(Expression expression, Map<Variable, Variab
                     ConstantPropogationVisitor propogationVisitor =
                     new ConstantPropogationVisitor(var_map);
                     expression.accept(propogationVisitor);
-                    //log.log(Level.FINEST, "\n__getExpression__\n " +
-                    //propogationVisitor.getLogStr());
+                    log.log(Level.FINEST, "\n__getExpression__\n " +
+                    propogationVisitor.getLogStr());
                     expression = propogationVisitor.getExpression();
-                    log.log(Level.FINEST, "\n Before Simplification\n " + expression);
-                    //propogationVisitor.getLogStr());
+                    log.log(Level.FINEST, "\n after \n " +
+                    propogationVisitor.getLogStr());
 
-                    SimplificationVisitor simplificationVisitor =
-                    new SimplificationVisitor();
+                    //SimplificationVisitor simplificationVisitor =
+                    //new SimplificationVisitor();
 
-                    expression.accept(simplificationVisitor);
-                    log.log(Level.FINEST, "\nSimplification\n " +
-                    simplificationVisitor.getLogStr());
+                    //expression.accept(simplificationVisitor);
+                    //log.log(Level.FINEST, "\nSimplification\n " +
+                    //simplificationVisitor.getLogStr());
 
-                    expression = simplificationVisitor.getExpression();
+                    //expression = simplificationVisitor.getExpression();
                     log.log(Level.FINEST, "\n After Simplification\n " + expression);
 
                     log.log(Level.FINEST, "After ConstantPropogation: " + expression);
@@ -224,70 +225,237 @@ private static class ConstantPropogationVisitor extends Visitor {
    @Override
 	public void postVisit(Operation operation) throws VisitorException {
         Operation.Operator op = operation.getOperator();
-        /*if (nop != null) {*/
         logstr += "\n__________\n";
-            Expression r = stack.pop();
-            logstr += ("right = " + r + "\n");
-            Expression l = stack.pop();
-            logstr += ("left = " + l + "\n");
+        Expression r = stack.pop();
+        logstr += ("right = " + r + "\n");
+        Expression l = stack.pop();
+        logstr += ("left = " + l + "\n");
+        Expression n;
 
             if ((r instanceof Variable)
                     && (l instanceof Variable)) {
-
                 /* Check if the variables have been assigned */
+                boolean chk = false;
                 if (variables.contains(r)) {
                     r = map.get(r);
+                    chk = !chk;
                 }
                 if (variables.contains(l)) {
                     l = map.get(l);
+                    chk = !chk;
                 }
 
-                logstr += "X==Y ASSIGNMENT : ";
-                logstr += (l + op.toString() + r + "\n");
-                Expression n  = new Operation(op, l, r);
-                logstr += ("n = " + n + "\n");
+                if (op.equals(Operation.Operator.EQ)) {
+                    if (chk) {
+                        if (r instanceof Constant) {
+                            map.put((Variable) l, (Constant) r);
+                            l = r;
+                        } else if (l instanceof Constant) {
+                            map.put((Variable) r, (Constant) l);
+                            r = l;
+                        }
+                        /* both l and r are constants now expect simplify */
+                    }
+                }
 
-                stack.push(new Operation(op, l, r));
-
+                logstr += "\nX==Y ASSIGNMENT : ";
+                n = new Operation(op, l, r);
+                logstr += (n + "\n");
             } else if ((r instanceof Constant)
                     && (l instanceof Variable)
                     && op.equals(Operation.Operator.EQ)) {
-
                 /* Its a variable assignment */
-                logstr += "X==0 ASSIGNMENT : ";
-                logstr += (l + op.toString() + r + "\n");
+                logstr += "\nX==0 ASSIGNMENT : ";
 
-                stack.push(new Operation(op, l, r));
-
+                n = new Operation(op, l, r);
+                logstr += (n + "\n");
             } else if ((r instanceof Constant)
                     && (l instanceof Variable)) {
                 /* Check if the variables have been assigned */
                 if (variables.contains(l)) {
                     l = map.get(l);
                 }
-                logstr += "X+1 ASSIGNMENT : ";
-                logstr += (l + op.toString() + r + "\n");
+                logstr += "\nX+1 ASSIGNMENT : ";
 
-                Expression n  = new Operation(op, l, r);
-                logstr += ("n = " + n + "\n");
-                stack.push(n);
+                n = new Operation(op, l, r);
+                logstr += (n + "\n");
+            } else if ((r instanceof Operation)
+                    && (l instanceof Constant)) {
+                logstr += "\nLeft is a constant, right is an operation : ";
+                //n = new Operation(op, l, r);
+                //logstr += (n + "\n");
+                Constant X = null;
 
+                Iterator<Expression> ops = ((Operation) r).getOperands().iterator();
+                Operation.Operator O = ((Operation) r).getOperator();
+
+                logstr += "Operands \n";
+                logstr += ("Operator : " + O.toString());
+
+                Expression op1 = ops.next();
+                Expression op2 = ops.next();
+
+                if (op1 instanceof Constant) {
+                    X = (Constant) op1;
+                    r = op2;
+                } else if (op2 instanceof Constant) {
+                    X = (Constant) op2;
+                    r = op1;
+                }
+
+                if (X != null) { /* We can simplify! */
+                    Operation.Operator nop = getNOP(O);
+                    Operation temp = new Operation(nop, l, X);
+
+                    if (nop == null) {
+                        logstr += "NOP is null! \n";
+                    } else if (l == null) {
+                        logstr += "l is null \n";
+                    } else if (X == null) {
+                        logstr += "X is null \n";
+                    }
+                    l = temp.apply(nop, r, X);
+                    logstr += ("new right =  " + r + "\n");
+                    logstr += ("new left =  " + l + "\n");
+                }
+
+                n = new Operation(op, l, r);
+                logstr += (n + "\n");
+            } else if ((r instanceof Operation)
+                    && (l instanceof Operation)
+                    && (op.equals(Operation.Operator.AND))) {
+                if (r.equals(Operation.FALSE) || l.equals(Operation.FALSE)){
+                    n = Operation.FALSE;
+                } else if (r.equals(Operation.TRUE) || l.equals(Operation.TRUE)){
+                    n = Operation.TRUE;
+                } else {
+                    n = new Operation(Operation.Operator.AND, l, r);
+                }
+            } else if ((r instanceof Constant)
+                    && (l instanceof Operation)
+                    && (op.equals(Operation.Operator.EQ))) {
+                logstr += "\nLeft is an Operation, right is an constant : ";
+
+                Constant X = null;
+
+                Iterator<Expression> ops = ((Operation) l).getOperands().iterator();
+                Operation.Operator O = ((Operation) l).getOperator();
+
+                logstr += "Operands \n";
+                logstr += ("Operator : " + O.toString());
+
+                Expression op1 = ops.next();
+                Expression op2 = ops.next();
+
+                if (op1 instanceof Constant) {
+                    X = (Constant) op1;
+                    l = op2;
+                } else if (op2 instanceof Constant) {
+                    X = (Constant) op2;
+                    l = op1;
+                }
+
+                if (X != null) { /* We can simplify! */
+                    Operation.Operator nop = getNOP(O);
+                    Operation temp = new Operation(nop, r, X);
+
+                    if (nop == null) {
+                        logstr += "NOP is null! \n";
+                    } else if (r == null) {
+                        logstr += "r is null \n";
+                    } else if (X == null) {
+                        logstr += "X is null \n";
+                    }
+                    r = temp.apply(nop, r, X);
+                    logstr += ("new right =  " + r + "\n");
+                    logstr += ("new left =  " + l + "\n");
+                }
+
+                n = new Operation(op, l, r);
+                logstr += (n + "\n");
+            } else if ((r instanceof Operation)
+                    && (l instanceof Operation)
+                    && (op.equals(Operation.Operator.AND))) {
+                if (r.equals(Operation.FALSE) || l.equals(Operation.FALSE)){
+                    n = Operation.FALSE;
+                } else if (r.equals(Operation.TRUE) || l.equals(Operation.TRUE)){
+                    n = Operation.TRUE;
+                } else {
+                    n = new Operation(Operation.Operator.AND, l, r);
+                }
             } else {
-                logstr += "UNKNOWN ASSIGNMENT : ";
-                logstr += (new Operation(op, l, r) + "\n");
+                logstr += "\nUNKNOWN ASSIGNMENT : ";
 
-                stack.push(new Operation(op, l, r));
+                n = new Operation(op, l, r);
+                logstr += (n + "\n");
             }
+
+            /* Simplify if possible */
+            if ((r instanceof Constant)
+                    && (l instanceof Constant)) {
+                /* opportunity to simplify */
+                logstr += "\n1+1 SIMPLIFICATION : ";
+                 n = operation.apply(op, l, r);
+
+                 logstr += (l + op.toString() + r + " = " + n.toString() + "\n");
+            }
+
+            stack.push(n);
             logstr += "\n__________\n";
+    }// end post visit
+
+    private Operation.Operator getNOP(Operation.Operator op) {
+        Operation.Operator nop = null;
+        switch (op) {
+        case EQ:
+            nop = Operation.Operator.EQ;
+            break;
+        case NE:
+            nop = Operation.Operator.NE;
+            break;
+        case LT:
+            nop = Operation.Operator.GT;
+            break;
+        case LE:
+            nop = Operation.Operator.GE;
+            break;
+        case GT:
+            nop = Operation.Operator.LT;
+            break;
+        case GE:
+            nop = Operation.Operator.LE;
+            break;
+        case MUL:
+            nop = Operation.Operator.DIV;
+            break;
+        case AND:
+            nop = Operation.Operator.AND;
+            break;
+        case ADD:
+            nop = Operation.Operator.SUB;
+            break;
+        case SUB:
+            nop = Operation.Operator.ADD;
+            break;
+        case OR:
+            nop = Operation.Operator.OR;
+            break;
+        default:
+            nop = op;
+            break;
+        }
+        return nop;
     }
 
-}
+
+}// end ConstantPropogationVisitor
+
 
 /* Goal Simplify expressions
  * Must traverse an expression already visited by ConstantPropogationVisitor
  */
 
-private static class SimplificationVisitor extends Visitor {
+/*private static class SimplificationVisitor extends Visitor {
     private Stack<Expression> stack;
     private String logstr;
 
@@ -317,7 +485,7 @@ private static class SimplificationVisitor extends Visitor {
     }
     /*
     */
-    @Override
+/*    @Override
      public void postVisit(Operation operation) throws VisitorException {
          Operation.Operator op = operation.getOperator();
          Expression r = stack.pop();
@@ -325,11 +493,9 @@ private static class SimplificationVisitor extends Visitor {
 
          // if constant +/-/* constant
          if ((r instanceof Constant) && (l instanceof Constant)) {
-                     operation.apply(op, new Operation(op, l, r));
+
          }
 
      }
-
-}
-
+}*/
 }
