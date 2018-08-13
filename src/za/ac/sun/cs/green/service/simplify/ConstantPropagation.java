@@ -127,7 +127,7 @@ public class ConstantPropagation extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				System.out.println(l + " "+ nop + " " + r);
+				System.out.println(">>>>>>>>>>>>>>>>>>>>>>"+l + " "+ nop + " " + r+"<<<<<<<<<<<<<<<<<<<<<);
 
 				if ((r instanceof IntVariable)
 						&& (l instanceof IntVariable)
