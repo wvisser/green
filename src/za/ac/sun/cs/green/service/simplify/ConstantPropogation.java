@@ -123,8 +123,10 @@ public class ConstantPropogation extends BasicService {
 			Operation.Operator op = operation.getOperator();
 
 			if (stack.size() >= 2) {
-				Expression right = stack.pop();
+                Expression right = stack.pop();
+                log.log(Level.FINEST, "Pop Right: "+right);
 				Expression left = stack.pop();
+                log.log(Level.FINEST, "Pop Left: "+left);
 				if (!op.equals(Operation.Operator.EQ)) {
 					if (left instanceof IntVariable) {
 						if (map.containsKey(left)) {
