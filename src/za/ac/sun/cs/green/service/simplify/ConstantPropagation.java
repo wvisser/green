@@ -170,7 +170,7 @@ public class ConstantPropogation extends BasicService {
 		}
 		
 		public Expression getExpression() {
-			Expression exp = stack.pop()
+			Expression exp = stack.pop();
 			return exp;
 		}		
 		
@@ -183,7 +183,7 @@ public class ConstantPropogation extends BasicService {
    			if (varsandvals.contains(variable)) {
    				int index = varsandvals.indexOf(variable)/2;
    				if (count[index] > 0) {
-   					stack.push(varsandvals.get(index+1);
+   					stack.push(varsandvals.get(index+1));
    				} else {
    					stack.push(variable);
    				}
@@ -203,7 +203,7 @@ public class ConstantPropogation extends BasicService {
 		private Stack<Expression> stack;
 		private ArrayList<Expression> varsandvals;
 		
-		public listVisitor() {
+		public ListVisitor() {
 			stack = new Stack<Expression>();
 			varsandvals = new ArrayList<Expression>();
 		}
