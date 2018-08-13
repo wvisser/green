@@ -59,12 +59,14 @@ public class ConstantPropogation extends BasicService {
 		try {
 			log.log(Level.FINEST, "Before Propogation: " + expression);
 			invocations++;
+
+			//Removed unneccessary code.
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			expression.accept(canonizationVisitor);
 			log.log(Level.FINEST, "After Propogation: " + canonized);
 			return expression;
+
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
 					"encountered an exception -- this should not be happening!",
@@ -76,9 +78,11 @@ public class ConstantPropogation extends BasicService {
 	private static class OrderingVisitor extends Visitor {
 
 		private Stack<Expression> stack;
+		private Map<IntVariable, IntConstant> map;
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
+			map = new Map<IntVariable, IntConstant>();
 		}
 
 		public Expression getExpression() {
@@ -99,6 +103,7 @@ public class ConstantPropogation extends BasicService {
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
 			Operation.Operator nop = null;
+			
 			switch (op) {
 			case EQ:
 				nop = Operation.Operator.EQ;
@@ -125,13 +130,10 @@ public class ConstantPropogation extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				if ((r instanceof IntVariable)
-						&& (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(
-								((IntVariable) l).getName()) < 0)) {
+				if ((r instanceof IntVariable) && (l instanceof IntConstant) && op = EQ) {
 					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
+				} 
+				else if ((r instanceof IntVariable) && (l instanceof IntConstant) && op = EQ) {
 					stack.push(new Operation(nop, r, l));
 				} else {
 					stack.push(operation);
@@ -139,6 +141,9 @@ public class ConstantPropogation extends BasicService {
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
+
+				if(map.containsKey(r)) r = map.get(r);
+				else(map.containsKey(l)) l = map.get(l);
 				stack.push(new Operation(op, l, r));
 			} else {
 				for (int i = op.getArity(); i > 0; i--) {
