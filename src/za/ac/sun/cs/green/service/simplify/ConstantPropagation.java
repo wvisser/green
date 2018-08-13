@@ -173,8 +173,8 @@ public class ConstantPropagation {
 						return Operation.FALSE;
 					} else if (e instanceof Operation) {
 						Operation o = (Operation) e;
-						if (o.getOperator == Operation.Operator.EQ) {
-
+						if (o.getOperator() == Operation.Operator.EQ) {
+							System.out.println("Found eq");
 						}
 						if (o.getOperator() == Operation.Operator.GT) {
 							e = new Operation(Operation.Operator.LT, scale(-1,
