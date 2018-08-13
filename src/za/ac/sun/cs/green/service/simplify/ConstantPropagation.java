@@ -26,7 +26,12 @@ import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation extends BasicService {
 
-  public SATCanonizerService(Green solver) {
+  /**
+   * Number of times the slicer has been invoked.
+   */
+  private int invocations = 0;
+
+  public ConstantPropagation(Green solver) {
     super(solver);
   }
 
@@ -44,8 +49,106 @@ public class ConstantPropagation extends BasicService {
     return result;
   }
 
+  @Override
+	public void report(Reporter reporter) {
+		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
+	}
+
   public Expression propagate(Expression expression,
 			Map<Variable, Variable> map) {
 
+    try {
+      log.log(Level.FINEST, "Before Canonization: " + expression);
+      invocations++;
+      PropagationVisitor propagationVisitor = new PropagationVisitor();
+			expression.accept(propagationVisitor);
+      propagationVisitor.showStack();
+			Expression propagated = propagationVisitor.getExpression();
+      return propagated;
+    } catch (VisitorException x) {
+      log.log(Level.SEVERE,"encountered an exception -- this should not be happening!",x);
+    }
+    return null;
+  }
+
+  private static class PropagationVisitor extends Visitor {
+
+    private Stack<Expression> stack;
+
+    private Variable var;
+
+    private Constant const;
+
+    public PropagationVisitor() {
+			stack = new Stack<Expression>();
+		}
+
+    public Expression getExpression() {
+			return stack.pop();
+		}
+
+    public void showStack() {
+      System.out.println("SHOWING!!!!!!!!!!!!!!!!!!!:");
+      for (Expression e : stack) {
+        System.out.println(e);
+      }
+    }
+
+		@Override
+		public void postVisit(IntConstant constant) {
+			stack.push(constant);
+		}
+
+		@Override
+		public void postVisit(IntVariable variable) {
+			stack.push(variable);
+		}
+
+    @Override
+		public void postVisit(Operation operation) throws VisitorException {
+			Operation.Operator op = operation.getOperator();
+			Operation.Operator nop = null;
+			switch (op) {
+			case EQ:
+				nop = Operation.Operator.EQ;
+				break;
+			case NE:
+				nop = Operation.Operator.NE;
+				break;
+			case LT:
+				nop = Operation.Operator.GT;
+				break;
+			case LE:
+				nop = Operation.Operator.GE;
+				break;
+			case GT:
+				nop = Operation.Operator.LT;
+				break;
+			case GE:
+				nop = Operation.Operator.LE;
+				break;
+			default:
+				break;
+			}
+      Expression r = stack.pop();
+      Expression l = stack.pop();
+      if (nop == Operation.Operator.EQ) {
+        if (r instanceof Variable && l instanceof Constant) {
+          var = r;
+          const = l;
+        } else if (l instanceof Variable && r instanceof Constant) {
+          var = l;
+          const = r;
+        }
+      } else {
+        if (r instanceof Variable) {
+          if (((Variable) r).getName().equals(var.getName())) {
+            stack.push(new Operation(nop, l, const));
+          }
+        } else if (l instanceof Variable) {
+          if (((Variable) l).getName().equals(var.getName())) {
+            stack.push(new Operation(nop, const, r));
+          }
+      }
   }
 }
