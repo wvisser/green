@@ -1,0 +1,9 @@
+# Ignore idea folder
+.idea
+
+# Ignore bin folder 
+bin
+
+# Ignore all class files
+*.class
+
