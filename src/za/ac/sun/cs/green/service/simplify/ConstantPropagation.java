@@ -36,8 +36,7 @@ public class ConstantPropagation  extends BasicService {
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			//NOTE: calling cannonize
-			final Expression e = canonize(instance.getFullExpression(), map);
+			final Expression e = simplify(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -45,28 +44,23 @@ public class ConstantPropagation  extends BasicService {
 		return result;
 	}
 
-	@Override
-	public void report(Reporter reporter) {
-		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
-	}
-
-	public Expression canonize(Expression expression,
+	public Expression simplify(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
-			log.log(Level.FINEST, "Before Canonization: " + expression);
-			invocations++;
-			OrderingVisitor orderingVisitor = new OrderingVisitor();
-			expression.accept(orderingVisitor);
-			expression = orderingVisitor.getExpression();
-			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
-			expression.accept(canonizationVisitor);
-			Expression canonized = canonizationVisitor.getExpression();
-			if (canonized != null) {
-				canonized = new Renamer(map,
-						canonizationVisitor.getVariableSet()).rename(canonized);
-			}
-			log.log(Level.FINEST, "After Canonization: " + canonized);
-			return canonized;
+			log.log(Level.FINEST, "Before Simplification:\n" + expression + "\n");
+			
+			//OrderingVisitor orderingVisitor = new OrderingVisitor();
+			//expression.accept(orderingVisitor);
+			//expression = orderingVisitor.getExpression();
+			//CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
+			//expression.accept(canonizationVisitor);
+			//Expression canonized = canonizationVisitor.getExpression();
+			//if (canonized != null) {
+			//	canonized = new Renamer(map,
+			//			canonizationVisitor.getVariableSet()).rename(canonized);
+			//}
+			log.log(Level.FINEST, "After Simplification:\n" + /*canonized*/ + "\n");
+			//return canonized;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
 					"encountered an exception -- this should not be happening!",
