@@ -38,11 +38,9 @@ public class ConstantPropogation extends BasicService {
 
 	public Expression simplify(Expression expression) {
 		try {
-			System.out.println("Before simplification: " + expression);		// XXX
 			SimplificationVisitor simplificationVisitor = new SimplificationVisitor();
 			expression.accept(simplificationVisitor);
 			Expression simplified = simplificationVisitor.getExpression();
-			System.out.println("After simplification: " + expression);		// XXX
 			return simplified;
 		} catch (VisitorException x) {
 			System.out.println("Houston, we have a problem!" + x);
@@ -53,67 +51,85 @@ public class ConstantPropogation extends BasicService {
 	private static class SimplificationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
-		private Map<Variable, Constant> knownVariables;
+		private Map<Expression, Constant> knownValues;
 
 		public SimplificationVisitor() {
 			stack = new Stack<Expression>();
-			knownVariables = new HashMap<Variable, Constant>();
+			knownValues = new HashMap<Expression, Constant>();
 		}
 
 		public Expression getExpression() {
-			printStack();
-			return stack.pop();
+			Expression top = stack.pop();
+			top = propogateConstants(top);
+			return top;
 		}
 
 		@Override
 		public void postVisit(Variable variable) {
-			System.out.println("Visited variable " + variable);
-			if (knownVariables.get(variable) != null) {
-				System.out.println("Variable is known");
-			}
-			stack.push(variable);
+			pushAndPrint(variable);
 		}
 
 		@Override
 		public void postVisit(Constant constant) {
-			System.out.println("Visited constant " + constant);
-			stack.push(constant);
+			pushAndPrint(constant);
 		}
 
 		@Override
 		public void postVisit(Operation operation) {
-			System.out.println("Visited operation " + operation);
-			Expression top = stack.peek();
 			if (operation.getOperator().equals(Operation.Operator.EQ)) {
-				// TODO: check for IntConstant instead?
-				if (top instanceof Constant) {
-					final Constant constVal = (Constant) stack.pop();
-					top = stack.peek();
-					if (top instanceof Variable) {
-						final Variable constVar = (Variable) stack.pop();
-						System.out.println(constVar + " is equal to " + constVal);
-						knownVariables.put(constVar, constVal);
-						return;
-					} else {
-						stack.push(top);
+				Expression l = operation.getOperand(0);
+				Expression r = operation.getOperand(1);
+				if (r instanceof Constant) {
+					final Constant constVal = (Constant) r;
+					if (l instanceof Variable) {
+						final Variable constVar = (Variable) l;
+						knownValues.put(constVar, constVal);
 					}
 				}
 			}
-			stack.push(operation);
+			pushAndPrint(operation);
+		}
+
+		private Expression propogateConstants(Expression expression) {
+
+			if (expression instanceof Constant) {
+				return expression;
+			}
+
+			if (expression instanceof Variable) {
+				if (knownValues.get(expression) != null) {
+					return knownValues.get(expression);
+				} else {
+					return expression;
+				}
+			}
+
+			if (expression instanceof Operation) {
+				Operation op = (Operation) expression;
+				Expression l = op.getOperand(0);
+				Expression r = op.getOperand(1);
+
+				// Handle variable assignment as a special case so we don't end up with val == val
+				if (op.getOperator().equals(Operation.Operator.EQ)) {
+					if (l instanceof Variable && r instanceof Constant) {
+						return op;
+					}
+				}
+
+				l = propogateConstants(l);
+				r = propogateConstants(r);
+				Operation newop = new Operation(op.getOperator(), l, r);
+				return newop;
+			}
+
+			System.out.println("We should never get to this point!");
+			return expression;
 		}
 
 		// For debugging purposes
-		private void printStack() {
-			Stack<Expression> otherStack = new Stack<Expression>();
-			System.out.println("Top of stack");
-			for (int i = 0; i < stack.size(); i++) {
-				Expression expr = stack.pop();
-				otherStack.push(expr);
-				System.out.println(expr);
-			}
-			for (int i = 0; i < otherStack.size(); i++) {
-				stack.push(otherStack.pop());
-			}
+		private void pushAndPrint(Expression e) {
+			// System.out.println("Pushing expression to stack: " + e);
+			stack.push(e);
 		}
 	}
 }
