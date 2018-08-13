@@ -1,24 +1,23 @@
 package za.ac.sun.cs.green.service.simplify;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Properties;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.util.Configuration;
 
-public class SimplificationConstantPropogationTest {
+public class SimplificationConstantPropagationTest {
 
 	public static Green solver;
 
@@ -30,7 +29,7 @@ public class SimplificationConstantPropogationTest {
 			props.setProperty("green.service.sat", "(simplify sink)");
 			//props.setProperty("green.service.sat", "(canonize sink)");
 			props.setProperty("green.service.sat.simplify",
-					"za.ac.sun.cs.green.service.simplify.ConstantPropogation");
+					"za.ac.sun.cs.green.service.simplify.ConstantPropagation");
 			//props.setProperty("green.service.sat.canonize",
 			//		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
 			
