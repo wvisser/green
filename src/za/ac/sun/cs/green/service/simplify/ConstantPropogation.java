@@ -150,7 +150,7 @@ public class ConstantPropogation extends BasicService {
           Expression l = stack.pop();
           Operation.Operator oper = operation.getOperator();
           if(oper.equals(Operation.Operator.EQ)){
-              if((r instanceof IntVariable) && (r instanceof IntConstant)){
+              if((l instanceof IntVariable) && (r instanceof IntConstant)){
                   Vmap.put((IntVariable)l ,(IntConstant) r);
               }else if((r instanceof IntVariable) && (l instanceof IntConstant)){
                   Vmap.put((IntVariable)r,(IntConstant)l);
