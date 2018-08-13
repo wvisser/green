@@ -31,18 +31,18 @@ public class ConstantPropagation  extends BasicService {
 	}
 
 	@Override
-	public Set<Instance> processRequest(Instance instance) {
-		@SuppressWarnings("unchecked")
-		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
-		if (result == null) {
-			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = propagate(instance.getFullExpression(), map);
-			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
-			result = Collections.singleton(i);
-			instance.setData(getClass(), result);
+		public Set<Instance> processRequest(Instance instance) {
+			@SuppressWarnings("unchecked")
+			Set<Instance> result = (Set<Instance>) instance.getData(getClass());
+			if (result == null) {
+				final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
+				final Expression e = propagate(instance.getFullExpression(), map);
+				final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
+				result = Collections.singleton(i);
+				instance.setData(getClass(), result);
+			}
+			return result;
 		}
-		return result;
-	}
 
 	public Expression propagate(Expression expression,
 			Map<Variable, Variable> map) {
