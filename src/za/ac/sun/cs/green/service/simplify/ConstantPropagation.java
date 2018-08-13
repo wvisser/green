@@ -119,7 +119,23 @@ public class ConstantPropagation extends BasicService {
 
 					stack.push(nop);
 				} 	
-			}
+			} else if (left instanceof IntaVariable || right instanceof IntVariable) {
+					if (map.containsKey(left)) {
+						 left = map.get(left);
+					} else if (map.containsKey) {
+						right = map.get(right);	
+					}
+					Operation nop = new Operation(operation.getOperator(), left, right);
+					stack.push(nop);
+				} else {
+					Operation nop = new Operation(operation.getOperator(), left, right);
+					stack.push(nop);
+				}
+			} else {
+				 for (int i = op.getArity(); i > 0; i--) {
+                    			stack.pop();
+                		}
+                		stack.push(operation);
 		/*	Operation.Operator nop = null;
 			switch (op) {
 			case EQ:
