@@ -178,10 +178,5 @@ public class SimplificationConstantPropagationTest {
 			
 			check(o, "0==1");
 		}
-
-
-
-
-
 }
 
