@@ -316,6 +316,12 @@ public class ConstantPropogation extends BasicService {
                             System.out.println("either false and");
                             stack.push(o_false);
                             return;
+                        } else if (r.equals(o_false) || l.equals(o_false)) {
+                            stack.push(o_false);
+                            return;
+                        } else {
+                            stack.push(l.equals(o_true) ? r : l);
+                            return;
                         }
                     case OR:
                         if (r.equals(o_false) && l.equals(o_false)) {
@@ -328,6 +334,12 @@ public class ConstantPropogation extends BasicService {
                                 r.equals(o_true) && l.equals(o_false)) {
                             System.out.println("either true or");
                             stack.push(o_true);
+                            return;
+                        } else if (r.equals(o_false) || l.equals(o_false)) {
+                            stack.push(o_false);
+                            return;
+                        } else {
+                            stack.push(l.equals(o_true) ? r : l);
                             return;
                         }
                     default:
