@@ -158,13 +158,13 @@ public class ConstantPropagation {
 			} else {
 				if (!stack.isEmpty()) {
 					Expression x = stack.pop();
+					System.out.println("Expression x, " + x);
 					if (x.equals(Operation.FALSE)) {
 						return Operation.FALSE;
 					} else if (!x.equals(Operation.TRUE)) {
 						conjuncts.add(x);
 					}
-				}
-				System.out.println("Expression x, " + x);
+				}				
 				SortedSet<Expression> newConjuncts = processBounds();
 //				new TreeSet<Expression>();
 				Expression c = null;
