@@ -103,7 +103,7 @@ public class ConstantPropagation extends BasicService {
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			if (stack.size() > 2) {
+			if (stack.size() >= 2) {
 				Expression right = stack.pop();
 				Expression left = stack.pop();
 				if (op == Operation.Operator.EQ) {
