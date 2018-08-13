@@ -61,10 +61,10 @@ public class ConstantPropagation extends BasicService {
 			//PropagationVisitor propagationVisitor = new PropagationVisitor();
 			//expression.accept(propagationVisitor);
 			//Expression propagated = propagationVisitor.getExpression();
-			if (propagated != null) {
+			//if (propagated != null) {
 				//propagated = new Renamer(map,
 				//		propagationVisitor.getVariableSet()).rename(propagated);
-			}
+			//}
 			log.log(Level.FINEST, "After Propagation: " + propagated);
 			return expression;
 			//return propagated;
