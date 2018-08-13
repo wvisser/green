@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/20289472/green.svg?branch=master)](https://travis-ci.org/20289472/green?branch=master)
+[![Build Status](https://travis-ci.org/20289472/green.svg?branch=master)](https://travis-ci.org/20289472/green?branch=constant-propagation)
 
 Notes:
 
