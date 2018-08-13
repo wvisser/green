@@ -73,13 +73,10 @@ public class ConstantPropagation extends BasicService {
 
 				expression.accept(constantVisitor);
 				expression = constantVisitor.getExpression();
-                System.out.println(expression);
 				expression.accept(orderingVisitor);
 				expression = orderingVisitor.getExpression();
-                System.out.println(expression);
 				expression.accept(simplifyVisitor);
 				expression = simplifyVisitor.getExpression();
-                System.out.println(expression);
 				changed = orderingVisitor.hasChanged() ||
 					constantVisitor.hasChanged() ||
 					simplifyVisitor.hasChanged();

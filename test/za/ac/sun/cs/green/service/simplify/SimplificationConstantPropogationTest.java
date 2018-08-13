@@ -249,7 +249,7 @@ public class SimplificationConstantPropogationTest {
 		Operation o1 = new Operation(Operation.Operator.DIV, x, c);	// x / 2
 		Operation o2 = new Operation(Operation.Operator.EQ, o1, c2); // x / 2 = 4
 		Operation o3 = new Operation(Operation.Operator.ADD, x, y); // x + y
-		Operation o4 = new Operation(Operation.Operator.EQ, o2, c3); // (x + y) = 1
+		Operation o4 = new Operation(Operation.Operator.EQ, o3, c3); // (x + y) = 1
 		Operation o = new Operation(Operation.Operator.AND, o4, o2); // (x + y = 1) && (x / 2 = 4)
 
 		check(o, "(y==-7)&&(x==8)");
