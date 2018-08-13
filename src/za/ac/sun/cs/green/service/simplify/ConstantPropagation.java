@@ -108,60 +108,31 @@ public class ConstantPropagation extends BasicService {
     @Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			Operation.Operator nop = null;
-			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case ADD:
-				nop = Operation.Operator.ADD;
-				break;
-      case AND:
-  			nop = Operation.Operator.AND;
-  			break;
-			default:
-				break;
-			}
-      if (nop != null) {
-        showStack();
-        Expression r = stack.pop();
-        System.out.println("Popped r = " + r);
-        Expression l = stack.pop();
-        System.out.println("Popped l = " + l);
-        if (nop == Operation.Operator.EQ) {
-          if (r instanceof IntVariable && l instanceof IntConstant) {
-            var = (IntVariable) r;
-            const1 = (IntConstant) l;
-          } else if (l instanceof IntVariable && r instanceof IntConstant) {
-            var = (IntVariable) l;
-            const1 = (IntConstant) r;
-          }
-          stack.push(new Operation(nop, l, r));
-        } else if (nop == Operation.Operator.ADD) {
-          System.out.println("1!!!!!!!!");
-          if (r instanceof IntVariable) {
-            System.out.println("2!!!!!!!!");
-            if (((IntVariable) r).getName().equals(var.getName())) {
-              System.out.println("PUSH R");
-              stack.push(new Operation(nop, l, const1));
-            }
-          }
-          if (l instanceof IntVariable) {
-            System.out.println("3!!!!!!!!");
-            if (((IntVariable) l).getName().equals(var.getName())) {
-              System.out.println("PUSH L");
-              stack.push(new Operation(nop, const1, r));
-            }
-          }
-        } else if (nop == Operation.Operator.AND) {
-          stack.push(new Operation(nop, l, r));
+      Expression r = stack.pop();
+      Expression l = stack.pop();
+      if (op == Operation.Operator.EQ) {
+        if (r instanceof IntVariable && l instanceof IntConstant) {
+          var = (IntVariable) r;
+          const1 = (IntConstant) l;
+        } else if (l instanceof IntVariable && r instanceof IntConstant) {
+          var = (IntVariable) l;
+          const1 = (IntConstant) r;
         }
+        stack.push(new Operation(op, l, r));
       } else {
-        /*for (int i = op.getArity(); i > 0; i--) {
-					stack.pop();
-				}*/
-				stack.push(operation);
+        if (r instanceof IntVariable) {
+          if (((IntVariable) r).getName().equals(var.getName())) {
+            r = const1;
+          }
+        }
+        if (l instanceof IntVariable) {
+          if (((IntVariable) l).getName().equals(var.getName())) {
+            l = const1;
+          }
+        }
+        stack.push(new Operation(op, l, r));
       }
+
     }
   }
 }
