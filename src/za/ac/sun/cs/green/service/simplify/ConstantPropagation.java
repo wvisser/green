@@ -60,7 +60,7 @@ public class ConstantPropagation extends BasicService {
 			invocations++;
 			PVisitor pVisitor = new PVisitor();
 			expression.accept(pVisitor);
-			expression simplify = pVisitor.getExpression();
+			Expression simplify = pVisitor.getExpression();
 			log.log(Level.FINEST, "After Simplification: " + expression);
 			return simplify;
 		} catch (VisitorException x) {
@@ -100,7 +100,7 @@ public class ConstantPropagation extends BasicService {
 			Operation.Operator operator = operation.getOperator();
 				if (operator.equals(Operation.Operator.EQ)) {
 						Expression left = operation.getOperand(0);
-						Expression Right = operation.getOperand(1);
+						Expression right = operation.getOperand(1);
 						if ((left instanceof IntConstant) && (right instanceof IntVariable)) {
 							hash.put((IntVariable) right, (IntConstant) left);
 						} else if ((left instanceof IntVariable) && (right instanceof IntConstant)){
@@ -118,14 +118,14 @@ public class ConstantPropagation extends BasicService {
 				Expression left = stack.pop();
 				if (!operator.equals(Operation.Operator.EQ)) {
 					if ((left instanceof IntVariable) && (hash.containsKey(left))) {
-						left = map.get(left);						
+						left = hash.get(left);						
 					}
 					if ((right instanceof IntVariable) && (hash.containsKey(right))){
-						right = map.get(right);
+						right = hash.get(right);
 					}
 				}
-				Operation operation = new Operation(operation.getOperator(), left, right);
-				stack.push(operation);
+				Operation operation2 = new Operation(operation.getOperator(), left, right);
+				stack.push(operation2);
 			}
 		}
 	}
