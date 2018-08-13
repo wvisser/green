@@ -113,17 +113,6 @@ public class ConstantPropogation  extends BasicService{
             stack.push(variable);
         }
 
-
-
-        public void beforeCalc(Operation operation) {
-            Operation.Operator op = operation.getOperator();
-            if (op.equals(Operation.operation.EQ)) {
-
-
-            }
-
-        }
-
         public void beforeOp(Operation operation) throws VisitorException {
             Operation.Operator op = operation.getOperator();
             Operation.Operator nop = null;
@@ -158,7 +147,7 @@ public class ConstantPropogation  extends BasicService{
                     map.put((IntVariable) l, (IntConstant) r);
 
                 } else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
-                    map.put((IntConstant) l, (IntVariable) r);
+                    map.put((IntVariable) r, (IntConstant) l);
                 }
 
             }
@@ -168,7 +157,7 @@ public class ConstantPropogation  extends BasicService{
         @Override
         public void postVisit(Operation operation) {
 
-            Operation.Operator op = operation.getOperator(); 
+            Operation.Operator op = operation.getOperator();
             if (stack.size() >= 2) {
                 Expression r = stack.pop();
                 Expression l = stack.pop();
