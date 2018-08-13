@@ -98,31 +98,31 @@ public class ConstantPropogation extends BasicService {
 			Operation.Operator nop = null;
 			switch (op) {
 			case EQ:
-				System.out.println("need to check for equality")
+				System.out.println("need to check for equality");
 				nop = Operation.Operator.EQ;
 				break;
 			case NE:
-				System.out.println("need to check for nonequality")
+				System.out.println("need to check for nonequality");
 				nop = Operation.Operator.NE;
 				break;
 			case LT:
-				System.out.println("need to check for less than")
+				System.out.println("need to check for less than");
 				nop = Operation.Operator.GT;
 				break;
 			case LE:
-				System.out.println("need to check for less than equals")
+				System.out.println("need to check for less than equals");
 				nop = Operation.Operator.GE;
 				break;
 			case GT:
-				System.out.println("need to check for greater than")
+				System.out.println("need to check for greater than");
 				nop = Operation.Operator.LT;
 				break;
 			case GE:
-				System.out.println("need to check for greater than equals")
+				System.out.println("need to check for greater than equals");
 				nop = Operation.Operator.LE;
 				break;
 			default:
-				System.out.println("Default case!")
+				System.out.println("Default case!");
 				break;
 			}
 			if (nop != null) {
