@@ -95,7 +95,7 @@
     <target name="test">
     	<echo message="java.library.path = ${z3lib};${cvc3lib}"/>
         <mkdir dir="${junit.dir}"/>
-        <junit fork="yes" haltonfailure = "no"
+        <junit fork="yes" haltonfailure = "yes"
 printsummary="no" filtertrace="yes" errorProperty="test.failed"
 failureProperty="test.failed">
             <formatter type="brief" usefile="false"/>

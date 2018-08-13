@@ -17,6 +17,7 @@ import com.microsoft.z3.Context;
 
 import cvc3.ValidityChecker;
 import za.ac.sun.cs.green.service.canonizer.SATCanonizerTest;
+import za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest;
 import za.ac.sun.cs.green.service.simplify.SimplificationConstantPropagationTest;
 import za.ac.sun.cs.green.service.z3.SATZ3Test;
 

@@ -22,327 +22,19 @@ import za.ac.sun.cs.green.util.Reporter;
 
 public class ConstantPropagation extends BasicService {
 	private int invocations = 0;
-	static Map<Expression, Expression> map = new HashMap<>();
 	private static Map<Expression, Expression> specialMap = new HashMap<>();
 	static boolean changed = false;
-	static boolean unsatisfiable = false;
-	static int ONE = 1;
-	public static void main (String[] args) {
-		Operation operation = test11();
-		System.out.println(operation);
-		constantVisitor ov = new constantVisitor();
-		try {
-			operation.accept(ov);
-			while (changed) {
-				changed = false;
-				ov.getExpression().accept(ov);
-				if (changed == false && ONE == 1) {
-					changed = true;
-					ONE--;
-				}
-			}
-			ov.print();
-		} catch (VisitorException e) {
-			e.printStackTrace();
-		}
-	}
+	private static int ONE = 1;
 
-	public static Operation test00() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntVariable z = new IntVariable("z", 0, 99);
-		IntConstant c = new IntConstant(1);
-		IntConstant c10 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(3);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
-		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
-		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
-		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
-		//check(o4, "(x==1)&&(y==9)");
-		return o4;
-	}
-
-
-	public static Operation test01() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntConstant c = new IntConstant(1);
-		IntConstant c2 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(2);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
-		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : x + y
-		Operation o3 = new Operation(Operation.Operator.LT, o2, c2); // o3 : (x+y) < 10
-		Operation oi = new Operation(Operation.Operator.SUB, y, c); // oi : y-1
-		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
-		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
-		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
-		// (x = 1) && (x+y < 10) && (y-1 = 2)
-		//check(o, "(x==1)&&(y==3)");
-		return o;
-	}
-
-	public static Operation test02() {
-		IntConstant c1 = new IntConstant(4);
-		IntConstant c2 = new IntConstant(10);
-		Operation o = new Operation(Operation.Operator.LT, c1, c2);
-		//check(o, "0==0");
-		return o;
-	}
-
-
-	public static Operation test03() {
-		IntConstant c1 = new IntConstant(4);
-		IntConstant c2 = new IntConstant(10);
-		Operation o = new Operation(Operation.Operator.GT, c1, c2);
-		//check(o, "0==1");
-		return o;
-	}
-
-
-	public static Operation test04() {
-		IntConstant c1 = new IntConstant(4);
-		IntConstant c2 = new IntConstant(10);
-		Operation o1 = new Operation(Operation.Operator.LT, c1, c2);
-		Operation o2 = new Operation(Operation.Operator.GT, c1, c2);
-		Operation o = new Operation(Operation.Operator.AND, o1, o2);
-		//check(o, "0==1");
-		return o;
-	}
-
-	public static Operation test05() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);		
-		IntConstant c = new IntConstant(1);
-		IntConstant c2 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(2);
-		Operation o1 = new Operation(Operation.Operator.EQ, c, x);
-		Operation o2 = new Operation(Operation.Operator.ADD, x, y);
-		Operation o3 = new Operation(Operation.Operator.LT, o2, c2);
-		Operation oi = new Operation(Operation.Operator.SUB, y, c);		
-		Operation o4 = new Operation(Operation.Operator.EQ, c3, oi);
-		Operation o5 = new Operation(Operation.Operator.AND, o1, o3);
-		Operation o = new Operation(Operation.Operator.AND, o5, o4);
-		//check(o, "(1==x)&&(3==y)");
-		return o;
-	}
-
-	public static Operation test06() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntVariable z = new IntVariable("z", 0 , 99);
-		IntConstant c = new IntConstant(1);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, y);		
-		Operation o2 = new Operation(Operation.Operator.EQ, y, z);
-		Operation o3 = new Operation(Operation.Operator.EQ, z, c);
-		Operation o = new Operation(Operation.Operator.AND, o1, o2);
-		o = new Operation(Operation.Operator.AND, o, o3);
-		//check(o, "(x==1)&&((y==1)&&(z==1))");
-		return o;
-	}
-
-
-	public static Operation test07() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntVariable z = new IntVariable("z", 0 , 99);
-		IntConstant c = new IntConstant(2);
-		IntConstant c1 = new IntConstant(4);
-		Operation o1 = new Operation(Operation.Operator.MUL, x, y);		
-		Operation o2 = new Operation(Operation.Operator.EQ, z, o1); // z = x * y
-		Operation o3 = new Operation(Operation.Operator.EQ, x, c); // x = 2
-		Operation o4 = new Operation(Operation.Operator.ADD, y, x); 
-		Operation o5 = new Operation(Operation.Operator.EQ, o4, c1); // x+y = 4
-
-		Operation o = new Operation(Operation.Operator.AND, o2, o3); // z = x * y && x = 2
-		o = new Operation(Operation.Operator.AND, o, o5); // z = x * y && x = 2 && x+y = 4
-		//check(o, "(z==4)&&((x==2)&&(y==2))");
-		return o;
-	}
-
-
-	public static Operation test08() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntConstant c = new IntConstant(2);
-		IntConstant c1 = new IntConstant(4);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c);		
-		Operation o2 = new Operation(Operation.Operator.EQ, x, c1);
-		Operation o = new Operation(Operation.Operator.AND, o1, o2);
-		return o;
-		//check(o, "0==1");
-	}
-
-	public static Operation test09() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntConstant c = new IntConstant(1);
-		IntConstant c2 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(2);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
-		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : x + y
-		Operation o3 = new Operation(Operation.Operator.GT, o2, c2); // o3 : (x+y) < 10
-		Operation oi = new Operation(Operation.Operator.SUB, y, c); // oi : y-1
-		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
-		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
-		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
-		// (x = 1) && (x+y < 10) && (y-1 = 2)
-		//check(o, "(x==1)&&(y==3)");
-		return o;
-	}
-
-	public static Operation test10() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntConstant c = new IntConstant(1);
-		IntConstant c2 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(2);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
-		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : x + y
-		Operation o3 = new Operation(Operation.Operator.LT, o2, c2); // o3 : (x+y) < 10
-		Operation oi = new Operation(Operation.Operator.SUB, y, c); // oi : y-1
-		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
-		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
-		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
-		// (x = 1) && (x+y < 10) && (y-1 = 2)
-		//check(o, "(x==1)&&(y==3)");
-		return o;
-	}
-
-	public static Operation test11() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntConstant c = new IntConstant(1);
-		IntConstant c2 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(2);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
-		Operation o2 = new Operation(Operation.Operator.ADD, c2, x); // o2 : x + y
-		Operation o3 = new Operation(Operation.Operator.LT, y, o2); // o3 : (x+y) < 10
-		Operation oi = new Operation(Operation.Operator.SUB, y, c); // oi : y-1
-		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
-		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
-		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
-		// (x = 1) && (y < 10 + x) && (y-1 = 2)
-		//check(o, "(x==1)&&(y==3)");
-		return o;
-	}
-
-	public static Operation test12() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntConstant c = new IntConstant(6);
-		IntConstant c2 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(3);
-		IntConstant c1 = new IntConstant(1);
-		IntConstant c4 = new IntConstant(2);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
-		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : x + y
-		Operation o3 = new Operation(Operation.Operator.LE, o2, c2); // o3 : (x+y) <= 10
-		Operation oi = new Operation(Operation.Operator.SUB, y, c1); // oi : y-1
-		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
-		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
-		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
-		// (x = 1) && (x+y < 10) && (y-1 = 2)
-		//check(o, "(x==1)&&(y==3)");
-		return o;
-	}
-
-	public static Operation test13() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntConstant c = new IntConstant(6);
-		IntConstant c2 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(3);
-		IntConstant c1 = new IntConstant(1);
-		IntConstant c4 = new IntConstant(2);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
-		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : x + y
-		Operation o3 = new Operation(Operation.Operator.GT, o2, c2); // o3 : (x+y) <= 10
-		Operation oi = new Operation(Operation.Operator.SUB, y, c1); // oi : y-1
-		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
-		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
-		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
-		// (x = 1) && (x+y < 10) && (y-1 = 2)
-		//check(o, "(x==1)&&(y==3)");
-		return o;
-	}
-
-	public static Operation test14() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntConstant c = new IntConstant(6);
-		IntConstant c2 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(3);
-		IntConstant c1 = new IntConstant(1);
-		IntConstant c4 = new IntConstant(2);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
-		Operation o2 = new Operation(Operation.Operator.MUL, x, y); // o2 : x + y
-		Operation o3 = new Operation(Operation.Operator.GT, o2, c2); // o3 : (x+y) <= 10
-		Operation oi = new Operation(Operation.Operator.SUB, y, c1); // oi : y-1
-		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
-		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
-		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
-		// (x = 1) && (x+y < 10) && (y-1 = 2)
-		//check(o, "(x==1)&&(y==3)");
-		return o;
-	}
-
-	public static Operation test15() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntConstant c = new IntConstant(6);
-		IntConstant c2 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(3);
-		IntConstant c1 = new IntConstant(1);
-		IntConstant c4 = new IntConstant(2);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
-		Operation o2 = new Operation(Operation.Operator.MUL, x, y); // o2 : x + y
-		Operation o3 = new Operation(Operation.Operator.NE, o2, c2); // o3 : (x+y) <= 10
-		Operation oi = new Operation(Operation.Operator.SUB, y, c1); // oi : y-1
-		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
-		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
-		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
-		// (x = 1) && (x+y < 10) && (y-1 = 2)
-		//check(o, "(x==1)&&(y==3)");
-		return o;
-	}
-
-	public static Operation test16() {
-		IntVariable x = new IntVariable("x", 0, 99);
-		IntVariable y = new IntVariable("y", 0, 99);
-		IntConstant c = new IntConstant(6);
-		IntConstant c2 = new IntConstant(10);
-		IntConstant c3 = new IntConstant(3);
-		IntConstant c1 = new IntConstant(1);
-		IntConstant c4 = new IntConstant(2);
-		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
-		Operation o2 = new Operation(Operation.Operator.DIV, x, y); // o2 : x + y
-		Operation o3 = new Operation(Operation.Operator.NE, o2, c2); // o3 : (x+y) <= 10
-		Operation oi = new Operation(Operation.Operator.SUB, y, c1); // oi : y-1
-		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
-		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
-		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
-		// (x = 1) && (x+y < 10) && (y-1 = 2)
-		//check(o, "(x==1)&&(y==3)");
-		return o;
-	}
-
-	/*
-	 * TODO
-	 */
 	public ConstantPropagation(Green solver) {
 		super(solver);
 	}
 
-	/*
-	 * TODO
-	 */
 	@Override
 	public void report(Reporter reporter) {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-	/*
-	 * TODO
-	 */
 	@Override
 	public Set<Instance> processRequest(Instance instance) {
 		@SuppressWarnings("unchecked")
@@ -356,8 +48,16 @@ public class ConstantPropagation extends BasicService {
 		return result;
 	}
 	
-	/*
-	 * TODO
+	/**
+	 * Propagates variables from the given paramater expression and simplifies the expressions
+	 * in order to try achieve the most simplified version. It continues to visit the expression until
+	 * no changes have been detected.
+	 * 
+	 * @param expression
+	 * 			The expression to propagate and simplify
+	 * 
+	 * @return exp
+	 * 			The simplified expression
 	 */
 	public Expression propagate(Expression expression) {
 		try {
@@ -370,15 +70,15 @@ public class ConstantPropagation extends BasicService {
 			while (changed) {
 				changed = false;
 				constantVisitor.getExpression().accept(constantVisitor);
-				//One extra iteration to account for expressions like 3 < 5 after variable propagation
+				//One extra iteration to account for boolean expressions like 3 < 5 to be simplified after variable propagation has occured.
 				if (changed == false && ONE == 1) {
 					ONE--;
 					changed = true;
 				}
 			}
-			Expression canonized = constantVisitor.getExpression();
-			log.log(Level.FINEST, "After Canonization: " + canonized);
-			return canonized;
+			Expression exp = constantVisitor.getExpression();
+			log.log(Level.FINEST, "After Constant Propagation and Simplification: " + exp);
+			return exp;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
 					"encountered an exception -- this should not be happening!",
@@ -388,9 +88,10 @@ public class ConstantPropagation extends BasicService {
 	}
 
 	/*
-	 * TODO
+	 * Visits the expression, propagates variables and simplifies expressions until 
+	 * there are no more changes
 	 */
-	static class constantVisitor extends Visitor {
+	private static class constantVisitor extends Visitor {
 
 		private Stack<Expression> stack;
 
@@ -402,22 +103,20 @@ public class ConstantPropagation extends BasicService {
 			return stack.pop();
 		}
 
-		/*
-		 * TODO
-		 */
 		@Override
 		public void preVisit(Operation operation) throws VisitorException {
 			//Checks if current expression is equality check
 			if (operation.getOperator().equals(Operation.Operator.EQ)) {
 				//Variable to constant
 				if (operation.getOperand(0) instanceof IntVariable && operation.getOperand(1) instanceof IntConstant) {
+					//Replaces value if key already in map
 					if (specialMap.containsKey(operation.getOperand(0)) && !(specialMap.get(operation.getOperand(0)).equals(operation.getOperand(1)))) {
-						if (specialMap.get(operation.getOperand(0)) instanceof IntConstant) {
-							unsatisfiable = true;
-						} else {
+						//This catches x==2 && x==4 from infinitely looping. Does not rewrite already defined variables.
+						if (!(specialMap.get(operation.getOperand(0)) instanceof IntConstant)) {
 							specialMap.replace(operation.getOperand(0), operation.getOperand(1));
 							changed = true;
-						}	
+						} 
+					//Adds new key and value
 					} else if (!specialMap.containsKey(operation.getOperand(0))) {
 						changed = true;
 						specialMap.put(operation.getOperand(0), operation.getOperand(1));
@@ -425,31 +124,38 @@ public class ConstantPropagation extends BasicService {
 				//Constant to variable
 				} else if (operation.getOperand(0) instanceof IntConstant && operation.getOperand(1) instanceof IntVariable) {
 					if (specialMap.containsKey(operation.getOperand(1)) && !(specialMap.get(operation.getOperand(1)).equals(operation.getOperand(0)))){
-						specialMap.replace(operation.getOperand(1), operation.getOperand(0));
-						changed = true;
+						if (!(specialMap.get(operation.getOperand(1)) instanceof IntConstant)) {
+							specialMap.replace(operation.getOperand(1), operation.getOperand(0));
+							changed = true;
+						} 
 					} else if (!specialMap.containsKey(operation.getOperand(1))) {
 						changed = true;
 						specialMap.put(operation.getOperand(1), operation.getOperand(0));
 					}
 				//Variable to variable
 				} else if (operation.getOperand(0) instanceof IntVariable && operation.getOperand(1) instanceof IntVariable) {
+					//Left variable contained in map
 					if (specialMap.containsKey(operation.getOperand(0)) && !(specialMap.get(operation.getOperand(0)).equals(operation.getOperand(1)))) {
 						specialMap.replace(operation.getOperand(0), operation.getOperand(1));
 						changed = true;
+					//Right variable contained in map
 					} else if (specialMap.containsKey(operation.getOperand(1)) && !(specialMap.get(operation.getOperand(1)).equals(operation.getOperand(0)))) {
 						specialMap.replace(operation.getOperand(1), operation.getOperand(0));
 						changed = true;
 					} else {
+						//Left variable new entry in map
 						if (!specialMap.containsKey(operation.getOperand(0))) {
 							changed = true;
 							specialMap.put(operation.getOperand(0), operation.getOperand(1));
+						//Right variable new entry in map
 						} else if (!specialMap.containsKey(operation.getOperand(1))) {
 							changed = true;
 							specialMap.put(operation.getOperand(1), operation.getOperand(0));
-						}
+						} 
 					} 
 				}
 			}
+			//Propagates variables down the map, i.e. x = y, y = 2 would result in x = 2, y = 2. Reduces iterations required for visitor.
 			if (operation.getOperand(0) instanceof IntVariable && operation.getOperand(1) instanceof IntVariable) {
 				Object t[] = specialMap.keySet().toArray();
 				for (int i = t.length-1; i >= 0; i--) {
@@ -468,10 +174,6 @@ public class ConstantPropagation extends BasicService {
 		@Override
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
-		}
-		
-		public void print() {
-			System.out.println(stack);
 		}
 
 		@Override
@@ -533,14 +235,22 @@ public class ConstantPropagation extends BasicService {
 							} 
 							//Simplified peration to push to the stack
 							oper = new Operation(Operation.Operator.EQ, constant, variable);
+						//Right side is a constant
 						} else if (r instanceof IntConstant) {
 							int coeff = 1;
 							if (((Operation) l).getOperand(0) instanceof IntConstant) {
 								variable = (IntVariable) ((Operation) l).getOperand(1);
+								//Coeff when moving variable
 								if (((Operation) l).getOperator().equals(Operation.Operator.SUB)) {
 									coeff = -1;
+									constant = new IntConstant(coeff*(((IntConstant) r).getValue() - ((IntConstant) ((Operation) l).getOperand(0)).getValue()));
+								} else if (((Operation) l).getOperator().equals(Operation.Operator.ADD)) {
+									constant = new IntConstant(coeff*(((IntConstant) r).getValue() - ((IntConstant) ((Operation) l).getOperand(0)).getValue()));
+								} else if (((Operation) l).getOperator().equals(Operation.Operator.MUL)) {
+									constant = new IntConstant(coeff*(((IntConstant) r).getValue() / ((IntConstant) ((Operation) l).getOperand(0)).getValue()));
+								} else if (((Operation) l).getOperator().equals(Operation.Operator.DIV)) {
+									constant = new IntConstant(coeff*(((IntConstant) r).getValue() * ((IntConstant) ((Operation) l).getOperand(0)).getValue()));
 								}
-								constant = new IntConstant(coeff*(((IntConstant) r).getValue() - ((IntConstant) ((Operation) l).getOperand(0)).getValue()));
 							} else if (((Operation) l).getOperand(1) instanceof IntConstant) {
 								variable = (IntVariable) ((Operation) l).getOperand(0);
 								if (((Operation) l).getOperator().equals(Operation.Operator.ADD)) {
@@ -548,9 +258,9 @@ public class ConstantPropagation extends BasicService {
 								} else if (((Operation) l).getOperator().equals(Operation.Operator.SUB)) {
 									constant = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) ((Operation) l).getOperand(1)).getValue());
 								} else if (((Operation) l).getOperator().equals(Operation.Operator.MUL)) {
-									constant = new IntConstant(((IntConstant) ((Operation) l).getOperand(0)).getValue() * ((IntConstant) ((Operation) l).getOperand(1)).getValue());
+									constant = new IntConstant(((IntConstant)r).getValue() / ((IntConstant) ((Operation) l).getOperand(1)).getValue());
 								} else if (((Operation) l).getOperator().equals(Operation.Operator.DIV)) {
-									constant = new IntConstant(((IntConstant) ((Operation) l).getOperand(0)).getValue() / ((IntConstant) ((Operation) l).getOperand(1)).getValue());
+									constant = new IntConstant(((IntConstant)r).getValue() * ((IntConstant) ((Operation) l).getOperand(1)).getValue());
 								}
 							}
 							oper = new Operation(Operation.Operator.EQ, variable, constant);
@@ -559,6 +269,7 @@ public class ConstantPropagation extends BasicService {
 					} else if (r instanceof Operation) {
 						if (l instanceof IntVariable) {
 							variable = (IntVariable) l;
+							//Simplifies two constants to one
 							if (((Operation) r).getOperand(0) instanceof IntConstant && ((Operation) r).getOperand(1) instanceof IntConstant) {
 								if (((Operation) r).getOperator().equals(Operation.Operator.ADD)) {
 									constant = new IntConstant(((IntConstant) ((Operation) r).getOperand(0)).getValue() + ((IntConstant) ((Operation) r).getOperand(1)).getValue());
@@ -575,36 +286,44 @@ public class ConstantPropagation extends BasicService {
 							}
 						} else if (l instanceof IntConstant) {
 							if (((Operation) r).getOperand(0) instanceof IntConstant) {
+								variable = (IntVariable) ((Operation) r).getOperand(1);
 								int coeff = 1;
+								//Multiplies through by coefficient of the variable in order for the variable to remain positive
 								if (((Operation) r).getOperator().equals(Operation.Operator.SUB)) {
 									coeff = -1;
 								}
-								variable = (IntVariable) ((Operation) r).getOperand(1);
-								constant = new IntConstant(coeff*(((IntConstant) l).getValue() - ((IntConstant) ((Operation) r).getOperand(0)).getValue()));
+								if (((Operation) r).getOperator().equals(Operation.Operator.ADD)) {
+									constant = new IntConstant(coeff * ((IntConstant)l).getValue() - ((IntConstant) ((Operation) r).getOperand(0)).getValue());
+								} else if (((Operation) r).getOperator().equals(Operation.Operator.SUB)) {
+									constant = new IntConstant(coeff * ((IntConstant)l).getValue() + ((IntConstant) ((Operation) r).getOperand(0)).getValue());
+								} else if (((Operation) r).getOperator().equals(Operation.Operator.MUL)) {
+									constant = new IntConstant(coeff * ((IntConstant) l).getValue() / ((IntConstant) ((Operation) r).getOperand(0)).getValue());
+								} else if (((Operation) r).getOperator().equals(Operation.Operator.DIV)) {
+									constant = new IntConstant(coeff * ((IntConstant)l).getValue() * ((IntConstant) ((Operation) r).getOperand(0)).getValue());
+								}
 								oper = new Operation(Operation.Operator.EQ, constant, variable);
 							} else if (((Operation) r).getOperand(1) instanceof IntConstant) {
 								variable = (IntVariable) ((Operation) r).getOperand(0);
 								if (((Operation) r).getOperator().equals(Operation.Operator.ADD)) {
-									constant = new IntConstant(((IntConstant) l).getValue() - ((IntConstant) ((Operation) r).getOperand(1)).getValue());
+									constant = new IntConstant(((IntConstant)l).getValue() - ((IntConstant) ((Operation) r).getOperand(1)).getValue());
 								} else if (((Operation) r).getOperator().equals(Operation.Operator.SUB)) {
-									constant = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) ((Operation) r).getOperand(1)).getValue());
-								} 
+									constant = new IntConstant(((IntConstant)l).getValue() + ((IntConstant) ((Operation) r).getOperand(1)).getValue());
+								} else if (((Operation) r).getOperator().equals(Operation.Operator.MUL)) {
+									constant = new IntConstant(((IntConstant) l).getValue() / ((IntConstant) ((Operation) r).getOperand(1)).getValue());
+								} else if (((Operation) r).getOperator().equals(Operation.Operator.DIV)) {
+									constant = new IntConstant(((IntConstant)l).getValue() * ((IntConstant) ((Operation) r).getOperand(1)).getValue());
+								}
 								oper = new Operation(Operation.Operator.EQ, constant, variable);
 							} else {
 								oper = operation;
 							}
 						}
 						stack.push(oper);
-					} else if (l instanceof IntConstant && r instanceof IntConstant) {
-						if (op.equals(Operation.Operator.ADD)) {
-							constant = new IntConstant(((IntConstant)(l)).getValue() + ((IntConstant)(r)).getValue());
-						} else if (op.equals(Operation.Operator.SUB)) {
-							constant = new IntConstant(((IntConstant)(l)).getValue() - ((IntConstant)(r)).getValue());
-						} else {
-							stack.push(operation);
-						}
+					} else if (operation.equals(Operation.TRUE) || operation.equals(Operation.FALSE)) {
+						stack.push(operation);
 					} else {
 						if (specialMap.containsKey(l) && l instanceof IntVariable) {
+							//Example x==2 && x==4 pushes a false onto the stack
 							if (!specialMap.get(l).equals(r) && r instanceof IntConstant) {
 								stack.push(Operation.FALSE);
 							} else if (l instanceof IntVariable) {
@@ -620,7 +339,6 @@ public class ConstantPropagation extends BasicService {
 							stack.push(new Operation(nop, l, r));
 						}
 					}
-
 				} else if ((r instanceof IntVariable)
 						&& (l instanceof IntVariable)
 						&& (((IntVariable) r).getName().compareTo(
@@ -658,6 +376,7 @@ public class ConstantPropagation extends BasicService {
 					}
 				} else {
 					if (l instanceof IntConstant && r instanceof IntConstant) {
+						//Checks if expression is boolean
 						switch (op) {
 						case GE:
 							if (((IntConstant)l).getValue() >= ((IntConstant)r).getValue()) {
@@ -710,15 +429,27 @@ public class ConstantPropagation extends BasicService {
 								break;
 							case SUB:
 								constant = new IntConstant(((IntConstant)((Operation)l).getOperand(0)).getValue() - ((IntConstant)((Operation)l).getOperand(1)).getValue());
-								oper = new Operation(operation.getOperator(), constant, r);
+								if (specialMap.containsKey(r)) {
+									oper = new Operation(operation.getOperator(), constant, specialMap.get(r));
+								} else {
+									oper = new Operation(operation.getOperator(), constant, r);
+								}
 								break;
 							case MUL:
 								constant = new IntConstant(((IntConstant)((Operation)l).getOperand(0)).getValue() * ((IntConstant)((Operation)l).getOperand(1)).getValue());
-								oper = new Operation(operation.getOperator(), constant, r);
+								if (specialMap.containsKey(r)) {
+									oper = new Operation(operation.getOperator(), constant, specialMap.get(r));
+								} else {
+									oper = new Operation(operation.getOperator(), constant, r);
+								}
 								break;
 							case DIV:
 								constant = new IntConstant(((IntConstant)((Operation)l).getOperand(0)).getValue() / ((IntConstant)((Operation)l).getOperand(1)).getValue());
-								oper = new Operation(operation.getOperator(), constant, r);
+								if (specialMap.containsKey(r)) {
+									oper = new Operation(operation.getOperator(), constant, specialMap.get(r));
+								} else {
+									oper = new Operation(operation.getOperator(), constant, r);
+								}
 								break;
 							default:
 								oper = operation;
@@ -784,19 +515,35 @@ public class ConstantPropagation extends BasicService {
 							switch (((Operation) r).getOperator()) {
 							case ADD:
 								constant = new IntConstant(((IntConstant)((Operation)r).getOperand(0)).getValue() + ((IntConstant)((Operation)r).getOperand(1)).getValue());
-								oper = new Operation(operation.getOperator(), l, constant);
+								if (specialMap.containsKey(l)) {
+									oper = new Operation(operation.getOperator(), specialMap.get(l), constant);
+								} else {
+									oper = new Operation(operation.getOperator(), l, constant);
+								}
 								break;
 							case SUB:
 								constant = new IntConstant(((IntConstant)((Operation)r).getOperand(0)).getValue() - ((IntConstant)((Operation)r).getOperand(1)).getValue());
-								oper = new Operation(operation.getOperator(), l, constant);
+								if (specialMap.containsKey(l)) {
+									oper = new Operation(operation.getOperator(), specialMap.get(l), constant);
+								} else {
+									oper = new Operation(operation.getOperator(), l, constant);
+								}
 								break;
 							case MUL:
 								constant = new IntConstant(((IntConstant)((Operation)r).getOperand(0)).getValue() * ((IntConstant)((Operation)r).getOperand(1)).getValue());
-								oper = new Operation(operation.getOperator(), l, constant);
+								if (specialMap.containsKey(l)) {
+									oper = new Operation(operation.getOperator(), specialMap.get(l), constant);
+								} else {
+									oper = new Operation(operation.getOperator(), l, constant);
+								}
 								break;
 							case DIV:
 								constant = new IntConstant(((IntConstant)((Operation)r).getOperand(0)).getValue() / ((IntConstant)((Operation)r).getOperand(1)).getValue());
-								oper = new Operation(operation.getOperator(), l, constant);
+								if (specialMap.containsKey(l)) {
+									oper = new Operation(operation.getOperator(), specialMap.get(l), constant);
+								} else {
+									oper = new Operation(operation.getOperator(), l, constant);
+								}
 								break;
 							default:
 								oper = operation;
@@ -824,9 +571,10 @@ public class ConstantPropagation extends BasicService {
 				Expression l = stack.pop();
 				Expression shrink = null;
 				if (r.equals(Operation.TRUE) || r.equals(Operation.FALSE) || l.equals(Operation.TRUE) || l.equals(Operation.FALSE)) {
-
+					//If true statement, shrink to the left statement as the true does not affect it.
 					if (r.equals(Operation.TRUE)) {
 						shrink = l;
+					//If false statement, shrink to false statement.
 					} else if (r.equals(Operation.FALSE)) {
 						shrink = r;
 					} 
@@ -837,6 +585,7 @@ public class ConstantPropagation extends BasicService {
 					}
 					stack.push(shrink);
 				} else {
+					//Push new operations whilst checking for corresponding values in the map
 					if (specialMap.containsKey(r) && specialMap.containsKey(l)) {
 						stack.push(new Operation(op, specialMap.get(l), specialMap.get(r)));
 					} else if (specialMap.containsKey(r)) {
