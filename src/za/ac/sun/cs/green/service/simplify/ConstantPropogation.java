@@ -156,9 +156,11 @@ public class ConstantPropogation extends BasicService {
 
       if(stack.size()>=2){
           Expression r = stack.pop();
-	  Expression rR = stackyMcStackStack.pop();
-          Expression l = stack.pop();
-	  Expression lL = stackyMcStackStack.pop();
+	  Expression l = stack.pop();
+	  if(stackyMcStackStack.size()>=2){
+	  	Expression rR = stackyMcStackStack.pop();
+	  	Expression lL = stackyMcStackStack.pop();	  
+	  }
           Operation.Operator oper = op;
           if(oper.equals(Operation.Operator.EQ)){
               if((l instanceof IntVariable) && (r instanceof IntConstant)){
