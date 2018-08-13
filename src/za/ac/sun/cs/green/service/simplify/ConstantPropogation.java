@@ -151,12 +151,19 @@ public class ConstantPropogation extends BasicService {
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
+			boolean doreplace = true;
 			Expression r = stack.pop();
 			Expression l = stack.pop();
 
-			if ((l instanceof IntVariable) && (r instanceof IntConstant) || (r instanceof IntVariable) && (l instanceof IntConstant)) {
-				stack.push(new Operation(operation.getOperator(), l, r));
-			} else {
+			if (operation.getOperator() == Operation.Operator.EQ && ((l instanceof IntVariable) && (r instanceof IntConstant))) {
+				doreplace = false;
+			}
+
+			if (operation.getOperator() == Operation.Operator.EQ && ((r instanceof IntVariable) && (l instanceof IntConstant))) {
+				doreplace = false;
+			}
+			
+			if (doreplace) {
 				// Check if variable in hashmap, and replace.
 				if ((r instanceof IntVariable && map.get(r.toString()) != null)) {
 					r = new IntConstant(map.get(r.toString()));
@@ -166,9 +173,9 @@ public class ConstantPropogation extends BasicService {
 				if ((l instanceof IntVariable && map.get(l.toString()) != null)) {
 					l = new IntConstant(map.get(l.toString()));
 				}
-
-				stack.push(new Operation(operation.getOperator(), l, r));
 			}
+
+			stack.push(new Operation(operation.getOperator(), l, r));
 		}
 	}
 }
