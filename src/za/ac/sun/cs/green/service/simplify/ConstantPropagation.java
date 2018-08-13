@@ -71,6 +71,7 @@ public class ConstantPropagation extends BasicService {
 				log.log(Level.FINEST, "After Simplification: " + expression);
 				expression.accept(varaibleVisitor);
 				expression = varaibleVisitor.getExpression();
+				
 			}
 			return expression;
 		} catch (VisitorException x) {
@@ -103,6 +104,7 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
+
 			Operation.Operator op = operation.getOperator();
 			Operation.Operator nop = null;
 			switch (op) {
@@ -129,6 +131,7 @@ public class ConstantPropagation extends BasicService {
 			}
 
 			if (nop != null) {
+
 				Expression r = stack.pop();
 				Expression l = stack.pop();
 				if (nop.equals(Operation.Operator.EQ) && r instanceof IntVariable && l instanceof IntConstant) {
@@ -172,11 +175,9 @@ public class ConstantPropagation extends BasicService {
 					if (constants.containsKey(r)) {
 						cont = true;
 						stack.push(new Operation(nop, l, constants.get(r)));
-
 					} else if (constants.containsKey(l)) {
 						cont = true;
 						stack.push(new Operation(nop, r, constants.get(l)));
-
 					} else {
 						stack.push(new Operation(nop, l, r));
 					}
@@ -201,6 +202,7 @@ public class ConstantPropagation extends BasicService {
 				}
 				stack.push(operation);
 			}
+
 		}
 
 	}
@@ -475,7 +477,6 @@ public class ConstantPropagation extends BasicService {
 				if (stack.size() >= 2) {
 					Expression r = stack.pop();
 					Expression l = stack.pop();
-
 					if ((l instanceof IntConstant) && (r instanceof IntConstant)) {
 						int li = ((IntConstant) l).getValue();
 						int ri = ((IntConstant) r).getValue();
@@ -548,8 +549,6 @@ public class ConstantPropagation extends BasicService {
 			Operation operation = (Operation) e;
 			Expression left = operation.getOperand(0);
 			Expression right = operation.getOperand(1);
-			System.out.println(left);
-			System.out.println(right);
 			if (left instanceof Operation) {
 				if (right instanceof IntConstant) {
 					// if (((Operation) left).getOperand(0).equals(new
@@ -567,7 +566,6 @@ public class ConstantPropagation extends BasicService {
 					// left).getOperand(1),
 					// new IntConstant(((IntConstant) right).getValue()));
 					// }
-					
 					return new Operation(op, left, new IntConstant(-1 * ((IntConstant) right).getValue()));
 					
 				} 
