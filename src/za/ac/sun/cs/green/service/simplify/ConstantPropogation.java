@@ -26,7 +26,7 @@ import za.ac.sun.cs.green.util.Reporter;
 public class ConstantPropogation extends BasicService {
 
     private int invocations = 0;
-    private HashMap<IntVariable, IntConstant> variables = new HashMap<>();
+    private HashMap<String, IntConstant> variables = new HashMap<>();
 
     public ConstantPropogation(Green solver) {
         super(solver);
@@ -81,9 +81,9 @@ public class ConstantPropogation extends BasicService {
     private static class ConstantPropogationVisitor extends Visitor {
 
         private Stack<Expression> stack;
-        private HashMap<IntVariable, IntConstant> variables;
+        private HashMap<String, IntConstant> variables;
 
-        public ConstantPropogationVisitor(HashMap<IntVariable, IntConstant> variables) {
+        public ConstantPropogationVisitor(HashMap<String, IntConstant> variables) {
             this.stack = new Stack<Expression>();
             this.variables = variables;
         }
@@ -111,11 +111,21 @@ public class ConstantPropogation extends BasicService {
             if (op == Operation.Operator.EQ) {
                 // simple assignment
                 if (r instanceof IntConstant && l instanceof IntVariable) {
+                    if (variables.containsKey(l.toString())) {
+                        System.out.println("variable " + l + " exists");
+                        stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
+                        return;
+                    }
                     System.out.println("adding variable " + l + " to list with value " + r);
-                    variables.put((IntVariable) l, (IntConstant) r);
+                    variables.put(l.toString(), (IntConstant) r);
                 } else if (r instanceof IntVariable && l instanceof IntConstant) {
+                    if (variables.containsKey(r.toString())) {
+                        System.out.println("variable " + r + " exists");
+                        stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
+                        return;
+                    }
                     System.out.println("adding variable " + r + " to list with value " + l);
-                    variables.put((IntVariable) r, (IntConstant) l);
+                    variables.put(r.toString(), (IntConstant) l);
                 }
                 // complex assignment (1 +/- x) = 2, 2 = (1 +/- x)
                 if (l instanceof IntConstant && r instanceof Operation) {
@@ -126,13 +136,13 @@ public class ConstantPropogation extends BasicService {
                                 * (((Operation) r).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         r = r2;
                         System.out.println("adding variable " + r + " to list with value " + l);
-                        variables.put((IntVariable) r, (IntConstant) l);
+                        variables.put(r.toString(), (IntConstant) l);
                     } else if (r2 instanceof IntConstant && l2 instanceof IntVariable) {
                         l = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) r2).getValue()
                                 * (((Operation) r).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         r = l2;
                         System.out.println("adding variable " + r + " to list with value " + l);
-                        variables.put((IntVariable) r, (IntConstant) l);
+                        variables.put(r.toString(), (IntConstant) l);
                     }
                 } else if (l instanceof Operation && r instanceof IntConstant) {
                     Expression r2 = ((Operation) l).getOperand(1);
@@ -142,13 +152,13 @@ public class ConstantPropogation extends BasicService {
                                 * (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         l = r2;
                         System.out.println("adding variable " + l + " to list with value " + r);
-                        variables.put((IntVariable) l, (IntConstant) r);
+                        variables.put(l.toString(), (IntConstant) r);
                     } else if (r2 instanceof IntConstant && l2 instanceof IntVariable) {
                         r = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) r2).getValue()
                                 * (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         l = l2;
                         System.out.println("adding variable " + l + " to list with value " + r);
-                        variables.put((IntVariable) l, (IntConstant) r);
+                        variables.put(l.toString(), (IntConstant) r);
                     }
                 }
             }
