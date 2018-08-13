@@ -32,7 +32,7 @@ public class OnlyConstantPropagationTest {
 			props.setProperty("green.service.sat.simplify",
 					"za.ac.sun.cs.green.service.simplify.ConstantPropagation");
 			/*props.setProperty("green.service.sat.canonize",
-			/		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");*/
+				"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");*/
 			props.setProperty("green.service.sat.sink",
 					"za.ac.sun.cs.green.service.sink.SinkService");
 			Configuration config = new Configuration(solver, props);
