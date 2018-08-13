@@ -38,8 +38,7 @@ public class ConstantPropogation extends BasicService {
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
-			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = propagateConstants(instance.getFullExpression(), map);
+			final Expression e = propagateConstants(instance.getFullExpression());
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -52,13 +51,24 @@ public class ConstantPropogation extends BasicService {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-	public Expression propagateConstants(Expression expression, Map<Variable, Variable> map) {
+	public Expression propagateConstants(Expression expression) {
 		try {
 			log.log(Level.FINEST, "Before constants are propagated: " + expression);
 			invocations++;
-			ConstantPropVisitor constantPropVisitor = new ConstantPropVisitor();
-			expression.accept(constantPropVisitor);
-			expression = constantPropVisitor.getExpression();
+
+			// Init
+			HashMap<String, Integer> map = new HashMap<String, Integer>();
+
+			// Search
+			ConstantPropPopulate constantPropPopulator = new ConstantPropPopulate(map);
+			expression.accept(constantPropPopulator);
+			expression = constantPropPopulator.getExpression();
+
+			// Replacer
+			ConstantPropReplacer constantPropReplacer = new ConstantPropReplacer(map);
+			expression.accept(constantPropReplacer);
+			expression = constantPropReplacer.getExpression();
+
 			log.log(Level.FINEST, "After constants are propagated: " + expression);
 			return expression;
 		} catch (VisitorException x) {
@@ -67,14 +77,14 @@ public class ConstantPropogation extends BasicService {
 		return null;
 	}
 
-	private static class ConstantPropVisitor extends Visitor {
+	private static class ConstantPropPopulate extends Visitor {
 
 		private Stack<Expression> stack;
 		private HashMap<String, Integer> map;
 
-		public ConstantPropVisitor() {
+		public ConstantPropPopulate(HashMap<String, Integer> map_in) {
 			stack = new Stack<Expression>();
-			map = new HashMap<String, Integer>();
+			map = map_in;
 		}
 
 		public Expression getExpression() {
@@ -111,17 +121,54 @@ public class ConstantPropogation extends BasicService {
 
 			}
 
-			// Check if variable in hashmap, and replace.
-			if (!detected && (r instanceof IntVariable && map.get(r.toString()) != null)) {
-				r = new IntConstant(map.get(r.toString()));
-			}
+			stack.push(operation);
+		}
+	}
 
-			// Check if variable in hashmap, and replace.
-			if (!detected && (l instanceof IntVariable && map.get(l.toString()) != null)) {
-				l = new IntConstant(map.get(l.toString()));
-			}
+	private static class ConstantPropReplacer extends Visitor {
 
-			stack.push(new Operation(operation.getOperator(), l, r));
+		private Stack<Expression> stack;
+		private HashMap<String, Integer> map;
+
+		public ConstantPropReplacer(HashMap<String, Integer> map_in) {
+			stack = new Stack<Expression>();
+			map = map_in;
+		}
+
+		public Expression getExpression() {
+			return stack.pop();
+		}
+
+		@Override
+		public void postVisit(IntConstant constant) {
+			stack.push(constant);
+		}
+
+		@Override
+		public void postVisit(IntVariable variable) {
+			stack.push(variable);
+		}
+
+		@Override
+		public void postVisit(Operation operation) throws VisitorException {
+			Expression r = stack.pop();
+			Expression l = stack.pop();
+
+			if ((l instanceof IntVariable) && (r instanceof IntConstant) || (r instanceof IntVariable) && (l instanceof IntConstant)) {
+				stack.push(new Operation(operation.getOperator(), l, r));
+			} else {
+				// Check if variable in hashmap, and replace.
+				if ((r instanceof IntVariable && map.get(r.toString()) != null)) {
+					r = new IntConstant(map.get(r.toString()));
+				}
+
+				// Check if variable in hashmap, and replace.
+				if ((l instanceof IntVariable && map.get(l.toString()) != null)) {
+					l = new IntConstant(map.get(l.toString()));
+				}
+
+				stack.push(new Operation(operation.getOperator(), l, r));
+			}
 		}
 	}
 }
