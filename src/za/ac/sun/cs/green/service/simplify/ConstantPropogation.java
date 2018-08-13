@@ -87,10 +87,14 @@ public class ConstantPropogation extends BasicService {
 				Expression opL = operation.getOperand(0);
 				Expression opR = operation.getOperand(1);
                 log.log(Level.FINEST, opL + " " + op + " " + opR);
-				if ((opL instanceof IntConstant) && (opR instanceof IntVariable)) {
-					map.put((IntVariable) opR, (IntConstant) opL);
-				} else if ((opL instanceof IntVariable) && (opR instanceof IntConstant)) {
-					map.put((IntVariable) opL, (IntConstant) opR);
+				if (opL instanceof IntConstant)  {
+                    if (opR instanceof IntVariable) {
+                        map.put((IntVariable) opR, (IntConstant) opL);
+                    }
+				} else if (opL instanceof IntVariable) {
+                    if (opR instanceof IntConstant) {
+                        map.put((IntVariable) opL, (IntConstant) opR);
+                    }
 				}
 			}
 		}
@@ -128,6 +132,7 @@ public class ConstantPropogation extends BasicService {
 					}
 				}
 				Operation e = new Operation(operation.getOperator(), left, right);
+                log.log(left + operation.getOperator() + right);
 				stack.push(e);
 			}
 
