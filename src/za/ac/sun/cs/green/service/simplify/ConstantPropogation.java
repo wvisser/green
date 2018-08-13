@@ -102,7 +102,7 @@ public class ConstantPropogation  extends BasicService{
             stack.push(variable);
         }
         @Override
-        public void beforeVisit(Operation operation) throws VisitorException {
+        public void preVisit(Operation operation) throws VisitorException {
             Operation.Operator op = operation.getOperator();
             Operation.Operator nop = null;
 
