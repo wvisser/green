@@ -49,16 +49,9 @@ public class ConstantPropagation  extends BasicService {
 		try {
 			log.log(Level.FINEST, "Before Simplification:\n" + expression + "\n");
 			
-			OrderingVisitor orderingVisitor = new OrderingVisitor();
-			expression.accept(orderingVisitor);
-			expression = orderingVisitor.getExpression();
 			PropagationVisitor propagationVisitor = new PropagationVisitor();
 			expression.accept(propagationVisitor);
 			Expression propagated = propagationVisitor.getExpression();
-			if (propagated != null) {
-				propagated = new Renamer(map,
-						propagationVisitor.getVariableSet()).rename(propagated);
-			}
 
 			log.log(Level.FINEST, "After Simplification:\n" + propagated + "\n");
 			return propagated;
