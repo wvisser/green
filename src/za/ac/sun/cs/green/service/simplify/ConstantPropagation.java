@@ -136,7 +136,7 @@ public class ConstantPropagation extends BasicService {
 						} else if ((l instanceof IntVariable) && (r instanceof IntConstant)) {							
 							stack.push(new Operation(nop, l, r));
 							variables.put((IntVariable) l, (IntConstant) r);											
-						} else if (((Operation)l).getOperator() == Operation.Operator.ADD && r instanceof IntConstant){
+						} else if (l instanceof Operation && ((Operation)l).getOperator() == Operation.Operator.ADD && r instanceof IntConstant){
 							Expression rA = ((Operation)l).getOperand(0);
 							Expression lA = ((Operation)l).getOperand(1);
 							int rC = ((IntConstant )r).getValue();							
@@ -149,7 +149,7 @@ public class ConstantPropagation extends BasicService {
 								int ans = rC - lC;
 								stack.push(new Operation(Operation.Operator.EQ, rA, new IntConstant(ans)));
 							}
-						} else if (((Operation)r).getOperator() == Operation.Operator.ADD && l instanceof IntConstant){
+						} else if (r instanceof Operation && ((Operation)r).getOperator() == Operation.Operator.ADD && l instanceof IntConstant){
 							Expression rA = ((Operation)r).getOperand(0);
 							Expression lA = ((Operation)r).getOperand(1);
 							int rC = ((IntConstant )l).getValue();							
