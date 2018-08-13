@@ -144,7 +144,7 @@ public class ConstantPropagation extends BasicService {
 							variables.put((IntVariable) l, (IntConstant) r);											
 						}
 						break;
-					case default:
+					default:
 						if ((r instanceof IntVariable) && (l instanceof IntVariable)
 							&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
 							stack.push(new Operation(nop, r, l));
