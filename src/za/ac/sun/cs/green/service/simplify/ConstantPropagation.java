@@ -123,7 +123,7 @@ public class ConstantPropagation extends BasicService {
 				} else if (left instanceof IntVariable || right instanceof IntVariable) {
 					if (hashmap.containsKey(left)) {
 						 left = hashmap.get(left);
-					} else if (map.containsKey(right)) {
+					} else if (hashmap.containsKey(right)) {
 						right = hashmap.get(right);	
 					}
 					Operation nop = new Operation(operation.getOperator(), left, right);
