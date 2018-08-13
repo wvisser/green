@@ -170,9 +170,31 @@ public class ConstantPropogation extends BasicService {
 		}
 		
 		public Expression getExpression() {
+			replacevars();
 			Expression exp = stack.pop();
 			return exp;
 		}		
+		
+		private void replacevars() {
+			while (!stack.isEmpty()) {
+			Expression var = stack.pop();
+			if (var instanceof IntVariable) {
+				if (varsandvals.contains(var)) {
+   				int index = varsandvals.indexOf(var)/2;
+   				if (count[index] > 0) {
+   					stack.push(varsandvals.get(index+1));
+   				} else {
+   					stack.push(var);
+   				}
+   				count[index]++;
+   			} else {
+   				stack.push(var);
+   			}
+			} else {
+   				stack.push(var);
+   			}
+		}
+	}
 		
    @Override
    public void postVisit(Constant constant) {
@@ -180,17 +202,7 @@ public class ConstantPropogation extends BasicService {
    }
    @Override
    public void postVisit(Variable variable) {
-   			if (varsandvals.contains(variable)) {
-   				int index = varsandvals.indexOf(variable)/2;
-   				if (count[index] > 0) {
-   					stack.push(varsandvals.get(index+1));
-   				} else {
-   					stack.push(variable);
-   				}
-   				count[index]++;
-   			} else {
-   				stack.push(variable);
-   			}
+   			stack.push(variable);
    }
 	@Override
 	 public void postVisit(Operation operation) throws VisitorException {
