@@ -64,17 +64,25 @@ public Expression propogateConstants(Expression expression, Map<Variable, Variab
                     MapVisitor mapVisitor = new MapVisitor();
         			expression.accept(mapVisitor);
         			var_map = mapVisitor.getMap();
-                    //log.log(Level.FINEST, "\n__getMap__\n " +
-                    //mapVisitor.getLogStr());
 
                     ConstantPropogationVisitor propogationVisitor =
                     new ConstantPropogationVisitor(var_map);
                     expression.accept(propogationVisitor);
-                    log.log(Level.FINEST, "\n__getExpression__\n " +
-                    propogationVisitor.getLogStr());
+                    //log.log(Level.FINEST, "\n__getExpression__\n " +
+                    //propogationVisitor.getLogStr());
                     expression = propogationVisitor.getExpression();
-                    log.log(Level.FINEST, "\n__getExpression__\n " +
-                    propogationVisitor.getLogStr());
+                    log.log(Level.FINEST, "\n Before Simplification\n " + expression);
+                    //propogationVisitor.getLogStr());
+
+                    SimplificationVisitor simplificationVisitor =
+                    new SimplificationVisitor();
+
+                    expression.accept(simplificationVisitor);
+                    log.log(Level.FINEST, "\nSimplification\n " +
+                    simplificationVisitor.getLogStr());
+
+                    expression = simplificationVisitor.getExpression();
+                    log.log(Level.FINEST, "\n After Simplification\n " + expression);
 
                     log.log(Level.FINEST, "After ConstantPropogation: " + expression);
         			return expression;
@@ -279,16 +287,26 @@ private static class ConstantPropogationVisitor extends Visitor {
  * Must traverse an expression already visited by ConstantPropogationVisitor
  */
 
-private static class simplificationVisitor extends Visitor {
+private static class SimplificationVisitor extends Visitor {
     private Stack<Expression> stack;
     private String logstr;
 
-    public simplificationVisitor () {
-
+    public SimplificationVisitor () {
+        this.stack = new Stack<Expression>();
+        this.logstr = "\n";
     }
     public String getLogStr() {
         return logstr;
+
     }
+
+    public Expression getExpression() {
+        logstr = "\n __Stack__\n";
+        Expression x = stack.pop();
+        logstr += (x + "\n");
+        return x;
+    }
+
     @Override
     public void postVisit(Constant constant) {
          stack.push(constant);
@@ -301,7 +319,16 @@ private static class simplificationVisitor extends Visitor {
     */
     @Override
      public void postVisit(Operation operation) throws VisitorException {
-}
+         Operation.Operator op = operation.getOperator();
+         Expression r = stack.pop();
+         Expression l = stack.pop();
+
+         // if constant +/-/* constant
+         if ((r instanceof Constant) && (l instanceof Constant)) {
+                     operation.apply(op, new Operation(op, l, r));
+         }
+
+     }
 
 }
 
