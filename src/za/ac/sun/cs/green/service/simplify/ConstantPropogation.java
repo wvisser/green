@@ -47,7 +47,6 @@ public class ConstantPropogation  extends BasicService{
         Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 
         if (result == null) {
-            // final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
             final Expression e = simplify(instance.getFullExpression());
             final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
             result = Collections.singleton(i);
@@ -102,34 +101,10 @@ public class ConstantPropogation  extends BasicService{
         public void postVisit(IntVariable variable) {
             stack.push(variable);
         }
-
+        @Override
         public void beforeVisit(Operation operation) throws VisitorException {
             Operation.Operator op = operation.getOperator();
             Operation.Operator nop = null;
-
-
-            // switch (op) {
-            // case EQ:
-            //     nop = Operation.Operator.EQ;
-            //     break;
-            // // case NE:
-            //     nop = Operation.Operator.NE;
-            //     break;
-            // case LT:
-            //     nop = Operation.Operator.GT;
-            //     break;
-            // case LE:
-            //     nop = Operation.Operator.GE;
-            //     break;
-            // case GT:
-            //     nop = Operation.Operator.LT;
-            //     break;
-            // case GE:
-            //     nop = Operation.Operator.LE;
-            //     break;
-            // default:
-                // break;
-            // }
 
             if (op.equals(Operation.Operator.EQ)) {
                 Expression l = operation.getOperand(0);
