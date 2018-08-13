@@ -132,8 +132,36 @@ public class ConstantPropogation extends BasicService {
 					}
 				}
 				Operation e = new Operation(operation.getOperator(), left, right);
-                log.log(Level.FINEST, op(0));
-				stack.push(e);
+
+                boolean isTrue = false;
+
+                switch (op) {
+    			case EQ:
+    				isTrue = left == right;
+    				break;
+    			case NE:
+                    isTrue = left != right;
+    				break;
+    			case LT:
+                    isTrue = left < right;
+                    break;
+    			case LE:
+                    isTrue = left <= right;
+    				break;
+    			case GT:
+                    isTrue = left > right;
+    				break;
+    			case GE:
+                    isTrue = left >= right;
+    				break;
+    			default:
+    				break;
+    			}
+                if (isTrue) {
+                    stack.push(Operation.TRUE);
+                } else {
+                    stack.push(e);
+                }
 			}
 
 		}
