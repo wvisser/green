@@ -139,19 +139,19 @@ public class ConstantPropogation extends BasicService {
                 if (left instanceof IntVariable && right instanceof IntVariable) {
                     switch (op) {
                     case EQ:
-                        isTrue = (leftValue == rightValue;
+                        isTrue = (leftValue == rightValue);
                         break;
                     case NE:
-                        isTrue = (leftValue != rightValue;
+                        isTrue = (leftValue != rightValue);
                         break;
                     case LT:
-                        isTrue = (leftValue < rightValue;
+                        isTrue = (leftValue < rightValue);
                         break;
                     case LE:
-                        isTrue = (leftValue <= rightValue;
+                        isTrue = (leftValue <= rightValue);
                         break;
                     case GT:
-                        isTrue = (leftValue > rightValue;
+                        isTrue = (leftValue > rightValue);
                         break;
                     case GE:
                         isTrue = (leftValue >= rightValue);
