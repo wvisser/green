@@ -132,11 +132,11 @@ public class ConstantPropogation extends BasicService {
 				Expression l = stack.pop();
 				if ((r instanceof IntVariable) && (l instanceof IntConstant) && op == Operation.Operator.EQ) {
 					map.put((IntVariable)r, (IntConstant)l);
-					stack.push(new Operation(nop, r, l));
+					stack.push(new Operation(nop, l, r));
 				} 
 				else if ((l instanceof IntVariable) && (r instanceof IntConstant) && op == Operation.Operator.EQ) {
 					map.put((IntVariable)l, (IntConstant)r);
-					stack.push(new Operation(nop, r, l));
+					stack.push(new Operation(nop, l, r));
 				} else {
 					if(map.containsKey(r)) r = map.get(r);
 					if(map.containsKey(l)) l = map.get(l);	
