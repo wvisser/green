@@ -95,7 +95,7 @@ public class ConstantPropogation extends BasicService {
 				System.out.println("Post visit variable: " + variable);
 				stack.push(variable);
 			}
-			
+
 			@Override
 			public void postVisit(Operation operation) throws VisitorException {
 				System.out.println("Post vist operation: " + operation);
@@ -103,14 +103,17 @@ public class ConstantPropogation extends BasicService {
 				if (op.equals(Operation.Operator.EQ)) {
 					Expression rightE = stack.pop();
 					Expression leftE = stack.pop();
+					//in this if we want to store the value of variables.
 					if ((rightE instanceof IntConstant) && (leftE instanceof IntVariable)) {
+						//if the operation is the format variable == constant
 						hMap.put((IntVariable)leftE, (IntConstant)rightE);
-
 					}  else if ((rightE instanceof IntVariable) && (leftE instanceof IntConstant)) {
+						//if the operation is the format constant == variable
 						hMap.put((IntVariable)rightE, (IntConstant)leftE);
 					}
 					operation = new Operation(op, leftE, rightE);
 				} else {
+					//Operator is not an equals, so variable values from hashmap if they exist
 					Expression rightE = stack.pop();
 					Expression leftE = stack.pop();
 					if (rightE instanceof IntVariable && hMap.containsKey(rightE)) {
