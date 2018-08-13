@@ -26,10 +26,6 @@ import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropogation extends BasicService {
 
-
-		/**
-		 * Number of times the slicer has been invoked.
-		 */
 		private int invocations = 0;
 
 		public ConstantPropogation(Green solver) {
@@ -58,21 +54,13 @@ public class ConstantPropogation extends BasicService {
 		public Expression simplify(Expression expression,
 				Map<Variable, Variable> map) {
 			try {
-				log.log(Level.FINEST, "Before Canonization: " + expression);
+				log.log(Level.FINEST, "Before Propagation: " + expression);
 				invocations++;
 				PropogatingVisitor propVisitor = new PropogatingVisitor();
 				expression.accept(propVisitor);
 				expression = propVisitor.getExpression();
-				//CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
-			//	expression.accept(canonizationVisitor);
-				//Expression canonized = canonizationVisitor.getExpression();
-				// if (canonized != null) {
-				// 	canonized = new Renamer(map,
-				// 			canonizationVisitor.getVariableSet()).rename(canonized);
-				// }
 				log.log(Level.FINEST, "After ConstProps: " + expression);
 				return expression;
-				// return canonized;
 			} catch (VisitorException x) {
 				log.log(Level.SEVERE,
 						"encountered an exception -- this should not be happening!",
@@ -89,11 +77,13 @@ public class ConstantPropogation extends BasicService {
 				stack = new Stack<Expression>();
 				hMap = new HashMap<IntVariable,IntConstant>();
 			}
+
 			public Expression getExpression() {
 				Expression popExpr = stack.pop();
 				System.out.println("Expression popped: " + popExpr);
 				return popExpr;
 			}
+
 			@Override
 			public void postVisit(IntConstant constant) {
 				System.out.println("Post visit constant: " + constant);
@@ -105,6 +95,7 @@ public class ConstantPropogation extends BasicService {
 				System.out.println("Post visit variable: " + variable);
 				stack.push(variable);
 			}
+			
 			@Override
 			public void postVisit(Operation operation) throws VisitorException {
 				System.out.println("Post vist operation: " + operation);
