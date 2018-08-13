@@ -161,6 +161,7 @@ public class ConstantPropagation extends BasicService {
 								int lC = ((IntConstant )lA).getValue();
 								int ans = rC - lC;
 								stack.push(new Operation(Operation.Operator.EQ, rA, new IntConstant(ans)));
+							}
 						} else {
 							stack.push(new Operation(nop, l, r));
 						}
