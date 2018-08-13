@@ -25,7 +25,7 @@ public class ConstantPropagation extends BasicService {
 	private static Map<Expression, Expression> specialMap = new HashMap<>();
 	static boolean changed = false;
 	private static int ONE = 1;
-
+	
 	public ConstantPropagation(Green solver) {
 		super(solver);
 	}
