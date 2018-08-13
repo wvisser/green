@@ -118,7 +118,7 @@ public class ConstantPropogation extends BasicService {
 
  		@Override
  		public void postVisit(Operation operation) throws VisitorException {
-      			/*Operation.Operator op = operation.getOperator();
+      			Operation.Operator op = operation.getOperator();
 			Operation.Operator nop = null;
 			switch (op) {
 			case EQ:
@@ -143,12 +143,12 @@ public class ConstantPropogation extends BasicService {
 				break;
 			}
 			if (nop != null) {}
-	*/
+	
 
       if(stack.size()>=2){
           Expression r = stack.pop();
           Expression l = stack.pop();
-          Operation.Operator oper = operation.getOperator();
+          Operation.Operator oper = op;
           if(oper.equals(Operation.Operator.EQ)){
               if((l instanceof IntVariable) && (r instanceof IntConstant)){
                   Vmap.put((IntVariable)l ,(IntConstant) r);
