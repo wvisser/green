@@ -1,4 +1,5 @@
-#Green [![Build Status](https://travis-ci.com/DavidBakerEffendi/green.svg?branch=master)](https://travis-ci.com/DavidBakerEffendi/green)
+# Green 
+[![Build Status](https://travis-ci.com/DavidBakerEffendi/green.svg?branch=master)](https://travis-ci.com/DavidBakerEffendi/green)
 
 ## Notes
 SATCanonizer and ConstantPropagation are functional. Test cases for 
