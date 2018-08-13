@@ -103,7 +103,7 @@ public class ConstantPropagation extends BasicService {
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			if (stack.size() > 2)
+			if (stack.size() > 2) {
 				if (op == EQ) {
 					Expression right = stack.pop();
 					Expression left = stack.pop();
@@ -121,7 +121,7 @@ public class ConstantPropagation extends BasicService {
 				}
 				Operation nop = new Operation(operation.getOperator(), left, right);
 				stack.push(nop);
-			
+			}
 		/*	Operation.Operator nop = null;
 			switch (op) {
 			case EQ:
