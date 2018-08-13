@@ -17,10 +17,10 @@ RUN apt install libgomp1
 # Clone down the GreenSolver repository
 RUN git clone https://github.com/DavidBakerEffendi/green
 # To work on a branch, uncomment the following:
-# WORKDIR green
-# RUN git fetch
-# RUN git checkout <branch name>
-# WORKDIR /
+WORKDIR green
+RUN git fetch
+RUN git checkout Propagation
+WORKDIR /
 # Download and extract Z3
 RUN mkdir z3
 WORKDIR z3
