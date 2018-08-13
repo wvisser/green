@@ -25,6 +25,8 @@ import za.ac.sun.cs.green.service.cvc3.SATCVC3Test;
 import za.ac.sun.cs.green.service.factorizer.SATFactorizerTest;
 import za.ac.sun.cs.green.service.latte.CountLattETest;
 import za.ac.sun.cs.green.service.latte.CountLattEWithBounderTest;
+import za.ac.sun.cs.green.service.simplify.OnlyConstantPropagationTest;
+import za.ac.sun.cs.green.service.simplify.SimplificationConstantPropagationTest;
 import za.ac.sun.cs.green.service.slicer.ParallelSATSlicerTest;
 import za.ac.sun.cs.green.service.slicer.SATSlicerTest;
 import za.ac.sun.cs.green.service.z3.SATZ3JavaTest;
@@ -36,6 +38,8 @@ import za.ac.sun.cs.green.util.SetTaskManagerTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	SATCanonizerTest.class,
+	OnlyConstantPropagationTest.class,
+	SimplificationConstantPropagationTest.class,
 	SATZ3Test.class
 })
 
