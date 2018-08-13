@@ -199,15 +199,15 @@ public class ConstantPropogation extends BasicService {
             Expression l = stack.pop();
             if (operation.getOperator() != Operation.Operator.EQ) {
                 if (l instanceof Variable) {
-                    if (variables.containsKey((IntVariable) l)) {
+                    if (variables.containsKey(l.toString())) {
                         System.out.println("replacing variable " + l);
-                        l = variables.get((IntVariable) l);
+                        l = variables.get(l.toString());
                     }
                 }
                 if (r instanceof Variable) {
-                    if (variables.containsKey((IntVariable) r)) {
+                    if (variables.containsKey(r.toString())) {
                         System.out.println("replacing variable " + r);
-                        r = variables.get((IntVariable) r);
+                        r = variables.get(r.toString());
                     }
                 }
             }
