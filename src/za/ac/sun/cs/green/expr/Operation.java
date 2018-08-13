@@ -124,7 +124,7 @@ public class Operation extends Expression {
 
 	public static final Expression TRUE = new Operation(Operation.Operator.EQ, ZERO, ZERO);
 
-	private Operator operator;
+	private final Operator operator;
 
 	private final Expression[] operands;
 
@@ -152,10 +152,6 @@ public class Operation extends Expression {
 
 	public Operator getOperator() {
 		return operator;
-	}
-	
-	public void setOperator(Operator opp) {
-		operator = opp;
 	}
 
 	public int getOperatandCount() {

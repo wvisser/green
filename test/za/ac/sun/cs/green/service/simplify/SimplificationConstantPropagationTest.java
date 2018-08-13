@@ -28,14 +28,8 @@ public class SimplificationConstantPropagationTest {
 			Properties props = new Properties();
 			props.setProperty("green.services", "sat");
 			props.setProperty("green.service.sat", "(simplify sink)");
-			//props.setProperty("green.service.sat", "(canonize sink)");
-			props.setProperty("green.service.sat.simplify",
-					"za.ac.sun.cs.green.service.simplify.ConstantPropogation");
-			//props.setProperty("green.service.sat.canonize",
-			//		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
-			
-			props.setProperty("green.service.sat.sink",
-					"za.ac.sun.cs.green.service.sink.SinkService");
+			props.setProperty("green.service.sat.simplify", "za.ac.sun.cs.green.service.simplify.ConstantPropogation");
+			props.setProperty("green.service.sat.sink", "za.ac.sun.cs.green.service.sink.SinkService");
 			Configuration config = new Configuration(solver, props);
 			config.configure();
 		}
@@ -115,9 +109,6 @@ public class SimplificationConstantPropagationTest {
 			check(o, "0==1");
 		}
 
-
-
-
 	@Test
 		public void test05() {
 			IntVariable x = new IntVariable("x", 0, 99);
@@ -146,7 +137,7 @@ public class SimplificationConstantPropagationTest {
 			Operation o3 = new Operation(Operation.Operator.EQ, z, c);
 			Operation o = new Operation(Operation.Operator.AND, o1, o2);
 			o = new Operation(Operation.Operator.AND, o, o3);
-			check(o, "(x==1)&&((y==1)&&(z==1))");
+			check(o, "((x==1)&&(y==1))&&(z==1)");
 		}
 
 	@Test
@@ -156,15 +147,15 @@ public class SimplificationConstantPropagationTest {
 			IntVariable z = new IntVariable("z", 0 , 99);
 			IntConstant c = new IntConstant(2);
 			IntConstant c1 = new IntConstant(4);
-			Operation o1 = new Operation(Operation.Operator.MUL, x, y);		
-			Operation o2 = new Operation(Operation.Operator.EQ, z, o1); // z = x * y
-			Operation o3 = new Operation(Operation.Operator.EQ, x, c); // x = 2
-			Operation o4 = new Operation(Operation.Operator.ADD, y, x); 
-			Operation o5 = new Operation(Operation.Operator.EQ, o4, c1); // x+y = 4
+			Operation o1 = new Operation(Operation.Operator.MUL, x, y);
+			Operation o2 = new Operation(Operation.Operator.EQ, z, o1);
+			Operation o3 = new Operation(Operation.Operator.EQ, x, c);
+			Operation o4 = new Operation(Operation.Operator.ADD, y, x);
+			Operation o5 = new Operation(Operation.Operator.EQ, o4, c1);
 
-			Operation o = new Operation(Operation.Operator.AND, o2, o3); // z = x * y && x = 2
-			o = new Operation(Operation.Operator.AND, o, o5); // z = x * y && x = 2 && x+y = 4
-			check(o, "(z==4)&&((x==2)&&(y==2))");
+			Operation o = new Operation(Operation.Operator.AND, o2, o3); 
+			o = new Operation(Operation.Operator.AND, o, o5); 
+			check(o, "((z==4)&&(x==2))&&(y==2)");
 		}
 
 	@Test
