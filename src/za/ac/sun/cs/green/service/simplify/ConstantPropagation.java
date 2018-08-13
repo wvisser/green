@@ -1,5 +1,6 @@
 package za.ac.sun.cs.green.service.simplify;
 
+import org.chocosolver.solver.variables.IntVar;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.*;
@@ -50,18 +51,14 @@ public class ConstantPropagation extends BasicService {
                 throw new VisitorException("");
             }
 
-            ConstantPropagation.ConstantPropagationVisitor conProgVisitor = new ConstantPropagation.ConstantPropagationVisitor();
+            ConstantPropagation.ConstantPropagationVisitor conProgVisitor = new ConstantPropagationVisitor();
+            ConstantPropagation.SimplificationVisitor simpVisitor = new SimplificationVisitor();
             expression.accept(conProgVisitor);
-            return conProgVisitor.getExpression();
-//            SATCanonizerService.CanonizationVisitor canonizationVisitor = new SATCanonizerService.CanonizationVisitor();
-//            expression.accept(canonizationVisitor);
-//            Expression canonized = canonizationVisitor.getExpression();
-//            if (canonized != null) {
-//                canonized = new SATCanonizerService.Renamer(map,
-//                        canonizationVisitor.getVariableSet()).rename(canonized);
-//            }
-//            log.log(Level.FINEST, "After Canonization: " + canonized);
-            //return null;
+            expression = conProgVisitor.getExpression();
+            expression.accept(simpVisitor);
+            expression = simpVisitor.getExpression();
+            log.log(Level.FINEST, "After Simplification: " + expression);
+            return expression;
         } catch (VisitorException x) {
             log.log(Level.SEVERE,
                     "encountered an exception -- this should not be happening!",
@@ -69,6 +66,98 @@ public class ConstantPropagation extends BasicService {
         }
         return null;
     }
+
+    private static class SimplificationVisitor extends Visitor {
+
+        private Stack<Expression> stack;
+        private Map<IntVariable, IntConstant> vars;
+
+        public SimplificationVisitor() {
+            stack = new Stack<>();
+            vars = new HashMap<>();
+        }
+
+        public Expression getExpression() {
+            return stack.pop();
+        }
+
+        public List<Expression> collectAndSimplify(Expression l, Expression r) {
+            List<Expression> returnList = new ArrayList<>();
+
+            if (l instanceof Operation) {
+                Expression opLeft = ((Operation) l).getOperand(0);
+                Expression opRight = ((Operation) l).getOperand(1);
+
+                if (opLeft instanceof IntConstant && opRight instanceof IntVariable) {
+                    int iVal = ((IntConstant) opLeft).getValue();
+
+                    if (r instanceof IntConstant) {
+                        switch (((Operation) l).getOperator()) {
+                            case ADD:
+                                iVal = ((IntConstant) r).getValue() - iVal;
+                                returnList.add(opRight);
+                                returnList.add(new IntConstant(iVal));
+                                break;
+                            case SUB:
+                                iVal = ((IntConstant) r).getValue() + iVal;
+                                returnList.add(opRight);
+                                returnList.add(new IntConstant(iVal));
+                                break;
+                            default:
+                                throw new UnsupportedOperationException(((Operation) l).getOperator().toString() + " Not Yet Supported.");
+                        }
+                        return returnList;
+                    }
+                } else if (opLeft instanceof IntVariable && opRight instanceof IntConstant) {
+                    int iVal = ((IntConstant) opRight).getValue();
+
+                    if (l instanceof IntConstant) {
+
+                    }
+                }
+
+            } else if (r instanceof Operation) {
+
+            }
+            return null;
+        }
+
+        @Override
+        public void postVisit(IntConstant constant) {
+            stack.push(constant);
+        }
+
+        @Override
+        public void postVisit(IntVariable variable) {
+            stack.push(variable);
+        }
+
+        @Override
+        public void postVisit(Operation operation) {
+            Operation.Operator op = operation.getOperator();
+
+            if (op.getArity() == 2) {
+                Expression r = stack.pop();
+                Expression l = stack.pop();
+
+                if (r instanceof Operation ^ l instanceof Operation) {
+                    List<Expression> simplified = collectAndSimplify(l, r);
+
+                    if (simplified != null) {
+                        l = simplified.get(0);
+                        r = simplified.get(1);
+                    }
+                }
+                stack.push(new Operation(op, l, r));
+            } else {
+                for (int i = op.getArity(); i > 0; i--) {
+                    stack.pop();
+                }
+                stack.push(operation);
+            }
+        }
+    }
+
 
     private static class ConstantPropagationVisitor extends Visitor {
 
@@ -109,7 +198,7 @@ public class ConstantPropagation extends BasicService {
                         vars.put((IntVariable) l, (IntConstant) r);
                     }
                     stack.push(new Operation(op, l, r));
-                } else if (r instanceof IntVariable || l instanceof  IntVariable) {
+                } else if (r instanceof IntVariable || l instanceof IntVariable) {
                     if (vars.containsKey(r)) {
                         r = vars.get(r);
                     }
