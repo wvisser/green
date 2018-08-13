@@ -60,7 +60,7 @@ public class ConstantPropagation extends BasicService {
 			invocations++;
 			PVisitor pVisitor = new PVisitor();
 			expression.accept(pVisitor);
-			expression = simplify.getExpression();
+			expression simplify = pVisitor.getExpression();
 			log.log(Level.FINEST, "After Simplification: " + expression);
 			return simplify;
 		} catch (VisitorException x) {
@@ -74,7 +74,7 @@ public class ConstantPropagation extends BasicService {
 	private static class PVisitor extends Visitor {
 
 		private Stack<Expression> stack;
-		private Map<IntVariable, IntConstant> variables;
+		private Map<IntVariable, IntConstant> hash;
 
 		public PVisitor() {
 			stack = new Stack<Expression>();
