@@ -97,6 +97,7 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
+
 			if (op.equals(Operation.Operator.EQ)) {
 				Expression opL = operation.getOperand(0);
 				Expression opR = operation.getOperand(1);
@@ -107,7 +108,7 @@ public class ConstantPropogation extends BasicService {
 				}
 			}
 
-			Operation.Operator op = operation.getOperator();
+			op = operation.getOperator();
 
 			if (stack.size() >= 2) {
 				Expression right = stack.pop();
