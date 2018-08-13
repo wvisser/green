@@ -24,6 +24,10 @@ public class SATCanonizerTest {
 
 	@BeforeClass
 	public static void initialize() {
+		System.out.println(
+				"===================================\n"
+				+ "SATCanonizerTest\n"
+				+ "===================================");
 		solver = new Green();
 		Properties props = new Properties();
 		props.setProperty("green.services", "sat");

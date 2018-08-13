@@ -48,8 +48,7 @@ public class ConstantPropagation extends BasicService {
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
-			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = propagateAndSimplify(instance.getFullExpression(), map);
+			final Expression e = propagateAndSimplify(instance.getFullExpression());
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -69,7 +68,7 @@ public class ConstantPropagation extends BasicService {
 	 *            A variable map.
 	 * @return Simplified {@link za.ac.sun.cs.green.expr.Expression Expression}.
 	 */
-	public Expression propagateAndSimplify(Expression expression, Map<Variable, Variable> map) {
+	public Expression propagateAndSimplify(Expression expression) {
 		varMap = new HashMap<Expression, Expression>();
 		try {
 			Expression finalExpression;

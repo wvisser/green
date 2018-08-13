@@ -17,14 +17,13 @@ import com.microsoft.z3.Context;
 
 import cvc3.ValidityChecker;
 import za.ac.sun.cs.green.service.canonizer.SATCanonizerTest;
-import za.ac.sun.cs.green.service.z3.SATZ3Test;
-import za.ac.sun.cs.green.service.simplify.ConstantPropagation;
 import za.ac.sun.cs.green.service.simplify.ConstantPropagationTest;
+import za.ac.sun.cs.green.service.z3.SATZ3Test;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-//	SATCanonizerTest.class,
-//	SATZ3Test.class,
+	SATCanonizerTest.class,
+	SATZ3Test.class,
 	ConstantPropagationTest.class
 })
 

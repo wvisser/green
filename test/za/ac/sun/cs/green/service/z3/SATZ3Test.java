@@ -24,6 +24,10 @@ public class SATZ3Test {
 
 	@BeforeClass
 	public static void initialize() {
+		System.out.println(
+				"===================================\n"
+				+ "SATZ3Test\n"
+				+ "===================================");
 		if (!EntireSuite.HAS_Z3) {
 			Assume.assumeTrue(false);
 			return;
