@@ -130,12 +130,12 @@ public class ConstantPropogation extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				if ((r instanceof IntVariable) && (l instanceof IntConstant) && op == EQ) {
-					map.put(r, l);
+				if ((r instanceof IntVariable) && (l instanceof IntConstant) && op == Operation.Operator.EQ) {
+					map.put((IntVariable)r, (IntConstant)l);
 					stack.push(new Operation(nop, r, l));
 				} 
-				else if ((l instanceof IntVariable) && (r instanceof IntConstant) && op == EQ) {
-					map.put(l, r);
+				else if ((l instanceof IntVariable) && (r instanceof IntConstant) && op == Operation.Operator.EQ) {
+					map.put((IntVariable)l, (Int)r);
 					stack.push(new Operation(nop, r, l));
 				} else {
 					stack.push(operation);
@@ -145,7 +145,7 @@ public class ConstantPropogation extends BasicService {
 				Expression l = stack.pop();
 
 				if(map.containsKey(r)) r = map.get(r);
-				if(map.containsKey(l)) l = map.get(l);//testassdsads	
+				if(map.containsKey(l)) l = map.get(l);	
 				stack.push(new Operation(op, l, r));
 			} else {
 				for (int i = op.getArity(); i > 0; i--) {
