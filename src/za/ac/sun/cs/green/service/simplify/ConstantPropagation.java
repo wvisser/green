@@ -62,7 +62,6 @@ public class ConstantPropagation extends BasicService {
       invocations++;
       PropagationVisitor propagationVisitor = new PropagationVisitor();
 			expression.accept(propagationVisitor);
-      propagationVisitor.showStack();
 			Expression propagated = propagationVisitor.getExpression();
       return propagated;
     } catch (VisitorException x) {
@@ -86,14 +85,6 @@ public class ConstantPropagation extends BasicService {
     public Expression getExpression() {
 			return stack.pop();
 		}
-
-    public void showStack() {
-      System.out.println("STACK:");
-      for (Expression e : stack) {
-        System.out.println(e);
-      }
-      System.out.println("-------");
-    }
 
 		@Override
 		public void postVisit(IntConstant constant) {
@@ -132,7 +123,6 @@ public class ConstantPropagation extends BasicService {
         }
         stack.push(new Operation(op, l, r));
       }
-
     }
   }
 }
