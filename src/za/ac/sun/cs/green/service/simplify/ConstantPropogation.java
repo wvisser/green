@@ -172,13 +172,13 @@ public class ConstantPropogation extends BasicService {
     private static class ReplacementVisitor extends Visitor {
 
         private Stack<Expression> stack;
-        private HashMap<IntVariable, IntConstant> variables;
+        private HashMap<String, IntConstant> variables;
 
         public Expression getExpression() {
             return stack.pop();
         }
 
-        public ReplacementVisitor(HashMap<IntVariable, IntConstant> variables) {
+        public ReplacementVisitor(HashMap<String, IntConstant> variables) {
             this.stack = new Stack<>();
             this.variables = variables;
         }
