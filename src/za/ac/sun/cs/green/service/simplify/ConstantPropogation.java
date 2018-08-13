@@ -35,21 +35,19 @@ import za.ac.sun.cs.green.util.Configuration;
 
 public class ConstantPropogation  extends BasicService{
 
-
-
     private int invocations = 0;
 
     public ConstantPropogation(Green solver) {
         super(solver);
     }
 
-
     @Override
     public Set<Instance> processRequest(Instance instance) {
         @SuppressWarnings("unchecked")
         Set<Instance> result = (Set<Instance>) instance.getData(getClass());
+
         if (result == null) {
-            final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
+            // final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
             final Expression e = simplify(instance.getFullExpression(), map);
             final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
             result = Collections.singleton(i);
@@ -66,13 +64,14 @@ public class ConstantPropogation  extends BasicService{
 
     public Expression simplify(Expression expression, Map<Variable, Variable> map) {
         try {
-            log.log(Level.FINEST, "Before Simplifying: " + expression);
             invocations++;
+            log.log(Level.FINEST, "Before propogating: " + expression)
             SimpleVisitor simpleVisitor = new SimpleVisitor();
             expression.accept(simpleVisitor);
             expression = simpleVisitor.getExpression();
 
-            log.log(Level.FINEST, "After Simplifying: " + expression);
+            log.log(Level.FINEST, "After propogating: " + expression);
+            return expression;
         } catch (VisitorException x) {
             log.log(Level.SEVERE,
                     "encountered an exception -- this should not be happening!",x);
