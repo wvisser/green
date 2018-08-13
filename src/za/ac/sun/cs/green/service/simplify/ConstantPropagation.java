@@ -28,7 +28,7 @@ import za.ac.sun.cs.green.util.Reporter;
 public class ConstantPropagation extends BasicService {
 
 	/**
-	 * Number of times the slicer has been invoked.
+	 * Number of times the propagation and simplification tool has been invoked.
 	 */
 	private int invocations = 0;
 	private static boolean varLeft;
