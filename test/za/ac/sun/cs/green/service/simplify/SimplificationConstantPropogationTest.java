@@ -30,7 +30,7 @@ public class SimplificationConstantPropogationTest {
 			props.setProperty("green.service.sat", "(simplify sink)");
 			//props.setProperty("green.service.sat", "(canonize sink)");
 			props.setProperty("green.service.sat.simplify",
-					"za.ac.sun.cs.green.service.simplify.ConstantPropogation");
+					"za.ac.sun.cs.green.service.simplify.ConstantPropagation");
 			//props.setProperty("green.service.sat.canonize",
 			//		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
 			
@@ -179,8 +179,84 @@ public class SimplificationConstantPropogationTest {
 			check(o, "0==1");
 		}
 
+	@Test
+	public void test09() {
+		IntVariable x = new IntVariable("x", 0, 99);
+		IntVariable y = new IntVariable("y", 0, 99);
+		IntConstant c = new IntConstant(1);
+		IntConstant c2 = new IntConstant(10);
+		IntConstant c3 = new IntConstant(2);
+		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 1)
+		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : x + y
+		Operation o3 = new Operation(Operation.Operator.LT, o2, c2); // o3 : (x+y) < 10
+		Operation oi = new Operation(Operation.Operator.SUB, y, c); // oi : y-1
+		Operation o4 = new Operation(Operation.Operator.EQ, oi, c3); // o4 : y-1 = 2
+		Operation o5 = new Operation(Operation.Operator.AND, o1, o3); // o5 : (x = 1) && (x+y < 10)
+		Operation o = new Operation(Operation.Operator.AND, o5, o4); // o = (x = 1) && (x+y < 10) && (y-1 = 2)
+		// (x = 1) && (x+y < 10) && (y-1 = 2)
+		check(o, "0==1");
+	}
 
+	@Test
+	public void test10() {
+		IntVariable x = new IntVariable("x", 0, 99);
+		IntVariable y = new IntVariable("y", 0, 99);
+		IntConstant c = new IntConstant(5);
+		IntConstant c2 = new IntConstant(3);
+		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : (x = 5)
+		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : x + y
+		Operation o3 = new Operation(Operation.Operator.LT, o2, c2); // o3 : (x+y) < 3
+		Operation o = new Operation(Operation.Operator.AND, o1, o2); // (x = 5) && (x + y < 3)
+		check(o, "(x==5)&&(y<-2)");
+	}
 
+	@Test
+		public void test11() {
+			IntVariable x = new IntVariable("x", 0, 99);
+			IntConstant c = new IntConstant(2);
+			Operation o1 = new Operation(Operation.Operator.EQ, x, c);		
+			Operation o2 = new Operation(Operation.Operator.EQ, x, c);
+			Operation o = new Operation(Operation.Operator.AND, o1, o2);
+			
+			check(o, "x==2");
+		}
 
+	@Test
+		public void test12() {
+			IntVariable x = new IntVariable("x", 0, 99);
+			IntConstant c = new IntConstant(2);
+			Operation o1 = new Operation(Operation.Operator.EQ, x, c);		
+			Operation o2 = new Operation(Operation.Operator.EQ, x, c);
+			Operation o = new Operation(Operation.Operator.OR, o1, o2);
+			
+			check(o, "x==2");
+		}
+
+	@Test
+		public void test13() {
+			IntVariable x = new IntVariable("x", 0, 99);
+            IntConstant c = new IntConstant(2);
+            IntConstant c2 = new IntConstant(4);
+			Operation o1 = new Operation(Operation.Operator.DIV, x, c);		
+			Operation o2 = new Operation(Operation.Operator.EQ, o1, c2);
+			
+			check(o2, "x==8");
+		}
+
+	@Test
+		public void test14() {
+			IntVariable x = new IntVariable("x", 0, 99);
+            IntVariable y = new IntVariable("y", 0, 99);
+            IntConstant c = new IntConstant(2);
+            IntConstant c2 = new IntConstant(4);
+            IntConstant c3 = new IntConstant(1);
+			Operation o1 = new Operation(Operation.Operator.DIV, x, c);		
+			Operation o2 = new Operation(Operation.Operator.EQ, o1, c2);
+            Operation o3 = new Operation(Operation.Operator.ADD, x, y); //  x + y
+            Operation o4 = new Operation(Operation.Operator.EQ, o2, c3); // (x + y) = 1
+            Operation o = new Operation(Operation.Operator.AND, o4, o2); 
+
+			check(o, "(x==8)&&(y==-9)");
+		}
 
 }
