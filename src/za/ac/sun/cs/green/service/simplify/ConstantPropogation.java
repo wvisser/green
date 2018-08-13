@@ -58,16 +58,16 @@ public class ConstantPropogation extends BasicService {
 		try {
 			log.log(Level.FINEST, "Before Simplify: " + expression);
 			invocations++;
-			//OrderingVisitor orderingVisitor = new OrderingVisitor();
-			//expression.accept(orderingVisitor);
-			//expression = orderingVisitor.getExpression();
+			OrderingVisitor orderingVisitor = new OrderingVisitor();
+			expression.accept(orderingVisitor);
+			expression = orderingVisitor.getExpression();
 			log.log(Level.FINEST, "After Simplify: " + expression);
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
 					"encountered an exception -- this should not be happening!",
 					x);
 		}
-		return null;
+		return expression;
 	}
 
 	private static class OrderingVisitor extends Visitor {
