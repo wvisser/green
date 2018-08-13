@@ -1,4 +1,4 @@
-package za.ac.sun.cs.green.service.canonizer;
+package za.ac.sun.cs.green.service.simplify;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class ConstantPropogation extends BasicService {
 	 */
 	private int invocations = 0;
 
-	public ConstantPropogationService(Green solver) {
+	public ConstantPropogation(Green solver) {
 		super(solver);
 	}
 
@@ -143,7 +143,7 @@ public class ConstantPropogation extends BasicService {
 				Expression l = stack.pop();
 
 				if(map.containsKey(r)) r = map.get(r);
-				else(map.containsKey(l)) l = map.get(l);//testassdsads
+				else(map.containsKey(l)) l = map.get(l);//testassdsads	
 				stack.push(new Operation(op, l, r));
 			} else {
 				for (int i = op.getArity(); i > 0; i--) {
