@@ -95,14 +95,20 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			Expression left = stack.pop();
 			Expression right = stack.pop();
+			Expression left = stack.pop();
 			System.out.println("Left:" + left + " Right: " + right);
+
 			Operation.Operator nop = null;
 
 			switch (op) {
 			case EQ:
 				System.out.println("need to check for equality");
+				if (right == left) {
+					stack.push(TRUE);
+				} else {
+					stack.push(FALSE);
+				}
 				break;
 			case NE:
 				System.out.println("need to check for nonequality");
@@ -136,30 +142,30 @@ public class ConstantPropogation extends BasicService {
 				System.out.println("Default case!");
 				break;
 			}
-			if (nop != null) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				if ((r instanceof IntVariable)
-						&& (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(
-								((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
-				} else {
-					stack.push(operation);
-				}
-			} else if (op.getArity() == 2) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				stack.push(new Operation(op, l, r));
-			} else {
-				for (int i = op.getArity(); i > 0; i--) {
-					stack.pop();
-				}
-				stack.push(operation);
-			}
+			// if (nop != null) {
+			// 	Expression r = stack.pop();
+			// 	Expression l = stack.pop();
+			// 	if ((r instanceof IntVariable)
+			// 			&& (l instanceof IntVariable)
+			// 			&& (((IntVariable) r).getName().compareTo(
+			// 					((IntVariable) l).getName()) < 0)) {
+			// 		stack.push(new Operation(nop, r, l));
+			// 	} else if ((r instanceof IntVariable)
+			// 			&& (l instanceof IntConstant)) {
+			// 		stack.push(new Operation(nop, r, l));
+			// 	} else {
+			// 		stack.push(operation);
+			// 	}
+			// } else if (op.getArity() == 2) {
+			// 	Expression r = stack.pop();
+			// 	Expression l = stack.pop();
+			// 	stack.push(new Operation(op, l, r));
+			// } else {
+			// 	for (int i = op.getArity(); i > 0; i--) {
+			// 		stack.pop();
+			// 	}
+			// 	stack.push(operation);
+			// }
 		}
 	}
 }
