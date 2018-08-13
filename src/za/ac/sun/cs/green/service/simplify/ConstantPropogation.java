@@ -532,14 +532,6 @@ public class ConstantPropogation extends BasicService {
                     } else {
                         return 0;
                     }
-                case LT:
-                    if (highBound < conValue) {
-                        return 1;
-                    } else if (lowBound >= conValue) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
             }
 
             return 0;
