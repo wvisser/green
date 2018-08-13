@@ -122,7 +122,7 @@ public class ConstantPropogation extends BasicService {
 					if (stack.size() >= 2) {
 						Expression r = stack.pop();
 						Expression l = stack.pop();
-						System.println(r + " " + l)
+						System.println(r + " " + l);
 					}
 					break;
 				case AND:
