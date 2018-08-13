@@ -36,8 +36,6 @@ import za.ac.sun.cs.green.service.simplify.ConstantPropagationTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	//SATCanonizerTest.class,
-	//SATZ3Test.class,
 	ConstantPropagationTest.class
 })
 
