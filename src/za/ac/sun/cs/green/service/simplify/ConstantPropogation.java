@@ -130,6 +130,8 @@ public class ConstantPropogation extends BasicService {
                                 * (((Operation) r).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         r = l2;
                     }
+                    System.out.println("adding variables " + r + " to list with value " + l);
+                    variables.put((IntVariable) r, (IntConstant) l);
                 } else if (l instanceof Operation && r instanceof IntConstant) {
                     Expression r2 = ((Operation) l).getOperand(1);
                     Expression l2 = ((Operation) l).getOperand(0);
@@ -142,6 +144,8 @@ public class ConstantPropogation extends BasicService {
                                 * (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         l = l2;
                     }
+                    System.out.println("adding variables " + l + " to list with value " + r);
+                    variables.put((IntVariable) l, (IntConstant) r);
                 }
             }
             stack.push(new Operation(op, l, r));
@@ -187,7 +191,7 @@ public class ConstantPropogation extends BasicService {
                     if (variables.containsKey((IntVariable) r)) r = variables.get((IntVariable) r);
                 }
             }
-            stack.push(new Operation(operation.getOperator(), l, r));
+            stack.push(new Operation(operation.getOperator(), r, l));
         }
     }
     
