@@ -50,7 +50,7 @@ public class ConstantPropogation  extends BasicService{
         Set<Instance> result = (Set<Instance>) instance.getData(getClass());
         if (result == null) {
             final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-            final Expression e = canonize(instance.getFullExpression(), map);
+            final Expression e = simplify(instance.getFullExpression(), map);
             final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
             result = Collections.singleton(i);
             instance.setData(getClass(), result);
@@ -117,22 +117,19 @@ public class ConstantPropogation  extends BasicService{
 
         public void beforeCalc(Operation operation) {
             Operation.Operator op = operation.getOperator();
-            if (op.equals(Operation.Operation.EQ)) {
+            if (op.equals(Operation.operation.EQ)) {
 
 
             }
 
         }
 
-
-        @Override
         public void beforeOp(Operation operation) throws VisitorException {
             Operation.Operator op = operation.getOperator();
             Operation.Operator nop = null;
             switch (op) {
             case EQ:
                 nop = Operation.Operator.EQ;
-
                 break;
             case NE:
                 nop = Operation.Operator.NE;
@@ -154,8 +151,8 @@ public class ConstantPropogation  extends BasicService{
             }
 
             if (nop.equals(Operation.Operator.EQ)) {
-                Expression l = operation.getOperator(0);
-                Expression r =  operation.getOperator(1);
+                Expression l = operation.getOperand(0);
+                Expression r = operation.getOperand(1);
 
                 if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
                     map.put((IntVariable) l, (IntConstant) r);
@@ -171,6 +168,7 @@ public class ConstantPropogation  extends BasicService{
         @Override
         public void postVisit(Operation operation) {
 
+            Operation.Operator op = operation.getOperator(); 
             if (stack.size() >= 2) {
                 Expression r = stack.pop();
                 Expression l = stack.pop();
