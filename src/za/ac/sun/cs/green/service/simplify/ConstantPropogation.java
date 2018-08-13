@@ -271,21 +271,37 @@ private static class ConstantPropogationVisitor extends Visitor {
                 stack.push(new Operation(op, l, r));
             }
             logstr += "\n__________\n";
-        /*} else if (op.getArity() == 2) {
-            Expression r = stack.pop();
-            Expression l = stack.pop();
-            logstr += "Arity ASSIGNMENT : ";
-            logstr += (l + op.toString() + r + "\n");
-            stack.push(new Operation(op, l, r));
-        } else {
-            for (int i = op.getArity(); i > 0; i--) {
-                stack.pop();
-            }
-            logstr += "Another Arity ASSIGNMENT : ";
-            logstr += (operation + "\n");
-            stack.push(operation);
-        }*/
     }
+
+}
+
+/* Goal Simplify expressions
+ * Must traverse an expression already visited by ConstantPropogationVisitor
+ */
+
+private static class simplificationVisitor extends Visitor {
+    private Stack<Expression> stack;
+    private String logstr;
+
+    public simplificationVisitor () {
+
+    }
+    public String getLogStr() {
+        return logstr;
+    }
+    @Override
+    public void postVisit(Constant constant) {
+         stack.push(constant);
+    }
+    @Override
+    public void postVisit(Variable variable) {
+         stack.push(variable);
+    }
+    /*
+    */
+    @Override
+     public void postVisit(Operation operation) throws VisitorException {
+}
 
 }
 
