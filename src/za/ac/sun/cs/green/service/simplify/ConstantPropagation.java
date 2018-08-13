@@ -53,11 +53,21 @@ public class ConstantPropagation extends BasicService {
         try {
             log.log(Level.FINEST, "Before Constant Propagation: " + expression);
             invocations++;
+            HashMap<IntVariable, IntConstant> variables = new HashMap<IntVariable, IntConstant>();
+
+            //Search for assignments
+            AssignmentVisitor assignmentVisitor = new AssignmentVisitor(variables);
+            expression.accept(assignmentVisitor);
+            expression = assignmentVisitor.getExpression();
+
+
+            //Propagate assignments
             OrderingVisitor orderingVisitor = new OrderingVisitor();
             expression.accept(orderingVisitor);
             expression = orderingVisitor.getExpression();
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
             
+            //Simplify
             expression = multipleSimplifications(expression, orderingVisitor);
             return expression;
         } catch (VisitorException x) {
@@ -79,36 +89,81 @@ public class ConstantPropagation extends BasicService {
         
         log.log(Level.FINEST, "After Simplification: " + expression);
 
-        while(simplified || propagated) {
-            orderingVisitor = new OrderingVisitor();
-            expression.accept(orderingVisitor);
-            expression = orderingVisitor.getExpression();
-            propagated = orderingVisitor.getPropagated();
-            log.log(Level.FINEST, "After Constant Propagation: " + expression);
-                    // DOUBLE CHECK WHAT CHANGES WERE MADE. MAY HAVE SOMETHING TO DO WITH STATIC OR BECAUSE IM USING LOG. TRY SOUT
-            simplifyingVisitor = new SimplifyingVisitor();
-            expression.accept(simplifyingVisitor);
-            expression = simplifyingVisitor.getExpression();
-            simplified = simplifyingVisitor.getSimplified();
-            log.log(Level.FINEST, "After Simplification: " + expression);
-        }
+        // while(simplified || propagated) {
+            // orderingVisitor = new OrderingVisitor();
+            // expression.accept(orderingVisitor);
+            // expression = orderingVisitor.getExpression();
+            // propagated = orderingVisitor.getPropagated();
+            // log.log(Level.FINEST, "After Constant Propagation: " + expression);
+            // simplifyingVisitor = new SimplifyingVisitor();
+            // expression.accept(simplifyingVisitor);
+            // expression = simplifyingVisitor.getExpression();
+            // simplified = simplifyingVisitor.getSimplified();
+            // log.log(Level.FINEST, "After Simplification: " + expression);
+        // }
         return expression;
-	}
+    }
+    
+    private static class AssignmentVisitor extends Visitor {
+        private Stack<Expression> stack;
+        private HashMap<IntVariable, IntConstant> variables;
+
+        public OrderingVisitor(HashMap<IntVariable, IntConstant> map) {
+            stack = new Stack<Expression>();
+            variables = map;
+        }
+
+        public Expression getExpression() {
+            Expression finalExp = stack.pop();
+            System.out.println("Final expression (assignment) is " + finalExp);
+            return finalExp;
+        }
+
+        @Override
+        public void postVisit(IntConstant constant) {
+            stack.push(constant);
+        }
+
+        @Override
+        public void postVisit(IntVariable variable) {
+            // If variable exists in HashMap (it has been assigned a value)
+            stack.push(variable);
+
+        }
+
+        @Override
+        public void postVisit(Operation operation) throws VisitorException {
+            Operation.Operator op = operation.getOperator();
+            Expression r = stack.pop();
+            Expression l = stack.pop();
+
+            // If operation is an EQ type. Add the equality to the HashMap
+            if (op == Operation.Operator.EQ) {
+                if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+                    variables.put((IntVariable) l, (IntConstant) r);
+                } else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
+                    variables.put((IntVariable) r, (IntConstant) l);
+                }
+                stack.push(new Operation(op, l, r));
+            }
+        }
+
+    }
 
     private static class OrderingVisitor extends Visitor {
         private Stack<Expression> stack;
         private HashMap<IntVariable, IntConstant> variables;
         private Boolean propagated;
 
-        public OrderingVisitor() {
+        public OrderingVisitor(HashMap<IntVariable, IntConstant> map) {
             stack = new Stack<Expression>();
-            variables = new HashMap<IntVariable, IntConstant>();
+            variables = map;
             propagated = false;
         }
 
         public Expression getExpression() {
             Expression finalExp = stack.pop();
-            System.out.println("Final expression is " + finalExp);
+            System.out.println("Final expression (propagation) is " + finalExp);
             return finalExp;
         }
 
@@ -124,12 +179,13 @@ public class ConstantPropagation extends BasicService {
         @Override
         public void postVisit(IntVariable variable) {
             // If variable exists in HashMap (it has been assigned a value)
-            if (variables.containsKey(variable)) {
-                stack.push(variables.get(variable));
-                propagated = true;
-            } else {
-                stack.push(variable);
-            }
+            // if (variables.containsKey(variable)) {
+            //     stack.push(variables.get(variable));
+            //     propagated = true;
+            // } else {
+            //     stack.push(variable);
+            // }
+            stack.push(variable);
         }
 
         @Override
@@ -142,10 +198,8 @@ public class ConstantPropagation extends BasicService {
             // future
             if (op == Operation.Operator.EQ) {
                 if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
-                    variables.put((IntVariable) l, (IntConstant) r);
                     stack.push(new Operation(op, l, r));
                 } else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
-                    variables.put((IntVariable) r, (IntConstant) l);
                     stack.push(new Operation(op, l, r));
                 } else {
                     stack.push(new Operation(op, l, r));
