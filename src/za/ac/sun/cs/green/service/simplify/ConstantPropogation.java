@@ -112,9 +112,15 @@ public class ConstantPropogation extends BasicService {
                 // simple assignment
                 if (r instanceof IntConstant && l instanceof IntVariable) {
                     System.out.println("adding variable " + l + " to list with value " + r);
+                    if (variables.containsKey((IntVariable) l)) {
+                        stack.push(new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1)));
+                    }
                     variables.put((IntVariable) l, (IntConstant) r);
                 } else if (r instanceof IntVariable && l instanceof IntConstant) {
                     System.out.println("adding variable " + r + " to list with value " + l);
+                    if (variables.containsKey((IntVariable) r)) {
+                        stack.push(new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1)));
+                    }
                     variables.put((IntVariable) r, (IntConstant) l);
                 }
                 // complex assignment (1 +/- x) = 2, 2 = (1 +/- x)
@@ -125,13 +131,19 @@ public class ConstantPropogation extends BasicService {
                         l = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) l2).getValue()
                                 * (((Operation) r).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         r = r2;
-                        System.out.println("adding variables " + r + " to list with value " + l);
+                        System.out.println("adding variable " + r + " to list with value " + l);
+                        if (variables.containsKey((IntVariable) r)) {
+                            stack.push(new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1)));
+                        }
                         variables.put((IntVariable) r, (IntConstant) l);
                     } else if (r2 instanceof IntConstant && l2 instanceof IntVariable) {
                         l = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) r2).getValue()
                                 * (((Operation) r).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         r = l2;
-                        System.out.println("adding variables " + r + " to list with value " + l);
+                        System.out.println("adding variable " + r + " to list with value " + l);
+                        if (variables.containsKey((IntVariable) r)) {
+                            stack.push(new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1)));
+                        }
                         variables.put((IntVariable) r, (IntConstant) l);
                     }
                 } else if (l instanceof Operation && r instanceof IntConstant) {
@@ -141,13 +153,19 @@ public class ConstantPropogation extends BasicService {
                         r = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) l2).getValue()
                                 * (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         l = r2;
-                        System.out.println("adding variables " + l + " to list with value " + r);
+                        System.out.println("adding variable " + l + " to list with value " + r);
+                        if (variables.containsKey((IntVariable) l)) {
+                            stack.push(new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1)));
+                        }
                         variables.put((IntVariable) l, (IntConstant) r);
                     } else if (r2 instanceof IntConstant && l2 instanceof IntVariable) {
                         r = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) r2).getValue()
                                 * (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         l = l2;
-                        System.out.println("adding variables " + l + " to list with value " + r);
+                        System.out.println("adding variable " + l + " to list with value " + r);
+                        if (variables.containsKey((IntVariable) l)) {
+                            stack.push(new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1)));
+                        }
                         variables.put((IntVariable) l, (IntConstant) r);
                     }
                 }
@@ -228,7 +246,8 @@ public class ConstantPropogation extends BasicService {
         }
 
         @Override
-        public void postVisit(Variable variable) {System.out.println("true-true and");
+        public void postVisit(Variable variable) {
+            System.out.println("true-true and");
             stack.push(variable);
         }
 
@@ -246,7 +265,8 @@ public class ConstantPropogation extends BasicService {
             // Operations on two constants
             if (r instanceof IntConstant && l instanceof IntConstant) {
                 switch (op) {
-                    case LT:System.out.println("true-true and");
+                    case LT:
+                        System.out.println("true-true and");
                         if (r.compareTo(l) < 0) {
                             stack.push(o_true);
                         } else {
@@ -309,18 +329,14 @@ public class ConstantPropogation extends BasicService {
                             System.out.println("both true and");
                             stack.push(o_true);
                             return;
-                        } else if ((
-                                r.equals(o_false) && l.equals(o_false)) ||
-                                r.equals(o_false) && l.equals(o_true) ||
-                                r.equals(o_true) && l.equals(o_false)) {
+                        } else if ((r.equals(o_false) && l.equals(o_false))
+                                || r.equals(o_false) && l.equals(o_true)
+                                || r.equals(o_true) && l.equals(o_false)) {
                             System.out.println("either false and");
                             stack.push(o_false);
                             return;
                         } else if (r.equals(o_false) || l.equals(o_false)) {
                             stack.push(o_false);
-                            return;
-                        } else {
-                            stack.push(l.equals(o_true) ? r : l);
                             return;
                         }
                     case OR:
@@ -328,18 +344,11 @@ public class ConstantPropogation extends BasicService {
                             System.out.println("both false or");
                             stack.push(o_false);
                             return;
-                        } else if ((
-                                r.equals(o_true) && l.equals(o_true)) ||
-                                r.equals(o_false) && l.equals(o_true) ||
-                                r.equals(o_true) && l.equals(o_false)) {
+                        } else if ((r.equals(o_true) && l.equals(o_true))
+                                || r.equals(o_false) && l.equals(o_true)
+                                || r.equals(o_true) && l.equals(o_false)) {
                             System.out.println("either true or");
                             stack.push(o_true);
-                            return;
-                        } else if (r.equals(o_false) || l.equals(o_false)) {
-                            stack.push(o_false);
-                            return;
-                        } else {
-                            stack.push(l.equals(o_true) ? r : l);
                             return;
                         }
                     default:
