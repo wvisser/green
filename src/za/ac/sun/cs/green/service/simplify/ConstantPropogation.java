@@ -1,6 +1,5 @@
 package za.ac.sun.cs.green.service.simplify;
 
-import org.chocosolver.solver.constraints.nary.nValue.amnv.mis.F;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.*;
@@ -23,7 +22,6 @@ public class ConstantPropogation extends BasicService {
 
     @Override
     public Set<Instance> processRequest(Instance instance) {
-        System.out.println("Processing request");
         @SuppressWarnings("unchecked")
         Set<Instance> result = (Set<Instance>) instance.getData(getClass());
         if (result == null) {
@@ -41,24 +39,24 @@ public class ConstantPropogation extends BasicService {
     }
 
     public Expression simplify(Expression expression) {
-        System.out.println("Simplifying");
         try {
-            System.out.println("######################################################################################");
             TreeMap<IntVariable, IntConstant> map = new TreeMap<>();
             invocations++;
             log.log(Level.FINEST, "Before Simplification: " + expression);
             SimplificationVisitor simplificationVisitor = new SimplificationVisitor(map);
             expression.accept(simplificationVisitor);
             Expression simplified = simplificationVisitor.getExpression();
-            while (!simplified.equals(expression)) {
+            while (!simplified.equals(expression) || simplificationVisitor.madeChange) {
                 expression = simplified;
+                simplificationVisitor = new SimplificationVisitor(map);
+                simplified.accept(simplificationVisitor);
+                simplified = simplificationVisitor.getExpression();
                 simplificationVisitor = new SimplificationVisitor(map);
                 simplified.accept(simplificationVisitor);
                 simplified = simplificationVisitor.getExpression();
             }
             log.log(Level.FINEST, "Original After Simplification" + expression);
             log.log(Level.FINEST, "Simplified After Simplification: " + simplified);
-            System.out.println("######################################################################################");
             return simplified;
         } catch (VisitorException x) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
@@ -74,6 +72,11 @@ public class ConstantPropogation extends BasicService {
         private TreeMap<IntVariable, Operation> constraintsMap;
         public boolean madeChange;
 
+        /**
+         * Constructor for the SimplificationVisitor object.
+         *
+         * @param map a TreeMap containing values for variables that have already been defined.
+         */
         public SimplificationVisitor(TreeMap<IntVariable, IntConstant> map) {
             stack = new Stack<Expression>();
             opStack = new Stack<>();
@@ -82,6 +85,11 @@ public class ConstantPropogation extends BasicService {
             madeChange = false;
         }
 
+        /**
+         * Builds the simplified expression and returns it.
+         *
+         * @return the simplified expression
+         */
         public Expression getExpression() {
             if (opStack.size() == 0) {
                 return null;
@@ -93,9 +101,16 @@ public class ConstantPropogation extends BasicService {
                 opLeft  = (Operation) simplify(opLeft);
                 opStack.push(new Operation(Operation.Operator.AND, opLeft, opRight));
             }
-            return (Operation) simplify(opStack.pop());
+            return simplify(opStack.pop());
         }
 
+        /**
+         * Propagates constants for the current operation and pushes the operation to the
+         * operation stack if applicable.
+         *
+         * @param operation the operation which must be processed
+         * @throws VisitorException
+         */
         @Override
         public void preVisit(Operation operation) throws VisitorException {
             switch (operation.getOperator()) {
@@ -120,25 +135,6 @@ public class ConstantPropogation extends BasicService {
             opStack.push(new Operation(operation.getOperator(), l, r));
         }
 
-        @Override
-        public void preVisit(IntConstant constant) {
-        }
-
-        @Override
-        public void preVisit(IntVariable variable) {
-        }
-
-        @Override
-        public void postVisit(IntConstant constant) {
-        }
-
-        @Override
-        public void postVisit(IntVariable variable) {
-        }
-
-        @Override
-        public void postVisit(Operation operation) {
-        }
 
         private Expression propagateConstants(Expression e) {
             if ((e instanceof IntConstant) || (e instanceof IntVariable)) {
@@ -151,13 +147,19 @@ public class ConstantPropogation extends BasicService {
 
             if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
                 if (operation.getOperator() == Operation.Operator.EQ) {
-                    map.put((IntVariable) l, (IntConstant) r);
+                    if (!map.containsKey(l)) {
+                        map.put((IntVariable) l, (IntConstant) r);
+                        madeChange = true;
+                    }
                 } else {
                     constraintsMap.put((IntVariable) l, operation);
                 }
             } else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
                 if (operation.getOperator() == Operation.Operator.EQ) {
-                    map.put((IntVariable) r, (IntConstant) l);
+                    if (!map.containsKey(r)) {
+                        map.put((IntVariable) r, (IntConstant) l);
+                        madeChange = true;
+                    }
                 } else {
                     constraintsMap.put((IntVariable) r, operation);
                 }
@@ -182,26 +184,145 @@ public class ConstantPropogation extends BasicService {
             Operation trueOp = new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(0));
             Operation falseOp = new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1));
 
+            Operation.Operator operator = operation.getOperator();
             Expression l = operation.getOperand(0);
             Expression r = operation.getOperand(1);
 
-            if ((l instanceof IntConstant) && (r instanceof IntConstant)) {
-                System.out.println("Simplifying constant operation");
-                return simplify_constant_operation(operation);
+            if (((l instanceof IntVariable) && (r instanceof IntConstant)) || ((l instanceof IntConstant) && (r instanceof IntVariable))) {
+                operation = (Operation) propagateConstants(operation);
+                operator = operation.getOperator();
+                l = operation.getOperand(0);
+                r = operation.getOperand(1);
+
             }
 
-            if ((operation.getOperator() == Operation.Operator.AND) && (l instanceof Operation) && (r instanceof Operation)) {
-                if (l.equals(trueOp) && r.equals(trueOp)) {
-                    return trueOp;
-                } else if (l.equals(falseOp) || r.equals(falseOp)) {
-                    return falseOp;
+            // In the case where both l and r are constants, we can evaluate absolutely.
+            if ((l instanceof IntConstant) && (r instanceof IntConstant)) {
+                return SimplifyConstantOperation(operation);
+            }
+
+            // Try to replace variables
+            if ((l instanceof IntVariable) && (r instanceof IntVariable)) {
+                if (map.containsKey(l)) {
+                    l = map.get(l);
                 }
+                if (map.containsKey(r)) {
+                    r = map.get(r);
+                }
+            }
+
+            // Eliminate all the cases where there is nothing to do
+            if (((l instanceof IntVariable) && (r instanceof IntVariable))
+                    || ((l instanceof Operation)   && (r instanceof IntVariable))
+                    || ((l instanceof IntVariable) && (r instanceof Operation))
+                    || ((l instanceof IntVariable) && (r instanceof IntConstant))
+                    || ((l instanceof IntConstant) && (r instanceof IntVariable))) {
+                return operation;
+            }
+
+
+            switch (operator) {
+                case AND:
+                    if (falseOp.equals(l) || falseOp.equals(r)) {
+                        return falseOp;
+                    } else if (trueOp.equals(l) && trueOp.equals(r)) {
+                        return trueOp;
+                    } else {
+                        return operation;
+                    }
+                case OR:
+                    if (trueOp.equals(l) || trueOp.equals(r)) {
+                        return trueOp;
+                    }
+                case EQ:
+                case GT:
+                case GE:
+                case LT:
+                case LE:
+                case NE:
+                    return evaluateExpression(operation);
             }
 
             return e;
         }
 
-        private Operation simplify_constant_operation(Operation operation) {
+        /**
+         * This method carries over constants, i.e. x + 1 == 10 would become x == 9
+         */
+        private Expression evaluateExpression(Operation operation) {
+            Expression l = operation.getOperand(0);
+            Expression r = operation.getOperand(1);
+            Expression newL = null;
+            Expression newR = null;
+
+            if (l instanceof IntConstant) {
+                newL = new IntConstant(((IntConstant) l).getValue());
+                if (!(r instanceof Operation)) {
+                    log.log(Level.SEVERE, "Invalid expression in evaluateExpression: " + operation);
+                    return operation;
+                }
+                Operation rop = (Operation) r;
+                for (Expression e : rop.getOperands()) {
+                    if (e instanceof IntConstant) {
+                        switch (rop.getOperator()) {
+                            case ADD:
+                                newL = new IntConstant(((IntConstant) l).getValue() - ((IntConstant) e).getValue());
+                                break;
+                            case SUB:
+                                newL = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) e).getValue());
+                                break;
+                            case MUL:
+                                if ((((IntConstant) l).getValue() % ((IntConstant) e).getValue()) == 0) {
+                                    newL = new IntConstant(((IntConstant) l).getValue() / ((IntConstant) e).getValue());
+                                }
+                                break;
+                            case DIV:
+                                newL = new IntConstant(((IntConstant) l).getValue() * ((IntConstant) e).getValue());
+                        }
+                    } else {
+                        newR = e;
+                    }
+                }
+            } else if (r instanceof IntConstant) {
+                newR = new IntConstant(((IntConstant) r).getValue());
+                if (!(l instanceof Operation)) {
+                    log.log(Level.SEVERE, "Invalid expression in evaluateExpression: " + operation);
+                    return operation;
+                }
+                Operation lop = (Operation) l;
+                for (Expression e : lop.getOperands()) {
+                    if (e instanceof IntConstant) {
+                        switch (lop.getOperator()) {
+                            case ADD:
+                                newR = new IntConstant(((IntConstant) r).getValue() - ((IntConstant) e).getValue());
+                                break;
+                            case SUB:
+                                newR = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) e).getValue());
+                                break;
+                            case MUL:
+                                if ((((IntConstant) r).getValue() % ((IntConstant) e).getValue()) == 0) {
+                                    newR = new IntConstant(((IntConstant) r).getValue() / ((IntConstant) e).getValue());
+                                }
+                                break;
+                            case DIV:
+                                newR = new IntConstant(((IntConstant) r).getValue() * ((IntConstant) e).getValue());
+                        }
+                    } else {
+                        newL = e;
+                    }
+                }
+            }
+
+            return new Operation(operation.getOperator(), newL, newR);
+        }
+
+        /**
+         * If both operands of an expression are constants, the value of the expression is fully determined. This method
+         * calculates that value.
+         * @param operation the operation that must be simplified
+         * @return the simplified operation
+         */
+        private Expression SimplifyConstantOperation(Operation operation) {
             Operation trueOp = new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(0));
             Operation falseOp = new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1));
             int l = ((IntConstant) operation.getOperand(0)).getValue();
@@ -225,13 +346,15 @@ public class ConstantPropogation extends BasicService {
                 case NE:
                     if (l != r) return trueOp;
                     else        return falseOp;
+                case ADD:
+                    return new IntConstant(l+r);
+                case MUL:
+                    return new IntConstant(l*r);
+                case SUB:
+                    return new IntConstant(l-r);
                 default:
                     return operation;
             }
-        }
-
-        public boolean hasMadeChange() {
-            return madeChange;
         }
 
     }
