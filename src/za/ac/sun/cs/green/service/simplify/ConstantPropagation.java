@@ -127,10 +127,6 @@ public class ConstantPropagation extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();		
-
-				if (((Operation)r).getOperator() == ADD) {
-					System.out.println("Add");
-				}
 				
 				switch (op) {
 					case EQ:
