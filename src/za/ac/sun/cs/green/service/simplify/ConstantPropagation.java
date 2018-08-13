@@ -115,9 +115,9 @@ public class ConstantPropagation extends BasicService {
 					//form the new operation and push it to the stack
 					Operation nop = new Operation(operation.getOperator(), left, right);
 					stack.push(nop);
-				} else if (left instanceof IntVariable || right instanceof IntVariable) {
-					// If the the current expression is not of the type above create a new expression and add
-					// it to the hashmap
+				} else {
+					// If the the current expression is not of the type above create a new expression and push
+					// it to the stack
 					if (hashmap.containsKey(left)) {
 						 left = hashmap.get(left);
 					} else if (hashmap.containsKey(right)) {
@@ -125,10 +125,7 @@ public class ConstantPropagation extends BasicService {
 					}
 					Operation nop = new Operation(operation.getOperator(), left, right);
 					stack.push(nop);
-				} else {
-					Operation nop = new Operation(operation.getOperator(), left, right);
-					stack.push(nop);
-				}
+				} 
 			} 
 		}
 	}
