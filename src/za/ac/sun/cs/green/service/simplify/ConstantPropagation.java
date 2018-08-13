@@ -164,7 +164,7 @@ public class ConstantPropagation {
 						conjuncts.add(x);
 					}
 				}
-				System.out.println("Expression x," x);
+				System.out.println("Expression x, " + x);
 				SortedSet<Expression> newConjuncts = processBounds();
 //				new TreeSet<Expression>();
 				Expression c = null;
