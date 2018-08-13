@@ -65,7 +65,7 @@ public class ConstantPropogation  extends BasicService{
     public Expression simplify(Expression expression, Map<Variable, Variable> map) {
         try {
             invocations++;
-            log.log(Level.FINEST, "Before propogating: " + expression)
+            log.log(Level.FINEST, "Before propogating: " + expression);
             SimpleVisitor simpleVisitor = new SimpleVisitor();
             expression.accept(simpleVisitor);
             expression = simpleVisitor.getExpression();
