@@ -10,6 +10,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
+import java.util.ArrayList;
 
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
@@ -59,16 +60,19 @@ public class ConstantPropagation extends BasicService {
 		try {
 			log.log(Level.FINEST, "Before ConstantPropagation: " + expression);
 			invocations++;
-			OrderingVisitor orderingVisitor = new OrderingVisitor();
-			expression.accept(orderingVisitor);
-			expression = orderingVisitor.getExpression();
-			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
-			expression.accept(canonizationVisitor);
-			Expression simplified = canonizationVisitor.getExpression();
-			if (simplified != null) {
+			//OrderingVisitor orderingVisitor = new OrderingVisitor();
+			//expression.accept(orderingVisitor);
+			//expression = orderingVisitor.getExpression();
+			ListVisitor listVisitor = new ListVisitor();
+			expression.accept(ListVisitor);
+			expression = listVisitor.getExpression();
+			PropagationVisitor propagationVisitor = new PropagationVisitor();
+			expression.accept(propagationVisitor);
+			Expression simplified = propagationVisitor.getExpression();
+			/*if (simplified != null) {
 				simplified = new Renamer(map,
-						canonizationVisitor.getVariableSet()).rename(simplified);
-			}
+						propagationVisitor.getVariableSet()).rename(simplified);
+			}*/
 			log.log(Level.FINEST, "After ConstantPropagation: " + simplified);
 			return simplified;
 		} catch (VisitorException x) {
@@ -79,6 +83,52 @@ public class ConstantPropagation extends BasicService {
 		return null;
 	}
 
+	private static class ListVisitor extends Visitor { //this is where we write the functions used to propogate the constants
+		private Stack<Expression> stack;
+		private ArrayList<Expression> varsandvals;
+		
+		public ListVisitor() {
+			stack = new Stack<Expression>();
+			varsandvals = new ArrayList<Expression>();
+		}
+									
+		public ArrayList<Expression> getList() {
+			while (!stack.isEmpty()) {
+				Expression var = stack.pop();
+				if (var instanceof Operation) {
+				if (((Operation)var).getOperator() == Operation.Operator.EQ) {
+					Expression var2 = stack.pop();
+					Expression var3 = stack.pop();
+					if (var2 instanceof Constant && var3 instanceof IntVariable)  {
+						varsandvals.add(var3);
+						varsandvals.add(var2);
+					} else if (var2 instanceof IntVariable && var3 instanceof Constant) {
+						varsandvals.add(var2);
+						varsandvals.add(var3);
+					}
+				}
+				}
+			}
+			return varsandvals;
+		}
+
+		@Override
+		public void postVisit(Constant constant) {
+			stack.push(constant);
+		}
+
+		@Override
+		public void postVisit(Variable variable) {
+			stack.push(variable);
+		}
+
+		@Override
+		public void postVisit(Operation operation) throws VisitorException {
+			stack.push(operation);
+		}
+
+	}
+/*
 	private static class OrderingVisitor extends Visitor {
 
 		private Stack<Expression> stack;
@@ -154,9 +204,49 @@ public class ConstantPropagation extends BasicService {
 		}
 
 	}
+*/
+	private static class PropagationVisitor extends Visitor {
+		private Stack<Expression> stack;
+		private int[] count;
+		ArrayList <Expression> listVarVal;
 
-	private static class CanonizationVisitor extends Visitor {
+		public PropagationVisitor(ArrayList<Expression> x) {
+			stack = new Stack<Expression>();
+			this.listVarVal = x;
+			count = new int[listVarVal.size()];
+		}
 
+		public Expression getExpression() {
+			Expression expr = stack.pop();
+			return expr;
+		}
+
+		@Override
+		public void postVisit(Constant constant) {
+			stack.push(constant);
+		}
+
+		@Override
+		public void postVisit(Variable var) {
+			if (varsandvals.contains(variable)) {
+			   	int index = varsandvals.indexOf(variable)/2;
+			if (count[index] > 0) {
+				stack.push(varsandvals.get(index+1));
+			} else {
+				stack.push(variable);
+   			}
+   				count[index]++;
+   			} else {
+				stack.push(variable);
+			}
+		}
+
+		@Override
+		public void postVisit(Operator op) {
+			stack.push(op);
+		}
+
+/*
 		private Stack<Expression> stack;
 
 		private SortedSet<Expression> conjuncts;
@@ -177,7 +267,7 @@ public class ConstantPropagation extends BasicService {
 
 		private boolean linearInteger;
 
-		public CanonizationVisitor() {
+		public PropagationVisitor() {
 			stack = new Stack<Expression>();
 			conjuncts = new TreeSet<Expression>();
 			variableSet = new TreeSet<IntVariable>();
@@ -631,7 +721,7 @@ public class ConstantPropagation extends BasicService {
 				return new Operation(p, l, r);
 			}
 		}
-
+	*/
 	}
 
 	private static class Renamer extends Visitor {
@@ -676,7 +766,7 @@ public class ConstantPropagation extends BasicService {
 			}
 			stack.push(new Operation(operation.getOperator(), operands));
 		}
-
+	
 	}
 
 }
