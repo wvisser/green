@@ -209,6 +209,12 @@ public class ConstantPropagation extends BasicService {
                     stack.push(new Operation(op, l, r));
                 } else {
                     System.out.println("Propagation: " + l + " " + op + " " + r);
+                    if (variables.containsKey(r)) {
+                        r = variables.get(r);
+                    }
+                    if (variables.containsKey(l)) {
+                        l = variables.get(l);
+                    }
                     stack.push(new Operation(op, l, r));
                 }
             } else {
