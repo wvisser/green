@@ -31,13 +31,18 @@ public class ConstantPropagation {
 	}*/
 
 	public static Expression constantPropagation(Expression expression) {
-		OrderingVisitor orderingVisitor = new OrderingVisitor();
+		try {
+			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
 			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
 			expression.accept(canonizationVisitor);
 			Expression simplified = canonizationVisitor.getExpression();
 			return simplified;
+		} catch (VisitorException x) {
+			log.log(Level.SEVERE,"encountered an exception -- this should not be happening!", x);
+		}
+		return null;
 	}
 
 	private static class OrderingVisitor extends Visitor {
