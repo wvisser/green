@@ -134,9 +134,10 @@ public class ConstantPropogation extends BasicService {
 				Operation e = new Operation(operation.getOperator(), left, right);
 
                 boolean isTrue = false;
-                rightValue = right.getValue();
-                leftValue = left.getValue();
+
                 if (left instanceof IntVariable && right instanceof IntVariable) {
+                    rightValue = right.getValue();
+                    leftValue = left.getValue();
                     switch (op) {
                     case EQ:
                         isTrue = (leftValue == rightValue);
