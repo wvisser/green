@@ -20,7 +20,7 @@ RUN git clone https://github.com/wiesnerbernard/green
 #
 WORKDIR /green
 RUN git fetch
-RUN git checkout constanPropagation
+RUN git checkout constantPropagation
 WORKDIR /
 
 # Download and extract Z3
