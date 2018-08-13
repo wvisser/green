@@ -44,34 +44,32 @@ public class ConstantPropogation extends BasicService {
     }
 
     public Expression propogate(Expression expression) {
+
         Expression propogated = null;
 
         try {
-            log.log(Level.FINEST, "\n**********\n");
             log.log(Level.FINEST, "Before Constant Propogation: " + expression);
 
             PropogateVisitor propogateVisitor = new PropogateVisitor();
             expression.accept(propogateVisitor);
-            expression =  propogateVisitor.getExpression();
+            propogated =  propogateVisitor.getExpression();
 
             log.log(Level.FINEST, "After Constant Propogation: " + expression);
-            log.log(Level.FINEST, "\n**********\n");
-            return expression;
-
+            return propogated;
         } catch (VisitorException ve) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", ve);
         }
-
-        return null;
+        return expression;
     }
 
     public class PropogateVisitor extends Visitor {
+
         private Stack<Expression> stack;
-        private Map<IntVariable, IntConstant> map;
+        private Map<IntVariable, IntConstant> constantVariableMap;
 
         public PropogateVisitor() {
             stack = new Stack<Expression>();
-            map = new TreeMap<IntVariable, IntConstant>();
+            constantVariableMap = new TreeMap<IntVariable, IntConstant>();
         }
 
         public Expression getExpression() {
@@ -84,18 +82,22 @@ public class ConstantPropogation extends BasicService {
 			Operation.Operator op = operation.getOperator();
 
 			if (op.equals(Operation.Operator.EQ)) {
-				Expression opL = operation.getOperand(0);
-				Expression opR = operation.getOperand(1);
-                log.log(Level.FINEST, opL + " " + op + " " + opR);
-				if (opL instanceof IntConstant)  {
-                    if (opR instanceof IntVariable) {
-                        map.put((IntVariable) opR, (IntConstant) opL);
-                    }
-				} else if (opL instanceof IntVariable) {
-                    if (opR instanceof IntConstant) {
-                        map.put((IntVariable) opL, (IntConstant) opR);
+
+				Expression leftOperand = operation.getOperand(0);
+				Expression rightOperand = operation.getOperand(1);
+
+				if (leftOperand instanceof IntConstant)  {
+                    if (rightOperand instanceof IntVariable) {
+                        constantVariableMap.put((IntVariable) rightOperand, (IntConstant) leftOperand);
                     }
 				}
+
+                if (leftOperand instanceof IntVariable) {
+                    if (rightOperand instanceof IntConstant) {
+                        constantVariableMap.put((IntVariable) leftOperand, (IntConstant) rightOperand);
+                    }
+				}
+
 			}
 		}
 
@@ -115,58 +117,26 @@ public class ConstantPropogation extends BasicService {
 			Operation.Operator op = operation.getOperator();
 
 			if (stack.size() >= 2) {
-                Expression right = stack.pop();
-                log.log(Level.FINEST, "Pop Right: "+right);
-				Expression left = stack.pop();
-                log.log(Level.FINEST, "Pop Left: "+left);
+
+                Expression first = stack.pop();
+				Expression second = stack.pop();
+
 				if (!op.equals(Operation.Operator.EQ)) {
-					if (left instanceof IntVariable) {
-						if (map.containsKey(left)) {
-							left = map.get(left);
+					if (second instanceof IntVariable) {
+						if (constantVariableMap.containsKey(second)) {
+							second = constantVariableMap.get(second);
 						}
 					}
-					if (right instanceof IntVariable) {
-						if (map.containsKey(right)) {
-							right = map.get(right);
+					if (first instanceof IntVariable) {
+						if (constantVariableMap.containsKey(first)) {
+							first = constantVariableMap.get(first);
 						}
 					}
 				}
-				Operation e = new Operation(operation.getOperator(), left, right);
+				Operation out = new Operation(operation.getOperator(), second, first);
 
-                boolean isTrue = false;
 
-                if (left instanceof IntVariable && right instanceof IntVariable) {
-                    rightValue = right.getValue();
-                    leftValue = left.getValue();
-                    switch (op) {
-                    case EQ:
-                        isTrue = (leftValue == rightValue);
-                        break;
-                    case NE:
-                        isTrue = (leftValue != rightValue);
-                        break;
-                    case LT:
-                        isTrue = (leftValue < rightValue);
-                        break;
-                    case LE:
-                        isTrue = (leftValue <= rightValue);
-                        break;
-                    case GT:
-                        isTrue = (leftValue > rightValue);
-                        break;
-                    case GE:
-                        isTrue = (leftValue >= rightValue);
-                        break;
-                    default:
-                        break;
-                    }
-                }
-
-                if (isTrue) {
-                    stack.push(Operation.TRUE);
-                } else {
-                    stack.push(e);
-                }
+                stack.push(out);
 			}
 
 		}
