@@ -73,9 +73,11 @@ public class ConstantPropogation extends BasicService {
 	private static class OrderingVisitor extends Visitor {
 
 		private Stack<Expression> stack;
+		private Map<IntVariable, IntConstant> map;
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
+			map = new TreeMap<IntVariable, IntConstant>();
 		}
 
 		public Expression getExpression() {
