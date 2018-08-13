@@ -135,30 +135,30 @@ public class ConstantPropogation extends BasicService {
 
                 boolean isTrue = false;
                 if (left instanceof IntVariable && right instanceof IntVariable) {
-
+                    switch (op) {
+                    case EQ:
+                        isTrue = (left.getValue() == right.getValue());
+                        break;
+                    case NE:
+                        isTrue = (left.getValue() != right.getValue());
+                        break;
+                    case LT:
+                        isTrue = (left.getValue() < right.getValue());
+                        break;
+                    case LE:
+                        isTrue = (left.getValue() <= right.getValue());
+                        break;
+                    case GT:
+                        isTrue = (left.getValue() > right.getValue());
+                        break;
+                    case GE:
+                        isTrue = (left.getValue() >= right.getValue());
+                        break;
+                    default:
+                        break;
+                    }
                 }
-                switch (op) {
-    			case EQ:
-    				isTrue = (left == right);
-    				break;
-    			case NE:
-                    isTrue = (left != right);
-    				break;
-    			case LT:
-                    isTrue = (left < right);
-                    break;
-    			case LE:
-                    isTrue = (left <= right);
-    				break;
-    			case GT:
-                    isTrue = (left > right);
-    				break;
-    			case GE:
-                    isTrue = (left >= right);
-    				break;
-    			default:
-    				break;
-    			}
+
                 if (isTrue) {
                     stack.push(Operation.TRUE);
                 } else {
