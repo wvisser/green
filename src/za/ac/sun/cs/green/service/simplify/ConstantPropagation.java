@@ -104,9 +104,10 @@ public class ConstantPropagation extends BasicService {
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
 			if (stack.size() > 2) {
+				Expression right = stack.pop();
+				Expression left = stack.pop();
 				if (op == Operation.Operator.EQ) {
-					Expression right = stack.pop();
-					Expression left = stack.pop();
+					
 					if (left instanceof IntConstant && right instanceof IntVariable) {
 						map.put((IntVariable) left, (IntConstant) right);
 						if (map.containsKey(left)) {
