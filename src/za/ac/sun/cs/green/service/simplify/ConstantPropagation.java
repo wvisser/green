@@ -119,10 +119,10 @@ public class ConstantPropagation extends BasicService {
 					System.out.println(">>>>>>>>>>>>>>>>>>>>>>"+left + " "+ nop + " " + right+"<<<<<<<<<<<<<<<<<<<<<");
 
 					stack.push(nop);
-				} else if (left instanceof IntaVariable || right instanceof IntVariable) {
+				} else if (left instanceof IntVariable || right instanceof IntVariable) {
 					if (map.containsKey(left)) {
 						 left = map.get(left);
-					} else if (map.containsKey) {
+					} else if (map.containsKey(right)) {
 						right = map.get(right);	
 					}
 					Operation nop = new Operation(operation.getOperator(), left, right);
