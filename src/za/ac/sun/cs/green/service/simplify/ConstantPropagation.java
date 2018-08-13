@@ -24,11 +24,11 @@ import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
 
-public class ConstantPropagation {
+public class ConstantPropagation extends BasicService {
 	/**
 	 * Number of times the slicer has been invoked.
 	 */
-	private int invocations = 0;
+	private  int invocations = 0;
 
 	public ConstantPropagation(Green solver) {
 		super(solver);
@@ -54,12 +54,13 @@ public class ConstantPropagation {
 	}
 
 	
-	public static Expression constantPropagation(Expression expression, Map<Variable, Variable> map) {
+	public Expression constantPropagation(Expression expression, Map<Variable, Variable> map) {
 		try {
 			invocations++;
 			PropogateVisitor propVisitor = new PropogateVisitor();
 			expression.accept(propVisitor);
-			simplified = propVisitor.getExpression();						
+			Expression simplified = propVisitor.getExpression();						
+			System.out.println("Simplified: " + simplified);
 			return simplified;
 		} catch (VisitorException e) {
 			System.err.println("This should no be happening");
