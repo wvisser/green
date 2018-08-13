@@ -26,10 +26,6 @@ import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation {
 
-	/*public SATCanonizerService(Green solver) {
-		super(solver);
-	}*/
-
 	public static Expression constantPropagation(Expression expression) {
 		try {
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
@@ -169,9 +165,10 @@ public class ConstantPropagation {
 					} else if (!x.equals(Operation.TRUE)) {
 						conjuncts.add(x);
 					}
-				}				
+				}	
+				
 				SortedSet<Expression> newConjuncts = processBounds();
-//				new TreeSet<Expression>();
+
 				Expression c = null;
 				for (Expression e : newConjuncts) {
 					if (e.equals(Operation.FALSE)) {
@@ -180,6 +177,9 @@ public class ConstantPropagation {
 						Operation o = (Operation) e;
 						if (o.getOperator() == Operation.Operator.EQ) {
 							System.out.println("Found eq");
+							for (Expression curOpp : o.getOperands()) {
+								System.out.println(curOpp);
+							}
 						}
 						if (o.getOperator() == Operation.Operator.GT) {
 							e = new Operation(Operation.Operator.LT, scale(-1,
