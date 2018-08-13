@@ -70,7 +70,7 @@ public class ConstantPropagation {
 	private static class PropogateVisitor extends Visitor {
 
 		private Stack<Expression> stack;
-		private HashMap<IntVariable, IntConstant> = variables;
+		private HashMap<IntVariable, IntConstant>  variables;
 
 		public PropogateVisitor() {
 			stack = new Stack<Expression>();
