@@ -104,11 +104,11 @@ public class ConstantPropogation extends BasicService {
 			switch (op) {
 			case EQ:
 				System.out.println("need to check for equality");
-				if (right == left) {
-					stack.push(Operation.TRUE);
-				} else {
-					stack.push(Operation.FALSE);
-				}
+				// if (right == left) {
+				// 	stack.push(Operation.TRUE);
+				// } else {
+				// 	stack.push(Operation.FALSE);
+				// }
 				break;
 			case NE:
 				System.out.println("need to check for nonequality");
@@ -132,7 +132,7 @@ public class ConstantPropogation extends BasicService {
 				break;
 			case ADD:
 				System.out.println("need to check for addition");
-				stack.push( new IntConstant( ((IntConstant) left).getValue() + ((IntConstant) right).getValue() ) );
+				//stack.push();
 				break;
 			case AND:
 				System.out.println("need to check for and");
