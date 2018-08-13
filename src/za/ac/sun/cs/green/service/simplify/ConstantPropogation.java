@@ -62,8 +62,7 @@ public class ConstantPropogation extends BasicService {
 
             PropogateVisitor propogateVisitor = new PropogateVisitor();
             expression.accept(propogateVisitor);
-            // expression =  propogateVisitor.getExpression();
-
+            expression =  propogateVisitor.getExpression();
 
             log.log(Level.FINEST, "Map: " + map);
 
