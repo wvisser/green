@@ -58,15 +58,16 @@ public class ConstantPropagation extends BasicService {
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			PropagationVisitor propagationVisitor = new PropagationVisitor();
-			expression.accept(propagationVisitor);
-			Expression propagated = propagationVisitor.getExpression();
+			//PropagationVisitor propagationVisitor = new PropagationVisitor();
+			//expression.accept(propagationVisitor);
+			//Expression propagated = propagationVisitor.getExpression();
 			if (propagated != null) {
-				propagated = new Renamer(map,
-						propagationVisitor.getVariableSet()).rename(propagated);
+				//propagated = new Renamer(map,
+				//		propagationVisitor.getVariableSet()).rename(propagated);
 			}
 			log.log(Level.FINEST, "After Propagation: " + propagated);
-			return propagated;
+			return expression;
+			//return propagated;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
 					"encountered an exception -- this should not be happening!",
