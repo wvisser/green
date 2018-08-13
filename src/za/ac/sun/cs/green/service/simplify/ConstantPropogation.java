@@ -41,7 +41,7 @@ public class ConstantPropogation extends BasicService {
 			instance.setData(getClass(), result);
 		}
 		return result;
-
+    }
 
     public Expression propogate(Expression expression) {
         Expression propogated = null;
@@ -50,8 +50,7 @@ public class ConstantPropogation extends BasicService {
             log.log(Level.FINEST, "\n**********\n");
             log.log(Level.FINEST, "Before Constant Propogation: " + expression);
 
-            PropogateVisitor propogateVisitor = new PropogateVisitor();
-            expression.accept(propogateVisitor);
+            expression.accept(PropogateVisitor propogateVisitor);
             propogateVisitor.PropogateVisitor();
             expression =  propogateVisitor.getExpression();
 
@@ -80,9 +79,10 @@ public class ConstantPropogation extends BasicService {
 		}
 
         @Override
-		public void preVisit(Operation operation) {
+		public void first(Operation operation) {
 
 			Operation.Operator op = operation.getOperator();
+
 			if (op.equals(Operation.Operator.EQ)) {
 				Expression opL = operation.getOperand(0);
 				Expression opR = operation.getOperand(1);
