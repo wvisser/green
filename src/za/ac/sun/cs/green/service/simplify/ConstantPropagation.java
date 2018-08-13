@@ -109,9 +109,9 @@ public class ConstantPropagation extends BasicService {
 				if (op == Operation.Operator.EQ) {
 					
 					if (left instanceof IntConstant && right instanceof IntVariable) {
-						map.put((IntVariable) left, (IntConstant) right);
-					} else if (right instanceof IntConstant && left instanceof IntVariable) {
 						map.put((IntVariable) right, (IntConstant) left);
+					} else if (right instanceof IntConstant && left instanceof IntVariable) {
+						map.put((IntVariable) left, (IntConstant) right);
 					}
 					
 					Operation nop = new Operation(operation.getOperator(), left, right);
