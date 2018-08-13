@@ -83,11 +83,11 @@ public class ConstantPropagation extends BasicService {
             expression = orderingVisitor.getExpression();
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
                     // DOUBLE CHECK WHAT CHANGES WERE MADE. MAY HAVE SOMETHING TO DO WITH STATIC OR BECAUSE IM USING LOG. TRY SOUT
-            // simplifyingVisitor = new SimplifyingVisitor();
-            // expression.accept(simplifyingVisitor);
-            // expression = simplifyingVisitor.getExpression();
+            simplifyingVisitor = new SimplifyingVisitor();
+            expression.accept(simplifyingVisitor);
+            expression = simplifyingVisitor.getExpression();
             // simplified = simplifyingVisitor.getSimplified();
-            // log.log(Level.FINEST, "After Simplification: " + expression);
+            log.log(Level.FINEST, "After Simplification: " + expression);
         // }
         return expression;
 	}
