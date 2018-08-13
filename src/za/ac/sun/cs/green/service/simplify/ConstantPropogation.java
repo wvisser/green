@@ -93,6 +93,20 @@ public class ConstantPropogation extends BasicService {
 		}
 
         @Override
+		public void preVisit(Operation operation) {
+			Operation.Operator op = operation.getOperator();
+			if (op.equals(Operation.Operator.EQ)) {
+				Expression opL = operation.getOperand(0);
+				Expression opR = operation.getOperand(1);
+				if ((opL instanceof IntConstant) && (opR instanceof IntVariable)) {
+					map.put((IntVariable) opR, (IntConstant) opL);
+				} else if ((opL instanceof IntVariable) && (opR instanceof IntConstant)) {
+					map.put((IntVariable) opL, (IntConstant) opR);
+				}
+			}
+		}
+
+        @Override
 		public void postVisit(IntConstant constant) {
 			stack.push(constant);
 		}
