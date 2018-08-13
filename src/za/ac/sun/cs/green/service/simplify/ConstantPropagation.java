@@ -53,12 +53,15 @@ public class ConstantPropagation extends BasicService {
         try {
             log.log(Level.FINEST, "Before Constant Propagation: " + expression);
             invocations++;
-            OrderingVisitor orderingVisitor = new OrderingVisitor();
-            expression.accept(orderingVisitor);
-            expression = orderingVisitor.getExpression();
+
+            // Constant propagation
+            PropagationVisitor propagationVisitor = new PropagationVisitor();
+            expression.accept(propagationVisitor);
+            expression = propagationVisitor.getExpression();
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
-            
-            expression = multipleSimplifications(expression, orderingVisitor);
+
+            // Simplification
+            expression = multipleSimplifications(expression, propagationVisitor);
             return expression;
         } catch (VisitorException x) {
             log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
@@ -66,9 +69,8 @@ public class ConstantPropagation extends BasicService {
         return null;
     }
 
-
-
-    private Expression multipleSimplifications(Expression expression, OrderingVisitor orderingVisitor) throws VisitorException {
+    private Expression multipleSimplifications(Expression expression, PropagationVisitor propagationVisitor)
+            throws VisitorException {
         Boolean simplified = false;
 
         SimplifyingVisitor simplifyingVisitor = new SimplifyingVisitor();
@@ -78,25 +80,24 @@ public class ConstantPropagation extends BasicService {
         log.log(Level.FINEST, "After Simplification: " + expression);
 
         // while(simplified == true) {
-            orderingVisitor = new OrderingVisitor();
-            expression.accept(orderingVisitor);
-            expression = orderingVisitor.getExpression();
-            log.log(Level.FINEST, "After Constant Propagation: " + expression);
-                    // DOUBLE CHECK WHAT CHANGES WERE MADE. MAY HAVE SOMETHING TO DO WITH STATIC OR BECAUSE IM USING LOG. TRY SOUT
-            simplifyingVisitor = new SimplifyingVisitor();
-            expression.accept(simplifyingVisitor);
-            expression = simplifyingVisitor.getExpression();
-            // simplified = simplifyingVisitor.getSimplified();
-            log.log(Level.FINEST, "After Simplification: " + expression);
+        propagationVisitor = new PropagationVisitor();
+        expression.accept(propagationVisitor);
+        expression = propagationVisitor.getExpression();
+        log.log(Level.FINEST, "After Constant Propagation: " + expression);
+        simplifyingVisitor = new SimplifyingVisitor();
+        expression.accept(simplifyingVisitor);
+        expression = simplifyingVisitor.getExpression();
+        // simplified = simplifyingVisitor.getSimplified();
+        log.log(Level.FINEST, "After Simplification: " + expression);
         // }
         return expression;
-	}
+    }
 
-    private static class OrderingVisitor extends Visitor {
+    private static class PropagationVisitor extends Visitor {
         private Stack<Expression> stack;
         private HashMap<IntVariable, IntConstant> variables;
 
-        public OrderingVisitor() {
+        public PropagationVisitor() {
             stack = new Stack<Expression>();
             variables = new HashMap<IntVariable, IntConstant>();
         }
@@ -128,9 +129,9 @@ public class ConstantPropagation extends BasicService {
             Expression r = stack.pop();
             Expression l = stack.pop();
 
-            // If operation is an EQ type. Add the equality to the HashMap to propagate in
-            // future
             if (op == Operation.Operator.EQ) {
+                // If operation is an EQ type. Add the equality to the HashMap to propagate in
+                // future
                 if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
                     variables.put((IntVariable) l, (IntConstant) r);
                     stack.push(new Operation(op, l, r));
@@ -141,6 +142,7 @@ public class ConstantPropagation extends BasicService {
                     stack.push(new Operation(op, l, r));
                 }
             } else {
+                // All non EQ operands, propagate any variables and add operation to stack
                 if (variables.containsKey(r)) {
                     r = variables.get(r);
                 }
@@ -192,6 +194,7 @@ public class ConstantPropagation extends BasicService {
             System.out.println("Processing: " + l + " " + op + " " + r);
 
             if (l instanceof IntConstant && r instanceof IntConstant) {
+                // Handling an operation with 2 constants
                 System.out.println("Have 2 constants");
                 simplified = true;
 
@@ -266,6 +269,7 @@ public class ConstantPropagation extends BasicService {
             }
 
             else if (l instanceof Operation && r instanceof Operation) {
+                // Handling operation with 2 operations
                 System.out.println("Have 2 ops");
                 simplified = true;
 
@@ -303,6 +307,7 @@ public class ConstantPropagation extends BasicService {
 
             else if ((l instanceof Operation && r instanceof IntConstant)
                     || (l instanceof IntConstant && r instanceof Operation)) {
+                // Handling operation with int and constant
                 System.out.println("Have an op and a constant");
                 simplified = true;
                 Operation insideOpp;
