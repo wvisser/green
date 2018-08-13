@@ -19,8 +19,7 @@ public class ConstantPropagation extends BasicService {
         @SuppressWarnings("unchecked")
         Set<Instance> result = (Set<Instance>) instance.getData(getClass());
         if (result == null) {
-            final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-            final Expression e = propagate(instance.getFullExpression(), map);
+            final Expression e = propagate(instance.getFullExpression());
             final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
             result = Collections.singleton(i);
             instance.setData(getClass(), result);
@@ -28,8 +27,15 @@ public class ConstantPropagation extends BasicService {
         return result;
     }
 
-    public Expression propagate(Expression expression,
-                                Map<Variable, Variable> map) {
+    /*
+     * This function creates the PropagationVisitor object and
+     * has the expression accept it. The purpose of the do-while is to continuously
+     * re-propagate the expression until it can no longer be further propagated, at which point
+     * it is returned to processRequest
+     *
+     * @param expression: The expresssion to be propagated
+     */
+    public Expression propagate(Expression expression) {
         try {
             PropagationVisitor propagationVisitor= new PropagationVisitor();
             expression.accept(propagationVisitor);
@@ -40,7 +46,6 @@ public class ConstantPropagation extends BasicService {
                 expression.accept(propagationVisitor);
                 expression = propagationVisitor.getExpression();
             } while(!old_expression.equals(expression));
-            System.out.println(expression.toString());
             return expression;
         } catch (VisitorException x) {
             System.out.println(x);
@@ -48,10 +53,17 @@ public class ConstantPropagation extends BasicService {
         return null;
     }
 
+    /*
+     * PropagationVisitor pushes constants and variables to the stack
+     * When it encounters an operation, it pops the two expressions from the top of the stack,
+     * checks the operator and operands and propagates the expression accordingly
+     */
     private static class PropagationVisitor extends Visitor {
 
+        // HashMap that stores the variable names and their corresponding values
         private HashMap<String, IntConstant> constantValueMap;
 
+        // Stack for storing and retrieving expressions
         private Stack<Expression> stack;
 
         public PropagationVisitor() {
@@ -59,35 +71,56 @@ public class ConstantPropagation extends BasicService {
             stack = new Stack<>();
         }
 
+        /*
+         * Returns the expression at the top of the stack
+         */
         public Expression getExpression() {
             return stack.pop();
         }
 
         @Override
+        /*
+         * Pushes variable to the top of the stack
+         */
         public void postVisit(Variable variable) {
             stack.push(variable);
         }
 
         @Override
+        /*
+         * Pushes constant to the top of the stack
+         */
         public void postVisit(Constant constant) {
             stack.push(constant);
         }
 
         @Override
+        /*
+         * Propagates operations by examining the operator and both operands
+         * If the operator is "==" and one of the operands is a variable
+         * and the other a constant, the variable and value are put into the
+         * HashMap. If that variable is accessed in future operations/propagations, the variable name
+         * will be replaced by the value associated with it in the HashMap, and the new value will be pushed
+         * to the stack instead of the variable name
+         */
         public void postVisit(Operation operation) {
             Operation.Operator op = operation.getOperator();
 
             if (op.getArity() == 2) {
+                // Left and right expressions are popped from the top of the stack
                 Expression l = stack.pop();
                 Expression r = stack.pop();
 
                 if(op.name().equals("EQ")) {
+                    // Checks if one of the operands is a variable and the other a constant
                     if (l instanceof IntVariable && r instanceof IntConstant) {
                         constantValueMap.put(((IntVariable) l).getName(), (IntConstant) r);
                     } else if (r instanceof  IntVariable && l instanceof IntConstant) {
                         constantValueMap.put(((IntVariable) r).getName(), (IntConstant) l);
                     }
                 } else {
+                    // Checks if the variable is present in the HashMap. If it is, replace the variable with its
+                    // associated value
                     if (l instanceof IntVariable) {
                         if (constantValueMap.containsKey(((IntVariable) l).getName())) {
                             l = constantValueMap.get(((IntVariable) l).getName());
@@ -98,13 +131,11 @@ public class ConstantPropagation extends BasicService {
                         }
                     }
                 }
+                // Push the new left and right operands as a new operation to the stack
                 stack.push(new Operation(op, r, l));
             }
 
         }
 
-
     }
-
-
 }

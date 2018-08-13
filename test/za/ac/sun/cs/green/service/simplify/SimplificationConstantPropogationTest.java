@@ -94,6 +94,7 @@ public class SimplificationConstantPropogationTest {
         IntConstant c1 = new IntConstant(4);
         IntConstant c2 = new IntConstant(10);
         Operation o = new Operation(Operation.Operator.LT, c1, c2);
+        // 4 < 10
         check(o, "0==0");
     }
 
@@ -102,6 +103,7 @@ public class SimplificationConstantPropogationTest {
         IntConstant c1 = new IntConstant(4);
         IntConstant c2 = new IntConstant(10);
         Operation o = new Operation(Operation.Operator.GT, c1, c2);
+        // 4 > 10
         check(o, "0==1");
     }
 
@@ -112,6 +114,7 @@ public class SimplificationConstantPropogationTest {
         Operation o1 = new Operation(Operation.Operator.LT, c1, c2);
         Operation o2 = new Operation(Operation.Operator.GT, c1, c2);
         Operation o = new Operation(Operation.Operator.AND, o1, o2);
+        // (4 < 10) && (4 > 10)
         check(o, "0==1");
     }
 
@@ -132,6 +135,7 @@ public class SimplificationConstantPropogationTest {
         Operation o4 = new Operation(Operation.Operator.EQ, c3, oi);
         Operation o5 = new Operation(Operation.Operator.AND, o1, o3);
         Operation o = new Operation(Operation.Operator.AND, o5, o4);
+        // (1 == x) && (x+y)<10 && (y-1)==2
         check(o, "(1==x)&&(3==y)");
     }
 
