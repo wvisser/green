@@ -62,7 +62,7 @@ public class ConstantPropagation extends BasicService {
 
 
             //Propagate assignments
-            OrderingVisitor orderingVisitor = new OrderingVisitor();
+            OrderingVisitor orderingVisitor = new OrderingVisitor(variables);
             expression.accept(orderingVisitor);
             expression = orderingVisitor.getExpression();
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
@@ -108,7 +108,7 @@ public class ConstantPropagation extends BasicService {
         private Stack<Expression> stack;
         private HashMap<IntVariable, IntConstant> variables;
 
-        public OrderingVisitor(HashMap<IntVariable, IntConstant> map) {
+        public AssignmentVisitor(HashMap<IntVariable, IntConstant> map) {
             stack = new Stack<Expression>();
             variables = map;
         }
@@ -126,9 +126,7 @@ public class ConstantPropagation extends BasicService {
 
         @Override
         public void postVisit(IntVariable variable) {
-            // If variable exists in HashMap (it has been assigned a value)
             stack.push(variable);
-
         }
 
         @Override
