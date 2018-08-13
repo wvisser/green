@@ -95,87 +95,50 @@ public class ConstantPropogation extends BasicService {
 		}
 
 		@Override
-		public void postVisit(Operation operation) {
+		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
+			//Expression right = stack.pop();
+			//Expression left = stack.pop();
+			//System.out.println("Left:" + left + " Right: " + right);
 
-			if (op.equals(Operation.Operator.EQ)) {
-				Expression opL = operation.getOperand(0);
-				Expression opR = operation.getOperand(1);
-				if ((opL instanceof IntConstant) && (opR instanceof IntVariable)) {
-					map.put((IntVariable) opR, (IntConstant) opL);
-				} else if ((opL instanceof IntVariable) && (opR instanceof IntConstant)) {
-					map.put((IntVariable) opL, (IntConstant) opR);
+			Operation.Operator nop = null;
+
+				switch (op) {
+				case EQ:
+					System.out.println("need to check for equality");
+					break;
+				case NE:
+					System.out.println("need to check for nonequality");
+					nop = Operation.Operator.NE;
+					break;
+				case LT:
+					System.out.println("need to check for less than");
+					nop = Operation.Operator.GT;
+					break;
+				case LE:
+					System.out.println("need to check for less than equals");
+					nop = Operation.Operator.GE;
+					break;
+				case GT:
+					System.out.println("need to check for greater than");
+					nop = Operation.Operator.LT;
+					break;
+				case GE:
+					System.out.println("need to check for greater than equals");
+					nop = Operation.Operator.LE;
+					break;
+				case ADD:
+					System.out.println("need to check for addition");
+					//stack.push();
+					break;
+				case AND:
+					System.out.println("need to check for and");
+					nop = Operation.Operator.AND;
+					break;
+				default:
+					System.out.println("Default case!");
+					break;
 				}
-			}
-
-			op = operation.getOperator();
-
-			if (stack.size() >= 2) {
-				Expression right = stack.pop();
-				Expression left = stack.pop();
-				if (!op.equals(Operation.Operator.EQ)) {
-					if (left instanceof IntVariable) {
-						if (map.containsKey(left)) {
-							left = map.get(left);
-						}
-					}
-					if (right instanceof IntVariable) {
-						if (map.containsKey(right)) {
-							right = map.get(right);
-						}
-					}
-				}
-				Operation e = new Operation(operation.getOperator(), left, right);
-				stack.push(e);
-			}
-
-		}
-
-		// @Override
-		// public void postVisit(Operation operation) throws VisitorException {
-		// 	Operation.Operator op = operation.getOperator();
-		// 	//Expression right = stack.pop();
-		// 	//Expression left = stack.pop();
-		// 	//System.out.println("Left:" + left + " Right: " + right);
-    //
-		// 	Operation.Operator nop = null;
-    //
-		// 		switch (op) {
-		// 		case EQ:
-		// 			System.out.println("need to check for equality");
-		// 			break;
-		// 		case NE:
-		// 			System.out.println("need to check for nonequality");
-		// 			nop = Operation.Operator.NE;
-		// 			break;
-		// 		case LT:
-		// 			System.out.println("need to check for less than");
-		// 			nop = Operation.Operator.GT;
-		// 			break;
-		// 		case LE:
-		// 			System.out.println("need to check for less than equals");
-		// 			nop = Operation.Operator.GE;
-		// 			break;
-		// 		case GT:
-		// 			System.out.println("need to check for greater than");
-		// 			nop = Operation.Operator.LT;
-		// 			break;
-		// 		case GE:
-		// 			System.out.println("need to check for greater than equals");
-		// 			nop = Operation.Operator.LE;
-		// 			break;
-		// 		case ADD:
-		// 			System.out.println("need to check for addition");
-		// 			//stack.push();
-		// 			break;
-		// 		case AND:
-		// 			System.out.println("need to check for and");
-		// 			nop = Operation.Operator.AND;
-		// 			break;
-		// 		default:
-		// 			System.out.println("Default case!");
-		// 			break;
-		// 		}
     //
 		// 	if (nop != null) {
 		// 		Expression r = stack.pop();
