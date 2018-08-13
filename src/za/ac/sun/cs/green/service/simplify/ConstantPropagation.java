@@ -126,10 +126,11 @@ public class ConstantPropagation extends BasicService {
 			}
 			if (nop != null) {
 				Expression r = stack.pop();
-				Expression l = stack.pop();			
+				Expression l = stack.pop();		
+
 				System.out.println(l);
-				System.out.println(r);	
-				System.out.println(r.getOperator());
+				System.out.println(r);				
+				System.out.println(((Operation)r).getOperator());
 				
 				switch (op) {
 					case EQ:
