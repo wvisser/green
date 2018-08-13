@@ -244,7 +244,7 @@ public class ConstantPropagation extends BasicService {
                     stack.push(divResult);
                     break;
                 default:
-                    log.log("Hit default 1... Weird");
+                    System.out.println("Hit default 1... Weird");
                     stack.push(operation);
                     break;
                 }
@@ -278,7 +278,7 @@ public class ConstantPropagation extends BasicService {
                     }
                     break;
                 default:
-                    log.log("Hit default 2... Weird");
+                    System.out.println("Hit default 2... Weird");
                     break;
                 }
 
@@ -377,7 +377,7 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     default:
-                        log.log("Hit default 3... Weird");
+                        System.out.println("Hit default 3... Weird");
                         break;
                     }
                     break;
@@ -472,7 +472,7 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     default:
-                        log.log("Hit default 4... Weird");
+                        System.out.println("Hit default 4... Weird");
                         break;
                     }
                     break;
@@ -561,7 +561,7 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     default:
-                        log.log("Hit default 5... Weird");
+                        System.out.println("Hit default 5... Weird");
                         break;
                     }
                     break;
@@ -650,7 +650,7 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     default:
-                        log.log("Hit default 6... Weird");
+                        System.out.println("Hit default 6... Weird");
                         break;
                     }
                     break;
@@ -739,12 +739,12 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     default:
-                        log.log("Hit default 7... Weird");
+                        System.out.println("Hit default 7... Weird");
                         break;
                     }
                     break;
                 default:
-                    log.log("Hit the default here. Odd");
+                    System.out.println("Hit the default here. Odd");
                     break;
                 }
             } else {
