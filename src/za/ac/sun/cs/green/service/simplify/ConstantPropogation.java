@@ -135,7 +135,7 @@ public class ConstantPropogation extends BasicService {
 					stack.push(new Operation(nop, r, l));
 				} 
 				else if ((l instanceof IntVariable) && (r instanceof IntConstant) && op == EQ) {
-					map.put(l, r)
+					map.put(l, r);
 					stack.push(new Operation(nop, r, l));
 				} else {
 					stack.push(operation);
