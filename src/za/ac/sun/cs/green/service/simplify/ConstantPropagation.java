@@ -101,8 +101,7 @@ public class ConstantPropagation  extends BasicService {
 						conjuncts.add(x);
 					}
 				}
-				SortedSet<Expression> newConjuncts = processBounds();
-//				new TreeSet<Expression>();
+				SortedSet<Expression> newConjuncts = new TreeSet<Expression>();
 				Expression c = null;
 				for (Expression e : newConjuncts) {
 					if (e.equals(Operation.FALSE)) {
