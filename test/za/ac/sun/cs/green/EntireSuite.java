@@ -40,7 +40,7 @@ import za.ac.sun.cs.green.util.SetTaskManagerTest;
 	SATCanonizerTest.class,
 	SATZ3Test.class,
 	OnlyConstantPropogationTest.class,
-	// SimplificationConstantPropogationTest.class
+	SimplificationConstantPropogationTest.class
 })
 
 public class EntireSuite {

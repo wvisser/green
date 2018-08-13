@@ -112,6 +112,11 @@ public class ConstantPropogation extends BasicService {
 				Expression l = op.getOperand(0);
 				Expression r = op.getOperand(1);
 
+				if (onlyContainsConstants(op)) {
+					// If the operation only contains constants we should evaluate it and return the constant value
+					return evaluate(op);
+				}
+
 				// Handle variable assignment as a special case so we don't end up with val == val
 				if (op.getOperator().equals(Operation.Operator.EQ)) {
 					if (l instanceof Variable && r instanceof Constant) {
@@ -127,6 +132,79 @@ public class ConstantPropogation extends BasicService {
 
 			System.out.println("We should never get to this point!");
 			return expression;
+		}
+
+		private Expression evaluate(Expression expression) {
+			if (expression instanceof Constant) return expression;
+
+			assert expression instanceof Operation;
+			Operation operation = (Operation) expression;
+			Expression l = operation.getOperand(0);
+			Expression r = operation.getOperand(1);
+
+			if (l instanceof Operation) l = evaluate(l);
+			if (r instanceof Operation) r = evaluate(r);
+
+			Operation.Operator op = operation.getOperator();
+			int rint;
+			int lint;
+			switch (op) {
+				case EQ:
+					lint = ((IntConstant) l).getValue();
+					rint = ((IntConstant) r).getValue();
+					if (lint == rint) {
+						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(0));
+					} else {
+						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1));
+					}
+				case GT:
+					lint = ((IntConstant) l).getValue();
+					rint = ((IntConstant) r).getValue();
+					if (lint > rint) {
+						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(0));
+					} else {
+						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1));
+					}
+				case LT:
+					lint = ((IntConstant) l).getValue();
+					rint = ((IntConstant) r).getValue();
+					if (lint < rint) {
+						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(0));
+					} else {
+						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1));
+					}
+				case AND:
+					Operation lop = (Operation) l;
+					Operation rop = (Operation) r;
+					assert lop.getOperator().equals(Operation.Operator.EQ);
+					assert rop.getOperator().equals(Operation.Operator.EQ);
+					if (lop.equals(rop)) {
+						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(0));
+					} else {
+						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1));
+					}
+				default:
+					System.out.println("Should not get here!");
+					return expression;
+			}
+		}
+
+		private boolean onlyContainsConstants(Operation operation) {
+			Expression l = operation.getOperand(0);
+			Expression r = operation.getOperand(1);
+
+			if (!(l instanceof Operation || r instanceof Operation)) {
+				return (l instanceof Constant && r instanceof Constant);
+			}
+
+			boolean ret = true;
+			if (l instanceof Operation) {
+				ret = ret && onlyContainsConstants((Operation) l);
+			}
+			if (r instanceof Operation) {
+				ret = ret && onlyContainsConstants((Operation) r);
+			}
+			return ret;
 		}
 
 		// For debugging purposes
