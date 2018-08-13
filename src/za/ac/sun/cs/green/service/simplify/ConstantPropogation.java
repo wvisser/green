@@ -203,8 +203,8 @@ public class ConstantPropogation extends BasicService {
 
         @Override
         public void postVisit(Operation operation) {
-            Expression l = stack.pop();
             Expression r = stack.pop();
+            Expression l = stack.pop();
             if (operation.getOperator() != Operation.Operator.EQ) {
                 if (l instanceof Variable) {
                     if (variables.containsKey((IntVariable) l)) {
