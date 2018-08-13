@@ -128,9 +128,9 @@ public class ConstantPropagation extends BasicService {
 				Expression r = stack.pop();
 				Expression l = stack.pop();		
 
-				System.out.println(l);
-				System.out.println(r);				
-				System.out.println(((Operation)r).getOperator());
+				if (((Operation)r).getOperator() == ADD) {
+					System.out.println("Add");
+				}
 				
 				switch (op) {
 					case EQ:
