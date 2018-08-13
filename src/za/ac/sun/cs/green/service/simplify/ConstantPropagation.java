@@ -50,16 +50,17 @@ public class ConstantPropagation extends BasicService {
 			expression.accept(varaibleVisitor);
 			expression = varaibleVisitor.getExpression();
 			log.log(Level.FINEST, "After Variable mapping: " + expression);
-			return expression;
-//			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
-//			expression.accept(canonizationVisitor);
-//			Expression canonized = canonizationVisitor.getExpression();
-//			log.log(Level.FINEST, "After Canonization: " + canonized);
-//			SimplificationVisitor simplificationVisitor = new SimplificationVisitor();
-//			canonized.accept(simplificationVisitor);
-//			Expression simplified = simplificationVisitor.getExpression();
-//			log.log(Level.FINEST, "After Simplification: " + simplified);
-//			return simplified;
+			// return expression;
+			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
+			expression.accept(canonizationVisitor);
+			Expression canonized = canonizationVisitor.getExpression();
+			log.log(Level.FINEST, "After Canonization: " + canonized);
+			// return canonized;
+			SimplificationVisitor simplificationVisitor = new SimplificationVisitor(map);
+			canonized.accept(simplificationVisitor);
+			Expression simplified = simplificationVisitor.getExpression();
+			log.log(Level.FINEST, "After Simplification: " + simplified);
+			return simplified;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", x);
 		}
@@ -191,10 +192,6 @@ public class ConstantPropagation extends BasicService {
 			variableSet = new TreeSet<IntVariable>();
 			unsatisfiable = false;
 			linearInteger = true;
-		}
-
-		public SortedSet<IntVariable> getVariableSet() {
-			return variableSet;
 		}
 
 		public Expression getExpression() {
@@ -639,18 +636,12 @@ public class ConstantPropagation extends BasicService {
 
 		private Stack<Expression> stack;
 
-		public SimplificationVisitor() {
+		public SimplificationVisitor(Map<Variable, Variable> map) {
 			this.map = map;
 			stack = new Stack<Expression>();
 		}
 
-		public Expression getExpression() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public Expression rename(Expression expression) throws VisitorException {
-			expression.accept(this);
+		public Expression getExpression() throws VisitorException {
 			return stack.pop();
 		}
 
@@ -658,7 +649,7 @@ public class ConstantPropagation extends BasicService {
 		public void postVisit(IntVariable variable) {
 			Variable v = map.get(variable);
 			if (v == null) {
-				v = new IntVariable("v" + map.size(), variable.getLowerBound(), variable.getUpperBound());
+				v = new IntVariable(variable.toString(), variable.getLowerBound(), variable.getUpperBound());
 				map.put(variable, v);
 			}
 			stack.push(v);
@@ -676,7 +667,12 @@ public class ConstantPropagation extends BasicService {
 			for (int i = arity; i > 0; i--) {
 				operands[i - 1] = stack.pop();
 			}
-			stack.push(new Operation(operation.getOperator(), operands));
+			if (operation.getOperand(0).equals(Operation.ONE)
+					&& operation.getOperator().equals(Operation.Operator.MUL)) {
+				stack.push(operation.getOperand(1));
+			} else {
+				stack.push(new Operation(operation.getOperator(), operands));
+			}
 		}
 
 	}
