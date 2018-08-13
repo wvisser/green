@@ -29,7 +29,7 @@ import za.ac.sun.cs.green.expr.Operation.Operator;
 
 public class ConstantPropogation extends BasicService {
 
-	/**
+	/*
 	 * Number of times the slicer has been invoked.
 	 */
 	private int invocations = 0;
@@ -61,9 +61,9 @@ public class ConstantPropogation extends BasicService {
 		try {
 			log.log(Level.FINEST, "Before Propagation: " + expression);
 			invocations++;
-			OrderingVisitor orderingVisitor = new OrderingVisitor();
-			expression.accept(orderingVisitor);
-			expression = orderingVisitor.getExpression();
+			Propagator constPropagator = new Propagator();
+			expression.accept(constPropagator);
+			expression = constPropagator.getExpression();
 			log.log(Level.FINEST, "After Propagation: " + expression);
 			return expression;
 		} catch (VisitorException x) {
@@ -74,12 +74,16 @@ public class ConstantPropogation extends BasicService {
 		return null;
 	}
 
-	private static class OrderingVisitor extends Visitor {
+	private static class Propagator extends Visitor {
 
 		private Stack<Expression> stack;
+
+		/*
+		* Created new Hashmap to keep track of variable-constant assignment
+		*/
 		private HashMap<String, Integer> hmap;
 
-		public OrderingVisitor() {
+		public constPropagator() {
 			stack = new Stack<Expression>();
 			hmap = new HashMap<String, Integer>();		
 		}
@@ -102,29 +106,6 @@ public class ConstantPropogation extends BasicService {
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
 			Operation.Operator nop = null;
-			
-			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case NE:
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
-			default:
-				break;
-			}
 
 			if (op != null) {
 
@@ -132,27 +113,51 @@ public class ConstantPropogation extends BasicService {
 				Expression l = stack.pop();
 				Operation e; 
 
+				/*
+				* Checks for '==' operator, thus checking for variable to constant assignment
+				*/
 				if (operation.getOperator() == Operation.Operator.EQ) {
 	
+					/*
+					* This provides a check for whether the variable is stated first and then the constant, vice versa
+					*/
 					if (((l instanceof IntVariable) && (r instanceof IntConstant)) || ((r instanceof IntVariable) && (l instanceof IntConstant))) {
+
 						if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+
 							hmap.put(l.toString(), (Integer.parseInt(r.toString())));
+
 						} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+
 							hmap.put(r.toString(), (Integer.parseInt(l.toString())));
 						}
-
 					} 
+					/*
+					* Once varibles and their assignments have been added to HashMap, create the operation
+					*/
 					e = new Operation(op, l, r);
 					
 				} else {
+
 					if (r instanceof IntVariable) {
+						/*
+						* Scans through HashMap to check whether variable already exists within the hash map
+						* If is does exist, replace the variable with the value associated with it
+						* Eventually pushing this change to the stack
+						*/
 						if (hmap.containsKey(r.toString())) {
+
 							r = new IntConstant(hmap.get(r.toString()));
+
 						}
 					}
+
 					if (l instanceof IntVariable) {
+
 						if (hmap.containsKey(l.toString())) {
+
 							l = new IntConstant(hmap.get(l.toString()));
+
 						}
 					}
 					e = new Operation(op, l, r);
