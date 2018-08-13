@@ -1,5 +1,6 @@
 package za.ac.sun.cs.green.expr;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -49,11 +50,11 @@ public class Operation extends Expression {
 		// String Operations
 		SUBSTRING("SUBSTRING", 3, Fix.POSTFIX),
 		CONCAT("CONCAT", 2, Fix.POSTFIX),
-		TRIM("TRIM", 1, Fix.POSTFIX), 
+		TRIM("TRIM", 1, Fix.POSTFIX),
 		REPLACE("REPLACE", 3, Fix.POSTFIX),
-		REPLACEFIRST("REPLACEFIRST", 3, Fix.POSTFIX),  
+		REPLACEFIRST("REPLACEFIRST", 3, Fix.POSTFIX),
 		TOLOWERCASE("TOLOWERCASE", 2, Fix.POSTFIX),
-		TOUPPERCASE("TOUPPERCASE", 2, Fix.POSTFIX), 
+		TOUPPERCASE("TOUPPERCASE", 2, Fix.POSTFIX),
 		VALUEOF("VALUEOF", 2, Fix.POSTFIX),
 		// String Comparators
 		NOTCONTAINS("NOTCONTAINS", 2, Fix.POSTFIX),
@@ -134,17 +135,119 @@ public class Operation extends Expression {
 	}
 
 	public static Expression apply(Operator operator, Expression... operands) {
-		switch (operator) {
+        boolean result = false;
+        int iresult = 0;
+        boolean first = true;
+        int prev = 0;
+
+        switch (operator) {
+        case GT:
+            for (Expression operand : operands) {
+                if (!(operand instanceof IntConstant)) {
+                    return new Operation(operator, operands);
+                } else {
+                    if (first) {
+                        prev = ((IntConstant) operand).getValue();
+                        first = !first;
+                    } else {
+                        result = (prev > ((IntConstant) operand).getValue());
+                    }
+                }
+            }
+
+            if (result) return TRUE;
+            else return FALSE;
+        case LT:
+            for (Expression operand : operands) {
+                if (!(operand instanceof IntConstant)) {
+                    return new Operation(operator, operands);
+                } else {
+                    if (first) {
+                        prev = ((IntConstant) operand).getValue();
+                        first = !first;
+                    } else {
+                        result = (prev < ((IntConstant) operand).getValue());
+                    }
+                }
+            }
+
+            if (result) return TRUE;
+            else return FALSE;
+        case LE:
+            for (Expression operand : operands) {
+                if (!(operand instanceof IntConstant)) {
+                    return new Operation(operator, operands);
+                } else {
+                    if (first) {
+                        prev = ((IntConstant) operand).getValue();
+                        first = !first;
+                    } else {
+                        result = (prev <= ((IntConstant) operand).getValue());
+                    }
+                }
+            }
+
+            if (result) return TRUE;
+            else return FALSE;
+        case GE:
+            for (Expression operand : operands) {
+                if (!(operand instanceof IntConstant)) {
+                    return new Operation(operator, operands);
+                } else {
+                    if (first) {
+                        prev = ((IntConstant) operand).getValue();
+                        first = !first;
+                    } else {
+                        result = (prev >= ((IntConstant) operand).getValue());
+                    }
+                }
+            }
+
+            if (result) return TRUE;
+            else return FALSE;
 		case ADD:
-			int result = 0;
 			for (Expression operand : operands) {
 				if (!(operand instanceof IntConstant)) {
 					return new Operation(operator, operands);
 				} else {
-					result += ((IntConstant) operand).getValue();
+					iresult += ((IntConstant) operand).getValue();
 				}
 			}
-			return new IntConstant(result);
+			return new IntConstant(iresult);
+        case SUB:
+			for (Expression operand : operands) {
+				if (!(operand instanceof IntConstant)) {
+					return new Operation(operator, operands);
+				} else {
+                    if (first) {
+                        iresult += ((IntConstant) operand).getValue();
+                        first = !first;
+                    } else iresult -= ((IntConstant) operand).getValue();
+				}
+			}
+			return new IntConstant(iresult);
+        case MUL:
+			iresult = 1;
+			for (Expression operand : operands) {
+				if (!(operand instanceof IntConstant)) {
+					return new Operation(operator, operands);
+				} else {
+					iresult *= ((IntConstant) operand).getValue();
+				}
+			}
+			return new IntConstant(iresult);
+        case DIV:
+			for (Expression operand : operands) {
+				if (!(operand instanceof IntConstant)) {
+					return new Operation(operator, operands);
+				} else {
+                    if (first) {
+                        iresult += ((IntConstant) operand).getValue();
+                        first = !first;
+                    } else iresult /= ((IntConstant) operand).getValue();
+				}
+			}
+			return new IntConstant(iresult);
 		default:
 			return new Operation(operator, operands);
 		}
@@ -225,6 +328,26 @@ public class Operation extends Expression {
 //		}
 //		return 0;
 //	}
+
+    public boolean like(Object object) {
+        if (object instanceof Operation) {
+			Operation operation = (Operation) object;
+			if (operator != operation.operator) {
+				return false;
+			}
+			if (operands.length != operation.operands.length) {
+				return false;
+			}
+			for (int i = 0; i < operands.length; i++) {
+				if (!Arrays.asList(operands).contains(operation.operands[i])) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+    }
 
 	@Override
 	public boolean equals(Object object) {
