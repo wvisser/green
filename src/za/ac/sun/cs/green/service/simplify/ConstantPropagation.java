@@ -26,9 +26,6 @@ import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation extends BasicService {
 
-	/**
-	 * Number of times the slicer has been invoked.
-	 */
 	private int invocations = 0;
 
 	public ConstantPropagation(Green solver) {
@@ -101,6 +98,7 @@ public class ConstantPropagation extends BasicService {
 			Expression key = variable;
 			Expression get = variable_map.get(key);
 			if (get != null) {
+				//propagation of one constant if it exists in the hash map.
 				System.out.println("Pushes variable: " + get);
 				stack.push(get);
 			} else {
@@ -114,73 +112,23 @@ public class ConstantPropagation extends BasicService {
 		public void postVisit(Operation operation) throws VisitorException {
 			System.out.println("------------------In postVisit: OPERATION.-----------------------");
 			Operation.Operator op = operation.getOperator();
-			Operation.Operator nop = null;
-			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case NE:
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
-			default:
-				break;
+
+			Expression r = stack.pop();
+			System.out.println("Pops off r: " + r);
+			Expression l = stack.pop();
+			System.out.println("Pops off l: " + l);
+
+			if (op == Operation.Operator.EQ) {
+				// adds variable and value to the hash map.
+				System.out.println("adds variable and constant to hash map: " + l + " == " + r);
+				variable_map.put(l, r);
+
 			}
-			if (nop != null) {
-				System.out.println("In fisrt if: nop != null.");
-				Expression r = stack.pop();
-				System.out.println("Pops off r: " + r);
-				Expression l = stack.pop();
-				System.out.println("Pops off l: " + l);
 
-				if  (nop == Operation.Operator.EQ) {
-					System.out.println("adds variable and constant to hash map: " + l + " == " + r);
-					variable_map.put(l, r);
+			System.out.println("Pushes a new Operation: \n l: " + l + "\n op: " + op + "\n r: " + r);
+			stack.push(new Operation(op, l, r));
 
-				}
-
-				if ((r instanceof IntVariable)
-						&& (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(
-								((IntVariable) l).getName()) < 0)) {
-					System.out.println("Pushes a new Operation: \n l: " + l + "\n nop: " + nop + "\n r: " + r);
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
-					System.out.println("Pushes a new Operation: \n l: " + l + "\n nop: " + nop + "\n r: " + r);
-					stack.push(new Operation(nop, r, l));
-				} else {
-
-					System.out.println("Pushes Operation: \n l: " + l + "\n nop: " + nop + "\n r: " + r);
-					stack.push(new Operation(nop, l, r));
-				}
-
-			} else if (op.getArity() == 2) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				System.out.println("Pushes a new Operation: in Arrity. \n l: " + l + "\n op: " + op + "\n r: " + r);
-				stack.push(new Operation(op, l, r));
-			} else {
-				for (int i = op.getArity(); i > 0; i--) {
-					System.out.println("POPS!");
-					stack.pop();
-				}
-
-				System.out.println("Pushes a new Operation: (in else) " + operation );
-				stack.push(operation);
-			}
-			System.out.println("----------------------------------------------------------------------------");
+			System.out.println("--------------End of postVisit: Operation.---------------------------");
 		}
 
 	}
