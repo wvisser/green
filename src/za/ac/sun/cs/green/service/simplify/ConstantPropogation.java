@@ -111,7 +111,9 @@ public class ConstantPropogation extends BasicService {
 					System.out.println(oL + " " + oR);
 					if (oL instanceof IntConstant && oR instanceof IntVariable) {
 						map.put((IntVariable) oR, (IntConstant) oL);
-					} 
+					} if (oR instanceof IntConstant && oL instanceof IntVariable) {
+						map.put((IntVariable) oL, (IntConstant) oR);
+					}
 					break;
 				case ADD:
 					System.out.println("need to check for addition");
