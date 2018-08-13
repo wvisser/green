@@ -1,0 +1,8 @@
+https://www.forbes.com/sites/quora/2014/10/08/what-the-top-1-of-software-engineers-do-that-the-other-99-do-not/#348cca3d7637
+
+
+This was an intersting article about the top 1% of software engineers, and how they differ from he other 99%.
+
+Basically to be the best SE alive, takes time. You need to breath code, be anxious to constantly learn, as the only permanent thing in CS is change.
+
+You need to have an active git repo and dare to explore new things, even if it looks lik it might fail. And most importantly, never stop learning.

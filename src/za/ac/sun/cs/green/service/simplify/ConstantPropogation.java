@@ -105,7 +105,7 @@ public class ConstantPropogation  extends BasicService{
             stack.push(variable);
         }
 
-        public void beforeOp(Operation operation) throws VisitorException {
+        public void preVisit(Operation operation) throws VisitorException {
             Operation.Operator op = operation.getOperator();
             Operation.Operator nop = null;
 
@@ -156,8 +156,7 @@ public class ConstantPropogation  extends BasicService{
                 Expression l = stack.pop();
 
                 if (!op.equals(Operation.Operator.EQ)) {
-                    if (l instanceof IntVariable) {
-                        if (map.containsKey(l)) {
+                    if (l instanceof IntVariable && map.containsKey(l)) {
                             l = map.get(l);
                         }
                     }
