@@ -76,11 +76,11 @@ public class ConstantPropagation extends BasicService {
         while(simplifyingVisitor.getSimplified()) {
             expression.accept(orderingVisitor);
             expression = orderingVisitor.getExpression();
-            log.log(Level.FINEST, "After Constant Propagation: " + expression);
-
+            //log.log(Level.FINEST, "After Constant Propagation: " + expression);
+                    // DOUBLE CHECK WHAT CHANGES WERE MADE. MAY HAVE SOMETHING TO DO WITH STATIC OR BECAUSE IM USING LOG. TRY SOUT
             expression.accept(simplifyingVisitor);
             expression = simplifyingVisitor.getExpression();
-            log.log(Level.FINEST, "After Simplification: " + expression);
+            // log.log(Level.FINEST, "After Simplification: " + expression);
         }
         return expression;
 	}
