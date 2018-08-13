@@ -75,8 +75,7 @@ public class ConstantPropogation  extends BasicService{
             log.log(Level.FINEST, "After Simplifying: " + expression);
         } catch (VisitorException x) {
             log.log(Level.SEVERE,
-                    "encountered an exception -- this should not be happening!",
-                    x);
+                    "encountered an exception -- this should not be happening!",x);
         }
         return expression;
     }
@@ -162,13 +161,11 @@ public class ConstantPropogation  extends BasicService{
 
                     if (r instanceof IntVariable && map.containsKey(r)) {
                             r = map.get(r);
-
                         }
-
+                }
 
                 Operation e = new Operation(operation.getOperator(), l, r);
                 stack.push(e);
-                }
             }
         }
     }
