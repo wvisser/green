@@ -64,8 +64,7 @@ public class ConstantPropogation  extends BasicService{
 	}
 
 
-    public Expression simplify(Expression expression,
-            Map<Variable, Variable> map) {
+    public Expression simplify(Expression expression Map<Variable, Variable> map) {
         try {
             log.log(Level.FINEST, "Before Simplifying: " + expression);
             invocations++;
@@ -109,11 +108,13 @@ public class ConstantPropogation  extends BasicService{
         public void beforeOp(Operation operation) throws VisitorException {
             Operation.Operator op = operation.getOperator();
             Operation.Operator nop = null;
-            switch (op) {
-            case EQ:
-                nop = Operation.Operator.EQ;
-                break;
-            // case NE:
+
+
+            // switch (op) {
+            // case EQ:
+            //     nop = Operation.Operator.EQ;
+            //     break;
+            // // case NE:
             //     nop = Operation.Operator.NE;
             //     break;
             // case LT:
@@ -128,11 +129,11 @@ public class ConstantPropogation  extends BasicService{
             // case GE:
             //     nop = Operation.Operator.LE;
             //     break;
-            default:
-                break;
-            }
+            // default:
+                // break;
+            // }
 
-            if (nop.equals(Operation.Operator.EQ)) {
+            if (op.equals(Operation.Operator.EQ)) {
                 Expression l = operation.getOperand(0);
                 Expression r = operation.getOperand(1);
 
@@ -154,24 +155,23 @@ public class ConstantPropogation  extends BasicService{
                 Expression r = stack.pop();
                 Expression l = stack.pop();
 
-                if ((l instanceof IntVariable) && (r instanceof IntVariable)) {
-                    if (!op.equals(Operation.Operator.EQ)) {
+                if (!op.equals(Operation.Operator.EQ)) {
+                    if ((l instanceof IntVariable) {
                         if (map.containsKey(l)) {
                             l = map.get(l);
                         }
+                    }
+
+                    if ((l instanceof IntVariable) {
                         if (map.containsKey(r)) {
                             r = map.get(r);
                         }
-
                     }
+                }
+
+                Operation e = new Operation(operation.getOperator(), l, r);
+                stack.push(e);
             }
-            Operation e = new Operation(operation.getOperator(), l, r);
-            stack.push(e);
         }
-
     }
-
-
-}
-
 }
