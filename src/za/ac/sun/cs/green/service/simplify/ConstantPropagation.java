@@ -75,7 +75,7 @@ public class ConstantPropagation extends BasicService {
             throws VisitorException {
         Boolean simplified = false;
 
-        //Simplify once
+        // Simplify once
         SimplifyingVisitor simplifyingVisitor = new SimplifyingVisitor();
         expression.accept(simplifyingVisitor);
         expression = simplifyingVisitor.getExpression();
@@ -248,9 +248,7 @@ public class ConstantPropagation extends BasicService {
                     stack.push(operation);
                     break;
                 }
-            }
-
-            else if (l instanceof Operation && r instanceof Operation) {
+            } else if (l instanceof Operation && r instanceof Operation) {
                 // Handling operation with 2 operations
                 simplified = true;
 
@@ -284,9 +282,7 @@ public class ConstantPropagation extends BasicService {
                     break;
                 }
 
-            }
-
-            else if ((l instanceof Operation && r instanceof IntConstant)
+            } else if ((l instanceof Operation && r instanceof IntConstant)
                     || (l instanceof IntConstant && r instanceof Operation)) {
                 // Handling operation with int and constant
                 simplified = true;
@@ -752,6 +748,7 @@ public class ConstantPropagation extends BasicService {
                     break;
                 }
             } else {
+                // All other cases of operations
                 simplified = false;
                 stack.push(new Operation(op, l, r));
             }
