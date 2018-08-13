@@ -53,11 +53,14 @@ public class ConstantPropagation extends BasicService {
         try {
             log.log(Level.FINEST, "Before Constant Propagation: " + expression);
             invocations++;
+            HashMap<IntVariable, IntConstant> variables = new HashMap<IntVariable, IntConstant>();
 
             // Constant propagation
-            PropagationVisitor propagationVisitor = new PropagationVisitor();
+            PropagationVisitor propagationVisitor = new PropagationVisitor(variables);
             expression.accept(propagationVisitor);
             expression = propagationVisitor.getExpression();
+            System.out.println("#######Printing map########");
+            System.out.println(Arrays.asList(variables));
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
 
             // Simplification
@@ -73,12 +76,14 @@ public class ConstantPropagation extends BasicService {
             throws VisitorException {
         Boolean simplified = false;
 
+        //Simplify once
         SimplifyingVisitor simplifyingVisitor = new SimplifyingVisitor();
         expression.accept(simplifyingVisitor);
         expression = simplifyingVisitor.getExpression();
         simplified = simplifyingVisitor.getSimplified();
         log.log(Level.FINEST, "After Simplification: " + expression);
 
+        //Propagate and simplify loop
         // while(simplified == true) {
         propagationVisitor = new PropagationVisitor();
         expression.accept(propagationVisitor);
@@ -97,9 +102,9 @@ public class ConstantPropagation extends BasicService {
         private Stack<Expression> stack;
         private HashMap<IntVariable, IntConstant> variables;
 
-        public PropagationVisitor() {
+        public PropagationVisitor(Hashmap<IntVariable, IntConstant> map) {
             stack = new Stack<Expression>();
-            variables = new HashMap<IntVariable, IntConstant>();
+            variables = map;
         }
 
         public Expression getExpression() {
