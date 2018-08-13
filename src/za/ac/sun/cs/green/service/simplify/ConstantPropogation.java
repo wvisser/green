@@ -9,6 +9,10 @@ import za.ac.sun.cs.green.util.Reporter;
 import java.util.*;
 import java.util.logging.Level;
 
+import static za.ac.sun.cs.green.expr.Operation.Operator.EQ;
+import static za.ac.sun.cs.green.expr.Operation.Operator.GE;
+import static za.ac.sun.cs.green.expr.Operation.Operator.GT;
+
 public class ConstantPropogation extends BasicService {
 
     /**
@@ -41,20 +45,21 @@ public class ConstantPropogation extends BasicService {
     public Expression simplify(Expression expression) {
         try {
             TreeMap<IntVariable, IntConstant> map = new TreeMap<>();
+            TreeMap<IntVariable, Operation> constraintsMap = new TreeMap<>();
             invocations++;
             log.log(Level.FINEST, "Before Simplification: " + expression);
-            SimplificationVisitor simplificationVisitor = new SimplificationVisitor(map);
+            SimplificationVisitor simplificationVisitor = new SimplificationVisitor(map, constraintsMap);
             expression.accept(simplificationVisitor);
             Expression simplified = simplificationVisitor.getExpression();
-            while (!simplified.equals(expression) || simplificationVisitor.madeChange) {
+            do {
                 expression = simplified;
-                simplificationVisitor = new SimplificationVisitor(map);
+                simplificationVisitor = new SimplificationVisitor(map, constraintsMap);
                 simplified.accept(simplificationVisitor);
                 simplified = simplificationVisitor.getExpression();
-                simplificationVisitor = new SimplificationVisitor(map);
+                simplificationVisitor = new SimplificationVisitor(map, constraintsMap);
                 simplified.accept(simplificationVisitor);
                 simplified = simplificationVisitor.getExpression();
-            }
+            } while (!simplified.equals(expression) || simplificationVisitor.madeChange);
             log.log(Level.FINEST, "Original After Simplification" + expression);
             log.log(Level.FINEST, "Simplified After Simplification: " + simplified);
             return simplified;
@@ -77,11 +82,11 @@ public class ConstantPropogation extends BasicService {
          *
          * @param map a TreeMap containing values for variables that have already been defined.
          */
-        public SimplificationVisitor(TreeMap<IntVariable, IntConstant> map) {
+        public SimplificationVisitor(TreeMap<IntVariable, IntConstant> map, TreeMap<IntVariable, Operation> constraintsMap) {
             stack = new Stack<Expression>();
             opStack = new Stack<>();
             this.map = map;
-            constraintsMap = new TreeMap<>();
+            this.constraintsMap = new TreeMap<>();
             madeChange = false;
         }
 
@@ -91,6 +96,9 @@ public class ConstantPropogation extends BasicService {
          * @return the simplified expression
          */
         public Expression getExpression() {
+            Operation trueOp = new Operation(EQ, new IntConstant(0), new IntConstant(0));
+            Operation falseOp = new Operation(EQ, new IntConstant(0), new IntConstant(1));
+            int constraintsSatisfied;
             if (opStack.size() == 0) {
                 return null;
             }
@@ -98,10 +106,31 @@ public class ConstantPropogation extends BasicService {
                 Operation opRight = (Operation) propagateConstants(opStack.pop());
                 Operation opLeft  = (Operation) propagateConstants(opStack.pop());
                 opRight = (Operation) simplify(opRight);
+                constraintsSatisfied = checkConstraints(opRight);
+                if (constraintsSatisfied == 1) {
+                    opRight = trueOp;
+                } else if (constraintsSatisfied == -1) {
+                    opRight = falseOp;
+                }
                 opLeft  = (Operation) simplify(opLeft);
+                constraintsSatisfied = checkConstraints(opLeft);
+                if (constraintsSatisfied == 1) {
+                    opLeft = trueOp;
+                } else if (constraintsSatisfied == -1) {
+                    opLeft = falseOp;
+                }
                 opStack.push(new Operation(Operation.Operator.AND, opLeft, opRight));
             }
-            return simplify(opStack.pop());
+            Operation op = opStack.pop();
+            op = (Operation) simplify(op);
+            constraintsSatisfied = checkConstraints(op);
+            if (constraintsSatisfied == 1) {
+                op = trueOp;
+            } else if (constraintsSatisfied == -1) {
+                op = falseOp;
+            }
+
+            return op;
         }
 
         /**
@@ -131,6 +160,8 @@ public class ConstantPropogation extends BasicService {
 
             l = propagateConstants(l);
             r = propagateConstants(r);
+            l = simplify(l);
+            r = simplify(r);
 
             opStack.push(new Operation(operation.getOperator(), l, r));
         }
@@ -146,31 +177,63 @@ public class ConstantPropogation extends BasicService {
             Expression r = operation.getOperand(1);
 
             if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
-                if (operation.getOperator() == Operation.Operator.EQ) {
-                    if (!map.containsKey(l)) {
-                        map.put((IntVariable) l, (IntConstant) r);
-                        madeChange = true;
-                    }
-                } else {
-                    constraintsMap.put((IntVariable) l, operation);
+                switch (operation.getOperator()) {
+                    case EQ:
+                        if (!map.containsKey(l)) {
+                            map.put((IntVariable) l, (IntConstant) r);
+                            madeChange = true;
+                        }
+                        constraintsMap.put((IntVariable) l, operation);
+                        break;
+                    case GT:
+                    case GE:
+                    case LT:
+                    case LE:
+                    case NE:
+                        if (!constraintsMap.containsKey(r)) {
+                            constraintsMap.put((IntVariable) l, operation);
+                        }
+                        break;
+                    default:
+                        if (map.containsKey(l)) {
+                            l = map.get(l);
+                        }
                 }
             } else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-                if (operation.getOperator() == Operation.Operator.EQ) {
-                    if (!map.containsKey(r)) {
-                        map.put((IntVariable) r, (IntConstant) l);
-                        madeChange = true;
-                    }
-                } else {
-                    constraintsMap.put((IntVariable) r, operation);
+                switch (operation.getOperator()) {
+                    case EQ:
+                        if (!map.containsKey(r)) {
+                            map.put((IntVariable) r, (IntConstant) l);
+                            madeChange = true;
+                        }
+                        constraintsMap.put((IntVariable) r, operation);
+                        break;
+                    case GT:
+                    case GE:
+                    case LT:
+                    case LE:
+                    case NE:
+                        if (!constraintsMap.containsKey(r)) {
+                            constraintsMap.put((IntVariable) r, operation);
+                        }
+                        break;
+                    default:
+                        if (map.containsKey(r)) {
+                            r = map.get(r);
+                        }
                 }
             } else if ((l instanceof IntVariable) && (r instanceof IntVariable)) {
                 if (map.containsKey(l)) {
                     l = map.get(l);
+                    madeChange = true;
                 }
                 if (map.containsKey(r)) {
                     r = map.get(r);
+                    madeChange = true;
                 }
             }
+
+
 
             return new Operation(operation.getOperator(), l, r);
         }
@@ -187,6 +250,13 @@ public class ConstantPropogation extends BasicService {
             Operation.Operator operator = operation.getOperator();
             Expression l = operation.getOperand(0);
             Expression r = operation.getOperand(1);
+
+            int constraintsSatisfied = checkConstraints(operation);
+            if (constraintsSatisfied == 1) {
+                return trueOp;
+            } else if (constraintsSatisfied == -1) {
+                return falseOp;
+            }
 
             if (((l instanceof IntVariable) && (r instanceof IntConstant)) || ((l instanceof IntConstant) && (r instanceof IntVariable))) {
                 operation = (Operation) propagateConstants(operation);
@@ -225,8 +295,10 @@ public class ConstantPropogation extends BasicService {
                 case AND:
                     if (falseOp.equals(l) || falseOp.equals(r)) {
                         return falseOp;
-                    } else if (trueOp.equals(l) && trueOp.equals(r)) {
-                        return trueOp;
+                    } else if (trueOp.equals(l)) {
+                        return r;
+                    } else if (trueOp.equals(r)) {
+                        return l;
                     } else {
                         return operation;
                     }
@@ -355,6 +427,122 @@ public class ConstantPropogation extends BasicService {
                 default:
                     return operation;
             }
+        }
+
+        /**
+         * Checks whether the given operation satisfies currently known constraints
+         *
+         * @param operation the operation which must be checked
+         * @return 0 if it satisfies known constraints, 1 if it is a tautology and -1 if it contradicts an
+         * existing constraint
+         */
+        private int checkConstraints(Operation operation) {
+            Expression l = operation.getOperand(0);
+            Expression r = operation.getOperand(1);
+
+            if (!((l instanceof IntVariable) && (r instanceof IntConstant)) && !((r instanceof IntVariable) && (l instanceof IntConstant))) {
+                return 0;
+            }
+
+
+            IntVariable var = (l instanceof IntVariable) ? (IntVariable) l : (IntVariable) r;
+            IntConstant con = (l instanceof IntConstant) ? (IntConstant) l : (IntConstant) r;
+            int val = con.getValue();
+
+            Operation.Operator operator = operation.getOperator();
+
+            // Ensure variable is on the left to reduce future code
+            if (r instanceof IntConstant) {
+                switch (operator) {
+                    case GT:
+                        operator = Operation.Operator.LT;
+                        break;
+                    case GE:
+                        operator = Operation.Operator.LE;
+                        break;
+                    case LT:
+                        operator = Operation.Operator.GT;
+                        break;
+                    case LE:
+                        operator = Operation.Operator.GE;
+                }
+            }
+
+            if (!constraintsMap.containsKey(var)) {
+                return 0;
+            }
+
+            Operation constraint = constraintsMap.get(var);
+            if (constraint.equals(operation)) {
+                return 0;
+            }
+            Expression lc = constraint.getOperand(0);
+            Expression rc = constraint.getOperand(1);
+            int conValue = (lc instanceof IntConstant) ? ((IntConstant) lc).getValue() : ((IntConstant) rc).getValue();
+            int lowBound = 0;
+            int highBound = 99;
+
+            if (lc instanceof IntVariable) {
+                switch (constraint.getOperator()) {
+                    case EQ:
+                        lowBound = conValue;
+                        highBound = conValue;
+                        break;
+                    case GE:
+                        lowBound = conValue;
+                        break;
+                    case GT:
+                        lowBound = conValue + 1;
+                        break;
+                    case LE:
+                        highBound = conValue;
+                        break;
+                    case LT:
+                        highBound = conValue - 1;
+                        break;
+                }
+            } else {
+                switch (constraint.getOperator()) {
+                    case EQ:
+                        lowBound = conValue;
+                        highBound = conValue;
+                        break;
+                    case LE:
+                        lowBound = conValue;
+                        break;
+                    case LT:
+                        lowBound = conValue + 1;
+                        break;
+                    case GE:
+                        highBound = conValue;
+                        break;
+                    case GT:
+                        highBound = conValue - 1;
+                        break;
+                }
+
+            }
+
+            switch (operation.getOperator()) {
+                case EQ:
+                    if ((lowBound == highBound) && (lowBound != val)) {
+                        return -1;
+                    } else if ((lowBound == highBound) && (lowBound == val)) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                case LT:
+                    if (highBound < conValue) {
+                        return 1;
+                    } else if (lowBound >= conValue) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+            }
+
+            return 0;
         }
 
     }
