@@ -1,7 +1,0 @@
-19787065 Matthew Brederode
-
-Firstly, the broken test must be uncommented. No reason for the failure is listed in the output. We can assume that the reason for failure is avaliable, however it is not being printed out. Next haltonfailure, within the build.xml file must be changed to no, now failure messages are found in 
-TEST-za.ac.sun.cs.green.EntireSuite.xml. From the error message, we can deduce that the something is wrong with the check in test20. changing our check to be less than or equal to instead of less than, will match the expected output and the test will pass. Lastly a cat command was added to travis.yml to output the contents of TEST-za.ac.sun.cs.green.EntireSuite.xml.
-
-link to github: https://github.com/MBrederode/green
-
