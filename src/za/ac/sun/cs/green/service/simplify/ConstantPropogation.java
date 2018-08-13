@@ -135,7 +135,6 @@ public class ConstantPropogation extends BasicService {
 				}
 				Operation out = new Operation(operation.getOperator(), second, first);
 
-
                 stack.push(out);
 			}
 
