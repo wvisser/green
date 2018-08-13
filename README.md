@@ -1,8 +1,10 @@
-[![Build Status](https://travis-ci.com/DavidBakerEffendi/green.svg?branch=master)](https://travis-ci.com/DavidBakerEffendi/green)
+#Green [![Build Status](https://travis-ci.com/DavidBakerEffendi/green.svg?branch=master)](https://travis-ci.com/DavidBakerEffendi/green)
 
-Notes:
+## Notes
+SATCanonizer and ConstantPropagation are functional. Test cases for 
+ConstantPropagation have been slightly adjusted to accommodate the order 
+through which the Expressions are output, but the correct variables and 
+their calculated constants will come out in correct order otherwise.
 
-The first step is to update "build.properties" with your local
-settings.  You do not need to set z3 and latte, but in that case
-some unit tests won't run.
-   
+## To my dear peers...
+Go away and figure Green out for yourselves! It's EZPZ.
