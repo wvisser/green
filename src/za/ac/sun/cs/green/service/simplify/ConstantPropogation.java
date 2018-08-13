@@ -105,9 +105,9 @@ public class ConstantPropogation extends BasicService {
 			case EQ:
 				System.out.println("need to check for equality");
 				if (right == left) {
-					stack.push(TRUE);
+					stack.push(Operator.TRUE);
 				} else {
-					stack.push(FALSE);
+					stack.push(Operator.FALSE);
 				}
 				break;
 			case NE:
