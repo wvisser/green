@@ -55,23 +55,20 @@ public class ConstantPropogation extends BasicService {
         invocations ++;
         Expression propogated = null;
 
-        log.log(Level.FINEST, "\n\n\n\n**********\n");
-        log.log(Level.FINEST, "Before Constant Propogation: " + expression);
-
         try {
+            log.log(Level.FINEST, "\n**********\n");
+            log.log(Level.FINEST, "Before Constant Propogation: " + expression);
 
             PropogateVisitor propogateVisitor = new PropogateVisitor();
             expression.accept(propogateVisitor);
             expression =  propogateVisitor.getExpression();
 
             log.log(Level.FINEST, "After Constant Propogation: " + expression);
-            log.log(Level.FINEST, "\n\n**********\n\n\n\n");
+            log.log(Level.FINEST, "\n**********\n");
             return expression;
 
         } catch (VisitorException ve) {
-            log.log(Level.SEVERE,
-					"encountered an exception -- this should not be happening!",
-					ve);
+            log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", ve);
         }
 
         return null;
