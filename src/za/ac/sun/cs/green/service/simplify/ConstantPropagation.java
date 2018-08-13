@@ -60,8 +60,6 @@ public class ConstantPropagation extends BasicService {
             PropagationVisitor propagationVisitor = new PropagationVisitor(variables);
             expression.accept(propagationVisitor);
             expression = propagationVisitor.getExpression();
-            System.out.println("#######Printing map########");
-            System.out.println(Arrays.asList(variables));
             log.log(Level.FINEST, "After Constant Propagation: " + expression);
 
             // Simplification
@@ -84,18 +82,6 @@ public class ConstantPropagation extends BasicService {
         simplified = simplifyingVisitor.getSimplified();
         log.log(Level.FINEST, "After Simplification: " + expression);
 
-        //Propagate and simplify loop
-        // while(simplified == true) {
-        // propagationVisitor = new PropagationVisitor();
-        // expression.accept(propagationVisitor);
-        // expression = propagationVisitor.getExpression();
-        // log.log(Level.FINEST, "After Constant Propagation: " + expression);
-        // simplifyingVisitor = new SimplifyingVisitor();
-        // expression.accept(simplifyingVisitor);
-        // expression = simplifyingVisitor.getExpression();
-        // simplified = simplifyingVisitor.getSimplified();
-        // log.log(Level.FINEST, "After Simplification: " + expression);
-        // }
         return expression;
     }
 
@@ -110,7 +96,6 @@ public class ConstantPropagation extends BasicService {
 
         public Expression getExpression() {
             Expression finalExp = stack.pop();
-            System.out.println("Final expression is " + finalExp);
             return finalExp;
         }
 
@@ -164,12 +149,10 @@ public class ConstantPropagation extends BasicService {
         public SimplifyingVisitor() {
             stack = new Stack<Expression>();
             simplified = false;
-            System.out.println("Starting Simplifier");
         }
 
         public Expression getExpression() {
             Expression finalExp = stack.pop();
-            System.out.println("Final expression: " + finalExp);
             return finalExp;
         }
 
@@ -193,11 +176,8 @@ public class ConstantPropagation extends BasicService {
             Expression r = stack.pop();
             Expression l = stack.pop();
 
-            System.out.println("Processing: " + l + " " + op + " " + r);
-
             if (l instanceof IntConstant && r instanceof IntConstant) {
                 // Handling an operation with 2 constants
-                System.out.println("Have 2 constants");
                 simplified = true;
 
                 switch (op) {
@@ -264,7 +244,7 @@ public class ConstantPropagation extends BasicService {
                     stack.push(divResult);
                     break;
                 default:
-                    System.out.println("Hit default 1... Weird");
+                    log.log("Hit default 1... Weird");
                     stack.push(operation);
                     break;
                 }
@@ -272,7 +252,6 @@ public class ConstantPropagation extends BasicService {
 
             else if (l instanceof Operation && r instanceof Operation) {
                 // Handling operation with 2 operations
-                System.out.println("Have 2 ops");
                 simplified = true;
 
                 switch (op) {
@@ -301,7 +280,7 @@ public class ConstantPropagation extends BasicService {
                     }
                     break;
                 default:
-                    System.out.println("Hit default 2... Weird");
+                    log.log("Hit default 2... Weird");
                     break;
                 }
 
@@ -310,7 +289,6 @@ public class ConstantPropagation extends BasicService {
             else if ((l instanceof Operation && r instanceof IntConstant)
                     || (l instanceof IntConstant && r instanceof Operation)) {
                 // Handling operation with int and constant
-                System.out.println("Have an op and a constant");
                 simplified = true;
                 Operation insideOpp;
                 IntConstant outsideConstant;
@@ -403,7 +381,7 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     default:
-                        System.out.println("Hit default 3... Weird");
+                        log.log("Hit default 3... Weird");
                         break;
                     }
                     break;
@@ -498,7 +476,7 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     default:
-                        System.out.println("Hit default 4... Weird");
+                        log.log("Hit default 4... Weird");
                         break;
                     }
                     break;
@@ -587,7 +565,7 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     default:
-                        System.out.println("Hit default 5... Weird");
+                        log.log("Hit default 5... Weird");
                         break;
                     }
                     break;
@@ -676,7 +654,7 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     default:
-                        System.out.println("Hit default 6... Weird");
+                        log.log("Hit default 6... Weird");
                         break;
                     }
                     break;
@@ -765,16 +743,15 @@ public class ConstantPropagation extends BasicService {
                         }
                         break;
                     default:
-                        System.out.println("Hit default 7... Weird");
+                        log.log("Hit default 7... Weird");
                         break;
                     }
                     break;
                 default:
-                    System.out.println("Hit the default here. Odd");
+                    log.log("Hit the default here. Odd");
                     break;
                 }
             } else {
-                System.out.println("Have none of the above");
                 simplified = false;
                 stack.push(new Operation(op, l, r));
             }
