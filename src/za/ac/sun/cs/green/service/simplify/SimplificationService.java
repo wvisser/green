@@ -1,21 +1,17 @@
 package za.ac.sun.cs.green.service.simplify;
 
-import org.chocosolver.solver.variables.IntVar;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.*;
 import za.ac.sun.cs.green.service.BasicService;
-import za.ac.sun.cs.green.service.canonizer.SATCanonizerService;
 
 import java.util.*;
 import java.util.logging.Level;
 
-public class ConstantPropagation extends BasicService {
-
-    /**
-     * Number of times the slicer has been invoked.
-     */
-    private int invocations = 0;
+/**
+ * Class Defines a Service which Simplifies Expressions
+ */
+public class SimplificationService extends BasicService {
 
     /**
      * Constructor for the basic service. It simply initializes its three
@@ -23,10 +19,18 @@ public class ConstantPropagation extends BasicService {
      *
      * @param solver the {@link Green} solver this service will be added to
      */
-    public ConstantPropagation(Green solver) {
+    public SimplificationService(Green solver) {
         super(solver);
     }
 
+    /**
+     *
+     * Handles requests and invokes the simplifier on a Green Instance.
+     *
+     * @param instance
+     *            the instance to solve
+     * @return The solved instance.
+     */
     @Override
     public Set<Instance> processRequest(Instance instance) {
         @SuppressWarnings("unchecked")
@@ -41,18 +45,24 @@ public class ConstantPropagation extends BasicService {
         return result;
     }
 
+    /**
+     *  Method Simplifies Expressions
+     *
+     * @param expression The Expression to Simplify
+     * @param map Variable Map
+     * @return The Simplified Expression
+     */
     public Expression simplify(Expression expression,
                                Map<Variable, Variable> map) {
         try {
             log.log(Level.FINEST, "Before Simplification: " + expression);
-            invocations++;
 
             if (map == null) {
                 throw new VisitorException("");
             }
 
-            ConstantPropagation.ConstantPropagationVisitor conProgVisitor = new ConstantPropagationVisitor();
-            ConstantPropagation.SimplificationVisitor simpVisitor = new SimplificationVisitor();
+            SimplificationService.ConstantPropagationVisitor conProgVisitor = new ConstantPropagationVisitor();
+            SimplificationService.SimplificationVisitor simpVisitor = new SimplificationVisitor();
 
             String result = "";
             while (true) {
@@ -83,20 +93,49 @@ public class ConstantPropagation extends BasicService {
         return null;
     }
 
+    /**
+     * Class is a Visitor which Simplifies Expressions.
+     */
     private static class SimplificationVisitor extends Visitor {
 
+        /**
+         * Expression Stack. Think RPN Calculator...
+         */
         private Stack<Expression> stack;
+
+        /**
+         * Maps Variables to Constants.
+         */
         private Map<IntVariable, IntConstant> vars;
 
+        /**
+         * Constructor for the Visitor.
+         */
         public SimplificationVisitor() {
             stack = new Stack<>();
             vars = new HashMap<>();
         }
 
+        /**
+         * Method returns the simplified Expression
+         *
+         * @return the simplified expression.
+         */
         public Expression getExpression() {
             return stack.pop();
         }
 
+        /**
+         * Collects Expressions
+         * Moves constants to RHS
+         * Moves vars to LHS
+         *
+         * Collapses and Simplifies Expressions
+         *
+         * @param l LHS Expressions
+         * @param r RHS Expression
+         * @return List of Simplified Expressions [0 = LHS, 1 = RHS]
+         */
         public List<Expression> collectAndSimplify(Expression l, Expression r) {
             List<Expression> returnList = new ArrayList<>();
 
@@ -145,16 +184,31 @@ public class ConstantPropagation extends BasicService {
             return null;
         }
 
+        /**
+         * Method gets called by the Expression after visiting constant.
+         *
+         * @param constant Constant Visited
+         */
         @Override
         public void postVisit(IntConstant constant) {
             stack.push(constant);
         }
 
+        /**
+         * Method gets called by the Expression after visiting variable.
+         *
+         * @param variable Variable Visited
+         */
         @Override
         public void postVisit(IntVariable variable) {
             stack.push(variable);
         }
 
+        /**
+         *  Method gets called by the Expression after visiting Operation
+         *
+         * @param operation Operation Visited
+         */
         @Override
         public void postVisit(Operation operation) {
             Operation.Operator op = operation.getOperator();
@@ -207,30 +261,63 @@ public class ConstantPropagation extends BasicService {
     }
 
 
+    /**
+     * Class is a Visitor which Propagates Constants.
+     */
     private static class ConstantPropagationVisitor extends Visitor {
 
+        /**
+         * Expression Stack. Think RPN Calculator...
+         */
         private Stack<Expression> stack;
+
+        /**
+         * Maps Variables to Constants.
+         */
         private Map<IntVariable, IntConstant> vars;
 
+        /**
+         * Constructor for Visitor
+         */
         public ConstantPropagationVisitor() {
             stack = new Stack<>();
             vars = new HashMap<>();
         }
 
+        /**
+         * Method returns the propagated Expression
+         *
+         * @return the simplified expression.
+         */
         public Expression getExpression() {
             return stack.pop();
         }
 
+        /**
+         * Method gets called by the Expression after visiting constant.
+         *
+         * @param constant Constant Visited
+         */
         @Override
         public void postVisit(IntConstant constant) {
             stack.push(constant);
         }
 
+        /**
+         * Method gets called by the Expression after visiting variable.
+         *
+         * @param variable Variable Visited
+         */
         @Override
         public void postVisit(IntVariable variable) {
             stack.push(variable);
         }
 
+        /**
+         *  Method gets called by the Expression after visiting Operation
+         *
+         * @param operation Operation Visited
+         */
         @Override
         public void postVisit(Operation operation) {
             Operation.Operator op = operation.getOperator();

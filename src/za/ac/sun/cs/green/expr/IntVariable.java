@@ -34,12 +34,6 @@ public class IntVariable extends Variable {
 		visitor.postVisit(this);
 	}
 
-//	@Override
-//	public int compareTo(Expression expression) {
-//		IntVariable variable = (IntVariable) expression;
-//		return getName().compareTo(variable.getName());
-//	}
-
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IntVariable) {
