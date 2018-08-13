@@ -111,6 +111,7 @@ public class ConstantPropogation extends BasicService {
             System.out.println("postprocessing operator " + op + " with operands " + l + " and " + r);
             if (op == Operation.Operator.EQ) {
                 // simple assignment
+                // 1 = x
                 if (r instanceof IntConstant && l instanceof IntVariable) {
                     if (variables.containsKey(l.toString())) {
                         System.out.println("variable " + l + " exists");
@@ -119,6 +120,7 @@ public class ConstantPropogation extends BasicService {
                     }
                     System.out.println("adding variable " + l + " to list with value " + r);
                     variables.put(l.toString(), (IntConstant) r);
+                    // x = 1
                 } else if (r instanceof IntVariable && l instanceof IntConstant) {
                     if (variables.containsKey(r.toString())) {
                         System.out.println("variable " + r + " exists");
@@ -128,36 +130,72 @@ public class ConstantPropogation extends BasicService {
                     System.out.println("adding variable " + r + " to list with value " + l);
                     variables.put(r.toString(), (IntConstant) l);
                 }
-                // complex assignment (1 +/- x) = 2, 2 = (1 +/- x)
+                // complex assignment (1 +/- x) = 2, 2 = (1 +/- x):
                 if (l instanceof IntConstant && r instanceof Operation) {
                     Expression r2 = ((Operation) r).getOperand(1);
                     Expression l2 = ((Operation) r).getOperand(0);
+                    // 2 = (x+1)
                     if (r2 instanceof IntVariable && l2 instanceof IntConstant) {
                         l = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) l2).getValue()
                                 * (((Operation) r).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         r = r2;
+
+                        // check to see if the variable is already set
+                        if (variables.containsKey(r.toString())) {
+                            System.out.println("variable " + r + " exists");
+                            stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
+                            return;
+                        }
+
                         System.out.println("adding variable " + r + " to list with value " + l);
                         variables.put(r.toString(), (IntConstant) l);
+                        // 2 = (1+x)
                     } else if (r2 instanceof IntConstant && l2 instanceof IntVariable) {
                         l = new IntConstant(((IntConstant) l).getValue() + ((IntConstant) r2).getValue()
                                 * (((Operation) r).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         r = l2;
+
+                        // check to see if the variable is already set
+                        if (variables.containsKey(r.toString())) {
+                            System.out.println("variable " + r + " exists");
+                            stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
+                            return;
+                        }
+
                         System.out.println("adding variable " + r + " to list with value " + l);
                         variables.put(r.toString(), (IntConstant) l);
                     }
                 } else if (l instanceof Operation && r instanceof IntConstant) {
                     Expression r2 = ((Operation) l).getOperand(1);
                     Expression l2 = ((Operation) l).getOperand(0);
+                    // (x+1) = 2
                     if (r2 instanceof IntVariable && l2 instanceof IntConstant) {
                         r = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) l2).getValue()
                                 * (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         l = r2;
+
+                        // check to see if the variable is already set
+                        if (variables.containsKey(l.toString())) {
+                            System.out.println("variable " + l + " exists");
+                            stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
+                            return;
+                        }
+
                         System.out.println("adding variable " + l + " to list with value " + r);
                         variables.put(l.toString(), (IntConstant) r);
+                        // (1+x) = 2
                     } else if (r2 instanceof IntConstant && l2 instanceof IntVariable) {
                         r = new IntConstant(((IntConstant) r).getValue() + ((IntConstant) r2).getValue()
                                 * (((Operation) l).getOperator() == Operation.Operator.ADD ? -1 : 1));
                         l = l2;
+
+                        // check to see if the variable is already set
+                        if (variables.containsKey(l.toString())) {
+                            System.out.println("variable " + l + " exists");
+                            stack.push(new Operation(Operation.Operator.EQ, new IntConstant(1), new IntConstant(0)));
+                            return;
+                        }
+
                         System.out.println("adding variable " + l + " to list with value " + r);
                         variables.put(l.toString(), (IntConstant) r);
                     }
