@@ -100,15 +100,10 @@ public class ConstantPropogation extends BasicService {
 			System.out.println("Left:" + left + " Right: " + right);
 
 			Operation.Operator nop = null;
-			if (stack.size() >= 3) {
+
 				switch (op) {
 				case EQ:
 					System.out.println("need to check for equality");
-					// if (right == left) {
-					// 	stack.push(Operation.TRUE);
-					// } else {
-					// 	stack.push(Operation.FALSE);
-					// }
 					break;
 				case NE:
 					System.out.println("need to check for nonequality");
@@ -142,7 +137,6 @@ public class ConstantPropogation extends BasicService {
 					System.out.println("Default case!");
 					break;
 				}
-			}
 
 			// if (nop != null) {
 			// 	Expression r = stack.pop();
