@@ -140,12 +140,8 @@ public class ConstantPropagation extends BasicService {
                 // future
                 if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
                     variables.put((IntVariable) l, (IntConstant) r);
-                    stack.push(new Operation(op, l, r));
                 } else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
                     variables.put((IntVariable) r, (IntConstant) l);
-                    stack.push(new Operation(op, l, r));
-                } else {
-                    stack.push(new Operation(op, l, r));
                 }
             } else {
                 // All non EQ operands, propagate any variables and add operation to stack
@@ -155,8 +151,8 @@ public class ConstantPropagation extends BasicService {
                 if (variables.containsKey(l)) {
                     l = variables.get(l);
                 }
-                stack.push(new Operation(op, l, r));
             }
+            stack.push(new Operation(op, l, r));
         }
 
     }
