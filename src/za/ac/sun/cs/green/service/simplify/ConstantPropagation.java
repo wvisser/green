@@ -127,7 +127,7 @@ public class ConstantPropagation extends BasicService {
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();		
-				System.out.println("Operator: " + ((Operation)l).getOperator());
+								
 				switch (op) {
 					case EQ:
 						if ((r instanceof IntVariable) && (l instanceof IntConstant)) {														
