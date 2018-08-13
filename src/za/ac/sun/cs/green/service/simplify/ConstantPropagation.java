@@ -25,7 +25,35 @@ import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation {
+	/**
+	 * Number of times the slicer has been invoked.
+	 */
+	private int invocations = 0;
 
+	public ConstantPropagation(Green solver) {
+		super(solver);
+	}
+
+	@Override
+	public Set<Instance> processRequest(Instance instance) {
+		@SuppressWarnings("unchecked")
+		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
+		if (result == null) {
+			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
+			final Expression e = constantPropagation(instance.getFullExpression(), map);
+			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
+			result = Collections.singleton(i);
+			instance.setData(getClass(), result);
+		}
+		return result;
+	}
+
+	@Override
+	public void report(Reporter reporter) {
+		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
+	}
+
+	
 	public static Expression constantPropagation(Expression expression) {
 		try {
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
