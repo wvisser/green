@@ -49,8 +49,8 @@ public class ConstantPropogation extends BasicService {
         try {
             log.log(Level.FINEST, "\n**********\n");
             log.log(Level.FINEST, "Before Constant Propogation: " + expression);
-
-            expression.accept(PropogateVisitor propogateVisitor);
+            PropogateVisitor propogateVisitor = new PropogateVisitor();
+            expression.accept(propogateVisitor);
             propogateVisitor.PropogateVisitor();
             expression =  propogateVisitor.getExpression();
 
@@ -107,6 +107,7 @@ public class ConstantPropogation extends BasicService {
 
         @Override
 		public void postVisit(Operation operation) {
+
 			Operation.Operator op = operation.getOperator();
 
 			if (stack.size() >= 2) {
