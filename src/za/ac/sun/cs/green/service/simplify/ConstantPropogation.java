@@ -100,48 +100,50 @@ public class ConstantPropogation extends BasicService {
 			System.out.println("Left:" + left + " Right: " + right);
 
 			Operation.Operator nop = null;
-
-			switch (op) {
-			case EQ:
-				System.out.println("need to check for equality");
-				// if (right == left) {
-				// 	stack.push(Operation.TRUE);
-				// } else {
-				// 	stack.push(Operation.FALSE);
-				// }
-				break;
-			case NE:
-				System.out.println("need to check for nonequality");
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				System.out.println("need to check for less than");
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				System.out.println("need to check for less than equals");
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				System.out.println("need to check for greater than");
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				System.out.println("need to check for greater than equals");
-				nop = Operation.Operator.LE;
-				break;
-			case ADD:
-				System.out.println("need to check for addition");
-				//stack.push();
-				break;
-			case AND:
-				System.out.println("need to check for and");
-				nop = Operation.Operator.AND;
-				break;
-			default:
-				System.out.println("Default case!");
-				break;
+			if (stack.size() < 2) {
+				switch (op) {
+				case EQ:
+					System.out.println("need to check for equality");
+					// if (right == left) {
+					// 	stack.push(Operation.TRUE);
+					// } else {
+					// 	stack.push(Operation.FALSE);
+					// }
+					break;
+				case NE:
+					System.out.println("need to check for nonequality");
+					nop = Operation.Operator.NE;
+					break;
+				case LT:
+					System.out.println("need to check for less than");
+					nop = Operation.Operator.GT;
+					break;
+				case LE:
+					System.out.println("need to check for less than equals");
+					nop = Operation.Operator.GE;
+					break;
+				case GT:
+					System.out.println("need to check for greater than");
+					nop = Operation.Operator.LT;
+					break;
+				case GE:
+					System.out.println("need to check for greater than equals");
+					nop = Operation.Operator.LE;
+					break;
+				case ADD:
+					System.out.println("need to check for addition");
+					//stack.push();
+					break;
+				case AND:
+					System.out.println("need to check for and");
+					nop = Operation.Operator.AND;
+					break;
+				default:
+					System.out.println("Default case!");
+					break;
+				}
 			}
+
 			// if (nop != null) {
 			// 	Expression r = stack.pop();
 			// 	Expression l = stack.pop();
