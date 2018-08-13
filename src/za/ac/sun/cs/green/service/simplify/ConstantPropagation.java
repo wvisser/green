@@ -75,9 +75,9 @@ public class ConstantPropagation extends BasicService {
 
     private Stack<Expression> stack;
 
-    private Variable var;
+    private Expression var;
 
-    private Constant const;
+    private Expression const;
 
     public PropagationVisitor() {
 			stack = new Stack<Expression>();
@@ -142,11 +142,11 @@ public class ConstantPropagation extends BasicService {
         }
       } else {
         if (r instanceof Variable) {
-          if (((Variable) r).getName().equals(var.getName())) {
+          if (((IntVariable) r).getName().equals(var.getName())) {
             stack.push(new Operation(nop, l, const));
           }
         } else if (l instanceof Variable) {
-          if (((Variable) l).getName().equals(var.getName())) {
+          if (((IntVariable) l).getName().equals(var.getName())) {
             stack.push(new Operation(nop, const, r));
           }
       }
