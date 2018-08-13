@@ -24,14 +24,14 @@ import za.ac.sun.cs.green.expr.Variable;
 import za.ac.sun.cs.green.expr.Visitor;
 import za.ac.sun.cs.green.expr.VisitorException;
 
-public class SATCanonizerService extends BasicService {
+public class ConstantPropagation extends BasicService {
 
 	/**
 	 * Number of times the slicer has been invoked.
 	 */
 	private int invocations = 0;
 
-	public SATCanonizerService(Green solver) {
+	public ConstantPropagation(Green solver) {
 		super(solver);
 	}
 
@@ -189,6 +189,7 @@ public class SATCanonizerService extends BasicService {
 			return variableSet;
 		}
 
+		//##########################################################
 		public Expression getExpression() {
 			if (!linearInteger) {
 				return null;
@@ -238,6 +239,7 @@ public class SATCanonizerService extends BasicService {
 				return (c == null) ? Operation.TRUE : c;
 			}
 		}
+		//#########################################################
 
 		private SortedSet<Expression> processBounds() {
 			return conjuncts;
