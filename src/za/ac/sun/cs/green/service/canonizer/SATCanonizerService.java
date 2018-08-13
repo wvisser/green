@@ -73,8 +73,7 @@ public class SATCanonizerService extends BasicService {
 			return canonized;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
-					"encountered an exception -- this should not be happening!",
-					x);
+					"encountered an exception -- this should not be happening!",x);
 		}
 		return null;
 	}

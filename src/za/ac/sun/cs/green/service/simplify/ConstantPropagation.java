@@ -75,9 +75,9 @@ public class ConstantPropagation extends BasicService {
 
     private Stack<Expression> stack;
 
-    private Expression var;
+    private IntVariable var;
 
-    private Expression const;
+    private IntConstant const1;
 
     public PropagationVisitor() {
 			stack = new Stack<Expression>();
@@ -88,10 +88,11 @@ public class ConstantPropagation extends BasicService {
 		}
 
     public void showStack() {
-      System.out.println("SHOWING!!!!!!!!!!!!!!!!!!!:");
+      System.out.println("STACK:");
       for (Expression e : stack) {
         System.out.println(e);
       }
+      System.out.println("-------");
     }
 
 		@Override
@@ -112,50 +113,53 @@ public class ConstantPropagation extends BasicService {
 			case EQ:
 				nop = Operation.Operator.EQ;
 				break;
-			case NE:
-				nop = Operation.Operator.NE;
+			case ADD:
+				nop = Operation.Operator.ADD;
 				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
+      case AND:
+  			nop = Operation.Operator.AND;
+  			break;
 			default:
 				break;
 			}
       if (nop != null) {
+        showStack();
         Expression r = stack.pop();
+        System.out.println("Popped r = " + r);
         Expression l = stack.pop();
+        System.out.println("Popped l = " + l);
         if (nop == Operation.Operator.EQ) {
-          if (r instanceof Variable && l instanceof Constant) {
-            var = r;
-            const = l;
-          } else if (l instanceof Variable && r instanceof Constant) {
-            var = l;
-            const = r;
+          if (r instanceof IntVariable && l instanceof IntConstant) {
+            var = (IntVariable) r;
+            const1 = (IntConstant) l;
+          } else if (l instanceof IntVariable && r instanceof IntConstant) {
+            var = (IntVariable) l;
+            const1 = (IntConstant) r;
           }
-        } else {
-          if (r instanceof Variable) {
+          stack.push(new Operation(nop, l, r));
+        } else if (nop == Operation.Operator.ADD) {
+          System.out.println("1!!!!!!!!");
+          if (r instanceof IntVariable) {
+            System.out.println("2!!!!!!!!");
             if (((IntVariable) r).getName().equals(var.getName())) {
-              stack.push(new Operation(nop, l, const));
-            }
-          } else if (l instanceof Variable) {
-            if (((IntVariable) l).getName().equals(var.getName())) {
-              stack.push(new Operation(nop, const, r));
+              System.out.println("PUSH R");
+              stack.push(new Operation(nop, l, const1));
             }
           }
+          if (l instanceof IntVariable) {
+            System.out.println("3!!!!!!!!");
+            if (((IntVariable) l).getName().equals(var.getName())) {
+              System.out.println("PUSH L");
+              stack.push(new Operation(nop, const1, r));
+            }
+          }
+        } else if (nop == Operation.Operator.AND) {
+          stack.push(new Operation(nop, l, r));
         }
       } else {
-        for (int i = op.getArity(); i > 0; i--) {
+        /*for (int i = op.getArity(); i > 0; i--) {
 					stack.pop();
-				}
+				}*/
 				stack.push(operation);
       }
     }

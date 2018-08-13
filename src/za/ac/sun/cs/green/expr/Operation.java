@@ -131,7 +131,6 @@ public class Operation extends Expression {
 	public Operation(final Operator operator, Expression... operands) {
 		this.operator = operator;
 		this.operands = operands;
-		ConstantPropogation.propagate(operator, operands);
 	}
 
 	public static Expression apply(Operator operator, Expression... operands) {
