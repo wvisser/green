@@ -64,7 +64,7 @@ public class ConstantPropogation  extends BasicService{
 	}
 
 
-    public Expression simplify(Expression expression Map<Variable, Variable> map) {
+    public Expression simplify(Expression expression, Map<Variable, Variable> map) {
         try {
             log.log(Level.FINEST, "Before Simplifying: " + expression);
             invocations++;
@@ -156,13 +156,13 @@ public class ConstantPropogation  extends BasicService{
                 Expression l = stack.pop();
 
                 if (!op.equals(Operation.Operator.EQ)) {
-                    if ((l instanceof IntVariable) {
+                    if (l instanceof IntVariable) {
                         if (map.containsKey(l)) {
                             l = map.get(l);
                         }
                     }
 
-                    if ((l instanceof IntVariable) {
+                    if (r instanceof IntVariable) {
                         if (map.containsKey(r)) {
                             r = map.get(r);
                         }
