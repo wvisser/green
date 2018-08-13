@@ -95,11 +95,14 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
+			Expression left = stack.pop();
+			Expression right = stack.pop();
+			System.out.println("Left:" + left + " Right: " + right);
 			Operation.Operator nop = null;
+
 			switch (op) {
 			case EQ:
 				System.out.println("need to check for equality");
-				nop = Operation.Operator.EQ;
 				break;
 			case NE:
 				System.out.println("need to check for nonequality");
