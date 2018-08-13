@@ -35,8 +35,7 @@ public class ConstantPropagation extends BasicService {
 	* Taken from SATCanonizerService.java
 	*/
   	@Override
-	public Set<Instance> processRequest(Instance instance,
-					   HashMap<Variable, Variable> map) {
+	public Set<Instance> processRequest(Instance instance) {
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
@@ -60,7 +59,8 @@ public class ConstantPropagation extends BasicService {
 	/**
 	* Based off of the same method in SATCanonizerService.java
 	*/
-  	public Expression propagate(Expression expression) {
+  	public Expression propagate(Expression expression,
+				   Map<Variable, Variable> map) {
 		try {
 			log.log(Level.FINEST, "Before Propagation: " + expression);
 			invocations++;
