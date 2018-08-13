@@ -77,11 +77,13 @@ public class ConstantPropagation extends BasicService {
 	}
 
 	private static class OrderingVisitor extends Visitor {
-
+		
+		private Map<IntVariable, IntConstant> map;
 		private Stack<Expression> stack;
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
+			map = new HashMap<IntVariable, IntConstant>();
 		}
 
 		public Expression getExpression() {
@@ -101,7 +103,26 @@ public class ConstantPropagation extends BasicService {
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			Operation.Operator nop = null;
+			if (stack.size() > 2)
+				if (op == EQ) {
+					Expression right = stack.pop();
+					Expression left = stack.pop();
+					if (left instanceOf IntVariable) {
+						if (map.containsKey(left)) {
+							left = map.get(left)
+						}
+					}
+					
+					if (right instanceOf IntVariable) {
+						if (map.containsKey(right)) {
+							right = map.get(right)
+						}
+					}
+				}
+				Operation nop = new Operation(operation.getOperator(), left, right);
+				stack.push(nop);
+			
+		/*	Operation.Operator nop = null;
 			switch (op) {
 			case EQ:
 				nop = Operation.Operator.EQ;
@@ -149,7 +170,7 @@ public class ConstantPropagation extends BasicService {
 					stack.pop();
 				}
 				stack.push(operation);
-			}
+			}*/
 		}
 
 	}
