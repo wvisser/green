@@ -127,6 +127,7 @@ public class ConstantPropogation extends BasicService {
 				break;
 			}  
 			
+			//Edited
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
