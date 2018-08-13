@@ -72,15 +72,8 @@ public class ConstantPropogation  extends BasicService{
             SimpleVisitor simpleVisitor = new SimpleVisitor();
             expression.accept(simpleVisitor);
             expression = simpleVisitor.getExpression();
-            // CanonizatioVisitor canonizationVisitor = new CanonizationVisitor();
-            // expression.accept(canonizationVisitor);
-            // Expression canonized = canonizationVisitor.getExpression();
-            // if (canonized != null) {
-            //     canonized = new Renamer(map,
-            //             canonizationVisitor.getVariableSet()).rename(canonized);
-            // }
+
             log.log(Level.FINEST, "After Simplifying: " + expression);
-            // return simplified;
         } catch (VisitorException x) {
             log.log(Level.SEVERE,
                     "encountered an exception -- this should not be happening!",
@@ -152,12 +145,6 @@ public class ConstantPropogation  extends BasicService{
 
             }
         }
-
-
-        @Override
-		public void postVisit(IntVariable variable) {
-			stack.push(variable);
-		}
 
         @Override
         public void postVisit(Operation operation) {
