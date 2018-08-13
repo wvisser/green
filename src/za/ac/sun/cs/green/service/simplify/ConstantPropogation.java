@@ -108,7 +108,7 @@ public class ConstantPropogation extends BasicService {
 					System.out.println("need to check for equality");
 					Expression oL = operation.getOperand(0);
 					Expression oR = operation.getOperand(1);
-					System.out.println(oL + " " + oR)
+					System.out.println(oL + " " + oR);
 					break;
 				case ADD:
 					System.out.println("need to check for addition");
