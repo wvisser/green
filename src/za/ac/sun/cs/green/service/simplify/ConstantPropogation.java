@@ -120,21 +120,21 @@ public class ConstantPropogation  extends BasicService{
             case EQ:
                 nop = Operation.Operator.EQ;
                 break;
-            case NE:
-                nop = Operation.Operator.NE;
-                break;
-            case LT:
-                nop = Operation.Operator.GT;
-                break;
-            case LE:
-                nop = Operation.Operator.GE;
-                break;
-            case GT:
-                nop = Operation.Operator.LT;
-                break;
-            case GE:
-                nop = Operation.Operator.LE;
-                break;
+            // case NE:
+            //     nop = Operation.Operator.NE;
+            //     break;
+            // case LT:
+            //     nop = Operation.Operator.GT;
+            //     break;
+            // case LE:
+            //     nop = Operation.Operator.GE;
+            //     break;
+            // case GT:
+            //     nop = Operation.Operator.LT;
+            //     break;
+            // case GE:
+            //     nop = Operation.Operator.LE;
+            //     break;
             default:
                 break;
             }
@@ -153,6 +153,11 @@ public class ConstantPropogation  extends BasicService{
             }
         }
 
+
+        @Override
+		public void postVisit(IntVariable variable) {
+			stack.push(variable);
+		}
 
         @Override
         public void postVisit(Operation operation) {
