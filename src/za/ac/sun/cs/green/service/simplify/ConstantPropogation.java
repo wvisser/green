@@ -212,7 +212,7 @@ public class ConstantPropogation extends BasicService {
 			while (!stack.isEmpty()) {
 			Expression var = stack.pop();
 			if (var instanceof Operation) {
-				if (var.getOperator() == Operation.Operator.EQ) {
+				if (((Operator) var).getOperator() == Operation.Operator.EQ) {
 					Expression var2 = stack.pop();
 					Expression var3 = stack.pop();
 					if (var2 instanceof Constant && var3 instanceof IntVariable)  {
