@@ -160,7 +160,7 @@ public class ConstantPropogation  extends BasicService{
                             l = map.get(l);
                         }
 
-                    if (r instanceof IntVariable) && map.containsKey(r)) {
+                    if (r instanceof IntVariable && map.containsKey(r)) {
                             r = map.get(r);
 
                         }
