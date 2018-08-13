@@ -97,53 +97,85 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-			//Expression right = stack.pop();
-			//Expression left = stack.pop();
-			//System.out.println("Left:" + left + " Right: " + right);
 
-			Operation.Operator nop = null;
-
-				switch (op) {
-				case EQ:
-					System.out.println("need to check for equality");
-					Expression oL = operation.getOperand(0);
-					Expression oR = operation.getOperand(1);
-					System.out.println(oL + " " + oR);
-					if (oL instanceof IntConstant && oR instanceof IntVariable) {
-						map.put((IntVariable) oR, (IntConstant) oL);
-					} if (oR instanceof IntConstant && oL instanceof IntVariable) {
-						map.put((IntVariable) oL, (IntConstant) oR);
-					}
-					break;
-				case ADD:
-					System.out.println("need to check for addition");
-					op = operation.getOperator();
-
-					if (stack.size() >= 2) {
-						Expression r = stack.pop();
-						Expression l = stack.pop();
-						if (l instanceof IntVariable) {
-							if (map.containsKey(l)) {
-								l = map.get(l);
-							}
-						}
-						if (r instanceof IntVariable) {
-							if (map.containsKey(r)) {
-								r = map.get(r);
-							}
-						}
-						Operation e = new Operation(operation.getOperator(), l, r);
-						stack.push(e);
-					}
-					break;
-				case AND:
-					System.out.println("need to check for and");
-					nop = Operation.Operator.AND;
-					break;
-				default:
-					System.out.println("Default case!");
-					break;
+			if (op.equals(Operation.Operator.EQ)) {
+				Expression oL = operation.getOperand(0);
+				Expression oR = operation.getOperand(1);
+				if ((oL instanceof IntConstant) && (oR instanceof IntVariable)) {
+					map.put((IntVariable) oR, (IntConstant) oL);
+				} else if ((oL instanceof IntVariable) && (oR instanceof IntConstant)) {
+					map.put((IntVariable) oL, (IntConstant) oR);
 				}
+			}
+
+			op = operation.getOperator();
+
+			if (stack.size() >= 2) {
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+				if (!op.equals(Operation.Operator.EQ)) {
+					if (l instanceof IntVariable) {
+						if (map.containsKey(l)) {
+							l = map.get(l);
+						}
+					}
+					if (r instanceof IntVariable) {
+						if (map.containsKey(r)) {
+							r = map.get(r);
+						}
+					}
+				}
+				Operation e = new Operation(operation.getOperator(), l, r);
+				stack.push(e);
+			}
+			// Operation.Operator op = operation.getOperator();
+			// //Expression right = stack.pop();
+			// //Expression left = stack.pop();
+			// //System.out.println("Left:" + left + " Right: " + right);
+      //
+			// Operation.Operator nop = null;
+      //
+			// 	switch (op) {
+			// 	case EQ:
+			// 		System.out.println("need to check for equality");
+			// 		Expression oL = operation.getOperand(0);
+			// 		Expression oR = operation.getOperand(1);
+			// 		System.out.println(oL + " " + oR);
+			// 		if (oL instanceof IntConstant && oR instanceof IntVariable) {
+			// 			map.put((IntVariable) oR, (IntConstant) oL);
+			// 		} if (oR instanceof IntConstant && oL instanceof IntVariable) {
+			// 			map.put((IntVariable) oL, (IntConstant) oR);
+			// 		}
+			// 		break;
+			// 	case ADD:
+			// 		System.out.println("need to check for addition");
+			// 		op = operation.getOperator();
+      //
+			// 		if (stack.size() >= 2) {
+			// 			Expression r = stack.pop();
+			// 			Expression l = stack.pop();
+			// 			if (l instanceof IntVariable) {
+			// 				if (map.containsKey(l)) {
+			// 					l = map.get(l);
+			// 				}
+			// 			}
+			// 			if (r instanceof IntVariable) {
+			// 				if (map.containsKey(r)) {
+			// 					r = map.get(r);
+			// 				}
+			// 			}
+			// 			Operation e = new Operation(operation.getOperator(), l, r);
+			// 			stack.push(e);
+			// 		}
+			// 		break;
+			// 	case AND:
+			// 		System.out.println("need to check for and");
+			// 		nop = Operation.Operator.AND;
+			// 		break;
+			// 	default:
+			// 		System.out.println("Default case!");
+			// 		break;
+			// 	}
     //
 		// 	if (nop != null) {
 		// 		Expression r = stack.pop();
