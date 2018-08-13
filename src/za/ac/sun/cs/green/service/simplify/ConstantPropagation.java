@@ -110,9 +110,8 @@ public class ConstantPropagation extends BasicService {
 					
 					if (left instanceof IntConstant && right instanceof IntVariable) {
 						map.put((IntVariable) left, (IntConstant) right);
-						if (map.containsKey(left)) {
-							left = map.get(left);
-						}
+					} else if (right instanceof IntConstant && left instanceof IntVariable) {
+						map.put((IntVariable) right, (IntConstant) left);
 					}
 					
 					Operation nop = new Operation(operation.getOperator(), left, right);
