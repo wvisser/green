@@ -54,6 +54,7 @@ public class ConstantPropogation extends BasicService {
     public Expression constant_propogation(Expression expression, Map<Variable, Variable> map) {
         try {
             log.log(Level.FINEST, "Before Constant Propogation: " + expression);
+            variables.clear();
             invocations++;
             ConstantPropogationVisitor constantPropogationVisitor = new ConstantPropogationVisitor(variables);
             expression.accept(constantPropogationVisitor);
