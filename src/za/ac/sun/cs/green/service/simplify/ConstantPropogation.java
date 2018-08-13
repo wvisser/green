@@ -138,7 +138,9 @@ public class ConstantPropogation extends BasicService {
 					map.put((IntVariable)l, (IntConstant)r);
 					stack.push(new Operation(nop, r, l));
 				} else {
-					stack.push(operation);
+					if(map.containsKey(r)) r = map.get(r);
+					if(map.containsKey(l)) l = map.get(l);	
+					stack.push(new Operation(op, l, r));
 				}
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
