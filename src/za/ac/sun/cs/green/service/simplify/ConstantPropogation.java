@@ -120,25 +120,21 @@ public class ConstantPropogation extends BasicService {
 					op = operation.getOperator();
 
 					if (stack.size() >= 2) {
+						System.out.println(r + " " + l);
 						Expression r = stack.pop();
 						Expression l = stack.pop();
-						System.out.println(r + " " + l);
-						if (stack.size() >= 2) {
-							Expression r = stack.pop();
-							Expression l = stack.pop();
-							if (l instanceof IntVariable) {
-								if (map.containsKey(l)) {
-									l = map.get(l);
-								}
+						if (l instanceof IntVariable) {
+							if (map.containsKey(l)) {
+								l = map.get(l);
 							}
-							if (r instanceof IntVariable) {
-								if (map.containsKey(r)) {
-									r = map.get(r);
-								}
-							}
-							Operation e = new Operation(operation.getOperator(), l, r);
-							stack.push(e);
 						}
+						if (r instanceof IntVariable) {
+							if (map.containsKey(r)) {
+								r = map.get(r);
+							}
+						}
+						Operation e = new Operation(operation.getOperator(), l, r);
+						stack.push(e);
 					}
 					break;
 				case AND:
