@@ -132,7 +132,7 @@ public class ConstantPropogation extends BasicService {
 				break;
 			case ADD:
 				System.out.println("need to check for addition");
-				nop = Operation.Operator.ADD;
+					stack.push(right+left);
 				break;
 			case AND:
 				System.out.println("need to check for and");
