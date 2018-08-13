@@ -26,9 +26,6 @@ import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation extends BasicService {
 
-	/**
-	 * Number of times the slicer has been invoked.
-	 */
 	private int invocations = 0;
 
 	public ConstantPropagation(Green solver) {
@@ -62,7 +59,6 @@ public class ConstantPropagation extends BasicService {
 			PropagationVisitor propagationVisitor = new PropagationVisitor();
 			expression.accept(propagationVisitor);
 			Expression propagated = propagationVisitor.getExpression();
-			//Expression propagated = expression;
 			log.log(Level.FINEST, "After Propagation: " + propagated);
 			return propagated;
 		} catch (VisitorException x) {
@@ -73,9 +69,15 @@ public class ConstantPropagation extends BasicService {
 		return null;
 	}
 
+	/*
+	 * The PropagationVisitor steps through the tree looking for candidate
+	 * variables for constant propagation, and attempts to take care of some
+	 * other low-hanging fruit for expressions which would never be satisfied.
+	 */
 	private static class PropagationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
+		private boolean never_satisfied;
 
 		// name and value of the variable to propogate
 		private String propName;
@@ -83,9 +85,19 @@ public class ConstantPropagation extends BasicService {
 
 		public PropagationVisitor() {
 			stack = new Stack<Expression>();
+			never_satisfied = false;
 		}
 
 		public Expression getExpression() {
+			// check if we had constant equalities which would never be
+			// satisfied
+			if (never_satisfied) {
+				stack.clear();
+				IntConstant new_l = new IntConstant(0);
+				IntConstant new_r = new IntConstant(1);
+				stack.push(new Operation(Operation.Operator.EQ, new_l, new_r));
+			}
+
 			return stack.pop();
 		}
 
@@ -112,16 +124,61 @@ public class ConstantPropagation extends BasicService {
 			Expression r = stack.pop();
 			Expression l = stack.pop();
 
-			// if we have found an equality statement, check if we have a
-			// candidate for propagation
 			if (op == Operation.Operator.EQ) {
+				// if we have found an equality statement, check if we have a
+				// candidate for propagation
 				if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
 					propName = new String(((IntVariable) l).getName());
 					propValue = ((IntConstant) r).getValue();
 				}
+				stack.push(new Operation(op, l, r));
+			} else if (op == Operation.Operator.GT) {
+				// check if we have constant expressions which are never
+				// satisfied, or conversely always satisfied
+				if ((l instanceof IntConstant) && (r instanceof IntConstant)) {
+					int l_value = ((IntConstant) l).getValue();
+					int r_value = ((IntConstant) r).getValue();
+
+					if (l_value <= r_value) {
+						// never satisfied
+						never_satisfied = true;
+						IntConstant new_l = new IntConstant(0);
+						IntConstant new_r = new IntConstant(1);
+						stack.push(new Operation(Operation.Operator.EQ, new_l, new_r));
+					} else {
+						// always satisfied
+						IntConstant new_l = new IntConstant(0);
+						IntConstant new_r = new IntConstant(0);
+						stack.push(new Operation(Operation.Operator.EQ, new_l, new_r));
+					}
+				} else {
+					stack.push(new Operation(op, l, r));
+				}
+			} else if (op == Operation.Operator.LT) {
+				// check if we have constant expressions which are never
+				// satisfied, or conversely always satisfied
+				if ((l instanceof IntConstant) && (r instanceof IntConstant)) {
+					int l_value = ((IntConstant) l).getValue();
+					int r_value = ((IntConstant) r).getValue();
+
+					if (l_value >= r_value) {
+						// never satisfied
+						never_satisfied = true;
+						IntConstant new_l = new IntConstant(0);
+						IntConstant new_r = new IntConstant(1);
+						stack.push(new Operation(Operation.Operator.EQ, new_l, new_r));
+					} else {
+						// always satisfied
+						IntConstant new_l = new IntConstant(0);
+						IntConstant new_r = new IntConstant(0);
+						stack.push(new Operation(Operation.Operator.EQ, new_l, new_r));
+					}
+				} else {
+					stack.push(new Operation(op, l, r));
+				}
+			} else {
+				stack.push(new Operation(op, l, r));
 			}
-				
-			stack.push(new Operation(op, l, r));
 		}
 	}
 }
