@@ -1,5 +1,6 @@
 package za.ac.sun.cs.green.service.simplify;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,7 +86,7 @@ public class ConstantPropagation extends BasicService {
 
         //Propagate and simplify loop
         // while(simplified == true) {
-        propagationVisitor = new PropagationVisitor();
+        // propagationVisitor = new PropagationVisitor();
         expression.accept(propagationVisitor);
         expression = propagationVisitor.getExpression();
         log.log(Level.FINEST, "After Constant Propagation: " + expression);
@@ -102,7 +103,7 @@ public class ConstantPropagation extends BasicService {
         private Stack<Expression> stack;
         private HashMap<IntVariable, IntConstant> variables;
 
-        public PropagationVisitor(Hashmap<IntVariable, IntConstant> map) {
+        public PropagationVisitor(HashMap<IntVariable, IntConstant> map) {
             stack = new Stack<Expression>();
             variables = map;
         }
