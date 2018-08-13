@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Stack;
+import java.util.logging.Level;
 
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
@@ -38,12 +39,14 @@ public class ConstantPropogation extends BasicService {
 
 	public Expression simplify(Expression expression) {
 		try {
+			log.log(Level.FINEST, "Before simplification: " + expression);
 			SimplificationVisitor simplificationVisitor = new SimplificationVisitor();
 			expression.accept(simplificationVisitor);
 			Expression simplified = simplificationVisitor.getExpression();
+			log.log(Level.FINEST, "After simplification: " + simplified);
 			return simplified;
 		} catch (VisitorException x) {
-			System.out.println("Houston, we have a problem!" + x);
+			log.log(Level.SEVERE, "Houston, we have a problem!", x);
 		}
 		return null;
 	}
