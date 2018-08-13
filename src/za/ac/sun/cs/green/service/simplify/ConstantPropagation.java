@@ -39,8 +39,8 @@ public class ConstantPropagation {
 			expression.accept(canonizationVisitor);
 			Expression simplified = canonizationVisitor.getExpression();
 			return simplified;
-		} catch (VisitorException x) {
-			log.log(Level.SEVERE,"encountered an exception -- this should not be happening!", x);
+		} catch (VisitorException e) {
+			System.err.println("This should no be happening");
 		}
 		return null;
 	}
