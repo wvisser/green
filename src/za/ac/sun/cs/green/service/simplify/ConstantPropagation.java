@@ -108,9 +108,7 @@ public class ConstantPropagation extends BasicService {
 				Expression left = stack.pop();
 				if (op == Operation.Operator.EQ) {
 					
-					if (left instanceof IntConstant && right instanceof IntVariable) {
-						map.put((IntVariable) right, (IntConstant) left);
-					} else if (right instanceof IntConstant && left instanceof IntVariable) {
+					if (right instanceof IntConstant && left instanceof IntVariable) {
 						map.put((IntVariable) left, (IntConstant) right);
 					}
 					
@@ -136,57 +134,6 @@ public class ConstantPropagation extends BasicService {
                 		}
                 		stack.push(operation);
 			}
-		/*	Operation.Operator nop = null;
-			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case NE:
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
-			default:
-				break;
-			}
-			if (nop != null) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				System.out.println(">>>>>>>>>>>>>>>>>>>>>>"+l + " "+ nop + " " + r+"<<<<<<<<<<<<<<<<<<<<<");
-
-				if ((r instanceof IntVariable)
-						&& (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(
-								((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
-				} else {
-					stack.push(operation);
-				}
-			} else if (op.getArity() == 2) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				stack.push(new Operation(op, l, r));
-			} else {
-				for (int i = op.getArity(); i > 0; i--) {
-					stack.pop();
-				}
-				stack.push(operation);
-			}*/
 		}
-
 	}
-
 }
