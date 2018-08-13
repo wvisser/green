@@ -59,11 +59,12 @@ public class ConstantPropagation extends BasicService {
 			invocations++;
 			PropogateVisitor propVisitor = new PropogateVisitor();
 			expression.accept(propVisitor);
-			Expression simplified = propVisitor.getExpression();						
+			Expression simplified = propVisitor.getExpression();	
+			log.log(Level.FINEST, "After simplification: " + expression);					
 			System.out.println("Simplified: " + simplified);
 			return simplified;
 		} catch (VisitorException e) {
-			System.err.println("This should no be happening");
+			log.log(Level.SEVERE, "encountered an exception -- this should not be happening!", e);
 		}
 		return null;
 	}
@@ -71,7 +72,7 @@ public class ConstantPropagation extends BasicService {
 	private static class PropogateVisitor extends Visitor {
 
 		private Stack<Expression> stack;
-		private HashMap<IntVariable, IntConstant>  variables;
+		private Map<IntVariable, IntConstant>  variables;
 
 		public PropogateVisitor() {
 			stack = new Stack<Expression>();
@@ -93,7 +94,7 @@ public class ConstantPropagation extends BasicService {
 		public void postVisit(IntVariable variable) {
 			// check if variable already exists.
 			if (variables.containsKey(variable)) {
-				System.out.println("Variable already assigned constant");
+				System.out.println("Variable already assigned constant, " + variable.getName()+ variables.get(variable));
 				stack.push(variables.get(variable));
 			} else {
 				System.out.println("Variable not assigned constant");
@@ -133,26 +134,30 @@ public class ConstantPropagation extends BasicService {
 
 				switch (op) {
 					case EQ:
-						if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-							variables.put((IntVariable) r, (IntConstant) l);		
-							System.out.println("Variables placed in hashmap");
-							stack.push(new Operation(nop, r, l));variables.put((IntVariable) r, (IntConstant) l);												
+						if ((r instanceof IntVariable) && (l instanceof IntConstant)) {							
+							System.out.println("Variables placed in hashmap, " + operation);
+							stack.push(new Operation(nop, r, l));
+							variables.put((IntVariable) r, (IntConstant) l);												
 						} else if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
-							stack.push(new Operation(nop, r, l));variables.put((IntVariable) l, (IntConstant) r);												
-							System.out.println("Variables placed in hashmap");
-							variables.put((IntVariable) l, (IntConstant) r);														
+							System.out.println("Variables placed in hashmap, " + operation);
+							stack.push(new Operation(nop, l, r));
+							variables.put((IntVariable) l, (IntConstant) r);											
 						}
+						break;
+					case default:
+						if ((r instanceof IntVariable) && (l instanceof IntVariable)
+							&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
+							stack.push(new Operation(nop, r, l));
+						} else if ((r instanceof IntVariable)
+							&& (l instanceof IntConstant)) {
+							stack.push(new Operation(nop, r, l));
+						} else {
+							stack.push(operation);
+						}
+						break;
 				}
 
-				if ((r instanceof IntVariable) && (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
-				} else {
-					stack.push(operation);
-				}
+				
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
