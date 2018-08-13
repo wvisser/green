@@ -53,10 +53,26 @@ public class ConstantPropagation extends BasicService {
 
             ConstantPropagation.ConstantPropagationVisitor conProgVisitor = new ConstantPropagationVisitor();
             ConstantPropagation.SimplificationVisitor simpVisitor = new SimplificationVisitor();
-            expression.accept(conProgVisitor);
-            expression = conProgVisitor.getExpression();
-            expression.accept(simpVisitor);
-            expression = simpVisitor.getExpression();
+
+            String result = "";
+            while (true) {
+                expression.accept(conProgVisitor);
+                expression = conProgVisitor.getExpression();
+                expression.accept(simpVisitor);
+                expression = simpVisitor.getExpression();
+
+                expression.accept(conProgVisitor);
+                expression = conProgVisitor.getExpression();
+                expression.accept(simpVisitor);
+                expression = simpVisitor.getExpression();
+                if (expression.toString().equals(result)) {
+                    break;
+                } else {
+                    result = expression.toString();
+                }
+            }
+
+
             log.log(Level.FINEST, "After Simplification: " + expression);
             return expression;
         } catch (VisitorException x) {
@@ -111,8 +127,15 @@ public class ConstantPropagation extends BasicService {
                 } else if (opLeft instanceof IntVariable && opRight instanceof IntConstant) {
                     int iVal = ((IntConstant) opRight).getValue();
 
-                    if (l instanceof IntConstant) {
-
+                    if (r instanceof IntConstant) {
+                        switch (((Operation) l).getOperator()) {
+                            case SUB:
+                                iVal = ((IntConstant) r).getValue() + iVal;
+                                returnList.add(opLeft);
+                                returnList.add(new IntConstant(iVal));
+                                break;
+                        }
+                        return returnList;
                     }
                 }
 
@@ -147,8 +170,33 @@ public class ConstantPropagation extends BasicService {
                         l = simplified.get(0);
                         r = simplified.get(1);
                     }
+                    stack.push(new Operation(op, l, r));
+                } else if (l instanceof IntConstant && r instanceof IntConstant) {
+                    switch (op) {
+                        case EQ:
+                            if (((IntConstant) l).getValue() == ((IntConstant) r).getValue()) {
+                                stack.push(Operation.TRUE);
+                            } else {
+                                stack.push(Operation.FALSE);
+                            }
+                            break;
+                        case LT:
+                            if (((IntConstant) l).getValue() < ((IntConstant) r).getValue()) {
+                                stack.push(Operation.TRUE);
+                            } else {
+                                stack.push(Operation.FALSE);
+                            }
+                            break;
+                        case GT:
+                            if (((IntConstant) l).getValue() > ((IntConstant) r).getValue()) {
+                                stack.push(Operation.TRUE);
+                            } else {
+                                stack.push(Operation.FALSE);
+                            }
+                    }
+                } else {
+                    stack.push(new Operation(op, l, r));
                 }
-                stack.push(new Operation(op, l, r));
             } else {
                 for (int i = op.getArity(); i > 0; i--) {
                     stack.pop();
@@ -207,6 +255,19 @@ public class ConstantPropagation extends BasicService {
                         l = vars.get(l);
                     }
                     stack.push(new Operation(op, l, r));
+                } else if (op == Operation.Operator.AND) {
+                    if (l.equals(Operation.FALSE) || r.equals(Operation.FALSE)) {
+                        stack.push(Operation.FALSE);
+                        return;
+                    } else if (l.equals(Operation.TRUE) && r.equals(Operation.TRUE)) {
+                        stack.push(Operation.TRUE);
+                    } else if (l.equals(Operation.TRUE)) {
+                        stack.push(r);
+                    } else if (r.equals(Operation.TRUE)) {
+                        stack.push(l);
+                    } else {
+                        stack.push(new Operation(op, l, r));
+                    }
                 } else {
                     stack.push(new Operation(op, l, r));
                 }
