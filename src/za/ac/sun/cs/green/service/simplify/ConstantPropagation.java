@@ -65,7 +65,7 @@ public class ConstantPropagation extends BasicService {
 				//propagated = new Renamer(map,
 				//		propagationVisitor.getVariableSet()).rename(propagated);
 			//}
-			log.log(Level.FINEST, "After Propagation: " + propagated);
+			log.log(Level.FINEST, "After Propagation: " + expression);
 			return expression;
 			//return propagated;
 		} catch (VisitorException x) {
