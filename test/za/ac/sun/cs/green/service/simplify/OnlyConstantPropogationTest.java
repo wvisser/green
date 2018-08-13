@@ -83,7 +83,7 @@ public class OnlyConstantPropogationTest {
 		IntConstant c3 = new IntConstant(3);
 		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
 		Operation o2 = new Operation(Operation.Operator.ADD, x, c); // o2 : (x + 1)
-		Operation o3 = new Operation(Operation.Operator.LE, o2, c10); // o3 : x+1 >= 10
+		Operation o3 = new Operation(Operation.Operator.GE, o2, c10); // o3 : x+1 >= 10
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+1) >= 10
 		check(o4, "(x==1)&&((1+1)>=10)");
 	}
@@ -99,7 +99,7 @@ public class OnlyConstantPropogationTest {
 		Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
 		Operation o2 = new Operation(Operation.Operator.ADD, x, c); // o2 : (x + 1)
 		Operation on = new Operation(Operation.Operator.ADD, y, o2); // o2 : (x + 1)
-		Operation o3 = new Operation(Operation.Operator.LE, on, c10); // o3 : x+1 >= 10
+		Operation o3 = new Operation(Operation.Operator.GE, on, c10); // o3 : x+1 >= 10
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+1) >= 10
 		check(o4, "(x==1)&&((y+(1+1))>=10)");
 	}

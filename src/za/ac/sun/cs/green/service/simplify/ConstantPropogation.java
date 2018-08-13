@@ -27,7 +27,7 @@ import za.ac.sun.cs.green.expr.VisitorException;
 public class ConstantPropogation extends BasicService {
 
   /**
-  * Number of times the slicer has been invoked.
+  * Number of times the propagator has been invoked.
   */
   private int invocations = 0;
 
@@ -41,7 +41,7 @@ public class ConstantPropogation extends BasicService {
     Set<Instance> result = (Set<Instance>) instance.getData(getClass());
     if (result == null) {
       final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-      final Expression e = propagate(instance.getFullExpression(), map);
+      final Expression e = propagate(instance.getFullExpression());
       final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
       result = Collections.singleton(i);
       instance.setData(getClass(), result);
@@ -54,8 +54,14 @@ public class ConstantPropogation extends BasicService {
     reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
   }
 
-  public Expression propagate(Expression expression,
-  Map<Variable, Variable> map) {
+  /**
+  * Function that propagates an expression
+  * and logs the expression both before and after prpagation.
+  *
+  * @param expression - The expression to be propogated
+  * @return The propogated expression
+  */
+  public Expression propagate(Expression expression) {
     try {
       log.log(Level.FINEST, "Before Propagation: " + expression);
       invocations++;
@@ -99,61 +105,37 @@ public class ConstantPropogation extends BasicService {
     public void postVisit(Operation operation) throws VisitorException {
       Operation.Operator op = operation.getOperator();
       Operation.Operator nop = null;
-      switch (op) {
-        case EQ:
-        nop = Operation.Operator.EQ;
-        break;
-        case NE:
-        nop = Operation.Operator.NE;
-        break;
-        case LT:
-        nop = Operation.Operator.GT;
-        break;
-        case LE:
-        nop = Operation.Operator.GE;
-        break;
-        case GT:
-        nop = Operation.Operator.LT;
-        break;
-        case GE:
-        nop = Operation.Operator.LE;
-        break;
-        default:
-        break;
-      }
+      nop = op;
+
       if (nop != null) {
         Expression r = stack.pop();
         Expression l = stack.pop();
-
+        // If operation is "=="
         if (op == Operation.Operator.EQ) {
+          // If right-hand side is a variable and left-hand side is a constant
           if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-            map.put(r.toString(), Integer.parseInt(l.toString()));
+            map.put(r.toString(), Integer.parseInt(l.toString())); // Add variable to map of variables
           } else if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
-            map.put(l.toString(), Integer.parseInt(r.toString()));
+            // Else if left-hand side is a variable and right-hand side is a constant
+            map.put(l.toString(), Integer.parseInt(r.toString())); // Add variable to map of variables
           }
           stack.push(new Operation(nop, l, r));
         } else {
-          if (map.containsKey(l.toString())) {
-            l = new IntConstant(map.get(l.toString()));
-          }
-          if (map.containsKey(r.toString())) {
-            r = new IntConstant(map.get(r.toString()));
-          }
+          // Assign value to any variables that have previously been given a value
+          if (map.containsKey(l.toString())) l = new IntConstant(map.get(l.toString()));
+          if (map.containsKey(r.toString()))  r = new IntConstant(map.get(r.toString()));
           stack.push(new Operation(nop, l, r));
         }
-
       } else if (op.getArity() == 2) {
         Expression r = stack.pop();
         Expression l = stack.pop();
 
-        if (map.containsKey(l.toString())) {
-          l = new IntConstant(map.get(l.toString()));
-        }
-        if (map.containsKey(r.toString())) {
-          r = new IntConstant(map.get(r.toString()));
-        }
+        // Assign value to any variables that have previously been given a value
+        if (map.containsKey(l.toString())) l = new IntConstant(map.get(l.toString()));
+        if (map.containsKey(r.toString()))   r = new IntConstant(map.get(r.toString()));
         stack.push(new Operation(op, l, r));
-      } else {
+
+      } else { // If nop == null
         for (int i = op.getArity(); i > 0; i--) {
           stack.pop();
         }
