@@ -47,9 +47,8 @@ public class Instance {
 		return parent;
 	}
 	
-	public Expression getExpression() {
-		expression = ConstantPropagation.constantPropagation(expression);
-		return expression;
+	public Expression getExpression() {		
+		return ConstantPropagation.constantPropagation(expression);
 	}
 
 	public Expression getFullExpression() {
