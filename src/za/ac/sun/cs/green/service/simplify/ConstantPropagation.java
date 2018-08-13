@@ -41,7 +41,7 @@ public class ConstantPropagation extends BasicService {
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
-			final Expression e = canonize(instance.getFullExpression(), map);
+			final Expression e = constantProp(instance.getFullExpression(), map);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -54,7 +54,7 @@ public class ConstantPropagation extends BasicService {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-	public Expression canonize(Expression expression,
+	public Expression constantProp(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
 			log.log(Level.FINEST, "Before ConstantPropagation: " + expression);
@@ -64,13 +64,13 @@ public class ConstantPropagation extends BasicService {
 			expression = orderingVisitor.getExpression();
 			CanonizationVisitor canonizationVisitor = new CanonizationVisitor();
 			expression.accept(canonizationVisitor);
-			Expression canonized = canonizationVisitor.getExpression();
-			if (canonized != null) {
-				canonized = new Renamer(map,
-						canonizationVisitor.getVariableSet()).rename(canonized);
+			Expression simplified = canonizationVisitor.getExpression();
+			if (simplified != null) {
+				simplified = new Renamer(map,
+						canonizationVisitor.getVariableSet()).rename(simplified);
 			}
-			log.log(Level.FINEST, "After ConstantPropagation: " + canonized);
-			return canonized;
+			log.log(Level.FINEST, "After ConstantPropagation: " + simplified);
+			return simplified;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
 					"encountered an exception -- this should not be happening!",
