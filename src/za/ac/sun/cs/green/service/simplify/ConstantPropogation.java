@@ -83,6 +83,7 @@ public class ConstantPropogation extends BasicService {
 
     public class PropogateVisitor extends Visitor {
         private Stack<Expression> stack;
+        private Map<IntVariable, IntConstant> map;
 
         public PropogateVisitor() {
             stack = new Stack<Expression>();
@@ -98,6 +99,7 @@ public class ConstantPropogation extends BasicService {
 			if (op.equals(Operation.Operator.EQ)) {
 				Expression opL = operation.getOperand(0);
 				Expression opR = operation.getOperand(1);
+                log.log(Level.FINEST, opL + " " + op + " " + opR);
 				if ((opL instanceof IntConstant) && (opR instanceof IntVariable)) {
 					map.put((IntVariable) opR, (IntConstant) opL);
 				} else if ((opL instanceof IntVariable) && (opR instanceof IntConstant)) {
