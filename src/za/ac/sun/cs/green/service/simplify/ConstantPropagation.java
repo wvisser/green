@@ -55,25 +55,19 @@ public class ConstantPropagation extends BasicService {
 	public void report(Reporter reporter) {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
-  
-  	public Expression propagate(Expression expression,
-			Map<Variable, Variable> map) {
+  	
+	/**
+	* Based off of the same method in SATCanonizerService.java
+	*/
+  	public Expression propagate(Expression expression) {
 		try {
 			log.log(Level.FINEST, "Before Propagation: " + expression);
 			invocations++;
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
 			expression = orderingVisitor.getExpression();
-			//PropagationVisitor propagationVisitor = new PropagationVisitor();
-			//expression.accept(propagationVisitor);
-			//Expression propagated = propagationVisitor.getExpression();
-			//if (propagated != null) {
-				//propagated = new Renamer(map,
-				//		propagationVisitor.getVariableSet()).rename(propagated);
-			//}
 			log.log(Level.FINEST, "After Propagation: " + expression);
 			return expression;
-			//return propagated;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
 					"encountered an exception -- this should not be happening!",
@@ -89,7 +83,7 @@ public class ConstantPropagation extends BasicService {
 
 		public OrderingVisitor() {
 			stack = new Stack<Expression>();
-			hashmap = new HashMap<IntVariable, IntConstant>();
+			hashmap = new HashMap<IntVariable, IntConstant>(); //Added a hash map to store constants propagated to variables
 		}
 
 		public Expression getExpression() {
@@ -110,17 +104,20 @@ public class ConstantPropagation extends BasicService {
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
 			if (stack.size() >= 2) {
-				Expression right = stack.pop();
-				Expression left = stack.pop();
-				if (op == Operation.Operator.EQ) {
-					
-					if (right instanceof IntConstant && left instanceof IntVariable) {
+				Expression right = stack.pop(); //gets right value of operator (variable to which will be assigned)
+				Expression left = stack.pop(); //gets left value of operator (constant to assign)
+				if (op == Operation.Operator.EQ) { //checks for  == 
+					//if there is a variable to the right of the operator and an integer integer to the left
+					//then assign the integer value to a key corresponding to the variable
+					if (right instanceof IntConstant && left instanceof IntVariable) { 
 						hashmap.put((IntVariable) left, (IntConstant) right);
 					}
-					
+					//form the new operation and push it to the stack
 					Operation nop = new Operation(operation.getOperator(), left, right);
 					stack.push(nop);
 				} else if (left instanceof IntVariable || right instanceof IntVariable) {
+					// If the the current expression is not of the type above create a new expression and add
+					// it to the hashmap
 					if (hashmap.containsKey(left)) {
 						 left = hashmap.get(left);
 					} else if (hashmap.containsKey(right)) {
