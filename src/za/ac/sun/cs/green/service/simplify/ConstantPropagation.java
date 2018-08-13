@@ -121,11 +121,13 @@ public class ConstantPropagation extends BasicService {
 
         @Override
         public void postVisit(IntConstant constant) {
+            System.out.println("Assignment: Pushing constant " + constant);
             stack.push(constant);
         }
 
         @Override
         public void postVisit(IntVariable variable) {
+            System.out.println("Assignment: Pushing variable " + variable);
             stack.push(variable);
         }
 
@@ -138,8 +140,10 @@ public class ConstantPropagation extends BasicService {
             // If operation is an EQ type. Add the equality to the HashMap
             if (op == Operation.Operator.EQ) {
                 if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+                    System.out.println("Assignment: Giving " + l + " value " + r);
                     variables.put((IntVariable) l, (IntConstant) r);
                 } else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
+                    System.out.println("Assignment: Giving " + r + " value " + l);
                     variables.put((IntVariable) r, (IntConstant) l);
                 }
                 stack.push(new Operation(op, l, r));
@@ -171,6 +175,7 @@ public class ConstantPropagation extends BasicService {
 
         @Override
         public void postVisit(IntConstant constant) {
+            System.out.println("Propagation: pushing constant " + constant);
             stack.push(constant);
         }
 
@@ -183,6 +188,7 @@ public class ConstantPropagation extends BasicService {
             // } else {
             //     stack.push(variable);
             // }
+            System.out.println("Propagation: pushing variable " + variable);
             stack.push(variable);
         }
 
@@ -196,10 +202,13 @@ public class ConstantPropagation extends BasicService {
             // future
             if (op == Operation.Operator.EQ) {
                 if ((l instanceof IntVariable) && (r instanceof IntConstant)) {
+                    System.out.println("Propagation: " + l + " " + op + " " + r);
                     stack.push(new Operation(op, l, r));
                 } else if ((l instanceof IntConstant) && (r instanceof IntVariable)) {
+                    System.out.println("Propagation: " + l + " " + op + " " + r);
                     stack.push(new Operation(op, l, r));
                 } else {
+                    System.out.println("Propagation: " + l + " " + op + " " + r);
                     stack.push(new Operation(op, l, r));
                 }
             } else {
@@ -209,6 +218,7 @@ public class ConstantPropagation extends BasicService {
                 if (variables.containsKey(l)) {
                     l = variables.get(l);
                 }
+                System.out.println("Propagation: " + l + " " + op + " " + r);
                 stack.push(new Operation(op, l, r));
             }
         }
