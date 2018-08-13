@@ -72,9 +72,9 @@ public class SATCanonizerTest {
 
 	@Test
 	public void test01() {
-		IntVariable v = new IntVariable("aa", 0, 99);
-		IntConstant c = new IntConstant(0);
-		Operation o = new Operation(Operation.Operator.EQ, v, c);
+		IntVariable v = new IntVariable("aa", 0, 99);  // v ->  0 < aa < 99
+		IntConstant c = new IntConstant(0);  // c -> 0
+		Operation o = new Operation(Operation.Operator.EQ, v, c); // v = c
 		check(o, "aa==0", "1*v==0");
 	}
 
@@ -82,7 +82,7 @@ public class SATCanonizerTest {
 	public void test02() {
 		IntVariable v1 = new IntVariable("aa", 0, 99);
 		IntConstant c1 = new IntConstant(0);
-		Operation o1 = new Operation(Operation.Operator.EQ, v1, c1);
+		Operation o1 = new Operation(Operation.Operator.EQ, v1, c1); //
 		IntVariable v2 = new IntVariable("bb", 0, 99);
 		IntConstant c2 = new IntConstant(1);
 		Operation o2 = new Operation(Operation.Operator.NE, v2, c2);
@@ -298,9 +298,9 @@ public class SATCanonizerTest {
 	public void test20() {
 		IntConstant c1 = new IntConstant(2);
 		IntVariable v1 = new IntVariable("aa", 0, 99);
-		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
-		Operation o2 = new Operation(Operation.Operator.LT, v1, c1);
-		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
+		Operation o1 = new Operation(Operation.Operator.LE, c1, c1); // 2 <= 2
+		Operation o2 = new Operation(Operation.Operator.LT, v1, c1); // (0<aa<99) < 2 <= 2 --> 0 < aa <=2 --> aa<=2
+		Operation o3 = new Operation(Operation.Operator.AND, o1, o2); // 2<=2 &&
 		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<=0");
 	}
 
