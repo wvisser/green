@@ -181,12 +181,12 @@ public class ConstantPropogation extends BasicService {
 			Expression var = stack.pop();
 			if (var instanceof IntVariable) {
 				if (varsandvals.contains(var)) {
-   				int index = varsandvals.indexOf(var)/2;
-   				if (count[index] > 0) {
+   				//int index = varsandvals.indexOf(var)/2;
+   				//if (count[index] > 0) {
    					stack2.push(varsandvals.get(index+1));
-   				} else {
-   					stack2.push(var);
-   				}
+   				//} else {
+   				//	stack2.push(var);
+   				//}
    				count[index]++;
    			} else {
    				stack2.push(var);
