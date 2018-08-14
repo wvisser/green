@@ -157,7 +157,7 @@ public class ConstantPropagation  extends BasicService {
 						System.out.println("Default reached switching on operator -- get outa Dodge!");
 						break;
 				}
-				if (nop.equals(Operation.Operator.EQ)) {
+				if ((nop != null) && (nop.equals(Operation.Operator.EQ))) {
 					Expression r = stack.pop();
 					Expression l = stack.pop();
 					if ((r instanceof Constant) && (l instanceof Variable)) {
