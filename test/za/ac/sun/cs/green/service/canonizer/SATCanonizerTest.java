@@ -44,6 +44,7 @@ public class SATCanonizerTest {
 	}
 
 	private void check(Expression expression, String full, String... expected) {
+		
 		Instance i = new Instance(solver, null, null, expression);
 		Expression e = i.getExpression();
 		assertTrue(e.equals(expression));
@@ -54,6 +55,7 @@ public class SATCanonizerTest {
 		assertEquals(Instance.class, result.getClass());
 		Instance j = (Instance) result;
 		finalCheck(j.getExpression().toString(), expected);
+		
 	}
 
 	private void check(Expression expression, Expression parentExpression, String full, String... expected) {
@@ -293,7 +295,7 @@ public class SATCanonizerTest {
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
 		check(o1, "2<=2", "0==0");
 	}
-/*
+
 	@Test
 	public void test20() {
 		IntConstant c1 = new IntConstant(2);
@@ -301,7 +303,17 @@ public class SATCanonizerTest {
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
 		Operation o2 = new Operation(Operation.Operator.LT, v1, c1);
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
-		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
+		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<=0");
 	}
-*/
+	
+	/*@Test
+	public void test99() {
+		IntConstant c1 = new IntConstant(2);
+		IntVariable v1 = new IntVariable("aa", 0, 99);
+		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
+		Operation o2 = new Operation(Operation.Operator.LT, v1, c1);
+		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
+		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
+	}*/
+
 }
