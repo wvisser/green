@@ -110,7 +110,7 @@ public class ConstantPropagation  extends BasicService {
 			map = new HashMap<Variable, Constant>();
 		}
 
-		public HashMap getVariables() {
+		public Map getVariables() {
 			return map;
 		}
 
