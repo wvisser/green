@@ -4,11 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.Stack;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.*;
 
@@ -36,7 +32,8 @@ public class ConstantPropogation extends BasicService {
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
-			final Expression e = propogate(instance.getFullExpression());
+			final Expression e = propogate(instance.getFullExpression()            constantVariableMap = new TreeMap<IntVariable, IntConstant>();
+);
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
@@ -66,13 +63,11 @@ public class ConstantPropogation extends BasicService {
     public class PropogateVisitor extends Visitor {
 
         private Stack<Expression> stack;
-        private Map<IntVariable, IntConstant> constantVariableMap;
         private LinkedList<IntVariable> variables;
         private LinkedList<IntConstant> constants;
 
         public PropogateVisitor() {
             stack = new Stack<Expression>();
-            constantVariableMap = new TreeMap<IntVariable, IntConstant>();
             variables = new LinkedList<IntVariable>();
             constants = new LinkedList<IntConstant>();
         }
@@ -93,7 +88,6 @@ public class ConstantPropogation extends BasicService {
 
 				if (leftOperand instanceof IntConstant)  {
                     if (rightOperand instanceof IntVariable) {
-                        constantVariableMap.put((IntVariable) rightOperand, (IntConstant) leftOperand);
                         variables.add((IntVariable) rightOperand);
                         constants.add((IntConstant) leftOperand);
                     }
@@ -101,7 +95,6 @@ public class ConstantPropogation extends BasicService {
 
                 if (leftOperand instanceof IntVariable) {
                     if (rightOperand instanceof IntConstant) {
-                        constantVariableMap.put((IntVariable) leftOperand, (IntConstant) rightOperand);
                         variables.add((IntVariable) leftOperand);
                         constants.add((IntConstant) rightOperand);
                     }
@@ -142,17 +135,6 @@ public class ConstantPropogation extends BasicService {
 							first = constants.get(variables.indexOf(first));
 						}
 					}
-
-					// if (second instanceof IntVariable) {
-					// 	if (constantVariableMap.containsKey(second)) {
-					// 		second = constantVariableMap.get(second);
-					// 	}
-					// }
-					// if (first instanceof IntVariable) {
-					// 	if (constantVariableMap.containsKey(first)) {
-					// 		first = constantVariableMap.get(first);
-					// 	}
-					// }
 				}
 				Operation out = new Operation(operation.getOperator(), second, first);
 
