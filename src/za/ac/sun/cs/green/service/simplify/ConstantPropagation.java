@@ -66,10 +66,10 @@ public class ConstantPropagation extends BasicService {
 			//expression = orderingVisitor.getExpression();
 			ListVisitor listVisitor = new ListVisitor();
 			expression.accept(listVisitor);
-			expr = listVisitor.getList();
-			PropagationVisitor propagationVisitor = new PropagationVisitor(expr);
-			expression.accept(propagationVisitor);
-			Expression simplified = propagationVisitor.getExpression();
+			Expression simplified = listVisitor.getExpression();
+			//PropagationVisitor propagationVisitor = new PropagationVisitor(expr);
+			//expression.accept(propagationVisitor);
+			//Expression simplified = propagationVisitor.getExpression();
 			/*if (simplified != null) {
 				simplified = new Renamer(map,
 						propagationVisitor.getVariableSet()).rename(simplified);
@@ -88,54 +88,47 @@ public class ConstantPropagation extends BasicService {
 		private Stack<Expression> stack;
 		private ArrayList<Expression> varsandvals;
 		public int count=0;
+		private Stack<Expression> stack;
+		private HashMap<Variable, IntConstant> hmap;
 		
 		public ListVisitor() {
 			stack = new Stack<Expression>();
-			varsandvals = new ArrayList<Expression>();
+		    	hmap = new HashMap<Variable, IntConstant>();
 		}
-									
-		public ArrayList<Expression> getList() {
-			while (!stack.isEmpty()) {
-				Expression var = stack.pop();
-				if (var instanceof Operation) {
-				if (((Operation)var).getOperator() == Operation.Operator.EQ) {
-					Expression var2 = stack.pop();
-					Expression var3 = stack.pop();
-					if (var2 instanceof Constant && var3 instanceof IntVariable)  {
-						varsandvals.add(var3);
-						varsandvals.add(var2);
-					} else if (var2 instanceof IntVariable && var3 instanceof Constant) {
-						varsandvals.add(var2);
-						varsandvals.add(var3);
-					}
-				}
-				}
-			}
-			return varsandvals;
+
+		public Expression getExpression() {
+		    return stack.pop();
 		}
 
 		@Override
-		public void postVisit(Constant constant) {
-			stack.push(constant);
+		public void postVisit(IntConstant constant) {
+		    stack.push(constant);
 		}
 
 		@Override
-		public void postVisit(Variable variable) {
-			if (count > 0) {
-				IntConstant one = new IntConstant(1);
-				stack.push(one);
-			} else {
-				count++;
-				stack.push(variable);
+		public void postVisit(IntVariable variable) {
+			stack.push(variable);
+		}
+
+		@Override
+        	public void postVisit(Operation operation) throws VisitorException {
+            		Operation.Operator op = operation.getOperator();
+		    	if (op.getArity() == 2) {
+		        	Expression r = stack.pop();
+		       		Expression l = stack.pop();
+			        if ((r instanceof IntVariable) && (l instanceof IntConstant) && op == Operation.Operator.EQ) {
+			            	hmap.put((Variable) r, (IntConstant) l);
+			        } else if ((r instanceof IntConstant) && (l instanceof IntVariable) && op == Operation.Operator.EQ) {
+			        	hmap.put((Variable) l, (IntConstant) r);
+			        } else if (l instanceof IntVariable && hmap.containsKey(l)) {
+			        	l = hmap.get(l);
+			        } else if (l instanceof IntVariable&& hmap.containsKey(r)) {
+			   	     r = hmap.get(l);
+			        }
+		        	stack.push(new Operation(op, l, r));
 			}
 		}
-
-		@Override
-		public void postVisit(Operation operation) throws VisitorException {
-			stack.push(operation);
-		}
-
-	}
+        }
 /*
 	private static class OrderingVisitor extends Visitor {
 
@@ -242,7 +235,7 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(Variable var) {
-			/*if (listVarVal.contains(var)) {
+			if (listVarVal.contains(var)) {
 			   	int index = listVarVal.indexOf(var)/2;
 			if (count[index] > 0) {
 				stack.push(listVarVal.get(index+1));
@@ -251,13 +244,6 @@ public class ConstantPropagation extends BasicService {
    			}
    				count[index]++;
    			} else {
-				stack.push(var);
-			}*/
-			if (counter > 0) {
-				IntConstant one = new IntConstant(1);
-				stack.push(one);
-			} else {
-				counter ++;
 				stack.push(var);
 			}
 		}
