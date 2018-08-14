@@ -131,16 +131,28 @@ public class ConstantPropogation extends BasicService {
 				Expression second = stack.pop();
 
 				if (!op.equals(Operation.Operator.EQ)) {
-					if (second instanceof IntVariable) {
-						if (constantVariableMap.containsKey(second)) {
-							second = constantVariableMap.get(second);
+
+                    if (second instanceof IntVariable) {
+						if (constants.contains(second)) {
+							second = constants.get(variables.indexOf(second));
 						}
 					}
 					if (first instanceof IntVariable) {
-						if (constantVariableMap.containsKey(first)) {
-							first = constantVariableMap.get(first);
+						if (constants.contains(first)) {
+							first = constants.get(variables.indexOf(first));
 						}
 					}
+
+					// if (second instanceof IntVariable) {
+					// 	if (constantVariableMap.containsKey(second)) {
+					// 		second = constantVariableMap.get(second);
+					// 	}
+					// }
+					// if (first instanceof IntVariable) {
+					// 	if (constantVariableMap.containsKey(first)) {
+					// 		first = constantVariableMap.get(first);
+					// 	}
+					// }
 				}
 				Operation out = new Operation(operation.getOperator(), second, first);
 
