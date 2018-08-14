@@ -117,11 +117,11 @@ public class ConstantPropogation extends BasicService {
 				//Checks whether a variable has been assigned a value, if so it is added to the HashMap
 				if ((r instanceof IntVariable) && (l instanceof IntConstant) && op == Operation.Operator.EQ) {
 					map.put((IntVariable)r, (IntConstant)l);
-					stack.push(new Operation(nop, l, r));
+					stack.push(new Operation(op, l, r));
 				} 
 				else if ((l instanceof IntVariable) && (r instanceof IntConstant) && op == Operation.Operator.EQ) {
 					map.put((IntVariable)l, (IntConstant)r);
-					stack.push(new Operation(nop, l, r));
+					stack.push(new Operation(op, l, r));
 				} 
 				//If the operand is anything but an equals, try to substitute constants in
 				else {
