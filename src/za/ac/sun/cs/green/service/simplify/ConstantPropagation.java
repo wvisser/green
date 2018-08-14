@@ -32,6 +32,9 @@ public class ConstantPropagation extends BasicService {
         super(solver);
     }
 
+	/**
+	 * this method processes a request and returns the result
+	 */
     @Override
     public Set<Instance> processRequest(Instance instance) {
         @SuppressWarnings("unchecked")
@@ -46,12 +49,18 @@ public class ConstantPropagation extends BasicService {
         
         return result;
     }
-
+    
+	/**
+	 * this method reports and is indifferent from the method found in the canonizer
+	 */
     @Override
     public void report(Reporter reporter) {
         reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
     }
 
+	/**
+	 * this method is used to apply propagation to the constants
+	 */
     public Expression propagateConstants(Expression expression, Map<Variable, Variable> map) {
         try {
             log.log(Level.FINEST, "Before Constant Propagation: " + expression);
@@ -74,11 +83,17 @@ public class ConstantPropagation extends BasicService {
         private Stack<Expression> stack;
         private Map<IntVariable, IntConstant> vMap;
 
+		/**
+	 	* this is the constructor
+	 	*/
         public ConstantPropagationVisitor() {
             stack = new Stack<Expression>();
             vMap = new TreeMap<IntVariable, IntConstant>();
         }
 
+		/**
+	 	* get the expression
+	 	*/
         public Expression getExpression() {
             Expression e = null;
             if (stack.isEmpty()) {
@@ -90,6 +105,9 @@ public class ConstantPropagation extends BasicService {
             return e;
         }
 
+		/**
+	 	* pushes a constant onto the stack
+	 	*/
         @Override
         public void postVisit(Constant constant) {
             if (!(constant instanceof IntConstant)) {
@@ -99,6 +117,9 @@ public class ConstantPropagation extends BasicService {
             }
         }
 
+		/**
+	 	* pushes a variable onto the stack
+	 	*/
         @Override
         public void postVisit(Variable variable) {
             if (!(variable instanceof IntVariable)) {
@@ -108,6 +129,9 @@ public class ConstantPropagation extends BasicService {
             }
         }
 
+		/**
+	 	* pushes a new operation onto the stack
+	 	*/
         @Override
         public void postVisit(Operation operation) throws VisitorException {
             int ss = stack.size();
