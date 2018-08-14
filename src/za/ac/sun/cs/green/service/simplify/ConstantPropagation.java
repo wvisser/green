@@ -84,7 +84,7 @@ public class ConstantPropagation extends BasicService {
 		return null;
 	}
 
-	private static class ListVisitor extends Visitor { //this is where we write the functions used to propogate the constants
+	private static class ListVisitor extends Visitor {
 		private Stack<Expression> stack;
 		private ArrayList<Expression> varsandvals;
 		
@@ -218,7 +218,13 @@ public class ConstantPropagation extends BasicService {
 		}
 
 		public Expression getExpression() {
-			Expression expr = stack.pop();
+			//Expression expr = stack.pop();
+			while (!stack.isEmpty() && stack.size() > 1) {
+				Expression expr1 = stack.pop();
+				Expression expr2 = stack.pop();
+				Expression expr3 = merge(expr1, expr2); 
+				stack.push(expr3);
+			}
 			return expr;
 		}
 
@@ -247,6 +253,100 @@ public class ConstantPropagation extends BasicService {
 		@Override
 		public void postVisit(Operation op) {
 			stack.push(op);
+		}
+
+		private Expression merge(Expression left, Expression right) {
+			Operation l = null;
+			Operation r = null;
+			int s = 0;
+			if (left instanceof IntConstant) {
+				s = ((IntConstant) left).getValue();
+			} else {
+				if (hasRightConstant(left)) {
+					s = getRightConstant(left);
+					l = getLeftOperation(left);
+				} else {
+					l = (Operation) left;
+				}
+			}
+			if (right instanceof IntConstant) {
+				s += ((IntConstant) right).getValue();
+			} else {
+				if (hasRightConstant(right)) {
+					s += getRightConstant(right);
+					r = getLeftOperation(right);
+				} else {
+					r = (Operation) right;
+				}
+			}
+			SortedMap<Variable, Integer> coefficients = new TreeMap<Variable, Integer>();
+			IntConstant c;
+			Variable v;
+			Integer k;
+
+			// Collect the coefficients of l
+			if (l != null) {
+				while (l.getOperator() == Operation.Operator.ADD) {
+					Operation o = (Operation) l.getOperand(1);
+					assert (o.getOperator() == Operation.Operator.MUL);
+					c = (IntConstant) o.getOperand(0);
+					v = (IntVariable) o.getOperand(1);
+					coefficients.put(v, c.getValue());
+					l = (Operation) l.getOperand(0);
+				}
+				assert (l.getOperator() == Operation.Operator.MUL);
+				c = (IntConstant) l.getOperand(0);
+				v = (IntVariable) l.getOperand(1);
+				coefficients.put(v, c.getValue());
+			}
+
+			// Collect the coefficients of r
+			if (r != null) {
+				while (r.getOperator() == Operation.Operator.ADD) {
+					Operation o = (Operation) r.getOperand(1);
+					assert (o.getOperator() == Operation.Operator.MUL);
+					c = (IntConstant) o.getOperand(0);
+					v = (IntVariable) o.getOperand(1);
+					k = coefficients.get(v);
+					if (k == null) {
+						coefficients.put(v, c.getValue());
+					} else {
+						coefficients.put(v, c.getValue() + k);
+					}
+					r = (Operation) r.getOperand(0);
+				}
+				assert (r.getOperator() == Operation.Operator.MUL);
+				c = (IntConstant) r.getOperand(0);
+				v = (IntVariable) r.getOperand(1);
+				k = coefficients.get(v);
+				if (k == null) {
+					coefficients.put(v, c.getValue());
+				} else {
+					coefficients.put(v, c.getValue() + k);
+				}
+			}
+
+			Expression lr = null;
+			for (Map.Entry<Variable, Integer> e : coefficients.entrySet()) {
+				int coef = e.getValue();
+				if (coef != 0) {
+					Operation term = new Operation(Operation.Operator.MUL,
+							new IntConstant(coef), e.getKey());
+					if (lr == null) {
+						lr = term;
+					} else {
+						lr = new Operation(Operation.Operator.ADD, lr, term);
+					}
+				}
+			}
+			if ((lr == null) || (lr instanceof IntConstant)) {
+				return new IntConstant(s);
+			} else if (s == 0) {
+				return lr;
+			} else {
+				return new Operation(Operation.Operator.ADD, lr,
+						new IntConstant(s));
+			}
 		}
 
 /*
