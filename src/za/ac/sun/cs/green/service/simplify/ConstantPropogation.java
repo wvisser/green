@@ -99,6 +99,7 @@ public class ConstantPropogation  extends BasicService{
         public void postVisit(IntVariable variable) {
             stack.push(variable);
         }
+
         @Override
         public void preVisit(Operation operation) throws VisitorException {
             Operation.Operator op = operation.getOperator();
@@ -121,6 +122,9 @@ public class ConstantPropogation  extends BasicService{
             }
         }
 
+
+
+        //does the propogation of the constants by popping from the stack.
         @Override
         public void postVisit(Operation operation) {
 
