@@ -10,6 +10,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
+import java.util.*;
 
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
@@ -66,10 +67,14 @@ public class ConstantPropogation extends BasicService {
 
         private Stack<Expression> stack;
         private Map<IntVariable, IntConstant> constantVariableMap;
+        private LinkedList<IntVariable> variables;
+        private LinkedList<IntConstant> constants;
 
         public PropogateVisitor() {
             stack = new Stack<Expression>();
             constantVariableMap = new TreeMap<IntVariable, IntConstant>();
+            variables = new LinkedList<IntVariable>();
+            constants = new LinkedList<IntConstant>();
         }
 
         public Expression getExpression() {
@@ -89,12 +94,16 @@ public class ConstantPropogation extends BasicService {
 				if (leftOperand instanceof IntConstant)  {
                     if (rightOperand instanceof IntVariable) {
                         constantVariableMap.put((IntVariable) rightOperand, (IntConstant) leftOperand);
+                        variables.add((IntVariable) rightOperand);
+                        constants.add((IntConstant) leftOperand);
                     }
 				}
 
                 if (leftOperand instanceof IntVariable) {
                     if (rightOperand instanceof IntConstant) {
                         constantVariableMap.put((IntVariable) leftOperand, (IntConstant) rightOperand);
+                        variables.add((IntVariable) leftOperand);
+                        constants.add((IntConstant) rightOperand);
                     }
 				}
 
