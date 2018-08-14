@@ -10,12 +10,12 @@ RUN apt upgrade -y
 # These should be available on the NARGA machines.
 RUN apt install ant -y
 RUN apt install vim -y
-RUN apt install tmux -y
+# RUN apt install tmux -y
 RUN apt install patchelf -y
 RUN apt install libgomp1
 
 # Clone down the GreenSolver repository
-RUN git clone https://github.com/wvisser/green
+RUN git clone https://github.com/DwaineSaundersonSU/green.git
 
 # Download and extract Z3
 RUN mkdir z3
