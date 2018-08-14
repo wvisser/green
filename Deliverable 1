@@ -1,0 +1,11 @@
+TASK 1 SOLUTION
+
+I figured out what was broken by comparing the value that was expected after canonization with the value it would be checked against (given in SATCanonizerTest.java).
+The expected value was "((1*v0)+-1)<=0" while the value in the code was "1*v+-<0". After changing the test case to the correct value it worked.
+
+I also changed the formatting type in build.xml to "brief" in order to find the error with more ease.
+
+Link to the repo: https://github.com/Liso66/green
+
+Bonus mark:
+set usefile="false" in build.xml

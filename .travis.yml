@@ -1,5 +1,13 @@
+sudo: required
+
+services:
+  - docker
+
 language: java
 
+before_install:
+  - docker ps -aq -f status=exited
+  - docker build -t green .
+
 script:
- - ant;
- - ant test;
+  - docker run green /bin/sh -c "cd /green; ant; ant test;"
