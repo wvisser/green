@@ -209,6 +209,9 @@ public class ConstantPropagation extends BasicService {
                         if (((IntConstant) r).getValue() > 0) {
                             stack.push(l);
                             return;
+                        } else {
+                            stack.push(new IntConstant(0));
+                            return;
                         }
                     }
                     // Both left and right side are constants, some constant operation
@@ -269,13 +272,22 @@ public class ConstantPropagation extends BasicService {
 
                         if (r instanceof IntConstant) {
                             if (op.name().equals("EQ") && l instanceof IntVariable) {
-                                constantValueMap.put(((IntVariable) l).getName(), (IntConstant) r);
+                                if (!constantValueMap.containsKey(((IntVariable) l).getName())) {
+                                    constantValueMap.put(((IntVariable) l).getName(), (IntConstant) r);
+                                } else if (constantValueMap.get(((IntVariable) l).getName()) != ((IntConstant) r)) {
+                                    l = (constantValueMap.get(((IntVariable) l).getName()));
+                                }
+
                             }
                         }
                      // One side is constant, other side is variable. Put in HashMap if its the `==' operation
                     } else if (l instanceof IntVariable) {
                         if (op.name().equals("EQ")) {
-                            constantValueMap.put(((IntVariable) l).getName(), (IntConstant) r);
+                            if (!constantValueMap.containsKey(((IntVariable) l).getName())) {
+                                constantValueMap.put(((IntVariable) l).getName(), (IntConstant) r);
+                            } else if (constantValueMap.get(((IntVariable) l).getName()) != ((IntConstant) r)){
+                                l = (constantValueMap.get(((IntVariable) l).getName()));
+                            }
                         } else if (constantValueMap.containsKey(((IntVariable) l).getName())){
                             l = constantValueMap.get(((IntVariable) l).getName());
                         }
@@ -289,8 +301,12 @@ public class ConstantPropagation extends BasicService {
                          }
                     }
                     if (r instanceof IntConstant) {
-                         if (op.name().equals("EQ")) {
-                             constantValueMap.put(((IntVariable) l).getName(), (IntConstant) r);
+                         if (op.name().equals("EQ") && l instanceof IntVariable) {
+                             if (!constantValueMap.containsKey(((IntVariable) l).getName())) {
+                                 constantValueMap.put(((IntVariable) l).getName(), (IntConstant) r);
+                             } else if (constantValueMap.get(((IntVariable) l).getName()) != ((IntConstant) r)) {
+                                 l = (constantValueMap.get(((IntVariable) l).getName()));
+                             }
                          }
                      }
 
@@ -301,6 +317,9 @@ public class ConstantPropagation extends BasicService {
                     if (op.name().equals("AND")) {
                         if (((IntConstant) l).getValue() > 0) {
                             stack.push(r);
+                            return;
+                        } else {
+                            stack.push(new IntConstant(0));
                             return;
                         }
                     }
@@ -362,13 +381,21 @@ public class ConstantPropagation extends BasicService {
 
                         if (l instanceof IntConstant) {
                             if (op.name().equals("EQ") && r instanceof IntVariable) {
-                                constantValueMap.put(((IntVariable) r).getName(), (IntConstant) l);
+                                if (!constantValueMap.containsKey(((IntVariable) r).getName())) {
+                                    constantValueMap.put(((IntVariable) r).getName(), (IntConstant) l);
+                                } else if (constantValueMap.get(((IntVariable) r).getName()) != ((IntConstant) l)) {
+                                    r = (constantValueMap.get(((IntVariable) r).getName()));
+                                }
                             }
                         }
                     // One side is constant, other side is variable. Put in HashMap if its the `==' operation
                     } else if (r instanceof IntVariable) {
                         if (op.name().equals("EQ")) {
-                            constantValueMap.put(((IntVariable) r).getName(), (IntConstant) l);
+                            if (!constantValueMap.containsKey(((IntVariable) r).getName())) {
+                                constantValueMap.put(((IntVariable) r).getName(), (IntConstant) l);
+                            } else if (constantValueMap.get(((IntVariable) r).getName()) != ((IntConstant) l)) {
+                                r = (constantValueMap.get(((IntVariable) r).getName()));
+                            }
                         } else if (constantValueMap.containsKey(((IntVariable) r).getName())) {
                             r = constantValueMap.get(((IntVariable) r).getName());
                         }
@@ -382,8 +409,12 @@ public class ConstantPropagation extends BasicService {
                         }
                     }
                     if (l instanceof IntConstant) {
-                        if (op.name().equals("EQ")) {
-                            constantValueMap.put(((IntVariable) r).getName(), (IntConstant) l);
+                        if (op.name().equals("EQ") && r instanceof IntVariable) {
+                            if (!constantValueMap.containsKey(((IntVariable) r).getName())) {
+                                constantValueMap.put(((IntVariable) r).getName(), (IntConstant) l);
+                            } else if (constantValueMap.get(((IntVariable) r).getName()) != ((IntConstant) l)) {
+                                r = (constantValueMap.get(((IntVariable) r).getName()));
+                            }
                         }
                     }
                 }
