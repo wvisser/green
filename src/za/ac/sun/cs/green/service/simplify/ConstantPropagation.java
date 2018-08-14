@@ -64,9 +64,9 @@ public class ConstantPropagation extends BasicService {
 			//expression.accept(orderingVisitor);
 			//expression = orderingVisitor.getExpression();
 			ListVisitor listVisitor = new ListVisitor();
-			expression.accept(ListVisitor);
-			expression = listVisitor.getExpression();
-			PropagationVisitor propagationVisitor = new PropagationVisitor();
+			expression.accept(listVisitor);
+			expression = listVisitor.getList();
+			PropagationVisitor propagationVisitor = new PropagationVisitor(listVisitor);
 			expression.accept(propagationVisitor);
 			Expression simplified = propagationVisitor.getExpression();
 			/*if (simplified != null) {
@@ -242,7 +242,7 @@ public class ConstantPropagation extends BasicService {
 		}
 
 		@Override
-		public void postVisit(Operator op) {
+		public void postVisit(Operation op) {
 			stack.push(op);
 		}
 
