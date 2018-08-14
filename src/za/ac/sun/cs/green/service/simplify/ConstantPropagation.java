@@ -58,6 +58,9 @@ public class ConstantPropagation extends BasicService {
   	
 	/**
 	* Based off of the same method in SATCanonizerService.java
+	* @param expression: expression to propagate
+	*        map: hashmap of variables
+	* @return updated expression
 	*/
   	public Expression propagate(Expression expression,
 				   Map<Variable, Variable> map) {
@@ -76,7 +79,10 @@ public class ConstantPropagation extends BasicService {
 		}
 		return null;
 	}
-
+	
+	/**
+	* Class to handle propagation of constants
+	*/
 	private static class OrderingVisitor extends Visitor {
 		
 		private Map<IntVariable, IntConstant> hashmap;
@@ -100,14 +106,19 @@ public class ConstantPropagation extends BasicService {
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
 		}
-
+		
+		/**
+		* This method propagates a constant through the expression, replacing all instances of a certain variable
+		* with a constant value.
+		* @param operation: the current operator that must be handled
+		*/
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
 			if (stack.size() >= 2) {
-				Expression right = stack.pop(); //gets right value of operator (variable to which will be assigned)
-				Expression left = stack.pop(); //gets left value of operator (constant to assign)
-				if (op == Operation.Operator.EQ) { //checks for  == 
+				Expression right = stack.pop(); 
+				Expression left = stack.pop();
+				if (op == Operation.Operator.EQ) { //checks for  '=='
 					//if there is a variable to the right of the operator and an integer integer to the left
 					//then assign the integer value to a key corresponding to the variable
 					if (right instanceof IntConstant && left instanceof IntVariable) { 
