@@ -153,11 +153,11 @@ public class ConstantPropagation  extends BasicService {
 					case LE:
 						nop = Operation.Operator.LE;
 						break;
-					case default:
+					default:
 						log.log(Level.FINEST, "Default reached switching on operator -- get outa Dodge!");
 						break;
 				}
-				if (nop.equals(Operation.Operator.EQ) {
+				if (nop.equals(Operation.Operator.EQ)) {
 					Expression r = stack.pop();
 					Expression l = stack.pop();
 					if ((r instanceof Constant) && (l instanceof Variable)) {
@@ -176,30 +176,27 @@ public class ConstantPropagation  extends BasicService {
 						log.log(Level.FINEST, "Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
 					}	
 				} /**/else if ((nop != null) && !(nop.equals(Operation.Operator.EQ)) {
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				if ((r instanceof IntVariable)
-						&& (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(
-								((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
+					Expression r = stack.pop();
+					Expression l = stack.pop();
+					if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
+						stack.push(new Operation(nop, r, l));
+					} else if ((r instanceof IntVariable)	&& (l instanceof IntConstant)) {
+						stack.push(new Operation(nop, r, l));
+					} else {
+						stack.push(operation);
+					}
+				}	else if (op.getArity() == 2){
+					Expression r = stack.pop();
+					Expression l = stack.pop();
+					stack.push(new Operation(op, l, r));
+					log.log(Level.FINEST, "Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
 				} else {
+					for (int i = op.getArity(); i > 0; i--) {
+						stack.pop();
+					}
 					stack.push(operation);
+					log.log(Level.FINEST, "Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
 				}
-			}	else if (op.getArity() == 2){
-				Expression r = stack.pop();
-				Expression l = stack.pop();
-				stack.push(new Operation(op, l, r));
-				log.log(Level.FINEST, "Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
-			} else {
-				for (int i = op.getArity(); i > 0; i--) {
-					stack.pop();
-				}
-				stack.push(operation);
-				log.log(Level.FINEST, "Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
-			}		
+			}
 	}
 }
