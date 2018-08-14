@@ -93,7 +93,7 @@ public class ConstantPropagation  extends BasicService {
 
 		public Expression getExpression() {
 
-			
+			return null;	
 
 		}
 
