@@ -168,13 +168,13 @@ public class ConstantPropagation  extends BasicService {
 					Expression l = stack.pop();
 
 					if (varValues.containsKey(r)) {
-						System.out.println("Propagation Visitor replaced \"" + r +"\" with \"" + varValues.get(r) + "\"");
 						r = varValues.get(r);
+						System.out.println("Propagation Visitor replaced \"" + r +"\" with \"" + varValues.get(r) + "\"");
 					}
 
 					if (varValues.containsKey(l)) {
-						System.out.println("Propagation Visitor replaced \"" + l +"\" with \"" + varValues.get(l) + "\"");
 						l = varValues.get(l);
+						System.out.println("Propagation Visitor replaced \"" + l +"\" with \"" + varValues.get(l) + "\"");
 					}
 					
 					stack.push(new Operation(op, l, r));
