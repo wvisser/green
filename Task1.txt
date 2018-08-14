@@ -1,0 +1,14 @@
+Jonathan Hulley
+19894295
+CS344
+
+Task 1
+I started off by uncommenting the testcase in SATCanonizerTest.java that fails. I then went into the build.xml file. In there, in the test target I changed haltonfailure from "yes" to "no". 
+After running the program again I saw that in bin/junit/TEST-za.ac.sun.cs.green.EntireSuit.xml an error had been added showing the expected result compared to the actual result, the difference being a < instead of a <=. I then changed the expected result to fix the error and now the testcase doesn't fail anymore.
+
+The link to the corrected code on my repo: 
+https://github.com/jonohulley/green
+
+For Task 2, the failing test details required can be found in bin/junit/TEST-za.ac.sun.cs.green.EntireSuit.xml . 
+An example of this is commit message: https://github.com/jonohulley/green/commit/640d5136d89d8236eacf633afd0239575ad06c28
+
