@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.*;
@@ -32,8 +33,7 @@ public class ConstantPropogation extends BasicService {
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
-			final Expression e = propogate(instance.getFullExpression()            constantVariableMap = new TreeMap<IntVariable, IntConstant>();
-);
+			final Expression e = propogate(instance.getFullExpression());
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
