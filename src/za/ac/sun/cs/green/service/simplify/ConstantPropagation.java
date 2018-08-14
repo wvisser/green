@@ -60,8 +60,9 @@ public class ConstantPropagation extends BasicService{
 			mapVC = new HashMap<Variable, Constant> ();
 			boolean flag = true;
 			boolean flag1 = true;
-			while(flag1){
-				/*System.out.println("----------New round");*/
+			int count = 0;
+			while(flag1 && count < 20){
+				count = count +1;
 				OrderingVisitor orderingVisitor = new OrderingVisitor(mapVC);
 				expression.accept(orderingVisitor);
 				expression = orderingVisitor.getExpression();
@@ -121,7 +122,6 @@ public class ConstantPropagation extends BasicService{
 			/*Pop the left and right side of the operation into a seperate sides*/
 			Expression RIGHT = stack.pop();
 			Expression LEFT = stack.pop();
-			/*System.out.println("Operation checking");*/
 
 			switch (op) {
 				/*If EQ then insert the change into the map and add to the stack*/
@@ -129,25 +129,21 @@ public class ConstantPropagation extends BasicService{
 					if (LEFT instanceof Variable && RIGHT instanceof Constant) {
 						/*Check for duplicate keys on left */
 						if(map.containsKey(LEFT)){
-							/*System.out.println("Duplicate keys: " + LEFT + " as " + RIGHT + " NOT ADDED");*/
 							flag = false;
 							stack.push(new Operation(op, LEFT, RIGHT));
 						}else{
 							flag = true;
 							map.put((Variable)LEFT, (Constant)RIGHT);
-							/*System.out.println("Inserted: " + LEFT + " as " + RIGHT);*/
 							stack.push(new Operation(op, LEFT, RIGHT));
 						}
 					}else if (RIGHT instanceof Variable && LEFT instanceof Constant) {
 						/*Check for duplicate keys on right*/
 						if(map.containsKey(RIGHT)){
-							/*System.out.println("Duplicate keys: " + RIGHT + " as " + LEFT + " NOT ADDED");*/
 							flag = false;
 							stack.push(new Operation(op, LEFT, RIGHT));
 						}else{
 							flag = true;
 							map.put((Variable)RIGHT, (Constant)LEFT);
-							/*System.out.println("Inserted " + RIGHT + " as " + LEFT);*/
 							stack.push(new Operation(op, RIGHT, LEFT));
 						}
 					}else if(LEFT instanceof Variable && RIGHT instanceof Variable){
@@ -158,11 +154,9 @@ public class ConstantPropagation extends BasicService{
 						then x == y ---> 1 == y
 						*/
 						if (map.containsKey(LEFT)) {
-							/* System.out.println("Inserted: " + RIGHT + " as " + map.get(LEFT));*/
 							map.put((Variable)RIGHT, (Constant)map.get(LEFT));
 							stack.push(new Operation(op, RIGHT, map.get(LEFT)));
 						}else if (map.containsKey(RIGHT)) {
-							/*System.out.println("Inserted: " + LEFT + " as " + map.get(RIGHT));*/
 							map.put((Variable)LEFT, (Constant)map.get(RIGHT));
 							stack.push(new Operation(op, LEFT, map.get(RIGHT)));
 						}else{
