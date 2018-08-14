@@ -50,18 +50,21 @@ public class ConstantPropagation  extends BasicService {
 		Map<Variable, Constant> varValues;// = new HashMap<Variable, Constant>();
 		
 		try {
-			log.log(Level.FINEST, "Before Simplification:\n" + expression);
+			log.log(Level.FINEST, "Before Collection:\n" + expression);
 
 			CollectionVisitor collectionVisitor = new CollectionVisitor();
 			expression.accept(collectionVisitor);
 			Expression propagated = collectionVisitor.getExpression();
 			varValues = collectionVisitor.getVarValues();
+			
+			log.log(Level.FINEST, "After Collection:\n" + propagated);
+			log.log(Level.FINEST, "Before Propagation:\n" + expression);
 
 			PropagationVisitor propagationVisitor = new PropagationVisitor(varValues);
 			expression.accept(propagationVisitor);
 			propagated = propagationVisitor.getExpression();
 
-			log.log(Level.FINEST, "After Simplification:\n" + propagated);
+			log.log(Level.FINEST, "After Propagation:\n" + propagated);
 			return propagated;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
@@ -89,13 +92,13 @@ public class ConstantPropagation  extends BasicService {
 		@Override
 			public void postVisit(IntConstant constant) {
 				stack.push(constant);
-				System.out.println( "Collection Visitor pushed \" " + constant + " \" (constant) to stack.");
+				System.out.println( "Propagation Visitor pushed \" " + constant + " \" (constant) to stack.");
 			}
 
 		@Override
 			public void postVisit(IntVariable variable) {
 				stack.push(variable);
-				System.out.println("Collection Visitor pushed \" " + variable + " \" (variable) to stack.");
+				System.out.println("Propagation Visitor pushed \" " + variable + " \" (variable) to stack.");
 			}
 
 		@Override
