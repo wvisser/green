@@ -57,7 +57,7 @@ public class ConstantPropagation extends BasicService {
 	public Expression propagate(Expression expression,
 			Map<Variable, Variable> map) {
 
-				try {
+		try {
 			log.log(Level.FINEST, "Before Canonization: " + expression);
 			invocations++;
 			PropagationVisitor propagationVisitor = new PropagationVisitor();
