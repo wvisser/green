@@ -202,8 +202,8 @@ public class ConstantPropogation extends BasicService {
 					hmap.put((Variable) l, (IntConstant) r);
 					stack.push(new Operation(op, r, l));
 				} else {
-					//stack.push(l);
-					//stack.push(r);
+					stack.push(l);
+					stack.push(r);
 					stack.push(operation);
 				}
 		}
