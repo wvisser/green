@@ -65,6 +65,9 @@ public class ConstantPropogation extends BasicService {
 			ListVisitor listVisitor = new ListVisitor();
 			expression.accept(listVisitor);
 			ArrayList<Expression> varsandvals = listVisitor.getList();
+			for (int i = 0; i < varsandvals.size(); i ++){
+				System.out.println(i+" var/val: "+varsandvals.get(i))
+			}
 			CPropogationVisitor cpropogationVisitor = new CPropogationVisitor(varsandvals);
 			expression.accept(cpropogationVisitor);
 			Expression simplified = cpropogationVisitor.getExpression();
