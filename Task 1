@@ -1,0 +1,9 @@
+I googled how to display detailed error message on JUnit, and came
+across this stack overflow page: https://stackoverflow.com/questions/9571267/junit-ant-how-to-show-detailed-error-message-on-the-screen
+
+After checking the responses I realised that one of them spoke about a certain formatting on the build.xml file which was not included in ours.
+I then added the line   <formatter type="plain" usefile="false"/> in the file and pushed to github, after that the format of the error report was a lot different.
+It showed what was received on the test case versus what is expected, I copied the expected response, saved and pushed and voila, Bob's your uncle.
+
+
+You can find my repo with this file on : https://github.com/Qhamaninande/green 
