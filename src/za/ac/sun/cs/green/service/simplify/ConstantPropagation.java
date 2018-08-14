@@ -219,16 +219,15 @@ public class ConstantPropagation extends BasicService {
 		}
 
 		public Expression getExpression() {
-			//Expression expr = stack.pop();
-			Expression expr;
+			Expression expr = stack.pop();
 			while (!stack.isEmpty()) {
 				Expression expr1 = stack.pop();
 				finalexpr = finalexpr+expr;
 			}
-			expr = (Expression) finalexpr;
+			System.out.println("Final string representation "+finalexpr);
 			return expr;
 		}
-
+		
 		@Override
 		public void postVisit(Constant constant) {
 			stack.push(constant);
