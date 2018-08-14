@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/wvisser/green.svg?branch=master)](https://travis-ci.org/wvisser/green.svg?branch=master)
+[![Build Status](https://travis-ci.org/WinandMey/green.svg?branch=master)](https://travis-ci.org/WinandMey/green?branch=master)
 
 Notes:
 

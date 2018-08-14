@@ -7,6 +7,8 @@ services:
  
 before_install:
  - docker build -t greendock .
+ - docker run greendock
  
 script:
- - docker run greendock sh -c "ant; ant test;"
+ - ant
+ - ant test
