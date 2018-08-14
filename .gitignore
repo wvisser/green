@@ -3,3 +3,6 @@
 *.swo
 */out/
 */.idea/
+bin/
+.idea/
+out/
