@@ -71,6 +71,7 @@ public class SimplificationConstantPropogationTest {
 		check(o4, "(x==1)&&(y==9)");
 	}
 	
+    /*
 	@Test
 	public void test01() {
 		IntVariable x = new IntVariable("x", 0, 99);
@@ -88,6 +89,7 @@ public class SimplificationConstantPropogationTest {
 		// (x = 1) && (x+y < 10) && (y-1 = 2)
 		check(o, "(x==1)&&(y==3)");
 	}
+    */
 
 	@Test
 		public void test02() {
@@ -118,6 +120,7 @@ public class SimplificationConstantPropogationTest {
 
 
 
+    /*
 	@Test
 		public void test05() {
 			IntVariable x = new IntVariable("x", 0, 99);
@@ -134,6 +137,7 @@ public class SimplificationConstantPropogationTest {
 			Operation o = new Operation(Operation.Operator.AND, o5, o4);
 			check(o, "(1==x)&&(3==y)");
 		}
+    */
 
 	@Test
 		public void test06() {
