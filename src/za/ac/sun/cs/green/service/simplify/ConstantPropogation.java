@@ -26,43 +26,43 @@ import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropogation extends BasicService {
 
-  public ConstantPropogation(Green solver){
-    super(solver);
-  }
+	public ConstantPropogation(Green solver){
+		super(solver);
+	}
 
-  @Override
-  public Set<Instance> processRequest(Instance instance) {
-    Expression expression = instance.getFullExpression();
-    log.log(Level.FINEST, "Before propogation: " + expression);
-    final Expression e = propegate(expression);
-    final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
-    log.log(Level.FINEST, "After propogation: " + i.getExpression());
-    return Collections.singleton(i);
-  }
+	@Override
+	public Set<Instance> processRequest(Instance instance) {
+		Expression expression = instance.getFullExpression();
+		log.log(Level.FINEST, "Before propogation: " + expression);
+		final Expression e = propegate(expression);
+		final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
+		log.log(Level.FINEST, "After propogation: " + i.getExpression());
+		return Collections.singleton(i);
+	}
 
-  private Expression propegate(Expression expression){
-    try {
-      PropogationVisitor propogationVisitor = new PropogationVisitor();
-      expression.accept(propogationVisitor);
-      return propogationVisitor.getExpression();
-    } catch (VisitorException ex){
-      log.log(Level.SEVERE, "This should not be happening - probably will.",ex);
-    }
-    return null;
-  }
+	private Expression propegate(Expression expression){
+		try {
+			PropogationVisitor propogationVisitor = new PropogationVisitor();
+			expression.accept(propogationVisitor);
+			return propogationVisitor.getExpression();
+		} catch (VisitorException ex){
+			log.log(Level.SEVERE, "This should not be happening - probably will.",ex);
+		}
+		return null;
+	}
 
-  private static class PropogationVisitor extends Visitor {
+	private static class PropogationVisitor extends Visitor {
 
-    private Map<Expression, Expression> constants;
-    private Stack<Expression> stack;
+		private Map<Expression, Expression> constants;
+		private Stack<Expression> stack;
 
-    public Expression getExpression() {
+		public Expression getExpression() {
 			return stack.pop();
 		}
 
 		public PropogationVisitor() {
 			stack = new Stack<Expression>();
-      this.constants = new HashMap<Expression, Expression>();
+			this.constants = new HashMap<Expression, Expression>();
 		}
 
 		@Override
@@ -77,30 +77,55 @@ public class ConstantPropogation extends BasicService {
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
-      Operation.Operator op = operation.getOperator();
+			Operation.Operator op = operation.getOperator();
 
-      Expression r = propegateForward(stack.pop());
-      Expression l = propegateForward(stack.pop());
+			Expression r = stack.pop();
+			Expression l = stack.pop();
 
-      if (op.equals(Operation.Operator.EQ)) {
-        extractEquality(r, l);
-        extractEquality(l, r);
-      }
+			r = propegateForward(r, l);
+			l = propegateForward(l, r);
 
-      stack.push(new Operation(op, l, r));
-    }
+			if (op.equals(Operation.Operator.EQ)) {
+				extractEquality(r, l);
+				extractEquality(l, r);
+			}
 
-    private void extractEquality(Expression r, Expression l) {
-      if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
-          constants.putIfAbsent(r, l);
-      }
-    }
+			/* Handles the case if an equality was discovered after a potential variable to change
+			has already been visited. e.i. (x + y) is visited before ('x = 1') */
+			if (l instanceof Operation) {
+				// visit left branch of parse tree
+				l.accept(this);
+				stack.push(new Operation(op, stack.pop(), r));
+			} else {
+				stack.push(new Operation(op, l, r));
+			}
+		}
 
-    private Expression propegateForward(Expression e) {
-      IntConstant var;
-      return (var = (IntConstant) constants.get(e)) != null
-             && e instanceof IntVariable ? var : e;
-    }
-  }
+	/**
+		* Determines if an 'x = 1' case exists between r and l.
+		*
+		* @param r The potential 'x'
+		* @param l The corresponding '1'
+		*/
+		private void extractEquality(Expression r, Expression l) {
+			if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+				constants.putIfAbsent(r, l);
+			}
+		}
+
+	/**
+		* Replaces an IntVariable with IntConstant if IntVariable is in 'constants'.
+		* Excludes the case where 'x = 1' --> '1 = 1'
+		*
+		* @param r IntVariable to be replaced
+		* @param l Expression to test for '1 == 1' case. (if l is an IntConstant).
+		* @return r if r is not in 'constants' else the new IntVariable
+		*/
+		private Expression propegateForward(Expression r, Expression l) {
+			IntConstant var;
+			return (var = (IntConstant) constants.get(r)) != null
+							&& r instanceof IntVariable && !(l instanceof IntConstant) ? var : r;
+		}
+	}
 
 }
