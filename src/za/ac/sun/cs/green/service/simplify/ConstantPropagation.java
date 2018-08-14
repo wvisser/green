@@ -56,8 +56,7 @@ public class ConstantPropagation extends BasicService{
 	public void report(Reporter reporter) {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
-
-	//public Expression propagateConstants(Expression expression,
+	
 	public Expression simplify(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
@@ -127,23 +126,7 @@ public class ConstantPropagation extends BasicService{
 			default:
 				break;
 			}
-			/*if (false) {
-				//System.out.println("POPPING THIS FROM STACK: " + stack.peek());
-				Expression r = stack.pop();
-				//System.out.println("POPPING THIS FROM STACK: " + stack.peek());
-				Expression l = stack.pop();
-				if ((r instanceof IntVariable)
-						&& (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(
-								((IntVariable) l).getName()) < 0)) {
-					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable)
-						&& (l instanceof IntConstant)) {
-					stack.push(new Operation(nop, r, l));
-				} else {
-					stack.push(operation);
-				}
-			} else */
+
 			if (op.equals(Operation.Operator.EQ)) {
 				// Extract constant
 				Expression r = stack.pop();
@@ -159,17 +142,7 @@ public class ConstantPropagation extends BasicService{
 					System.out.println("Stuck <" + r + "," + l + "> into map");
 				}
 				stack.push(new Operation(op, l, r));
-				//stack.push(new Operation(Operation.Operator.NE, r, r));
-				//stack.push(new Operation(Operation.Operator.NE, l, r)); // wrong push for testing
 			} else {
-				// TODO sniff out variables and replace with saved constants
-				/*
-				System.out.println("Non assignment operator: " + op);
-				for (int i = op.getArity(); i > 0; i--) {
-					System.out.println("I want to die " + stack.peek());
-					stack.pop();
-				}
-				stack.push(operation);*/
 				Expression r = stack.pop();
 				Expression l = stack.pop();
 				if (map.containsKey(r)) {
