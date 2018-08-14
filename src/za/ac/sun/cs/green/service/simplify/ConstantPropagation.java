@@ -135,11 +135,13 @@ public class ConstantPropagation  extends BasicService {
 						//TODO: If one of the values are in the map, another can be added. Kinda a second pass thing.
 						System.out.println("Instance of variable being able to be added to map. Maby next pass.");
 						stack.push(new Operation(op, l, r));
-						System.out.println("Propagation Visitor pushed \"" + operation +"\" (operation) to stack.");
+						//System.out.println("Propagation Visitor pushed \"" + operation +"\" (operation) to stack.");
+						System.out.println("Propagation Visitor pushed \"" + l + " " + op + " " + r + "\" (operation) to stack.");
 					} else {
 						System.out.println("Operator was EQ, but allas, no variables could be added to map. Maby next pass.");
 						stack.push(new Operation(op, l, r));
-						System.out.println("Propagation Visitor pushed \"" + operation +"\" (operation) to stack.");
+						//System.out.println("Propagation Visitor pushed \"" + operation +"\" (operation) to stack.");
+						System.out.println("Propagation Visitor pushed \"" + l + " " + op + " " + r + "\" (operation) to stack.");
 					}	
 				} /*else if ((nop != null) && !(nop.equals(Operation.Operator.EQ))) {
 					Expression r = stack.pop();
