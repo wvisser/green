@@ -15,7 +15,11 @@ RUN apt install patchelf -y
 RUN apt install libgomp1
 
 # Clone down the GreenSolver repository
-RUN git clone https://github.com/wvisser/green
+RUN git clone https://github.com/19896913/green
+WORKDIR /green
+RUN git fetch
+RUN git checkout constantPropagation
+WORKDIR /
 
 # Download and extract Z3
 RUN mkdir z3
