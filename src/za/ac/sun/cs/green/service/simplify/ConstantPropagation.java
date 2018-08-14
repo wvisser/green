@@ -49,15 +49,19 @@ public class ConstantPropagation  extends BasicService {
 		try {
 			log.log(Level.FINEST, "Before Simplification:\n" + expression);
 			
-			PropagationVisitor propagationVisitor = new PropagationVisitor();
-			expression.accept(propagationVisitor);
-			Expression propagated = propagationVisitor.getExpression();
+			CollectionVisitor collectionVisitor = new CollectionVisitor();
+			expression.accept(collectionVisitor);
+			Expression propagated = collectionVisitor.getExpression();
+
+			//PropagationVisitor propagationVisitor = new PropagationVisitor();
+			//expression.accept(propagationVisitor);
+			//Expression propagated = propagationVisitor.getExpression();
 
 			log.log(Level.FINEST, "After Simplification:\n" + propagated);
 			return propagated;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
-					"encountered an exception -- this should not be happening!",
+					"encountered an exception -- the sky is falling!",
 					x);
 		}
 		return null;
@@ -95,35 +99,107 @@ public class ConstantPropagation  extends BasicService {
 
 	}
 
-	private static class MapVisitor extends Visitor {
+	private static class CollectionVisitor extends Visitor {
 
 		private Stack<Expression> stack;
+		
+		private Map<Variable, Variable> map = new HashMap<Variable, Variable>();
 
-		private SortedSet<Expression> conjuncts;
-
-		private SortedSet<IntVariable> variableSet;
-
-		private boolean unsatisfiable;
-
-		private boolean linearInteger;
-
-		public MapVisitor() {
+		public CollectionVisitor() {
 			stack = new Stack<Expression>();
-			conjuncts = new TreeSet<Expression>();
-			variableSet = new TreeSet<IntVariable>();
-			unsatisfiable = false;
-			linearInteger = true;
+			map = new Hashmap<Variable, Constant>();
 		}
 
-		public SortedSet<IntVariable> getVariableSet() {
-			return variableSet;
+		public Hashmap getVariables() {
+			return map;
 		}
 
 		public Expression getExpression() {
-
-			
-
+			return stack.pop();
 		}
 
+		@Override
+			public void postVisit(IntConstant constant) {
+				stack.push(constant);
+				log.log(Level.FINEST, "Collection Visitor pushed \" " + expression + " \" (constant) to stack.");
+			}
+
+		@Override
+			public void postVisit(IntVariable variable) {
+				stack.push(variable);
+				log.log(Level.FINEST, "Collection Visitor pushed \" " + variable + " \" (variable) to stack.");
+			}
+
+		@Override
+			public void postVisit(Operation operation) throws VisitorException {
+				Operation.Operator op = operation.getOperator();
+				Operation.Operator nop = null;
+				switch(op) {
+					case EQ:
+						nop = Operation.Operator.EQ;
+						break;
+					case NE:
+						nop = Operation.Operator.NE;
+						break;
+					case GT:
+						nop = Operation.Operator.GT;
+						break;
+					case GE:
+						nop = Operation.Operator.GE;
+						break;
+					case LT:
+						nop = Operation.Operator.LT;
+						break;
+					case LE:
+						nop = Operation.Operator.LE;
+						break;
+					case default:
+						log.log(Level.FINEST, "Default reached switching on operator -- get outa Dodge!");
+						break;
+				}
+				if (nop.equals(Operation.Operator.EQ) {
+					Expression r = stack.pop();
+					Expression l = stack.pop();
+					if ((r instanceof Constant) && (l instanceof Variable)) {
+						map.put((Variable) l, (Constant) r);
+						log.log(Level.FINEST, l + " == "+ r + ": Variable \"" + l + "\" added to map.");
+						stack.push(new Operation(op, l, r));
+						log.log(Level.FINEST, "Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
+					} else if ((r instanceof Variable) && (l instanceof Constant)) {
+						map.put((Variable) r, (Constant) l);
+						log.log(Level.FINEST, l + " == "+ r + ": Variable \"" + r + "\" added to map.");
+						stack.push(new Operation(op, l, r));
+						log.log(Level.FINEST, "Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
+					} else {
+						log.log(Level.FINEST, "Operator was EQ, but allas, no variables could be added to map. Maby next pass.");
+						stack.push(operation);
+						log.log(Level.FINEST, "Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
+					}	
+				} /**/else if ((nop != null) && !(nop.equals(Operation.Operator.EQ)) {
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+				if ((r instanceof IntVariable)
+						&& (l instanceof IntVariable)
+						&& (((IntVariable) r).getName().compareTo(
+								((IntVariable) l).getName()) < 0)) {
+					stack.push(new Operation(nop, r, l));
+				} else if ((r instanceof IntVariable)
+						&& (l instanceof IntConstant)) {
+					stack.push(new Operation(nop, r, l));
+				} else {
+					stack.push(operation);
+				}
+			}	else if (op.getArity() == 2){
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+				stack.push(new Operation(op, l, r));
+				log.log(Level.FINEST, "Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
+			} else {
+				for (int i = op.getArity(); i > 0; i--) {
+					stack.pop();
+				}
+				stack.push(operation);
+				log.log(Level.FINEST, "Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
+			}		
 	}
 }
