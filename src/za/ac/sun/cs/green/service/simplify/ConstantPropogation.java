@@ -94,10 +94,11 @@ public class ConstantPropogation extends BasicService {
 			stack.push(variable);
 		}
 
+
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
-
+			//operation is equals, checks which side is constant or variable and passes to map
 			if (op.equals(Operation.Operator.EQ)) {
 				Expression oL = operation.getOperand(0);
 				Expression oR = operation.getOperand(1);
@@ -108,20 +109,21 @@ public class ConstantPropogation extends BasicService {
 				}
 			}
 
+			//propogates through the rest of stack
 			op = operation.getOperator();
 
 			if (stack.size() >= 2) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				if (op.equals(Operation.Operator.ADD)) {
-					if (l instanceof IntVariable) {
-						if (map.containsKey(l)) {
-							l = map.get(l);
-						}
-					}
+				if (!op.equals(Operation.Operator.EQ)) {
 					if (r instanceof IntVariable) {
 						if (map.containsKey(r)) {
 							r = map.get(r);
+						}
+					}
+					if (l instanceof IntVariable) {
+						if (map.containsKey(l)) {
+							l = map.get(l);
 						}
 					}
 				}
