@@ -1,0 +1,12 @@
+Task1:
+
+    Inserted the following line into the build.xml in the junit file to display the junit report file.
+        <formatter type="plain" usefile="false" />
+    This showed the error in the expected value of test20, which was fixed by replacing the following line of code:
+        check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
+    with
+        check(o3, "(2<=2)&&(aa<2)", "1*v+-1<=0");
+
+Task2:
+
+    Repository:  https://github.com/19059019/green
