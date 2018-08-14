@@ -46,14 +46,18 @@ public class ConstantPropagation  extends BasicService {
 
 	public Expression propagate(Expression expression,
 			Map<Variable, Variable> map) {
+		
+		Map<Variable, Constant> varValues;// = new HashMap<Variable, Constant>();
+		
 		try {
 			log.log(Level.FINEST, "Before Simplification:\n" + expression);
-			
+
 			CollectionVisitor collectionVisitor = new CollectionVisitor();
 			expression.accept(collectionVisitor);
 			Expression propagated = collectionVisitor.getExpression();
+			varValues = collectionVisitor.getVarValues();
 
-			//PropagationVisitor propagationVisitor = new PropagationVisitor();
+			PropagationVisitor propagationVisitor = new PropagationVisitor(varValues);
 			//expression.accept(propagationVisitor);
 			//Expression propagated = propagationVisitor.getExpression();
 
@@ -70,25 +74,13 @@ public class ConstantPropagation  extends BasicService {
 	private static class PropagationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
+		
+		private Map<Variable, Constant> varValues;
 
-		private SortedSet<Expression> conjuncts;
-
-		private SortedSet<IntVariable> variableSet;
-
-		private boolean unsatisfiable;
-
-		private boolean linearInteger;
-
-		public PropagationVisitor() {
+		public PropagationVisitor(Map<Variable, Constant> varVals) {
 			stack = new Stack<Expression>();
-			conjuncts = new TreeSet<Expression>();
-			variableSet = new TreeSet<IntVariable>();
-			unsatisfiable = false;
-			linearInteger = true;
-		}
+			varValues = varVals;
 
-		public SortedSet<IntVariable> getVariableSet() {
-			return variableSet;
 		}
 
 		public Expression getExpression() {
@@ -110,7 +102,7 @@ public class ConstantPropagation  extends BasicService {
 			map = new HashMap<Variable, Constant>();
 		}
 
-		public Map getVariables() {
+		public Map getVarValues() {
 			return map;
 		}
 
