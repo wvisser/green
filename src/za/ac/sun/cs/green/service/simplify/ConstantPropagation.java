@@ -87,6 +87,7 @@ public class ConstantPropagation extends BasicService {
 	private static class ListVisitor extends Visitor {
 		private Stack<Expression> stack;
 		private ArrayList<Expression> varsandvals;
+		public int count=0;
 		
 		public ListVisitor() {
 			stack = new Stack<Expression>();
@@ -120,7 +121,12 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(Variable variable) {
-			stack.push(variable);
+			if (count > 0) {
+				stack.push(1);
+			} else {
+				count++;
+				stack.push(variable);
+			}
 		}
 
 		@Override
