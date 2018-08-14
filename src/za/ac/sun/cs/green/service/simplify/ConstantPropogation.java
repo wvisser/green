@@ -79,11 +79,23 @@ public class ConstantPropogation extends BasicService {
 			return stack.pop();
 		}
 
+		/**
+		 * Pushes constant onto stack for future use
+		 * 
+		 * @param constant The constant being visited
+		 */
 		@Override
 		public void postVisit(IntConstant constant) {
 			stack.push(constant);
 		}
 
+		/**
+		 * Checks if operator is an '=='. 
+		 * If so and if the operands are a constant & variable pair 
+		 * we map the constant to the variable for later use
+		 * 
+		 * @param operation The operation bing visited 
+		 */
 		@Override
 		public void preVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
@@ -98,11 +110,23 @@ public class ConstantPropogation extends BasicService {
 			}
 		}
 
+		/**
+		 * Pushes the visited variable onto stack for later use
+		 * 
+		 * @param variable The variable being visited
+		 */
 		@Override
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
 		}
 
+		/**
+		 * If the operation being visited is not an equals
+		 * we check if the operands are variables and have constants mapped to them, 
+		 * if so we replace them
+		 * 
+		 * @param operation The operation being visited
+		 */
 		@Override
 		public void postVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
@@ -111,6 +135,7 @@ public class ConstantPropogation extends BasicService {
 				Expression right = stack.pop();
 				Expression left = stack.pop();
 				if (!op.equals(Operation.Operator.EQ)) {
+					//checks if operands are mapped and replaces when appropriate
 					if (left instanceof IntVariable) {
 						if (map.containsKey(left)) {
 							left = map.get(left);
