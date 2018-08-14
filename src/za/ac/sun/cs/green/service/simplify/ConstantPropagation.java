@@ -54,15 +54,15 @@ public class ConstantPropagation extends BasicService {
 	public Expression simplify(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
-			log.log(Level.FINEST, "Before Simplification: " + expression);
+			log.log(Level.FINEST, "Before ConstantPropagation: " + expression);
 			invocations++;
 
-			OrderingVisitor orderingVisitor = new OrderingVisitor();
-			expression.accept(orderingVisitor);
+			Propagation propagation = new Propagation();
+			expression.accept(propagation);
 
-			expression = orderingVisitor.getExpression();
+			expression = propagation.getExpression();
 
-			log.log(Level.FINEST, "After Simplification: " + expression);
+			log.log(Level.FINEST, "After ConstantPropagation: " + expression);
 			return expression;
 
 		} catch (VisitorException x) {
@@ -73,12 +73,18 @@ public class ConstantPropagation extends BasicService {
 		return null;
 	}
 
-	private static class OrderingVisitor extends Visitor {
+/**
+	Propagation class propagates the expression with a constant
+	for when there is a equality.
+	For example: (x==1)&&((y+x)==10) will become (x==1)&&((y+1)==10)
+	Propagation will only work if the equality is before the expression.
+*/
+	private static class Propagation extends Visitor {
 
 		private Stack<Expression> stack;
 		private Map<Expression, Expression> variable_map;
 
-		public OrderingVisitor() {
+		public Propagation() {
 			stack = new Stack<Expression>();
 			variable_map = new HashMap<Expression, Expression>();
 		}
@@ -89,7 +95,6 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(IntConstant constant) {
-			System.out.println("Pushes constant: " + constant);
 			stack.push(constant);
 		}
 
@@ -99,10 +104,8 @@ public class ConstantPropagation extends BasicService {
 			Expression get = variable_map.get(key);
 			if (get != null) {
 				//propagation of one constant if it exists in the hash map.
-				System.out.println("Pushes variable: " + get);
 				stack.push(get);
 			} else {
-				System.out.println("Pushes variable: " + variable);
 				stack.push(variable);
 			}
 
@@ -110,25 +113,20 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
-			System.out.println("------------------In postVisit: OPERATION.-----------------------");
+
 			Operation.Operator op = operation.getOperator();
 
 			Expression r = stack.pop();
-			System.out.println("Pops off r: " + r);
 			Expression l = stack.pop();
-			System.out.println("Pops off l: " + l);
 
 			if (op == Operation.Operator.EQ) {
 				// adds variable and value to the hash map.
-				System.out.println("adds variable and constant to hash map: " + l + " == " + r);
 				variable_map.put(l, r);
 
 			}
 
-			System.out.println("Pushes a new Operation: \n l: " + l + "\n op: " + op + "\n r: " + r);
 			stack.push(new Operation(op, l, r));
 
-			System.out.println("--------------End of postVisit: Operation.---------------------------");
 		}
 
 	}
