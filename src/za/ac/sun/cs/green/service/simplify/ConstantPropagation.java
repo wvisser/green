@@ -87,11 +87,6 @@ public class ConstantPropagation extends BasicService {
 		public Expression getExpression() {
       Expression x = stack.pop();
 
-      System.out.println("-------------------");
-      System.out.println("-------------------");
-      System.out.println("Stack after pop: ");
-      System.out.println("-------------------");
-      System.out.println("-------------------");
       System.out.println(Arrays.toString(stack.toArray()));
 			return x;
 		}
@@ -99,22 +94,12 @@ public class ConstantPropagation extends BasicService {
 		@Override
 		public void postVisit(IntConstant constant) {
 			stack.push(constant);
-      System.out.println("-------------------");
-      System.out.println("-------------------");
-      System.out.println("Stack after cons push: ");
-      System.out.println("-------------------");
-      System.out.println("-------------------");
       System.out.println(Arrays.toString(stack.toArray()));
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
 			stack.push(variable);
-      System.out.println("-------------------");
-      System.out.println("-------------------");
-      System.out.println("Stack after var push: ");
-      System.out.println("-------------------");
-      System.out.println("-------------------");
       System.out.println(Arrays.toString(stack.toArray()));
 		}
 
