@@ -59,18 +59,18 @@ public class ConstantPropogation extends BasicService {
 		try {
 			log.log(Level.FINEST, "Before cpropogation: " + expression);
 			invocations++;
-			//OrderingVisitor orderingVisitor = new OrderingVisitor();
-			//expression.accept(orderingVisitor);
-			//expression = orderingVisitor.getExpression();
-			ListVisitor listVisitor = new ListVisitor();
-			expression.accept(listVisitor);
-			ArrayList<Expression> varsandvals = listVisitor.getList();
-			for (int i = 0; i < varsandvals.size(); i ++){
-				System.out.println(i+" var/val: "+varsandvals.get(i));
-			}
-			CPropogationVisitor cpropogationVisitor = new CPropogationVisitor(varsandvals);
-			expression.accept(cpropogationVisitor);
-			Expression simplified = cpropogationVisitor.getExpression();
+			ExchangeVisitor exchangeVisitor = new ExchangeVisitor();
+			expression.accept(exchangeVisitor);
+			expression = exchangeVisitor.getExpression();
+			//ListVisitor listVisitor = new ListVisitor();
+			//expression.accept(listVisitor);
+			//ArrayList<Expression> varsandvals = listVisitor.getList();
+			//for (int i = 0; i < varsandvals.size(); i ++){
+			//	System.out.println(i+" var/val: "+varsandvals.get(i));
+			//}
+			//CPropogationVisitor cpropogationVisitor = new CPropogationVisitor(varsandvals);
+			//expression.accept(cpropogationVisitor);
+			//Expression simplified = cpropogationVisitor.getExpression();
 			//if (simplified != null) {
 				//simplified = new Renamer(map,
 					//	cpropogationVisitor.getVariableSet()).rename(canonized);
@@ -160,6 +160,55 @@ public class ConstantPropogation extends BasicService {
 		}
 
 	}*/
+	private static class ExchangeVisitor extends Visitor {
+
+		private Stack<Expression> stack;
+		private HashMap<Variable, Constant> hmap;
+
+		public ExchangeVisitor() {
+			stack = new Stack<Expression>();
+		}
+
+		public Expression getExpression() {
+			return stack.pop();
+		}
+
+		@Override
+		public void postVisit(IntConstant constant) {
+			stack.push(constant);
+		}
+
+		@Override
+		public void postVisit(IntVariable variable) {
+			if (hmap.contains(variable)) {
+      	val = map.get(variable);
+      	stack.push(val);
+      } else {
+				stack.push(variable);
+			}
+		}
+
+		@Override
+		public void postVisit(Operation operation) throws VisitorException {
+			Operation.Operator op = operation.getOperator();
+			if (op == Operation.Operator.EQ) {
+				Expression r = stack.pop();
+				Expression l = stack.pop();
+				if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+					hmap.put((Variable) r, (IntConstant) l);
+					stack.push(new Operation(op, r, l));
+				} else if ((r instanceof IntConstant) && (l instanceof IntVariable)) {
+					hmap.put((Variable) l, (IntConstant) r);
+					stack.push(new Operation(op, r, l));
+				} else {
+					//stack.push(l);
+					//stack.push(r);
+					stack.push(operation);
+				}
+		}
+
+	}
+}
 
 	private static class CPropogationVisitor extends Visitor { //this is where we write the functions used to propogate the constants
 		private Stack<Expression> stack;
