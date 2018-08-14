@@ -128,6 +128,7 @@ public class SATCanonizerService extends BasicService {
 				break;
 			}
 			if (nop != null) {
+				
 				Expression r = stack.pop();
 				Expression l = stack.pop();
 				if ((r instanceof IntVariable)
