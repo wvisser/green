@@ -197,7 +197,7 @@ public class ConstantPropogation extends BasicService {
 		}
 		while (!stack2.isEmpty()) {
 			Expression exp = stack2.pop();
-			stack.push(exp)
+			stack.push(exp);
 		}
 		
 	}
