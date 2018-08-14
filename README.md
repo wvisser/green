@@ -3,6 +3,7 @@
 # Notes:
 
 - The link above should lead to travis. If not please see https://travis-ci.org/Simone-vanZyl/green/builds.
+- See Travis Build #94 for Tut 2 results. 
 
 # Tut 2 Part 2
 

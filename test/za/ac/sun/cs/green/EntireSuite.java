@@ -40,7 +40,7 @@ import za.ac.sun.cs.green.util.SetTaskManagerTest;
     // XXX uncomment later
 	//SATCanonizerTest.class,
 	//SATZ3Test.class,
-    SimplificationConstantPropogationTest.class,
+    SimplificationConstantPropogationTest.class
     //OnlyConstantPropogationTest.class
 })
 
