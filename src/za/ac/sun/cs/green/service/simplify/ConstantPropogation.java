@@ -51,6 +51,10 @@ public class ConstantPropogation extends BasicService {
 		return null;
 	}
 
+	/**
+	 * Visits an expression parse tree and replaces known variables with their constant values,
+	 * as well as evaluating expressions consisting only of constants.
+	 */
 	private static class SimplificationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
@@ -77,6 +81,10 @@ public class ConstantPropogation extends BasicService {
 			pushAndPrint(constant);
 		}
 
+		/**
+		 * When encountering an equality operation, we check to see if it is a variable assignment
+		 * and if so add the value to our map of known variables.
+		 */
 		@Override
 		public void postVisit(Operation operation) {
 			if (operation.getOperator().equals(Operation.Operator.EQ)) {
@@ -93,12 +101,17 @@ public class ConstantPropogation extends BasicService {
 			pushAndPrint(operation);
 		}
 
+		/**
+		 * Given an expression, break it down recursively and replace all known variables with
+		 * their constant values.
+		 */
 		private Expression propogateConstants(Expression expression) {
 
 			if (expression instanceof Constant) {
 				return expression;
 			}
 
+			// Replace known variables with their constant values
 			if (expression instanceof Variable) {
 				if (knownValues.get(expression) != null) {
 					return knownValues.get(expression);
@@ -124,6 +137,7 @@ public class ConstantPropogation extends BasicService {
 					}
 				}
 
+				// Recursively propogate both sides before reforming operation
 				l = propogateConstants(l);
 				r = propogateConstants(r);
 				Operation newop = new Operation(op.getOperator(), l, r);
@@ -134,6 +148,9 @@ public class ConstantPropogation extends BasicService {
 			return expression;
 		}
 
+		/**
+		 * Evaluate the truth value of an expression in terms of constants.
+		 */
 		private Expression evaluate(Expression expression) {
 			if (expression instanceof Constant) return expression;
 
@@ -150,6 +167,7 @@ public class ConstantPropogation extends BasicService {
 			int lint;
 			switch (op) {
 				case EQ:
+					// In the case of equality, we return 0==0 if true, and 0==1 if false
 					lint = ((IntConstant) l).getValue();
 					rint = ((IntConstant) r).getValue();
 					if (lint == rint) {
@@ -158,6 +176,7 @@ public class ConstantPropogation extends BasicService {
 						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1));
 					}
 				case GT:
+					// In the case of an inequality, we return 0==0 if true, and 0==1 if false
 					lint = ((IntConstant) l).getValue();
 					rint = ((IntConstant) r).getValue();
 					if (lint > rint) {
@@ -166,6 +185,7 @@ public class ConstantPropogation extends BasicService {
 						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1));
 					}
 				case LT:
+					// In the case of an inequality, we return 0==0 if true, and 0==1 if false
 					lint = ((IntConstant) l).getValue();
 					rint = ((IntConstant) r).getValue();
 					if (lint < rint) {
@@ -174,6 +194,7 @@ public class ConstantPropogation extends BasicService {
 						return new Operation(Operation.Operator.EQ, new IntConstant(0), new IntConstant(1));
 					}
 				case AND:
+					// In the case of an AND statement, we return 0==0 if true, and 0==1 if false
 					Operation lop = (Operation) l;
 					Operation rop = (Operation) r;
 					assert lop.getOperator().equals(Operation.Operator.EQ);
@@ -189,6 +210,9 @@ public class ConstantPropogation extends BasicService {
 			}
 		}
 
+		/**
+		 * Checks whether an operation is only expressed in terms of constants.
+		 */
 		private boolean onlyContainsConstants(Operation operation) {
 			Expression l = operation.getOperand(0);
 			Expression r = operation.getOperand(1);
@@ -209,7 +233,7 @@ public class ConstantPropogation extends BasicService {
 
 		// For debugging purposes
 		private void pushAndPrint(Expression e) {
-			// System.out.println("Pushing expression to stack: " + e);
+			log.log(Level.DEBUG, "Pushing expression to stack: " + e);
 			stack.push(e);
 		}
 	}
