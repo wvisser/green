@@ -133,12 +133,12 @@ public class ConstantPropogation extends BasicService {
 				if (!op.equals(Operation.Operator.EQ)) {
 
                     if (second instanceof IntVariable) {
-						if (constants.contains(second)) {
+						if (variables.contains(second)) {
 							second = constants.get(variables.indexOf(second));
 						}
 					}
 					if (first instanceof IntVariable) {
-						if (constants.contains(first)) {
+						if (variables.contains(first)) {
 							first = constants.get(variables.indexOf(first));
 						}
 					}
