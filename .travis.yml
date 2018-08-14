@@ -1,5 +1,14 @@
+sudo: required
+
 language: java
 
+services:
+ - docker
+ 
+before_install:
+  - docker build -t carlad/sinatra .
+  
+
 script:
- - ant;
- - ant test;
+  - docker run carlad/sinatra /bin/sh -c "ant; ant test;"
+  

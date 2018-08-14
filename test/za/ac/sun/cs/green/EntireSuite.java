@@ -14,7 +14,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import com.microsoft.z3.Context;
-
+import za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest;
+import za.ac.sun.cs.green.service.simplify.SimplificationConstantPropogationTest;
 import cvc3.ValidityChecker;
 import za.ac.sun.cs.green.parser.smtlib2.SMTLIB2Parser0Test;
 import za.ac.sun.cs.green.parser.smtlib2.SMTLIB2Scanner0Test;
@@ -32,11 +33,14 @@ import za.ac.sun.cs.green.service.z3.SATZ3Test;
 import za.ac.sun.cs.green.util.ParallelSATTest;
 import za.ac.sun.cs.green.util.SetServiceTest;
 import za.ac.sun.cs.green.util.SetTaskManagerTest;
+import za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	SATCanonizerTest.class,
-	SATZ3Test.class
+	//SATCanonizerTest.class,
+	//SATZ3Test.class
+	OnlyConstantPropogationTest.class,
+	//SimplificationConstantPropogationTest.class
 })
 
 public class EntireSuite {
@@ -67,7 +71,8 @@ public class EntireSuite {
 				barvinok = p.getProperty("barvinokpath");
 				z3 = p.getProperty("z3path");
 			} catch (IOException e) {
-				// do nothing
+				 //do nothing
+				
 			}
 		}
 		LATTE_PATH = latte;
