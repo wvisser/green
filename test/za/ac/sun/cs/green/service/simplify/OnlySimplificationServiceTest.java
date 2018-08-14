@@ -30,7 +30,7 @@ public class OnlySimplificationServiceTest {
 			props.setProperty("green.service.sat", "(simplify sink)");
 			//props.setProperty("green.service.sat", "(canonize sink)");
 			props.setProperty("green.service.sat.simplify",
-					"za.ac.sun.cs.green.service.simplify.SimplificationService");
+					"za.ac.sun.cs.green.service.simplify.ConstantPropagationService");
 			//props.setProperty("green.service.sat.canonize",
 			//		"za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
 			
