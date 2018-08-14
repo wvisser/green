@@ -167,6 +167,7 @@ public class ConstantPropogation extends BasicService {
 
 		public ExchangeVisitor() {
 			stack = new Stack<Expression>();
+			hmap = new HashMap<Variable, IntConstant>();
 		}
 
 		public Expression getExpression() {
