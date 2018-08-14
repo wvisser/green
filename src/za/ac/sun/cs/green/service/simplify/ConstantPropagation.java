@@ -156,7 +156,7 @@ public class ConstantPropagation  extends BasicService {
 					Expression l = stack.pop();
 					stack.push(new Operation(op, l, r));
 					System.out.println("Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
-				}*/ else /*if (nop!= null)*/ {
+				}*/ else if (op!= null) {
 					//for (int i = op.getArity(); i > 0; i--) {
 					//	stack.pop();
 					//}
@@ -178,6 +178,7 @@ public class ConstantPropagation  extends BasicService {
 					}
 					
 					stack.push(new Operation(op, l, r));
+					System.out.println("Propagation Visitor pushed \"" + operation +"\" (operation) to stack.");
 				}
 			}
 
