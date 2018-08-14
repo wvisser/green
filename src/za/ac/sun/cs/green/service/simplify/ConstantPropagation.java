@@ -122,7 +122,7 @@ public class ConstantPropagation extends BasicService {
 		@Override
 		public void postVisit(Variable variable) {
 			if (count > 0) {
-				int one = 1;
+				IntConstant one = new IntConstant(1);
 				stack.push(one);
 			} else {
 				count++;
