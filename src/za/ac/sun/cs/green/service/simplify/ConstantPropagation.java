@@ -26,9 +26,6 @@ import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropagation extends BasicService {
 
-	/**
-	 * Number of times the slicer has been invoked.
-	 */
 	private int invocations = 0;
 
 	public ConstantPropagation(Green solver) {
@@ -57,12 +54,12 @@ public class ConstantPropagation extends BasicService {
 	public Expression simplify(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
-			log.log(Level.FINEST, "Before Simplification: " + expression);
+			log.log(Level.FINEST, "Before Propagation: " + expression);
 			invocations++;
-			OrderingVisitor orderingVisitor = new OrderingVisitor();
-			expression.accept(orderingVisitor);
-			expression = orderingVisitor.getExpression();
-			System.out.println("Expression after orderingVisitor: " + expression);
+			PropagationVisitor propagationVisitor = new PropagationVisitor();
+			expression.accept(propagationVisitor);
+			expression = propagationVisitor.getExpression();
+			log.log(Level.FINEST, "After Propagation: " + expression);
 			return expression;
 		} catch (VisitorException x) {
 			log.log(Level.SEVERE,
@@ -72,12 +69,15 @@ public class ConstantPropagation extends BasicService {
 		return null;
 	}
 
-	private static class OrderingVisitor extends Visitor {
+	/*
+	 * Propagation of one constant
+	 */
+	private static class PropagationVisitor extends Visitor {
 
 		private Stack<Expression> stack;
 		private Map<Expression, Expression> variableMap = new HashMap<Expression, Expression>();
 
-		public OrderingVisitor() {
+		public PropagationVisitor() {
 			stack = new Stack<Expression>();
 		}
 
@@ -87,17 +87,14 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(IntConstant constant) {
-			System.out.println("postVisit constant: " + constant);
 			stack.push(constant);
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
-			System.out.println("postVisit variable: " + variable);
 			Expression key = variable;
 			//Checks if the variable has been saved in the map before
 			if (variableMap.containsKey(key)){
-				System.out.println("pushing: " + variableMap.get(key));
 				//If yes, push the variable's value instead of the variable again
 				stack.push(variableMap.get(key));
 			} else {
@@ -107,20 +104,14 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
-			System.out.println("postVisit operation: " + operation);
 			Operation.Operator op = operation.getOperator();
 			Expression r = stack.pop();
-			System.out.println("Expression r: " + r);
 			Expression l = stack.pop();
-			System.out.println("Expression l: " + l);
 			//If the operation is assigning a constant to a variable, add the expressions to the hash map
 			if (op == Operation.Operator.EQ && l instanceof IntVariable && r instanceof IntConstant) {
-				System.out.println("Adding key: " + l + " with value: " + r);
 				variableMap.put(l, r);
 				stack.push(new Operation(op, l , r));
-				System.out.println("Pushing operation: " + l + op + r);
 			} else {
-					System.out.println("Pushing operation: " + l + op + r);
 					stack.push(new Operation(op, l, r));
 			}
 		}
