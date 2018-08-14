@@ -198,7 +198,7 @@ public class ConstantPropagation  extends BasicService {
 					System.out.println("Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
 				}
 				System.out.println("Following variables collected:");
-				for (map.Entry<Variable, Constant> entry: map.entrySet) {
+				for (Map.Entry<Variable, Constant> entry: map.entrySet) {
 					System.out.println("Variable: " + entry.getKey() + " Constant: " + entry.getValue());
 				}
 			}
