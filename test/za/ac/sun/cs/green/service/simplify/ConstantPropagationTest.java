@@ -57,7 +57,7 @@ public class ConstantPropagationTest {
 	}
 
 	@Test
-	public void test000() {
+	public void test00() {
 		IntVariable x = new IntVariable("x", 0, 99);
 		IntVariable y = new IntVariable("y", 0, 99);
 		IntVariable z = new IntVariable("z", 0, 99);
@@ -68,6 +68,23 @@ public class ConstantPropagationTest {
 		Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
 		Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
 		Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10 
-		check(o4, "(x==1)&&((1+y)==10)");
+		check(o4, "(x==1)&&(y==9)");
 	}
+	
+	@Test
+	public void test02() {
+		IntConstant c1 = new IntConstant(4);
+		IntConstant c2 = new IntConstant(10);
+		Operation o = new Operation(Operation.Operator.LT, c1, c2);
+		check(o, "0==0");
+	}
+
+	@Test
+	public void test03() {
+		IntConstant c1 = new IntConstant(4);
+		IntConstant c2 = new IntConstant(10);
+		Operation o = new Operation(Operation.Operator.GT, c1, c2);
+		check(o, "0==1");
+	}
+	
 }
