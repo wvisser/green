@@ -197,6 +197,10 @@ public class ConstantPropagation  extends BasicService {
 					stack.push(operation);
 					System.out.println("Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
 				}
+				System.out.println("Following variables collected:");
+				for (map.Entry<Variable, Constant> entry: map.entrySet) {
+					System.out.println("Variable: " + entry.getKey() + " Constant: " + entry.getValue());
+				}
 			}
 	}
 }
