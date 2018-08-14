@@ -12,10 +12,8 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
-
 import java.util.Arrays;
 import java.util.Properties;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import za.ac.sun.cs.green.Instance;
@@ -101,7 +99,7 @@ public class ConstantPropogation  extends BasicService{
         public void postVisit(IntVariable variable) {
             stack.push(variable);
         }
-        @Override
+        // @Override
         public void beforeProp(Operation operation) throws VisitorException {
             Operation.Operator op = operation.getOperator();
             Operation.Operator nop = null;
