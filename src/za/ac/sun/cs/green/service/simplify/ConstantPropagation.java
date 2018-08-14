@@ -218,6 +218,7 @@ public class ConstantPropagation extends BasicService {
 		private int[] count;
 		ArrayList <Expression> listVarVal;
 		String finalexpr = "";
+		int count=0;
 
 		public PropagationVisitor(ArrayList<Expression> x) {
 			stack = new Stack<Expression>();
@@ -241,7 +242,7 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(Variable var) {
-			if (listVarVal.contains(var)) {
+			/*if (listVarVal.contains(var)) {
 			   	int index = listVarVal.indexOf(var)/2;
 			if (count[index] > 0) {
 				stack.push(listVarVal.get(index+1));
@@ -250,6 +251,13 @@ public class ConstantPropagation extends BasicService {
    			}
    				count[index]++;
    			} else {
+				stack.push(var);
+			}*/
+			if (count > 0) {
+				IntConstant one = new IntConstant(1);
+				stack.push(one);
+			} else {
+				count ++;
 				stack.push(var);
 			}
 		}
