@@ -216,15 +216,18 @@ private static class ConstantPropogationVisitor extends Visitor {
    @Override
 	public void postVisit(Operation operation) throws VisitorException {
         Operation.Operator op = operation.getOperator();
-        logstr += "\n__________\n";
+
         Expression r = stack.pop();
-        logstr += ("right = " + r + "\n");
         Expression l = stack.pop();
-        logstr += ("left = " + l + "\n");
         Expression n;
+
+        logstr += "\n__________\n";
+        logstr += ("right = " + r + "\n");
+        logstr += ("left = " + l + "\n");
 
         if ((r instanceof Variable)
                 && (l instanceof Variable)) {
+
             /* Check if the variables have been assigned */
             boolean chk = false;
             if (variables.contains(r)) {
@@ -238,54 +241,57 @@ private static class ConstantPropogationVisitor extends Visitor {
 
             if (op.equals(Operation.Operator.EQ)) {
                 if (chk) {
+                    /* when y ==0 this adds y to the map */
                     if (r instanceof Constant) {
                         map.put((Variable) l, (Constant) r);
-                        l = r;
                     } else if (l instanceof Constant) {
                         map.put((Variable) r, (Constant) l);
-                        r = l;
                     }
                     /* both l and r are constants now expect simplify */
                 }
             }
 
-            logstr += "\nX==Y ASSIGNMENT : ";
             n = new Operation(op, l, r);
+
+            logstr += "\nX==Y ASSIGNMENT : ";
             logstr += (n + "\n");
         } else if ((r instanceof Constant)
                 && (l instanceof Variable)
                 && op.equals(Operation.Operator.EQ)) {
             /* Its a variable assignment */
-            logstr += "\nX==0 ASSIGNMENT : ";
 
             n = new Operation(op, l, r);
+
+            logstr += "\nX==0 ASSIGNMENT : ";
             logstr += (n + "\n");
         } else if ((r instanceof Constant)
                 && (l instanceof Variable)) {
+
             /* Check if the variables have been assigned */
             if (variables.contains(l)) {
                 l = map.get(l);
             }
-            logstr += "\nX+1 ASSIGNMENT : ";
 
             n = new Operation(op, l, r);
+
+            logstr += "\nX+1 ASSIGNMENT : ";
             logstr += (n + "\n");
         } else if ((r instanceof Operation)
                 && (l instanceof Constant)) {
-            logstr += "\nLeft is a constant, right is an operation : ";
-            //n = new Operation(op, l, r);
-            //logstr += (n + "\n");
+
             Constant X = null;
 
             Iterator<Expression> ops = ((Operation) r).getOperands().iterator();
             Operation.Operator O = ((Operation) r).getOperator();
 
+            logstr += "\nLeft is a constant, right is an operation : ";
             logstr += "Operands \n";
             logstr += ("Operator : " + O.toString());
 
             Expression op1 = ops.next();
             Expression op2 = ops.next();
 
+            /* Identify the constant in the Operation */
             if (op1 instanceof Constant) {
                 X = (Constant) op1;
                 r = op2;
@@ -298,30 +304,24 @@ private static class ConstantPropogationVisitor extends Visitor {
                 Operation.Operator nop = getNOP(O);
                 Operation temp = new Operation(nop, l, X);
 
-                if (nop == null) {
-                    logstr += "NOP is null! \n";
-                } else if (l == null) {
-                    logstr += "l is null \n";
-                } else if (X == null) {
-                    logstr += "X is null \n";
-                }
                 l = temp.apply(nop, r, X);
-                logstr += ("new right =  " + r + "\n");
-                logstr += ("new left =  " + l + "\n");
             }
 
             n = new Operation(op, l, r);
+
+            logstr += ("new right =  " + r + "\n");
+            logstr += ("new left =  " + l + "\n");
             logstr += (n + "\n");
         }  else if ((r instanceof Constant)
                 && (l instanceof Operation)
                 && (op.equals(Operation.Operator.EQ))) {
-            logstr += "\nLeft is an Operation, right is an constant : ";
 
             Constant X = null;
 
             Iterator<Expression> ops = ((Operation) l).getOperands().iterator();
             Operation.Operator O = ((Operation) l).getOperator();
 
+            logstr += "\nLeft is an Operation, right is an constant : ";
             logstr += "Operands \n";
             logstr += ("Operator : " + O.toString());
 
@@ -340,24 +340,20 @@ private static class ConstantPropogationVisitor extends Visitor {
                 Operation.Operator nop = getNOP(O);
                 Operation temp = new Operation(nop, r, X);
 
-                if (nop == null) {
-                    logstr += "NOP is null! \n";
-                } else if (r == null) {
-                    logstr += "r is null \n";
-                } else if (X == null) {
-                    logstr += "X is null \n";
-                }
                 r = temp.apply(nop, r, X);
-                logstr += ("new right =  " + r + "\n");
-                logstr += ("new left =  " + l + "\n");
             }
 
             n = new Operation(op, l, r);
+
+            logstr += ("new right =  " + r + "\n");
+            logstr += ("new left =  " + l + "\n");
             logstr += (n + "\n");
         }  else if ((r instanceof Operation)
                 && (l instanceof Operation)
                 && (op.equals(Operation.Operator.AND))) {
+            /* resolve x==0 && x==1 */
             logstr += "op && op : \n";
+
             if (r.equals(Operation.FALSE) || l.equals(Operation.FALSE)){
                 n = Operation.FALSE;
             } else if (r.equals(Operation.TRUE) || l.equals(Operation.TRUE)){
@@ -367,8 +363,10 @@ private static class ConstantPropogationVisitor extends Visitor {
                 n = Operation.TRUE;
             } else if (isAssignment((Operation) l) && isAssignment((Operation) r)
                         && op.equals(Operation.Operator.AND)){
+
                 if (sameVariables((Operation)l, (Operation)r)) {
                     logstr += "Same Variables detected\n";
+
                     if (sameConstants((Operation)l, (Operation)r)) {
                         n = Operation.TRUE;
                         logstr += "Same Constants detected\n";
@@ -380,17 +378,9 @@ private static class ConstantPropogationVisitor extends Visitor {
             }else {
                 n = new Operation(Operation.Operator.AND, l, r);
             }
-            /*if (r.equals(Operation.FALSE) || l.equals(Operation.FALSE)){
-                n = Operation.FALSE;
-            } else if (r.equals(Operation.TRUE) || l.equals(Operation.TRUE)){
-                n = Operation.TRUE;
-            } else {
-                n = new Operation(Operation.Operator.AND, l, r);
-            }*/
         } else {
-            logstr += "\nUNKNOWN ASSIGNMENT : ";
-
             n = new Operation(op, l, r);
+            logstr += "\nUNKNOWN ASSIGNMENT : ";
             logstr += (n + "\n");
         }
 
@@ -398,16 +388,17 @@ private static class ConstantPropogationVisitor extends Visitor {
         if ((r instanceof Constant)
                 && (l instanceof Constant)) {
             /* opportunity to simplify */
-            logstr += "\n1+1 SIMPLIFICATION : ";
-             n = operation.apply(op, l, r);
 
-             logstr += (l + op.toString() + r + " = " + n.toString() + "\n");
+            n = operation.apply(op, l, r);
+            logstr += "\n1+1 SIMPLIFICATION : ";
+            logstr += (l + op.toString() + r + " = " + n.toString() + "\n");
         }
 
         stack.push(n);
         logstr += "\n__________\n";
     }// end post visit
 
+    /* Checks if operations is of type x==0*/
     private boolean isAssignment(Operation o) {
         Operation.Operator operator = o.getOperator();
         Iterator<Expression> iter = o.getOperands().iterator();
@@ -518,56 +509,6 @@ private static class ConstantPropogationVisitor extends Visitor {
         }
         return nop;
     }
+    }// end ConstantPropogationVisitor
 
-
-}// end ConstantPropogationVisitor
-
-
-/* Goal Simplify expressions
- * Must traverse an expression already visited by ConstantPropogationVisitor
- */
-
-/*private static class SimplificationVisitor extends Visitor {
-    private Stack<Expression> stack;
-    private String logstr;
-
-    public SimplificationVisitor () {
-        this.stack = new Stack<Expression>();
-        this.logstr = "\n";
-    }
-    public String getLogStr() {
-        return logstr;
-
-    }
-
-    public Expression getExpression() {
-        logstr = "\n __Stack__\n";
-        Expression x = stack.pop();
-        logstr += (x + "\n");
-        return x;
-    }
-
-    @Override
-    public void postVisit(Constant constant) {
-         stack.push(constant);
-    }
-    @Override
-    public void postVisit(Variable variable) {
-         stack.push(variable);
-    }
-    /*
-    */
-/*    @Override
-     public void postVisit(Operation operation) throws VisitorException {
-         Operation.Operator op = operation.getOperator();
-         Expression r = stack.pop();
-         Expression l = stack.pop();
-
-         // if constant +/-/* constant
-         if ((r instanceof Constant) && (l instanceof Constant)) {
-
-         }
-
-     }
-}*/
 }
