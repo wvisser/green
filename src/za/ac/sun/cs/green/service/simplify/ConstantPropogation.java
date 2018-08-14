@@ -58,7 +58,13 @@ public class ConstantPropogation  extends BasicService{
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
-
+    /**
+   * Creates a new simpleVisitor object.
+   * displays what the expression looks like before and after propogation.
+   * @return the expression by popping from the stack the expression which was pushed onto it
+   * by postVisit()
+   *
+   */
     public Expression simplify(Expression expression) {
         try {
             invocations++;
@@ -70,8 +76,7 @@ public class ConstantPropogation  extends BasicService{
             log.log(Level.FINEST, "After propogating: " + expression);
             return expression;
         } catch (VisitorException x) {
-            log.log(Level.SEVERE,
-                    "encountered an exception -- this should not be happening!",x);
+            log.log(Level.SEVERE, "encountered an exception -- this should not be happening!",x);
         }
         return expression;
     }
@@ -100,6 +105,7 @@ public class ConstantPropogation  extends BasicService{
             stack.push(variable);
         }
 
+        // maps constants to variables
         @Override
         public void preVisit(Operation operation) throws VisitorException {
             Operation.Operator op = operation.getOperator();

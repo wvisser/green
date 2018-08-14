@@ -90,12 +90,12 @@ public class SimplificationConstantPropogationTest {
 	}
 
 	@Test
-		public void test02() {
-			IntConstant c1 = new IntConstant(4);
-			IntConstant c2 = new IntConstant(10);
-			Operation o = new Operation(Operation.Operator.LT, c1, c2);
-			check(o, "0==0");
-		}
+	public void test02() {
+		IntConstant c1 = new IntConstant(4);
+		IntConstant c2 = new IntConstant(10);
+		Operation o = new Operation(Operation.Operator.LT, c1, c2);
+		check(o, "0==0");
+	}
 
 	@Test
 		public void test03() {
