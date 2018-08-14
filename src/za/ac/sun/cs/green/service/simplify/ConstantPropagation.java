@@ -88,7 +88,6 @@ public class ConstantPropagation extends BasicService {
 		private Stack<Expression> stack;
 		private ArrayList<Expression> varsandvals;
 		public int count=0;
-		private Stack<Expression> stack;
 		private HashMap<Variable, IntConstant> hmap;
 		
 		public ListVisitor() {
