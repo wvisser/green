@@ -175,7 +175,7 @@ public class ConstantPropagation  extends BasicService {
 						stack.push(operation);
 						log.log(Level.FINEST, "Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
 					}	
-				} /**/else if ((nop != null) && !(nop.equals(Operation.Operator.EQ)) {
+				} /**/else if ((nop != null) && !(nop.equals(Operation.Operator.EQ))) {
 					Expression r = stack.pop();
 					Expression l = stack.pop();
 					if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
