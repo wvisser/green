@@ -230,9 +230,11 @@ public class ConstantPropagation extends BasicService {
 		@Override
 		public void postVisit(Variable var) {
 			if (listVarVal.contains(var)) {
+				System.out.println("________The variable was found________");
 			   	int index = listVarVal.indexOf(var);
 			if (count[index] > 0) {
 				stack.push(listVarVal.get(index+1));
+				System.out.println("________The variable's value was found________");
 			} else {
 				stack.push(var);
    			}
