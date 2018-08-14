@@ -61,7 +61,7 @@ public class ConstantPropogation extends BasicService {
 			invocations++;
 			ExchangeVisitor exchangeVisitor = new ExchangeVisitor();
 			expression.accept(exchangeVisitor);
-			expression = exchangeVisitor.getExpression();
+			simplified = exchangeVisitor.getExpression();
 			//ListVisitor listVisitor = new ListVisitor();
 			//expression.accept(listVisitor);
 			//ArrayList<Expression> varsandvals = listVisitor.getList();
@@ -163,7 +163,7 @@ public class ConstantPropogation extends BasicService {
 	private static class ExchangeVisitor extends Visitor {
 
 		private Stack<Expression> stack;
-		private HashMap<Variable, Constant> hmap;
+		private HashMap<Variable, IntConstant> hmap;
 
 		public ExchangeVisitor() {
 			stack = new Stack<Expression>();
@@ -181,7 +181,7 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(IntVariable variable) {
 			if (hmap.contains(variable)) {
-      	val = map.get(variable);
+      	IntConstant val = hmap.get(variable);
       	stack.push(val);
       } else {
 				stack.push(variable);
