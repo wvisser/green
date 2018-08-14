@@ -231,9 +231,8 @@ public class ConstantPropagation extends BasicService {
 		public void postVisit(Variable var) {
 			if (listVarVal.contains(var)) {
 				System.out.println("________The variable "+var+" was found________");
-			   	int index = listVarVal.indexOf(var);
+			   	int index = listVarVal.indexOf(var)/2;
 			if (count[index] > 0) {
-				stack.pop();
 				stack.push(listVarVal.get(index+1));
 				System.out.println("________The variable's value "+listVarVal.get(index+1)+" was found________");
 			} else {
