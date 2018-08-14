@@ -47,6 +47,15 @@ public class ConstantPropagation extends BasicService {
 		return result;
 	}
 
+	/*
+	 * Simplifies the input expression as far as possible
+	 * 
+	 * @param expression The input expression
+	 * 
+	 * @param map The variable map used to simplify
+	 * 
+	 * @return The simplified expression
+	 */
 	public Expression simplify(Expression expression, Map<Variable, Variable> map) {
 		cont = true;
 		try {
@@ -61,15 +70,13 @@ public class ConstantPropagation extends BasicService {
 					expression = varaibleVisitor.getExpression();
 				}
 				log.log(Level.FINEST, "After Variable mapping: " + expression);
-				// return expression;
 				expression.accept(canonizationVisitor);
 				expression = canonizationVisitor.getExpression();
 				log.log(Level.FINEST, "After Canonization: " + expression);
-				// return canonized;
 				expression.accept(simplificationVisitor);
 				expression = simplificationVisitor.getExpression();
 				log.log(Level.FINEST, "After Simplification: " + expression);
-				
+
 			}
 			return expression;
 		} catch (VisitorException x) {
@@ -182,9 +189,7 @@ public class ConstantPropagation extends BasicService {
 				} else {
 					stack.push(new Operation(nop, l, r));
 				}
-			} else if (op.getArity() == 2)
-
-			{
+			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
 				if (constants.containsKey(l)) {
@@ -235,6 +240,11 @@ public class ConstantPropagation extends BasicService {
 			linearInteger = true;
 		}
 
+		/*
+		 * gets the expression in a more canonized form.
+		 * 
+		 * @return The simplified expression
+		 */
 		public Expression getExpression() {
 			if (!linearInteger) {
 				return null;
@@ -250,7 +260,6 @@ public class ConstantPropagation extends BasicService {
 					}
 				}
 				SortedSet<Expression> newConjuncts = processBounds();
-				// new TreeSet<Expression>();
 				Expression c = null;
 				for (Expression e : newConjuncts) {
 					if (e.equals(Operation.FALSE)) {
@@ -332,6 +341,11 @@ public class ConstantPropagation extends BasicService {
 			}
 		}
 
+		/*
+		 * Tells if if the expression is bound or not
+		 * 
+		 * @return A true or false if the expression is bound
+		 */
 		private boolean isBound(Expression lhs) {
 			if (!(lhs instanceof Operation)) {
 				return false;
@@ -457,7 +471,6 @@ public class ConstantPropagation extends BasicService {
 							stack.push(Operation.TRUE);
 						} else {
 							stack.push(Operation.FALSE);
-							// unsatisfiable = true;
 						}
 					} else {
 						stack.push(swop(op, e));
@@ -538,6 +551,15 @@ public class ConstantPropagation extends BasicService {
 			}
 		}
 
+		/*
+		 * Swops the = 0 on the RHS to a = <variable or constant> instead.
+		 * 
+		 * @param op the operator to swop on
+		 * 
+		 * @param e the expression to swop on
+		 * 
+		 * @return The swapped expression
+		 */
 		private Expression swop(Operator op, Expression e) {
 			if (!(e instanceof Operation)) {
 				new Operation(op, e, Operation.ZERO);
@@ -549,8 +571,8 @@ public class ConstantPropagation extends BasicService {
 			if (left instanceof Operation) {
 				if (right instanceof IntConstant) {
 					return new Operation(op, left, new IntConstant(-1 * ((IntConstant) right).getValue()));
-					
-				} 
+
+				}
 			} else if (right instanceof Operation) {
 				if (left instanceof IntConstant) {
 					return new Operation(op, right, new IntConstant(-1 * ((IntConstant) left).getValue()));
@@ -560,6 +582,15 @@ public class ConstantPropagation extends BasicService {
 			return new Operation(op, e, Operation.ZERO);
 		}
 
+		/*
+		 * Merges the left and right expressions
+		 * 
+		 * @param left the left expression
+		 * 
+		 * @param right the right expression
+		 * 
+		 * @return The merged expression
+		 */
 		private Expression merge(Expression left, Expression right) {
 			Operation l = null;
 			Operation r = null;
@@ -707,6 +738,11 @@ public class ConstantPropagation extends BasicService {
 			stack = new Stack<Expression>();
 		}
 
+		/*
+		 * Returns the expression
+		 * 
+		 * @return The expression
+		 */
 		public Expression getExpression() throws VisitorException {
 			return stack.pop();
 		}
@@ -765,7 +801,13 @@ public class ConstantPropagation extends BasicService {
 			}
 
 		}
-
+		/*
+		 * checks if the expression is negative
+		 * 
+		 * @param op the expression to check on
+		 * 
+		 * @return If the expression is negative
+		 */
 		public boolean isNegative(Expression op) {
 			if (op instanceof IntConstant) {
 				if (((IntConstant) op).getValue() < 0) {

@@ -28,11 +28,7 @@ public class SimplificationConstantPropogationTest {
 		Properties props = new Properties();
 		props.setProperty("green.services", "sat");
 		props.setProperty("green.service.sat", "(simplify sink)");
-		// props.setProperty("green.service.sat", "(canonize sink)");
 		props.setProperty("green.service.sat.simplify", "za.ac.sun.cs.green.service.simplify.ConstantPropagation");
-		// props.setProperty("green.service.sat.canonize",
-		// "za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
-
 		props.setProperty("green.service.sat.sink", "za.ac.sun.cs.green.service.sink.SinkService");
 		Configuration config = new Configuration(solver, props);
 		config.configure();
@@ -156,7 +152,6 @@ public class SimplificationConstantPropogationTest {
 		Operation o3 = new Operation(Operation.Operator.EQ, x, c); // x = 2
 		Operation o4 = new Operation(Operation.Operator.ADD, y, x);
 		Operation o5 = new Operation(Operation.Operator.EQ, o4, c1); // x+y = 4
-
 		Operation o = new Operation(Operation.Operator.AND, o2, o3); // z = x * y && x = 2
 		o = new Operation(Operation.Operator.AND, o, o5); // z = x * y && x = 2 && x+y = 4
 		check(o, "(z==4)&&((x==2)&&(y==2))");
