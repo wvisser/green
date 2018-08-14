@@ -160,7 +160,7 @@ public class ConstantPropagation  extends BasicService {
 					for (int i = op.getArity(); i > 0; i--) {
 						stack.pop();
 					}
-					stack.push(operation);
+					//stack.push(operation);
 
 					//TODO: Another second pass opportunity
 
