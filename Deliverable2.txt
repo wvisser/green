@@ -1,0 +1,5 @@
+Link to the article: https://hackernoon.com/absolute-fundamentals-of-machine-learning-dca5deee78df
+
+Absolute Fundamentals of Machine Learning
+There are several different types of learning that can be employed by a machine i.e. Supervised Learning, Reinforcement Learning etc.
+Using propabilities it is plausable to teach a machine to learn.
