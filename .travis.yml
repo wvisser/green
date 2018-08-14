@@ -1,5 +1,14 @@
+required: sudo
+
+services:
+ - docker
+
 language: java
 
+#Builds Docker Image directly from GitHub repository
+before_install:
+- docker build -t green .
+
+#Runs the test from the docker shell
 script:
- - ant;
- - ant test;
+ - docker run green /bin/sh -c "ant; ant test"

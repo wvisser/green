@@ -3,6 +3,9 @@ package za.ac.sun.cs.green.expr;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Operation extends Expression {
 
 	public static enum Fix {
