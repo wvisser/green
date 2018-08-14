@@ -24,12 +24,12 @@ import java.util.logging.Level;
 import za.ac.sun.cs.green.expr.VisitorException;
 
 public class ConstantPropogation extends BasicService {
-	
+
 	private int invocations = 0;
  	public ConstantPropogation(Green solver) {
 		super(solver);
 	}
-	
+
 	@Override
 	public Set<Instance> processRequest(Instance instance) {
 	@SuppressWarnings("unchecked")
@@ -43,8 +43,8 @@ public class ConstantPropogation extends BasicService {
 		}
 		return setResults;
 	}
-	
-	
+
+
 	@Override
         public void report(Reporter reporter) {
         reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
@@ -61,13 +61,13 @@ public class ConstantPropogation extends BasicService {
 			log.log(Level.SEVERE, "Error visitor exception encountered", x);
 		} finally {
 			return expression;
-		}		
+		}
 	}
-	
+
 	public class SimplifyVisitor extends Visitor {
 		private Map<IntVariable, IntConstant> map;
 		private Stack<Expression> Exprstack;
-		
+
 		public SimplifyVisitor() {
 			Exprstack = new Stack<Expression>();
 			map = new TreeMap<IntVariable, IntConstant>();
@@ -104,24 +104,52 @@ public class ConstantPropogation extends BasicService {
 		@Override
 		public void postVisit(Operation operation) {
 			Operation.Operator op = operation.getOperator();
-
-			if (Exprstack.size() >= 2) {
-				Expression right = Exprstack.pop();
-				Expression left = Exprstack.pop();
-				if (!op.equals(Operation.Operator.EQ)) {
-					if (left instanceof IntVariable) {
-						if (map.containsKey(left)) {
-							left = map.get(left);
+			Operation.Operator nop = null;
+						switch (op) {
+						case EQ:
+							nop = Operation.Operator.EQ;
+							break;
+						case NE:
+							nop = Operation.Operator.NE;
+							break;
+						case LT:
+							nop = Operation.Operator.GT;
+							break;
+						case LE:
+							nop = Operation.Operator.GE;
+							break;
+						case GT:
+							nop = Operation.Operator.LT;
+							break;
+						case GE:
+							nop = Operation.Operator.LE;
+							break;
+						default:
+							break;
 						}
-					}
-					if (right instanceof IntVariable) {
-						if (map.containsKey(right)) {
-							right = map.get(right);
-						}
-					}
-				}
-				Operation eOP = new Operation(operation.getOperator(), left, right);
-				Exprstack.push(eOP);
+						if (nop != null) {
+							Expression r = Exprstack.pop();
+							Expression l = Exprstack.pop();
+							if ((r instanceof IntVariable)
+									&& (l instanceof IntVariable)
+									&& (((IntVariable) r).getName().compareTo(
+											((IntVariable) l).getName()) < 0)) {
+								Exprstack.push(new Operation(nop, r, l));
+							} else if ((r instanceof IntVariable)
+									&& (l instanceof IntConstant)) {
+								Exprstack.push(new Operation(nop, r, l));
+							} else {
+								Exprstack.push(operation);
+							}
+						} else if (op.getArity() == 2) {
+							Expression r = Exprstack.pop();
+							Expression l = Exprstack.pop();
+							Exprstack.push(new Operation(op, l, r));
+						} else {
+							for (int i = op.getArity(); i > 0; i--) {
+								Exprstack.pop();
+							}
+							Exprstack.push(operation);
 			}
 
 		}
