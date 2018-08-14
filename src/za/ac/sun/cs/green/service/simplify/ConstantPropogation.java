@@ -54,6 +54,10 @@ public class ConstantPropogation extends BasicService {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
 	}
 
+	/**
+	* This method takes in an expression, propogates
+	* and  logs the results before and after propogation.
+	*/
 	public Expression propogate(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
