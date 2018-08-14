@@ -11,4 +11,4 @@ before_install:
 script:
   # - docker run -d --name cont green /bin/sh -c "ant; ant test -v"
   # - docker logs -f cont
-  - docker run -d --name cont green /bin/sh -c "cd green/; ant; ant test;"
+  - docker run green /bin/sh -c "cd green/; ant; ant test;"
