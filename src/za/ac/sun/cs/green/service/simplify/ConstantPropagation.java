@@ -233,6 +233,7 @@ public class ConstantPropagation extends BasicService {
 				System.out.println("________The variable "+var+" was found________");
 			   	int index = listVarVal.indexOf(var);
 			if (count[index] > 0) {
+				stack.pop();
 				stack.push(listVarVal.get(index+1));
 				System.out.println("________The variable's value "+listVarVal.get(index+1)+" was found________");
 			} else {
