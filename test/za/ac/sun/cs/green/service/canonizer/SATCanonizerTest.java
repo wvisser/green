@@ -277,6 +277,9 @@ public class SATCanonizerTest {
 		check(o1, "2<2", "0==1");
 	}
 
+	/**
+	 * Failing test case to demonstrate "improved" Travis output
+	 */
 	@Test
 	public void test18() {
 		IntConstant c1 = new IntConstant(2);
@@ -284,16 +287,19 @@ public class SATCanonizerTest {
 		Operation o1 = new Operation(Operation.Operator.LT, c1, c1);
 		Operation o2 = new Operation(Operation.Operator.LT, v1, c1);
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
-		check(o3, "(2<2)&&(aa<2)", "0==1");
+		check(o3, "(2<2)||(aa<2)", "0==201230"); // broken check
+		assert 1 == 2;
+		//check(o3, "(2<2)&&(aa<2)", "0==1"); // correct check
 	}
 
+	
 	@Test
 	public void test19() {
 		IntConstant c1 = new IntConstant(2);
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
 		check(o1, "2<=2", "0==0");
 	}
-/*
+	
 	@Test
 	public void test20() {
 		IntConstant c1 = new IntConstant(2);
@@ -301,7 +307,6 @@ public class SATCanonizerTest {
 		Operation o1 = new Operation(Operation.Operator.LE, c1, c1);
 		Operation o2 = new Operation(Operation.Operator.LT, v1, c1);
 		Operation o3 = new Operation(Operation.Operator.AND, o1, o2);
-		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
+		check(o3, "(2<=2)&&(aa<2)", "1*v+-1<=0");
 	}
-*/
 }
