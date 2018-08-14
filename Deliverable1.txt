@@ -1,0 +1,18 @@
+AP van Niekerk
+16579089
+
+REPO: https://github.com/apvanniekerk/green
+
+For Task 1, in order to have verbose debug output for the test.dist.dir variable, I added this line to the target in the build.xml file:
+
+	<echo message="${test.dist.dir}"/>
+
+This then showed:
+
+	Before Canonization: (aa<2)&&(2<=2)
+    	[junit] [20180724 09:14:35][za.ac.sun.cs.green.service.canonizer.SATCanonizerService canonize][FINEST] After Canonization: ((1*v0)+-1)<=0
+	   	[junit] 
+	BUILD FAILED
+	/home/travis/build/apvanniekerk/green/build.xml:99: Test za.ac.sun.cs.green.EntireSuite failed
+
+So after changing the conical form from "1*v+-1<0" to the canonized form given by JUNIT, the build succeeded.

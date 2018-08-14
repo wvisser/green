@@ -1,8 +1,6 @@
-[![Build Status](https://travis-ci.org/wvisser/green.svg?branch=master)](https://travis-ci.org/wvisser/green.svg?branch=master)
+[![Build Status](https://travis-ci.org/apvanniekerk/green.svg?branch=master)](https://travis-ci.org/apvanniekerk/green)
 
-Notes:
+AP van Niekerk - 16579089 - 2018
 
-The first step is to update "build.properties" with your local
-settings.  You do not need to set z3 and latte, but in that case
-some unit tests won't run.
-   
+Green project for tuts in RW344. Forked from wvisser/green
+  
