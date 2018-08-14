@@ -1,5 +1,13 @@
+sudo: required
+dist: trusty
+
+services: docker
+
 language: java
 
 script:
- - ant;
- - ant test;
+ - docker-compose up --build -d
+ - docker ps -a
+
+after_script:
+ - docker-compose down
