@@ -51,12 +51,18 @@ public class ConstantPropagation extends BasicService {
         return null;
     }
 
+    /*
+     * Called to start the constant propagation visit
+     */
     public ConstantPropagation (Green solver) {
         super(solver);
     }
 
+    /*
+     *  Class extends visitor and is used to complete the propagation postVisit is used to
+     *  save the values needed propagate the function correctly
+     */
     private static class ConstantPropagationVisitor extends Visitor {
-
 
         private Stack<Expression> stack;
 
@@ -64,7 +70,7 @@ public class ConstantPropagation extends BasicService {
 
         public ConstantPropagationVisitor() {
             stack = new Stack<Expression>();
-            hashmap =  new HashMap<IntVariable, IntConstant>();
+            hashmap = new HashMap<IntVariable, IntConstant>();
         }
 
         public Expression getExpression() {
@@ -89,14 +95,14 @@ public class ConstantPropagation extends BasicService {
                 Expression r = stack.pop();
                 Expression l = stack.pop();
                 if (r instanceof IntConstant && l instanceof IntVariable && op.name().equals("EQ")) {
-                    hashmap.put((IntVariable) l, (IntConstant)r);
+                    hashmap.put((IntVariable) l, (IntConstant) r);
 
 
                 } else if (r instanceof IntVariable && l instanceof IntConstant && op.name().equals("EQ")) {
-                    hashmap.put((IntVariable) r, (IntConstant)l);
+                    hashmap.put((IntVariable) r, (IntConstant) l);
 
 
-                } else if (r instanceof IntVariable || l instanceof  IntVariable) {
+                } else if (r instanceof IntVariable || l instanceof IntVariable) {
                     if (hashmap.containsKey(l)) {
                         l = hashmap.get(l);
                     }
@@ -108,69 +114,9 @@ public class ConstantPropagation extends BasicService {
                 stack.push(new Operation(op, l, r));
             }
 
-            /*Operation.Operator nop = null;
-            switch (op) {
-                case EQ:
-                    nop = Operation.Operator.EQ;
-                    break;
-                case NE:
-                    nop = Operation.Operator.NE;
-                    break;
-                case LT:
-                    nop = Operation.Operator.GT;
-                    break;
-                case LE:
-                    nop = Operation.Operator.GE;
-                    break;
-                case GT:
-                    nop = Operation.Operator.LT;
-                    break;
-                case GE:
-                    nop = Operation.Operator.LE;
-                    break;
-                default:
-                    break;
-            }
-
-            if (nop != null) {
-                Expression r = stack.pop();
-                Expression l = stack.pop();
-                if ((r instanceof IntVariable)
-                        && (l instanceof IntVariable)
-                        && (((IntVariable) r).getName().compareTo(
-                        ((IntVariable) l).getName()) < 0)) {
-                    stack.push(new Operation(nop, r, l));
-                } else if ((r instanceof IntVariable)
-                        && (l instanceof IntConstant)) {
-                    stack.push(new Operation(nop, r, l));
-                } else {
-                    stack.push(operation);
-                }
-            } else if (op.getArity() == 2) {
-                Expression r = stack.pop();
-                Expression l = stack.pop();
-                stack.push(new Operation(op, l, r));
-            } else {
-                for (int i = op.getArity(); i > 0; i--) {
-                    stack.pop();
-                }
-                stack.push(operation);
-            }*/
         }
-
     }
 }
 
-/*    public void test00() {
-        IntVariable x = new IntVariable("x", 0, 99);
-        IntVariable y = new IntVariable("y", 0, 99);
-        IntVariable z = new IntVariable("z", 0, 99);
-        IntConstant c = new IntConstant(1);
-        IntConstant c10 = new IntConstant(10);
-        IntConstant c3 = new IntConstant(3);
-        Operation o1 = new Operation(Operation.Operator.EQ, x, c); // o1 : x = 1
-        Operation o2 = new Operation(Operation.Operator.ADD, x, y); // o2 : (x + y)
-        Operation o3 = new Operation(Operation.Operator.EQ, o2, c10); // o3 : x+y = 10
-        Operation o4 = new Operation(Operation.Operator.AND, o1, o3); // o4 : x = 1 && (x+y) = 10
-        check(o4, "(x==1)&&((1+y)==10)");
-    }*/
+
+
