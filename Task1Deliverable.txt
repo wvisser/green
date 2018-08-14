@@ -1,0 +1,61 @@
+Chelsea Barraball
+19768125
+Software Engineering Tutorial 1
+______________________________________________________________________________________________
+Task 1
+
+For the first task, I looked in build.xml for where the tests and their outputs get formatted. 
+
+I noticed that the formatter looks like this:
+
+<formatter type="xml"/>
+
+After a bit of Googling (https://ant.apache.org/manual/Tasks/junit.html) to find out exactly what this line does and if I could change it to better suit my needs, I found that I could change and add some of its parameters, more specifically:
+
+- Change the `type' parameter to `plain' to be more readable.
+- Add the usefile=`false' parameter, which determines whether the output should be sent to a file or not.
+
+With these new parameters, the altered <formatter/> looked like this:
+
+<formatter type="plain" usefile="false"/>
+
+When I pushed this change and Travis tried to build, there was an error that read:
+
+[junit] Testcase: test20 took 0.004 sec
+[junit] 	FAILED
+[junit] junit.framework.AssertionFailedError: expected:<[1*v+-1<0]> but was:<[1*v+-1<=0]>
+[junit]    at za.ac.sun.cs.green.service.canonizer.SATCanonizerTest.finalCheck(SATCanonizerTest.java:43)
+[junit]    at za.ac.sun.cs.green.service.canonizer.SATCanonizerTest.check(SATCanonizerTest.java:56)
+[junit]    at za.ac.sun.cs.green.service.canonizer.SATCanonizerTest.test20(SATCanonizerTest.java:304)  
+
+With this new information, I could go find the faulty test20 inside SATCanonizerTest, and found this line:
+check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
+
+Using the information that the error gave me, I changed it to this:
+
+check(o3, "(2<=2)&&(aa<2)", "1*v+-1<=0");
+
+Pushed and built, and it worked.
+
+______________________________________________________________________________________________
+
+Link to my Github account:
+https://github.com/chelsb/green
+
+Link to the place in my repository where I made the change for Task 1:
+https://github.com/chelsb/green/blob/master/test/za/ac/sun/cs/green/service/canonizer/SATCanonizerTest.java
+(On line 304)
+
+______________________________________________________________________________________________
+
+For testing the bonus question in Travis with Docker, please look at build #53 in the build history (Broke test 20 again to show error messages) 
+For testing the working build, please look at the latest build #54
+
+To do the bonus question I had to change the formatter to 
+<formatter type="plain" usefile="true"/>
+to be able to grep the file it was writing to. 
+
+
+
+
+
