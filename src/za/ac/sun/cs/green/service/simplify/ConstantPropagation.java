@@ -69,8 +69,6 @@ public class ConstantPropagation extends BasicService {
 				expression.accept(simplificationVisitor);
 				expression = simplificationVisitor.getExpression();
 				log.log(Level.FINEST, "After Simplification: " + expression);
-				expression.accept(varaibleVisitor);
-				expression = varaibleVisitor.getExpression();
 				
 			}
 			return expression;
@@ -463,7 +461,6 @@ public class ConstantPropagation extends BasicService {
 						}
 					} else {
 						stack.push(swop(op, e));
-						// stack.push(new Operation(op, e, Operation.ZERO));
 					}
 				}
 				break;
@@ -551,21 +548,6 @@ public class ConstantPropagation extends BasicService {
 			Expression right = operation.getOperand(1);
 			if (left instanceof Operation) {
 				if (right instanceof IntConstant) {
-					// if (((Operation) left).getOperand(0).equals(new
-					// IntConstant(1))
-					// && ((Operation)
-					// left).getOperator().equals(Operation.Operator.MUL)) {
-					// return new Operation(op, ((Operation)
-					// left).getOperand(1),
-					// new IntConstant(-1 * ((IntConstant) right).getValue()));
-					// } else if (((Operation) left).getOperand(0).equals(new
-					// IntConstant(-1))
-					// && ((Operation)
-					// left).getOperator().equals(Operation.Operator.MUL)) {
-					// return new Operation(op, ((Operation)
-					// left).getOperand(1),
-					// new IntConstant(((IntConstant) right).getValue()));
-					// }
 					return new Operation(op, left, new IntConstant(-1 * ((IntConstant) right).getValue()));
 					
 				} 
