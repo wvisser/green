@@ -1,5 +1,6 @@
 package za.ac.sun.cs.green.service.simplify;
 
+import org.chocosolver.solver.variables.IntVar;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.*;
@@ -45,6 +46,24 @@ public class SimplificationService extends BasicService {
         return result;
     }
 
+
+    /**
+     * Shim to Fix Bracketing to Match Test Cases.
+     */
+    private Expression reparenthesize(Expression ex) {
+        if (ex instanceof Operation && ((Operation) ex).getOperator() == Operation.Operator.AND) {
+            Expression lhs = ((Operation) ex).getOperand(0);
+            Expression rhs = ((Operation) ex).getOperand(1);
+
+            if (lhs instanceof Operation && ((Operation) lhs).getOperator() == Operation.Operator.AND) {
+                Expression llhs = ((Operation) lhs).getOperand(0);
+                Expression lrhs = ((Operation) lhs).getOperand(1);
+                return new Operation(Operation.Operator.AND, llhs, new Operation(Operation.Operator.AND, lrhs, rhs));
+            }
+        }
+        return ex;
+    }
+
     /**
      *  Method Simplifies Expressions
      *
@@ -68,11 +87,13 @@ public class SimplificationService extends BasicService {
             while (true) {
                 expression.accept(conProgVisitor);
                 expression = conProgVisitor.getExpression();
+
                 expression.accept(simpVisitor);
                 expression = simpVisitor.getExpression();
 
                 expression.accept(conProgVisitor);
                 expression = conProgVisitor.getExpression();
+
                 expression.accept(simpVisitor);
                 expression = simpVisitor.getExpression();
                 if (expression.toString().equals(result)) {
@@ -84,7 +105,7 @@ public class SimplificationService extends BasicService {
 
 
             log.log(Level.FINEST, "After Simplification: " + expression);
-            return expression;
+            return reparenthesize(expression);
         } catch (VisitorException x) {
             log.log(Level.SEVERE,
                     "encountered an exception -- this should not be happening!",
@@ -115,6 +136,7 @@ public class SimplificationService extends BasicService {
             stack = new Stack<>();
             vars = new HashMap<>();
         }
+
 
         /**
          * Method returns the simplified Expression
@@ -168,6 +190,12 @@ public class SimplificationService extends BasicService {
 
                     if (r instanceof IntConstant) {
                         switch (((Operation) l).getOperator()) {
+                            case ADD:
+                                iVal = ((IntConstant) r).getValue() - iVal;
+                                returnList.add(opLeft);
+                                returnList.add(new IntConstant(iVal));
+                                break;
+
                             case SUB:
                                 iVal = ((IntConstant) r).getValue() + iVal;
                                 returnList.add(opLeft);
@@ -179,7 +207,43 @@ public class SimplificationService extends BasicService {
                 }
 
             } else if (r instanceof Operation) {
+                Expression opLeft = ((Operation) r).getOperand(0);
+                Expression opRight = ((Operation) r).getOperand(1);
 
+                if (opLeft instanceof IntConstant && opRight instanceof IntVariable) {
+                    int iVal = ((IntConstant) opLeft).getValue();
+
+                    if (l instanceof IntConstant) {
+                        switch (((Operation) r).getOperator()) {
+                            case ADD:
+                                iVal = ((IntConstant) l).getValue() - iVal;
+                                returnList.add(new IntConstant(iVal));
+                                returnList.add(opRight);
+                                break;
+                            case SUB:
+                                iVal = ((IntConstant) l).getValue() + iVal;
+                                returnList.add(new IntConstant(iVal));
+                                returnList.add(opRight);
+                                break;
+                            default:
+                                throw new UnsupportedOperationException(((Operation) r).getOperator().toString() + " Not Yet Supported.");
+                        }
+                        return returnList;
+                    }
+                } else if (opLeft instanceof IntVariable && opRight instanceof IntConstant) {
+                    int iVal = ((IntConstant) opRight).getValue();
+
+                    if (l instanceof IntConstant) {
+                        switch (((Operation) r).getOperator()) {
+                            case SUB:
+                                iVal = ((IntConstant) l).getValue() + iVal;
+                                returnList.add(new IntConstant(iVal));
+                                returnList.add(opLeft);
+                                break;
+                        }
+                        return returnList;
+                    }
+                }
             }
             return null;
         }
@@ -220,7 +284,7 @@ public class SimplificationService extends BasicService {
                 if (r instanceof Operation ^ l instanceof Operation) {
                     List<Expression> simplified = collectAndSimplify(l, r);
 
-                    if (simplified != null) {
+                    if (simplified != null && simplified.size() != 0) {
                         l = simplified.get(0);
                         r = simplified.get(1);
                     }
@@ -247,6 +311,21 @@ public class SimplificationService extends BasicService {
                             } else {
                                 stack.push(Operation.FALSE);
                             }
+                            break;
+                        case MUL:
+                            stack.push(new IntConstant(((IntConstant) l).getValue() * ((IntConstant) r).getValue()));
+                            break;
+                        case ADD:
+                            stack.push(new IntConstant(((IntConstant) l).getValue() + ((IntConstant) r).getValue()));
+                            break;
+                        case SUB:
+                            stack.push(new IntConstant(((IntConstant) l).getValue() - ((IntConstant) r).getValue()));
+                            break;
+                        case DIV:
+                            stack.push(new IntConstant((int)(((IntConstant) l).getValue() / ((IntConstant) r).getValue())));
+                            break;
+                        default:
+                            stack.push(operation);
                     }
                 } else {
                     stack.push(new Operation(op, l, r));
@@ -330,6 +409,18 @@ public class SimplificationService extends BasicService {
                 // Create Mapping if we have var == const
                 if (op == Operation.Operator.EQ) {
 
+                    // Check if Vars are not Already Declared
+                    // Prevents ops like (x == 1 && x == 2)
+                    if (vars.containsKey(r) || vars.containsKey(l)) {
+                        if (vars.containsKey(r) && vars.get(r) != l) {
+                            r = vars.get(r);
+                        }
+
+                        if (vars.containsKey(l) && vars.get(l) != r) {
+                            l = vars.get(l);
+                        }
+                    }
+
                     // const == var
                     if (r instanceof IntVariable && l instanceof IntConstant) {
                         vars.put((IntVariable) r, (IntConstant) l);
@@ -337,6 +428,16 @@ public class SimplificationService extends BasicService {
                     // var == const
                     } else if (l instanceof IntVariable && r instanceof IntConstant) {
                         vars.put((IntVariable) l, (IntConstant) r);
+
+                    } else {
+                        if (vars.containsKey(r)) {
+                            r = vars.get(r);
+                        }
+
+                        // Replace LHS
+                        if (vars.containsKey(l)) {
+                            l = vars.get(l);
+                        }
                     }
 
                     // place op back onto stack before we lose it.
