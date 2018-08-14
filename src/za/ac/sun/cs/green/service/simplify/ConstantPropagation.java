@@ -170,9 +170,6 @@ public class ConstantPropagation extends BasicService {
                     Expression r = stack.pop(); //variable1
                     Expression l = stack.pop(); // variable2
                     stack.push(new Operation(nop, l, r));
-                    for (Expression i : stack) {
-                        System.out.println("i: " + i);
-                    }
                 } else {
                     Expression r = stack.pop(); //variable1
                     Expression l = stack.pop(); // variable2
