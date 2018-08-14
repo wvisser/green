@@ -36,6 +36,14 @@ public class ConstantPropagation extends BasicService {
         super(solver);
     }
 
+    /**
+     * Request is Processed. An expression, variable map and instance is instantiated and the result of the
+     * instance is returned.
+     * @param instance
+     *            the instance to solve
+     * @return
+     *         instance result
+     */
     @Override
     public Set<Instance> processRequest(Instance instance) {
         @SuppressWarnings("unchecked")
@@ -50,6 +58,13 @@ public class ConstantPropagation extends BasicService {
         return result;
     }
 
+    /**
+     * An instance of ConstantPropagation is created. The expression is stored and and printed out before
+     * propagation commences. If it fails to do so, an error message will be generated.
+     * @param expression
+     * @param map
+     * @return
+     */
     public Expression simpies(Expression expression,
                                Map<Variable, Variable> map) {
         try {
@@ -68,10 +83,17 @@ public class ConstantPropagation extends BasicService {
         return null;
     }
 
+    /**
+     * An invocation message is parsed to the report.
+     * @param reporter
+     *            the mechanism through which reporting is done
+     *
+     */
     @Override
     public void report(Reporter reporter) {
         reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
     }
+
 
     private static class propConst extends Visitor {
 
@@ -83,20 +105,39 @@ public class ConstantPropagation extends BasicService {
             varmap = new HashMap<>();
         }
 
+        /**
+         * Pop item off stack
+         * @return
+         */
         public Expression getExpression() {
             return stack.pop();
         }
 
+        /**
+         * Posts visit for constant value
+         * @param constant
+         */
         @Override
         public void postVisit(IntConstant constant) {
             stack.push(constant);
         }
 
+        /**
+         * Post visit for variable value
+         * @param variable
+         */
         @Override
         public void postVisit(IntVariable variable) {
             stack.push(variable);
         }
 
+        /**
+         * The order of the left and right operands are identified and put onto map accordingly.
+         * A final Operation is pushed to the stack.
+         *
+         * @param operation
+         * @throws VisitorException
+         */
         @Override
         public void postVisit(Operation operation) throws VisitorException {
 
