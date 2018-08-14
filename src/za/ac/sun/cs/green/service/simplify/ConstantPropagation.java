@@ -470,7 +470,7 @@ public class ConstantPropagation extends BasicService {
 						if (b) {
 							stack.push(Operation.TRUE);
 						} else {
-							stack.push(Operation.FALSE);
+							stack.push(Operation.FALSE); 
 						}
 					} else {
 						stack.push(swop(op, e));
