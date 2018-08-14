@@ -88,21 +88,26 @@ public class SATCanonizerService extends BasicService {
 		}
 
 		public Expression getExpression() {
-			return stack.pop();
+			Expression popExpr = stack.pop();
+			System.out.println("Expression popped: " + popExpr);
+			return popExpr;
 		}
 
 		@Override
 		public void postVisit(IntConstant constant) {
+			System.out.println("Post visit constant: " + constant);
 			stack.push(constant);
 		}
 
 		@Override
 		public void postVisit(IntVariable variable) {
+			System.out.println("Post visit variable: " + variable);
 			stack.push(variable);
 		}
 
 		@Override
 		public void postVisit(Operation operation) throws VisitorException {
+			System.out.println("Post vist operation: " + operation);
 			Operation.Operator op = operation.getOperator();
 			Operation.Operator nop = null;
 			switch (op) {
@@ -341,8 +346,10 @@ public class SATCanonizerService extends BasicService {
 
 		@Override
 		public void postVisit(Constant constant) {
+			System.out.println("Post visit constant: " + constant);
 			if (linearInteger && !unsatisfiable) {
 				if (constant instanceof IntConstant) {
+					System.out.println("pushed constant onto stack: " + constant);
 					stack.push(constant);
 				} else {
 					stack.clear();
@@ -356,8 +363,10 @@ public class SATCanonizerService extends BasicService {
 			if (linearInteger && !unsatisfiable) {
 				if (variable instanceof IntVariable) {
 					variableSet.add((IntVariable) variable);
-					stack.push(new Operation(Operation.Operator.MUL, Operation.ONE,
-							variable));
+					Operation newOper = new Operation(Operation.Operator.MUL, Operation.ONE, variable);
+					System.out.println("pushed operation onto stack: " + newOper);
+
+					stack.push(newOper);
 				} else {
 					stack.clear();
 					linearInteger = false;
@@ -371,6 +380,7 @@ public class SATCanonizerService extends BasicService {
 				return;
 			}
 			Operation.Operator op = operation.getOperator();
+			System.out.println("Post visit operator: " + op);
 			switch (op) {
 			case AND:
 				if (!stack.isEmpty()) {
@@ -411,13 +421,17 @@ public class SATCanonizerService extends BasicService {
 							b = v >= 0;
 						}
 						if (b) {
+							System.out.println("pushed true");
 							stack.push(Operation.TRUE);
 						} else {
+							System.out.println("pushed false");
 							stack.push(Operation.FALSE);
 							// unsatisfiable = true;
 						}
 					} else {
-						stack.push(new Operation(op, e, Operation.ZERO));
+						Operation pushOp = new Operation(op, e, Operation.ZERO);
+						System.out.println("pushed operation: " + pushOp);
+						stack.push(pushOp);
 					}
 				}
 				break;
@@ -654,16 +668,19 @@ public class SATCanonizerService extends BasicService {
 		@Override
 		public void postVisit(IntVariable variable) {
 			Variable v = map.get(variable);
+			System.out.println("Post visit IntVariable: " + variable);
 			if (v == null) {
 				v = new IntVariable("v" + map.size(), variable.getLowerBound(),
 						variable.getUpperBound());
 				map.put(variable, v);
 			}
+			System.out.println("pushed IntVariable onto stack: " + v);
 			stack.push(v);
 		}
 
 		@Override
 		public void postVisit(IntConstant constant) {
+			System.out.println("Post visit pushed constant: " + constant);
 			stack.push(constant);
 		}
 
@@ -674,7 +691,9 @@ public class SATCanonizerService extends BasicService {
 			for (int i = arity; i > 0; i--) {
 				operands[i - 1] = stack.pop();
 			}
-			stack.push(new Operation(operation.getOperator(), operands));
+			Operation pushOp = new Operation(operation.getOperator(), operands);
+			System.out.println("pushed operation onto stack: " + pushOp);
+			stack.push(pushOp);
 		}
 
 	}
