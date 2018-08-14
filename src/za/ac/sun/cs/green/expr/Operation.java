@@ -128,7 +128,7 @@ public class Operation extends Expression {
 
 	private final Expression[] operands;
 
-	public Operation(final Operator operator, Expression... operands) {
+	public Operation(final Operator operator, Expression... operands) {	
 		this.operator = operator;
 		this.operands = operands;
 	}

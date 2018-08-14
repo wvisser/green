@@ -1,0 +1,4 @@
+- build.xml: used formatter tag to set usefile to false
+- <formatter type ="plain" usefile="false"/>
+- Used this output to find which Oracle was incorrect
+- change test20's Orcale to check(o3, "(2<=2)&&(aa<2)", "1*v+-1<=0")
