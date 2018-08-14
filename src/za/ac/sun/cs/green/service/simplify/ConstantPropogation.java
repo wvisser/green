@@ -80,25 +80,21 @@ public class ConstantPropogation extends BasicService {
 
 			public Expression getExpression() {
 				Expression popExpr = stack.pop();
-				System.out.println("Expression popped: " + popExpr);
 				return popExpr;
 			}
 
 			@Override
 			public void postVisit(IntConstant constant) {
-				System.out.println("Post visit constant: " + constant);
 				stack.push(constant);
 			}
 
 			@Override
 			public void postVisit(IntVariable variable) {
-				System.out.println("Post visit variable: " + variable);
 				stack.push(variable);
 			}
 
 			@Override
 			public void postVisit(Operation operation) throws VisitorException {
-				System.out.println("Post vist operation: " + operation);
 				Operation.Operator op = operation.getOperator();
 				if (op.equals(Operation.Operator.EQ)) {
 					Expression rightE = stack.pop();
