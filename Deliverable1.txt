@@ -1,0 +1,6 @@
+repo link: https://github.com/theGreatStefan/green.git
+
+First I went online to see if JUnit has some form of failure report. Turns out it does. Then I went to the build.xml file and searched for report and found junitreport.
+This showed me that there is an xml file created in /bin/junit and when I went to look there I found the fail report of test20. This showed that JUnit expected:<[1*v+-1<0]> but found:<[1*v+-1<=0]>.
+Considering that the assignment said that Green was correct and that the problem lies with the test, I simply changed the test to expect: <[1*v+-1<=0]>
+
