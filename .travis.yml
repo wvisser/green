@@ -1,5 +1,18 @@
+sudo: required
+
 language: java
 
+services:
+    - docker
+
+before_install:
+
+    - docker build -t hen3kr8/green .
+#    - docker run hen3kr8/green
+    - docker ps -a
+#    - 
+#    - docker run hen3kr8/green 
+
 script:
- - ant;
- - ant test;
+    - docker run --name contGreen hen3kr8/green /bin/sh -c "ant; ant test -v"
+#    - ant test;

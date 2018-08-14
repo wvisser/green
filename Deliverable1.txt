@@ -1,0 +1,36 @@
+RW 344
+Assignment 1
+Deliverable 1
+19060815
+Hendri Krijt
+
+Link to repo: https://github.com/hen3kr8/green 
+
+How I found the error:
+
+In Test 20, line 305,
+check(o3, "(2<=2)&&(aa<2)", "1*v+-1<0");
+was replaced with 
+check(o3, "(2<=2)&&(aa<2)", "1*v+-1<=0");
+which makes the expression evaluate correctly.
+
+I added a formatter (see code below) to the build.xml file, in the TARGET:test. This enables a report to be printed to the screen, basically prints a logfile of exactly what is happening. 
+
+<formatter type="plain" usefile="false" /> 
+
+from
+https://stackoverflow.com/questions/5521311/ant-junit-task-does-not-report-detail on Tuesday 24th July 2018.
+
+The log file print out the following regarding the failed testcase:
+
+[junit] 	FAILED
+    [junit] expected:<[1*v+-1<0]> but was:<[1*v+-1<=0]>
+    [junit] junit.framework.AssertionFailedError: expected:<[1*v+-1<0]> but was:<[1*v+-1<=0]>
+    [junit] 	at za.ac.sun.cs.green.service.canonizer.SATCanonizerTest.finalCheck(SATCanonizerTest.java:43)
+    [junit] 	at za.ac.sun.cs.green.service.canonizer.SATCanonizerTest.check(SATCanonizerTest.java:56)
+    [junit] 	at za.ac.sun.cs.green.service.canonizer.SATCanonizerTest.test20(SATCanonizerTest.java:307)
+
+
+It is clear the assertion failed.
+So I changed it to match what the system required.
+

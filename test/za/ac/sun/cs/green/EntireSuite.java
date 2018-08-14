@@ -21,6 +21,8 @@ import za.ac.sun.cs.green.parser.smtlib2.SMTLIB2Scanner0Test;
 import za.ac.sun.cs.green.service.bounder.BounderTest;
 import za.ac.sun.cs.green.service.canonizer.SATCanonizerTest;
 import za.ac.sun.cs.green.service.choco.SATChocoTest;
+import za.ac.sun.cs.green.service.simplify.OnlyConstantPropogationTest;
+import za.ac.sun.cs.green.service.simplify.SimplificationConstantPropogationTest;
 import za.ac.sun.cs.green.service.cvc3.SATCVC3Test;
 import za.ac.sun.cs.green.service.factorizer.SATFactorizerTest;
 import za.ac.sun.cs.green.service.latte.CountLattETest;
@@ -35,8 +37,9 @@ import za.ac.sun.cs.green.util.SetTaskManagerTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	SATCanonizerTest.class,
-	SATZ3Test.class
+	// SATCanonizerTest.class,
+	// SATZ3Test.class,
+	OnlyConstantPropogationTest.class
 })
 
 public class EntireSuite {
@@ -75,9 +78,9 @@ public class EntireSuite {
 		Z3_PATH = z3;
 		HAS_Z3 = checkZ3Presence();
 		if (!HAS_Z3) {
-		  System.out.println("Z3 Not Available, no tests for it will be executed");	
+		  System.out.println("Z3 Not Available, no tests for it will be executed");
 		}
-		
+
 	}
 
 	private static boolean checkCVC3Presence() {
