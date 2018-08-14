@@ -42,9 +42,7 @@ public class ConstantPropogation extends BasicService {
     }
 
     public Expression propogate(Expression expression) {
-
         Expression propogated = null;
-
         try {
             log.log(Level.FINEST, "Before Constant Propogation: " + expression);
 
@@ -61,11 +59,9 @@ public class ConstantPropogation extends BasicService {
     }
 
     public class PropogateVisitor extends Visitor {
-
         private Stack<Expression> stack;
         private LinkedList<IntVariable> variables;
         private LinkedList<IntConstant> constants;
-
         public PropogateVisitor() {
             stack = new Stack<Expression>();
             variables = new LinkedList<IntVariable>();
@@ -78,28 +74,22 @@ public class ConstantPropogation extends BasicService {
 
         @Override
 		public void preVisit(Operation operation) {
-
 			Operation.Operator op = operation.getOperator();
-
 			if (op.equals(Operation.Operator.EQ)) {
-
 				Expression leftOperand = operation.getOperand(0);
 				Expression rightOperand = operation.getOperand(1);
-
 				if (leftOperand instanceof IntConstant)  {
                     if (rightOperand instanceof IntVariable) {
                         variables.add((IntVariable) rightOperand);
                         constants.add((IntConstant) leftOperand);
                     }
 				}
-
                 if (leftOperand instanceof IntVariable) {
                     if (rightOperand instanceof IntConstant) {
                         variables.add((IntVariable) leftOperand);
                         constants.add((IntConstant) rightOperand);
                     }
 				}
-
 			}
 		}
 
@@ -115,16 +105,11 @@ public class ConstantPropogation extends BasicService {
 
         @Override
 		public void postVisit(Operation operation) {
-
 			Operation.Operator op = operation.getOperator();
-
 			if (stack.size() >= 2) {
-
                 Expression first = stack.pop();
 				Expression second = stack.pop();
-
 				if (!op.equals(Operation.Operator.EQ)) {
-
                     if (second instanceof IntVariable) {
 						if (variables.contains(second)) {
 							second = constants.get(variables.indexOf(second));
@@ -137,7 +122,6 @@ public class ConstantPropogation extends BasicService {
 					}
 				}
 				Operation out = new Operation(operation.getOperator(), second, first);
-
                 stack.push(out);
 			}
 
