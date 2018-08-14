@@ -1,5 +1,12 @@
+sudo: required
+
 language: java
 
+services:
+ - docker
+
+before_install:
+  - docker build -t 18966330/dock .
+
 script:
- - ant;
- - ant test;
+ - docker run 18966330/dock /bin/sh -c "ant; ant test"
