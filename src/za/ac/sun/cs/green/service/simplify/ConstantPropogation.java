@@ -27,7 +27,7 @@ import za.ac.sun.cs.green.expr.VisitorException;
 public class ConstantPropogation extends BasicService {
 
 	/**
-	 * Number of times the slicer has been invoked.
+	 * Number of times the propagator has been invoked.
 	 */
 	private int invocations = 0;
 
@@ -60,10 +60,10 @@ public class ConstantPropogation extends BasicService {
 			log.log(Level.FINEST, "Before Propogation: " + expression);
 			invocations++;
 
-			//Removed unneccessary code.
 			PropogateVisitor propVisitor = new PropogateVisitor();
 			expression.accept(propVisitor);
 			expression = propVisitor.getExpression();
+			
 			log.log(Level.FINEST, "After Propogation: " + expression);
 			return expression;
 
@@ -76,7 +76,6 @@ public class ConstantPropogation extends BasicService {
 	}
 
 	private static class PropogateVisitor extends Visitor {
-
 		private Stack<Expression> stack;
 		private Map<IntVariable, IntConstant> map;
 
@@ -103,34 +102,15 @@ public class ConstantPropogation extends BasicService {
 		public void postVisit(Operation operation) throws VisitorException {
 			Operation.Operator op = operation.getOperator();
 			Operation.Operator nop = null;
-			
-			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case NE:
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
-			default:
-				break;
-			}  
-			
-			//Edited
-			if (nop != null) {
+						
+			//Checks whether there is an operator
+			if (op != null) {
+
+				//Gets the expression on the left and right side of the operator
 				Expression r = stack.pop();
 				Expression l = stack.pop();
+
+				//Checks whether a variable has been assigned a value, if so it is added to the HashMap
 				if ((r instanceof IntVariable) && (l instanceof IntConstant) && op == Operation.Operator.EQ) {
 					map.put((IntVariable)r, (IntConstant)l);
 					stack.push(new Operation(nop, l, r));
@@ -138,11 +118,14 @@ public class ConstantPropogation extends BasicService {
 				else if ((l instanceof IntVariable) && (r instanceof IntConstant) && op == Operation.Operator.EQ) {
 					map.put((IntVariable)l, (IntConstant)r);
 					stack.push(new Operation(nop, l, r));
-				} else {
+				} 
+				//If the operand is anything but an equals, try to substitute constants in
+				else {
 					if(map.containsKey(r)) r = map.get(r);
 					if(map.containsKey(l)) l = map.get(l);	
 					stack.push(new Operation(op, l, r));
 				}
+			//If there is no operand
 			} else if (op.getArity() == 2) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
