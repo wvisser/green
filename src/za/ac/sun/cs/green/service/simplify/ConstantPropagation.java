@@ -58,6 +58,7 @@ public class ConstantPropagation extends BasicService {
 	public Expression constantProp(Expression expression,
 			Map<Variable, Variable> map) {
 		try {
+			ArrayList<Expression> expr = new ArrayList<Expression>();
 			log.log(Level.FINEST, "Before ConstantPropagation: " + expression);
 			invocations++;
 			//OrderingVisitor orderingVisitor = new OrderingVisitor();
@@ -65,8 +66,8 @@ public class ConstantPropagation extends BasicService {
 			//expression = orderingVisitor.getExpression();
 			ListVisitor listVisitor = new ListVisitor();
 			expression.accept(listVisitor);
-			expression = listVisitor.getList();
-			PropagationVisitor propagationVisitor = new PropagationVisitor(listVisitor);
+			expr = listVisitor.getList();
+			PropagationVisitor propagationVisitor = new PropagationVisitor(expr);
 			expression.accept(propagationVisitor);
 			Expression simplified = propagationVisitor.getExpression();
 			/*if (simplified != null) {
@@ -228,16 +229,16 @@ public class ConstantPropagation extends BasicService {
 
 		@Override
 		public void postVisit(Variable var) {
-			if (varsandvals.contains(variable)) {
-			   	int index = varsandvals.indexOf(variable)/2;
+			if (listVarVal.contains(var)) {
+			   	int index = listVarVal.indexOf(var)/2;
 			if (count[index] > 0) {
-				stack.push(varsandvals.get(index+1));
+				stack.push(listVarVal.get(index+1));
 			} else {
-				stack.push(variable);
+				stack.push(var);
    			}
    				count[index]++;
    			} else {
-				stack.push(variable);
+				stack.push(var);
 			}
 		}
 
