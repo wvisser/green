@@ -1,0 +1,8 @@
+*/bin/
+*.swp
+*.swo
+*/out/
+*/.idea/
+bin/
+.idea/
+out/

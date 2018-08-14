@@ -15,7 +15,7 @@ RUN apt install patchelf -y
 RUN apt install libgomp1
 
 # Clone down the GreenSolver repository
-RUN git clone https://github.com/wvisser/green
+RUN git clone https://github.com/ArnoldVenter/green
 
 # Download and extract Z3
 RUN mkdir z3
@@ -35,3 +35,7 @@ RUN mv z3-4.7.1-x64-ubuntu-16.04/ z3/
 WORKDIR /green/
 RUN sed -i '16s/.*/z3path = \/z3\/z3\/bin\/z3/' build.properties
 RUN sed -i '17s/.*/z3lib = \/z3\/z3\/bin/' build.properties
+
+#running the tests
+RUN ant
+RUN ant test
