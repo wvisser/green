@@ -107,10 +107,10 @@ public class ConstantPropagation  extends BasicService {
 
 		public CollectionVisitor() {
 			stack = new Stack<Expression>();
-			map = new Hashmap<Variable, Constant>();
+			map = new HashMap<Variable, Constant>();
 		}
 
-		public Hashmap getVariables() {
+		public HashMap getVariables() {
 			return map;
 		}
 
@@ -121,13 +121,13 @@ public class ConstantPropagation  extends BasicService {
 		@Override
 			public void postVisit(IntConstant constant) {
 				stack.push(constant);
-				log.log(Level.FINEST, "Collection Visitor pushed \" " + expression + " \" (constant) to stack.");
+				System.out.println( "Collection Visitor pushed \" " + constant + " \" (constant) to stack.");
 			}
 
 		@Override
 			public void postVisit(IntVariable variable) {
 				stack.push(variable);
-				log.log(Level.FINEST, "Collection Visitor pushed \" " + variable + " \" (variable) to stack.");
+				System.out.println("Collection Visitor pushed \" " + variable + " \" (variable) to stack.");
 			}
 
 		@Override
@@ -154,7 +154,7 @@ public class ConstantPropagation  extends BasicService {
 						nop = Operation.Operator.LE;
 						break;
 					default:
-						log.log(Level.FINEST, "Default reached switching on operator -- get outa Dodge!");
+						System.out.println("Default reached switching on operator -- get outa Dodge!");
 						break;
 				}
 				if (nop.equals(Operation.Operator.EQ)) {
@@ -162,18 +162,18 @@ public class ConstantPropagation  extends BasicService {
 					Expression l = stack.pop();
 					if ((r instanceof Constant) && (l instanceof Variable)) {
 						map.put((Variable) l, (Constant) r);
-						log.log(Level.FINEST, l + " == "+ r + ": Variable \"" + l + "\" added to map.");
+						System.out.println(l + " == "+ r + ": Variable \"" + l + "\" added to map.");
 						stack.push(new Operation(op, l, r));
-						log.log(Level.FINEST, "Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
+						System.out.println("Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
 					} else if ((r instanceof Variable) && (l instanceof Constant)) {
 						map.put((Variable) r, (Constant) l);
-						log.log(Level.FINEST, l + " == "+ r + ": Variable \"" + r + "\" added to map.");
+						System.out.println(l + " == "+ r + ": Variable \"" + r + "\" added to map.");
 						stack.push(new Operation(op, l, r));
-						log.log(Level.FINEST, "Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
+						System.out.println("Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
 					} else {
-						log.log(Level.FINEST, "Operator was EQ, but allas, no variables could be added to map. Maby next pass.");
+						System.out.println("Operator was EQ, but allas, no variables could be added to map. Maby next pass.");
 						stack.push(operation);
-						log.log(Level.FINEST, "Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
+						System.out.println("Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
 					}	
 				} /**/else if ((nop != null) && !(nop.equals(Operation.Operator.EQ))) {
 					Expression r = stack.pop();
@@ -189,13 +189,13 @@ public class ConstantPropagation  extends BasicService {
 					Expression r = stack.pop();
 					Expression l = stack.pop();
 					stack.push(new Operation(op, l, r));
-					log.log(Level.FINEST, "Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
+					System.out.println("Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
 				} else {
 					for (int i = op.getArity(); i > 0; i--) {
 						stack.pop();
 					}
 					stack.push(operation);
-					log.log(Level.FINEST, "Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
+					System.out.println("Collection Visitor pushed \"" + operation +"\" (operation) to stack.");
 				}
 			}
 	}
