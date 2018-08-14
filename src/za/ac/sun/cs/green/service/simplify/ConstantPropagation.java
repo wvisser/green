@@ -220,6 +220,7 @@ public class ConstantPropagation extends BasicService {
 
 		public Expression getExpression() {
 			//Expression expr = stack.pop();
+			Expression expr;
 			while (!stack.isEmpty()) {
 				Expression expr1 = stack.pop();
 				finalexpr = finalexpr+expr;
