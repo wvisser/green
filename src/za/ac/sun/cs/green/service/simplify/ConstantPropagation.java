@@ -224,7 +224,6 @@ public class ConstantPropagation extends BasicService {
 				Expression expr1 = stack.pop();
 				finalexpr = finalexpr+expr;
 			}
-			System.out.println("Final string representation "+finalexpr);
 			return expr;
 		}
 		
@@ -236,11 +235,9 @@ public class ConstantPropagation extends BasicService {
 		@Override
 		public void postVisit(Variable var) {
 			if (listVarVal.contains(var)) {
-				System.out.println("________The variable "+var+" was found________");
 			   	int index = listVarVal.indexOf(var)/2;
 			if (count[index] > 0) {
 				stack.push(listVarVal.get(index+1));
-				System.out.println("________The variable's value "+listVarVal.get(index+1)+" was found________");
 			} else {
 				stack.push(var);
    			}
