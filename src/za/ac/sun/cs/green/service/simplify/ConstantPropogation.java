@@ -176,24 +176,30 @@ public class ConstantPropogation extends BasicService {
 		}		
 		
 		private void replacevars() {
+			Stack<Expression> stack2 = new Stack<Expression>();
 			while (!stack.isEmpty()) {
 			Expression var = stack.pop();
 			if (var instanceof IntVariable) {
 				if (varsandvals.contains(var)) {
    				int index = varsandvals.indexOf(var)/2;
    				if (count[index] > 0) {
-   					stack.push(varsandvals.get(index+1));
+   					stack2.push(varsandvals.get(index+1));
    				} else {
-   					stack.push(var);
+   					stack2.push(var);
    				}
    				count[index]++;
    			} else {
-   				stack.push(var);
+   				stack2.push(var);
    			}
 			} else {
-   				stack.push(var);
+   				stack2.push(var);
    			}
 		}
+		while (!stack2.isEmpty()) {
+			Expression exp = stack2.pop();
+			stack.push(exp)
+		}
+		
 	}
 		
    @Override
