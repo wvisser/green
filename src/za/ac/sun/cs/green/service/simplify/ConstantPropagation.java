@@ -58,8 +58,8 @@ public class ConstantPropagation  extends BasicService {
 			varValues = collectionVisitor.getVarValues();
 
 			PropagationVisitor propagationVisitor = new PropagationVisitor(varValues);
-			//expression.accept(propagationVisitor);
-			//Expression propagated = propagationVisitor.getExpression();
+			expression.accept(propagationVisitor);
+			propagated = propagationVisitor.getExpression();
 
 			log.log(Level.FINEST, "After Simplification:\n" + propagated);
 			return propagated;
