@@ -1,0 +1,11 @@
+The problem was a missing "=" character in the test oracle.
+
+This was found by adding a formatter to the JUnit target in build.xml to print
+detailed output (including failing tests with their expected values) to the
+terminal (thank you StackOverflow).
+
+While searching I did discover that JUnit was already actually printing the
+desired output to a file somewhere in /bin, but I left my changes as is because
+printing errors to the terminal is nice as well.
+
+The repo is at https://github.com/wimkeir/green
