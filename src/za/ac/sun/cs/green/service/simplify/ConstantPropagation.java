@@ -80,14 +80,103 @@ public class ConstantPropagation  extends BasicService {
 		public PropagationVisitor(Map<Variable, Constant> varVals) {
 			stack = new Stack<Expression>();
 			varValues = varVals;
-
 		}
 
 		public Expression getExpression() {
-
-			return null;	
-
+			return stack.pop();	
 		}
+		
+		@Override
+			public void postVisit(IntConstant constant) {
+				stack.push(constant);
+				System.out.println( "Collection Visitor pushed \" " + constant + " \" (constant) to stack.");
+			}
+
+		@Override
+			public void postVisit(IntVariable variable) {
+				stack.push(variable);
+				System.out.println("Collection Visitor pushed \" " + variable + " \" (variable) to stack.");
+			}
+
+		@Override
+			public void postVisit(Operation operation) throws VisitorException {
+				Operation.Operator op = operation.getOperator();
+				Operation.Operator nop = null;
+				switch(op) {
+					case EQ:
+						nop = Operation.Operator.EQ;
+						break;
+					case NE:
+						nop = Operation.Operator.NE;
+						break;
+					case GT:
+						nop = Operation.Operator.GT;
+						break;
+					case GE:
+						nop = Operation.Operator.GE;
+						break;
+					case LT:
+						nop = Operation.Operator.LT;
+						break;
+					case LE:
+						nop = Operation.Operator.LE;
+						break;
+					default:
+						System.out.println("Default reached switching on operator -- get outa Dodge!");
+						break;
+				}
+				if ((nop != null) && (nop.equals(Operation.Operator.EQ))) {
+					Expression r = stack.pop();
+					Expression l = stack.pop();
+					if ((r instanceof Variable) && (l instanceof Variable)) {
+						//TODO: If one of the values are in the map, another can be added. Kinda a second pass thing.
+						System.out.println("Instance of variable being able to be added to map. Maby next pass.");
+						stack.push(operation);
+						System.out.println("Propagation Visitor pushed \"" + operation +"\" (operation) to stack.");
+					} else {
+						System.out.println("Operator was EQ, but allas, no variables could be added to map. Maby next pass.");
+						stack.push(operation);
+						System.out.println("Propagation Visitor pushed \"" + operation +"\" (operation) to stack.");
+					}	
+				} /*else if ((nop != null) && !(nop.equals(Operation.Operator.EQ))) {
+					Expression r = stack.pop();
+					Expression l = stack.pop();
+					if ((r instanceof IntVariable) && (l instanceof IntVariable) && (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
+						stack.push(new Operation(nop, r, l));
+					} else if ((r instanceof IntVariable)	&& (l instanceof IntConstant)) {
+						stack.push(new Operation(nop, r, l));
+					} else {
+						stack.push(operation);
+					}
+				}	else if (op.getArity() == 2){
+					Expression r = stack.pop();
+					Expression l = stack.pop();
+					stack.push(new Operation(op, l, r));
+					System.out.println("Collection Visitor pushed \"" + l + " " + op + " " + r +"\" (operation) to stack.");
+				}*/ else {
+					for (int i = op.getArity(); i > 0; i--) {
+						stack.pop();
+					}
+					stack.push(operation);
+
+					//TODO: Another second pass opportunity
+
+					Expression r = stack.pop();
+					Expression l = stack.pop();
+
+					if (varValues.containsKey(r)) {
+						System.out.println("Propagation Visitor replaced \"" + r +"\" with \"" + varValues.ger(r) + "\"");
+						r = varValues.get(r);
+					}
+
+					if (varValues.containsKey(l)) {
+						System.out.println("Propagation Visitor replaced \"" + l +"\" with \"" + varValues.ger(l) + "\"");
+						l = varValues.get(l);
+					}
+					
+					stack.push(new Operation(op, l, r));
+				}
+			}
 
 	}
 
