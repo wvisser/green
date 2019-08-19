@@ -21,7 +21,7 @@ public enum Keyword0 {
 	STATUS("\":status\""),
 	VERBOSITY("\":verbosity\""),
 	VERSION("\":version\"");
-	
+
 	/**
 	 * A description string for the information flag.
 	 */
@@ -29,10 +29,10 @@ public enum Keyword0 {
 
 	/**
 	 * Constructs an information flag.
-	 * 
+	 *
 	 * @param string the description string
 	 */
-	private Keyword0(String string) {
+	Keyword0(String string) {
 		this.string = string;
 	}
 

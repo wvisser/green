@@ -1,16 +1,9 @@
 package za.ac.sun.cs.green.service.barvinok;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.*;
-import java.util.Properties;
-
 import org.apfloat.Apint;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
@@ -19,44 +12,53 @@ import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.util.Configuration;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 public class CountBarvinokTest {
 
 	public static Green solver = null;
-    private static String DEFAULT_BARVINOK_PATH;
-    private static final String BARVINOK_PATH = "barvinoklattepath";
-    private static final String resourceName = "build.properties";
+	private static String DEFAULT_BARVINOK_PATH;
+	private static final String BARVINOK_PATH = "barvinoklattepath";
+	private static final String resourceName = "build.properties";
 
-    @BeforeClass
-	public static void initialize() {	
+	@BeforeClass
+	public static void initialize() {
 		solver = new Green();
 		Properties properties = new Properties();
-        properties.setProperty("green.services", "count");
-        properties.setProperty("green.service.count", "barvinok");
-        properties.setProperty("green.service.count.barvinok",
+		properties.setProperty("green.services", "count");
+		properties.setProperty("green.service.count", "barvinok");
+		properties.setProperty("green.service.count.barvinok",
 				"za.ac.sun.cs.green.service.barvinok.CountBarvinokService");
 
-        String barvPath = new File("").getAbsolutePath() + "/lib/barvinok-0.39/barvlatte";
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        InputStream resourceStream;
-        try {
-            resourceStream = loader.getResourceAsStream(resourceName);
-            if (resourceStream == null) {
-                // If properties are correct, override with that specified path.
-                resourceStream = new FileInputStream((new File("").getAbsolutePath()) + "/" + resourceName);
+		String barvPath = new File("").getAbsolutePath() + "/lib/barvinok-0.39/barvlatte";
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		InputStream resourceStream;
+		try {
+			resourceStream = loader.getResourceAsStream(resourceName);
+			if (resourceStream == null) {
+				// If properties are correct, override with that specified path.
+				resourceStream = new FileInputStream((new File("").getAbsolutePath()) + "/" + resourceName);
 
-            }
-            if (resourceStream != null) {
-                properties.load(resourceStream);
-                barvPath = properties.getProperty(BARVINOK_PATH);
-                resourceStream.close();
-            }
-        } catch (IOException x) {
-            // ignore
-        }
+			}
+			if (resourceStream != null) {
+				properties.load(resourceStream);
+				barvPath = properties.getProperty(BARVINOK_PATH);
+				resourceStream.close();
+			}
+		} catch (IOException x) {
+			// ignore
+		}
 
-        DEFAULT_BARVINOK_PATH = barvPath;
+		DEFAULT_BARVINOK_PATH = barvPath;
 
-        properties.setProperty("green.barvinok.path", DEFAULT_BARVINOK_PATH);
+		properties.setProperty("green.barvinok.path", DEFAULT_BARVINOK_PATH);
 		Configuration config = new Configuration(solver, properties);
 		config.configure();
 	}
@@ -80,12 +82,12 @@ public class CountBarvinokTest {
 	private void check(Expression expression, Apint expected) {
 		check(expression, null, expected);
 	}
-	
+
 	/**
 	 * Problem:
-	 *   1 * aa == 0
+	 * 1 * aa == 0
 	 * Count:
-	 *   1
+	 * 1
 	 */
 	@Test
 	public void test01() {
@@ -99,34 +101,34 @@ public class CountBarvinokTest {
 
 	/**
 	 * Problem:
-	 *   1 * aa > 0
-	 *   1 * aa + -10 < 0
+	 * 1 * aa > 0
+	 * 1 * aa + -10 < 0
 	 * Count:
-	 *   9
+	 * 9
 	 */
 	@Test
 	public void test02() {
 		IntConstant zz = new IntConstant(0);
 		IntConstant oo = new IntConstant(1);
 		IntVariable vv = new IntVariable("aa", 0, 99);
-		
+
 		Operation at = new Operation(Operation.Operator.MUL, oo, vv);
 		Operation ao = new Operation(Operation.Operator.GT, at, zz);
-		
+
 		Operation bt1 = new Operation(Operation.Operator.MUL, oo, vv);
 		Operation bt2 = new Operation(Operation.Operator.ADD, bt1, new IntConstant(-10));
 		Operation bo = new Operation(Operation.Operator.LT, bt2, zz);
-		
+
 		Operation o = new Operation(Operation.Operator.AND, ao, bo);
 		check(o, new Apint(9));
 	}
-	
+
 	/**
 	 * Problem:
-	 *   3 * aa + -6 > 0
-	 *   1 * aa + -10 < 0
+	 * 3 * aa + -6 > 0
+	 * 1 * aa + -10 < 0
 	 * Count:
-	 *   7
+	 * 7
 	 */
 	@Test
 	public void test03() {
@@ -134,28 +136,28 @@ public class CountBarvinokTest {
 		IntConstant oo = new IntConstant(1);
 		IntConstant tt = new IntConstant(3);
 		IntVariable vv = new IntVariable("aa", 0, 99);
-		
+
 		Operation at1 = new Operation(Operation.Operator.MUL, tt, vv);
 		Operation at2 = new Operation(Operation.Operator.ADD, at1, new IntConstant(-6));
 		Operation ao = new Operation(Operation.Operator.GT, at2, zz);
-		
+
 		Operation bt1 = new Operation(Operation.Operator.MUL, oo, vv);
 		Operation bt2 = new Operation(Operation.Operator.ADD, bt1, new IntConstant(-10));
 		Operation bo = new Operation(Operation.Operator.LT, bt2, zz);
-		
+
 		Operation o = new Operation(Operation.Operator.AND, ao, bo);
 		check(o, new Apint(7));
 	}
 
 	/**
 	 * Problem:
-	 *   1 * aa + -1 * bb < 0
-	 *   1 * aa + 1 > 0
-	 *   1 * aa + -10 < 0
-	 *   1 * bb + 1 > 0
-	 *   1 * bb + -10 < 0
+	 * 1 * aa + -1 * bb < 0
+	 * 1 * aa + 1 > 0
+	 * 1 * aa + -10 < 0
+	 * 1 * bb + 1 > 0
+	 * 1 * bb + -10 < 0
 	 * Count:
-	 *   45
+	 * 45
 	 */
 	@Test
 	public void test04() {
@@ -184,5 +186,5 @@ public class CountBarvinokTest {
 
 		check(o, new Apint(45));
 	}
-	
+
 }

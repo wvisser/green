@@ -1,29 +1,11 @@
 package za.ac.sun.cs.green.service.latte;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.logging.log4j.Logger;
 import org.apfloat.Apint;
-
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
@@ -31,6 +13,10 @@ import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.service.CountService;
+
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * [Dependencies]
@@ -44,7 +30,7 @@ public class CountLattEService extends CountService {
 	private static final String DIRECTORY = System.getProperty("java.io.tmpdir");
 
 	private static final String DATE = new SimpleDateFormat("yyyyMMdd-HHmmss-SSS").format(new Date());
-	
+
 	private static final int RANDOM = new Random().nextInt(9);
 
 	private static final String DIRNAME = String.format("%s/%s%s", DIRECTORY, DATE, RANDOM);
@@ -76,13 +62,13 @@ public class CountLattEService extends CountService {
 	 * The location of the LattE executable file.
 	 */
 	private final String DEFAULT_LATTE_PATH;
-    private static final String LATTE_PATH = "lattepath";
+	private static final String LATTE_PATH = "lattepath";
 
 	/**
 	 * Options passed to the LattE executable.
 	 */
 	private final String DEFAULT_LATTE_ARGS = "--triangulation=cddlib";
-	
+
 	/**
 	 * Combination of the LattE executable, options, and the filename, all
 	 * separated by spaces.
@@ -98,27 +84,27 @@ public class CountLattEService extends CountService {
 		super(solver);
 		log = solver.getLogger();
 
-        String lattePath = new File("").getAbsolutePath() + "lib/latte-integrale-1.7.3/latte-int-1.7.3/code/latte/count";
-        InputStream is = null;
-        try {
-            is = new FileInputStream("build.properties");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+		String lattePath = new File("").getAbsolutePath() + "lib/latte-integrale-1.7.3/latte-int-1.7.3/code/latte/count";
+		InputStream is = null;
+		try {
+			is = new FileInputStream("build.properties");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 
-        if (is != null) {
-            // If properties are correct, override with that specified path.
-            Properties p = new Properties();
-            try {
-                p.load(is);
-                lattePath = p.getProperty(LATTE_PATH);
-                is.close();
-            } catch (IOException e) {
-                // do nothing
-            }
-        }
+		if (is != null) {
+			// If properties are correct, override with that specified path.
+			Properties p = new Properties();
+			try {
+				p.load(is);
+				lattePath = p.getProperty(LATTE_PATH);
+				is.close();
+			} catch (IOException e) {
+				// do nothing
+			}
+		}
 
-        DEFAULT_LATTE_PATH = lattePath;
+		DEFAULT_LATTE_PATH = lattePath;
 
 		String p = properties.getProperty("green.latte.path", DEFAULT_LATTE_PATH);
 		String a = properties.getProperty("green.latte.args", DEFAULT_LATTE_ARGS);
@@ -137,13 +123,12 @@ public class CountLattEService extends CountService {
 	 * coefficients (and an additional, implicit mapping from the "
 	 * <code>null</code>" variable to the constant coefficient that must appear
 	 * in each row).
-	 * 
+	 * <p>
 	 * Each row has a type, which is a integer comparison (equal-to,
 	 * not-equal-to, less-than, less-than-or-equal-to, greater-than, or
 	 * greater-then-or-equal-to). Once all the coefficients have been entered,
 	 * it is "fixed". This means that no new coefficients may be added, and some
 	 * internal flags are set.
-	 * 
 	 */
 	private static class HRow {
 
@@ -174,9 +159,8 @@ public class CountLattEService extends CountService {
 
 		/**
 		 * Constructor for the row.
-		 * 
-		 * @param type
-		 *            the type of the row
+		 *
+		 * @param type the type of the row
 		 */
 		public HRow(Operation.Operator type) {
 			assert (type == Operation.Operator.EQ)
@@ -197,11 +181,9 @@ public class CountLattEService extends CountService {
 		 * previous coefficient that might have been associated with a variable.
 		 * If the given variable is <code>null</code>, the coefficient is taken
 		 * to be the constant coefficient.
-		 * 
-		 * @param variable
-		 *            the variable
-		 * @param coefficient
-		 *            the coefficient for the variable
+		 *
+		 * @param variable    the variable
+		 * @param coefficient the coefficient for the variable
 		 */
 		public void put(IntVariable variable, int coefficient) {
 			assert !fixed;
@@ -217,11 +199,9 @@ public class CountLattEService extends CountService {
 		 * previous coefficient that might have been associated with a variable.
 		 * If the given variable is <code>null</code>, the coefficient is taken
 		 * to be the constant coefficient.
-		 * 
-		 * @param variable
-		 *            the variable
-		 * @param coefficient
-		 *            the coefficient for the variable
+		 *
+		 * @param variable    the variable
+		 * @param coefficient the coefficient for the variable
 		 */
 		public void put(IntVariable variable, IntConstant coefficient) {
 			put(variable, coefficient.getValue());
@@ -232,11 +212,9 @@ public class CountLattEService extends CountService {
 		 * not yet been assigned a coefficient, the given value is taken to be
 		 * the new coefficient. If the given variable is <code>null</code>, the
 		 * coefficient is taken to be the constant coefficient.
-		 * 
-		 * @param variable
-		 *            the variable
-		 * @param delta
-		 *            the value to add to the variable's coefficient
+		 *
+		 * @param variable the variable
+		 * @param delta    the value to add to the variable's coefficient
 		 */
 		public void add(IntVariable variable, int delta) {
 			assert !fixed;
@@ -257,11 +235,9 @@ public class CountLattEService extends CountService {
 		 * not yet been assigned a coefficient, the given value is taken to be
 		 * the new coefficient. If the given variable is <code>null</code>, the
 		 * coefficient is taken to be the constant coefficient.
-		 * 
-		 * @param variable
-		 *            the variable
-		 * @param delta
-		 *            the value to add to the variable's coefficient
+		 *
+		 * @param variable the variable
+		 * @param delta    the value to add to the variable's coefficient
 		 */
 		@SuppressWarnings("unused")
 		// Not used at the moment
@@ -273,9 +249,8 @@ public class CountLattEService extends CountService {
 		 * Finds the coefficient of the given variable. If the variable is
 		 * <code>null</code>, the constant coefficient is returned. If the
 		 * variable has no associated coefficient, the value 0 is returned.
-		 * 
-		 * @param variable
-		 *            the given variable
+		 *
+		 * @param variable the given variable
 		 * @return the coefficient associated with the variable (or 0)
 		 */
 		public int get(IntVariable variable) {
@@ -318,7 +293,7 @@ public class CountLattEService extends CountService {
 		 * Returns the set of variables that appear with non-zero coefficients
 		 * in the row. The "<code>null</code>" constant coefficient variable is
 		 * not returned.
-		 * 
+		 *
 		 * @return the set of variables with non-zero coefficients
 		 */
 		public Set<IntVariable> getVariables() {
@@ -328,7 +303,7 @@ public class CountLattEService extends CountService {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		@Override
@@ -342,7 +317,7 @@ public class CountLattEService extends CountService {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#hashCode()
 		 */
 		@Override
@@ -417,16 +392,15 @@ public class CountLattEService extends CountService {
 		 * Constructs the rows of the matrix by recursively exploring the
 		 * expression. It is assumed that the expression has a very specific
 		 * form.
-		 * 
+		 *
 		 * <pre>
 		 * expr ::= constraint | expr && expr
 		 * constraint ::= cexpr ( = | != | < | <= | > | >= ) 0
 		 * cexpr ::= term | cexpr + term
 		 * term ::= integer_constant | integer_constant * variable
 		 * </pre>
-		 * 
-		 * @param operation
-		 *            the expression to explore
+		 *
+		 * @param operation the expression to explore
 		 */
 		private void explore(Operation operation) {
 			Operation.Operator op = operation.getOperator();
@@ -457,15 +431,13 @@ public class CountLattEService extends CountService {
 		/**
 		 * Processes one term of an expression and adding it to the given row.
 		 * The term is assumed to have a very specific form.
-		 * 
+		 *
 		 * <pre>
 		 * term ::= integer_constant | integer_constant * variable
 		 * </pre>
-		 * 
-		 * @param row
-		 *            the row to which the term information is added
-		 * @param expression
-		 *            the term to process
+		 *
+		 * @param row        the row to which the term information is added
+		 * @param expression the term to process
 		 */
 		private void explore0(HRow row, Expression expression) {
 			if (expression instanceof IntConstant) {
@@ -484,9 +456,8 @@ public class CountLattEService extends CountService {
 		 * {@link HRow#fix()}) and then adding it to the appropriate set, based
 		 * on its type. The variables of the row is added to the set of
 		 * variables.
-		 * 
-		 * @param row
-		 *            the row to add to the matrix
+		 *
+		 * @param row the row to add to the matrix
 		 */
 		private void register(HRow row) {
 			row.fix();
@@ -515,9 +486,8 @@ public class CountLattEService extends CountService {
 
 		/**
 		 * Counts the number solutions that satisfy the expression.
-		 * 
-		 * @param expression
-		 *            the expression to satisfy
+		 *
+		 * @param expression the expression to satisfy
 		 * @return the number of satisfying solutions
 		 */
 		public Apint count(Expression expression) {
@@ -637,9 +607,8 @@ public class CountLattEService extends CountService {
 		 * Processes the input to produce the number of satisfying solutions. If
 		 * present, the store is checked first. If the answer is not already
 		 * present, it is calculated and added to the store.
-		 * 
-		 * @param input
-		 *            the LattE input as an H-matrix
+		 *
+		 * @param input the LattE input as an H-matrix
 		 * @return the number of satisfying solutions as an {@link Apint}
 		 */
 		private Apint processInput(String input) {
@@ -659,9 +628,8 @@ public class CountLattEService extends CountService {
 		 * Stores the input in a file, invokes LattE on the file, captures and
 		 * processes the output, and returns the number of satisfying solutions
 		 * as a string.
-		 * 
-		 * @param input
-		 *            the LattE input as an H-matrix
+		 *
+		 * @param input the LattE input as an H-matrix
 		 * @return the number of satisfying solutions as a string
 		 */
 		private String invokeLattE(String input) {
@@ -736,16 +704,15 @@ public class CountLattEService extends CountService {
 	 * Generic class to iterate over all subsets of a given set. Note that the
 	 * empty set is never returned. The correct way to use this class is as
 	 * follows:
-	 * 
+	 *
 	 * <pre>
 	 * Subsetter<X> z = new Subsetter<X>(...some set of X elements...);
 	 * for (Set<X> s = new HashSet<X>(); s != null; s = z.advance()) {
 	 *   ...do something with subset s...
 	 * }
 	 * </pre>
-	 * 
-	 * @param <T>
-	 *            the base type of element
+	 *
+	 * @param <T> the base type of element
 	 */
 	private static class Subsetter<T> {
 
@@ -774,9 +741,8 @@ public class CountLattEService extends CountService {
 		/**
 		 * Constructor for the subsetter. Class fields are initialized but no
 		 * heavy computation is performed.
-		 * 
-		 * @param wholeSet
-		 *            the whole set over which subsets are taken
+		 *
+		 * @param wholeSet the whole set over which subsets are taken
 		 */
 		public Subsetter(Set<T> wholeSet) {
 			list = new LinkedList<T>(wholeSet);
@@ -788,9 +754,9 @@ public class CountLattEService extends CountService {
 		/**
 		 * Calculates and returns the next subset. Once there are no more
 		 * subsets, the method returns <code>null</code>.
-		 * 
+		 *
 		 * @return the next subset of the whole set, or <code>null</code> if all
-		 *         subsets have been returned
+		 * subsets have been returned
 		 */
 		public final Set<T> advance() {
 			int i = 0;

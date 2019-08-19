@@ -1,27 +1,13 @@
 package za.ac.sun.cs.green.service.smtlib;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
-import za.ac.sun.cs.green.expr.BoolVariable;
-import za.ac.sun.cs.green.expr.IntConstant;
-import za.ac.sun.cs.green.expr.IntVariable;
-import za.ac.sun.cs.green.expr.IntegerConstant;
-import za.ac.sun.cs.green.expr.IntegerVariable;
-import za.ac.sun.cs.green.expr.Operation;
+import za.ac.sun.cs.green.Instance;
+import za.ac.sun.cs.green.expr.*;
 import za.ac.sun.cs.green.expr.Operation.Operator;
-import za.ac.sun.cs.green.expr.RealConstant;
-import za.ac.sun.cs.green.expr.RealVariable;
-import za.ac.sun.cs.green.expr.Variable;
-import za.ac.sun.cs.green.expr.Visitor;
-import za.ac.sun.cs.green.expr.VisitorException;
 import za.ac.sun.cs.green.service.ModelService;
 import za.ac.sun.cs.green.util.Misc;
+
+import java.util.*;
 
 public abstract class ModelSMTLIBFloatService extends ModelService {
 
@@ -85,7 +71,7 @@ public abstract class ModelSMTLIBFloatService extends ModelService {
 		private final List<String> domains;
 
 		public Translator() {
-			stack = new Stack<ModelSMTLIBFloatService.TranslatorPair>();
+			stack = new Stack<TranslatorPair>();
 			varMap = new HashMap<Variable, String>();
 			defs = new LinkedList<String>();
 			domains = new LinkedList<String>();
@@ -241,70 +227,70 @@ public abstract class ModelSMTLIBFloatService extends ModelService {
 
 		private boolean isRelop(Operator op) {
 			switch (op) {
-			case EQ:
-			case LT:
-			case LE:
-			case GT:
-			case GE:
-			case NOT:
-			case AND:
-			case OR:
-				return true;
-			default:
-				return false;
+				case EQ:
+				case LT:
+				case LE:
+				case GT:
+				case GE:
+				case NOT:
+				case AND:
+				case OR:
+					return true;
+				default:
+					return false;
 			}
 		}
 
 		private String setOperator(Operator op) throws TranslatorUnsupportedOperation {
 			switch (op) {
-			case EQ:
-				return "=";
-			case LT:
-				return "<";
-			case LE:
-				return "<=";
-			case GT:
-				return ">";
-			case GE:
-				return ">=";
-			case NOT:
-				return "not";
-			case AND:
-				return "and";
-			case OR:
-				return "or";
-			case IMPLIES:
-				return "=>"; // not sure about this one?
-			case ADD:
-				return "+";
-			case SUB:
-				return "-";
-			case MUL:
-				return "*";
-			case DIV:
-				return "div";
-			case MOD:
-				return "mod";
-			case BIT_AND:
-			case BIT_OR:
-			case BIT_XOR:
-			case SHIFTL:
-			case SHIFTR:
-			case SHIFTUR:
-			case SIN:
-			case COS:
-			case TAN:
-			case ASIN:
-			case ACOS:
-			case ATAN:
-			case ATAN2:
-			case ROUND:
-			case LOG:
-			case EXP:
-			case POWER:
-			case SQRT:
-			default:
-				throw new TranslatorUnsupportedOperation("unsupported operation " + op);
+				case EQ:
+					return "=";
+				case LT:
+					return "<";
+				case LE:
+					return "<=";
+				case GT:
+					return ">";
+				case GE:
+					return ">=";
+				case NOT:
+					return "not";
+				case AND:
+					return "and";
+				case OR:
+					return "or";
+				case IMPLIES:
+					return "=>"; // not sure about this one?
+				case ADD:
+					return "+";
+				case SUB:
+					return "-";
+				case MUL:
+					return "*";
+				case DIV:
+					return "div";
+				case MOD:
+					return "mod";
+				case BIT_AND:
+				case BIT_OR:
+				case BIT_XOR:
+				case SHIFTL:
+				case SHIFTR:
+				case SHIFTUR:
+				case SIN:
+				case COS:
+				case TAN:
+				case ASIN:
+				case ACOS:
+				case ATAN:
+				case ATAN2:
+				case ROUND:
+				case LOG:
+				case EXP:
+				case POWER:
+				case SQRT:
+				default:
+					throw new TranslatorUnsupportedOperation("unsupported operation " + op);
 			}
 		}
 

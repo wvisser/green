@@ -46,7 +46,7 @@ public enum Token {
 	UREM("\"URem\""),
 	XOR("\"Xor\""),
 	ZEXT("\"ZExt\""),
-	
+
 	ARROW("\"->\""),
 	AT("\"@\""),
 	COLON("\":\""),
@@ -66,10 +66,10 @@ public enum Token {
 
 	/**
 	 * Constructs a token.
-	 * 
+	 *
 	 * @param string the description string
 	 */
-	private Token(String string) {
+	Token(String string) {
 		this.string = string;
 	}
 

@@ -1,27 +1,22 @@
 package za.ac.sun.cs.green.service.bounder;
 
-import static org.junit.Assert.*;
-
-import java.util.Properties;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
-import za.ac.sun.cs.green.expr.IntegerConstant;
-import za.ac.sun.cs.green.expr.IntegerVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.util.Configuration;
+
+import java.util.Properties;
+
+import static org.junit.Assert.*;
 
 public class BounderServiceTest {
 
 	public static Green solver;
-    private final static int SIZE32 = 32;
-    private final static int SIZE64 = 64;
 
 	@BeforeClass
 	public static void initialize() {
@@ -53,7 +48,7 @@ public class BounderServiceTest {
 	}
 
 	private void check(Expression expression, String full,
-			String... expected) {
+					   String... expected) {
 		Instance i = new Instance(solver, null, expression);
 		Expression e = i.getExpression();
 		assertTrue(e.equals(expression));
@@ -67,7 +62,7 @@ public class BounderServiceTest {
 	}
 
 	@Test
-	public void test01a() {
+	public void test01() {
 		IntVariable v = new IntVariable("v", 0, 99);
 		IntConstant c = new IntConstant(0);
 		Operation o = new Operation(Operation.Operator.EQ, v, c);
@@ -75,7 +70,7 @@ public class BounderServiceTest {
 	}
 
 	@Test
-	public void test02a() {
+	public void test02() {
 		IntVariable v1 = new IntVariable("v1", 0, 99);
 		IntVariable v2 = new IntVariable("v2", 9, 19);
 		IntConstant c = new IntConstant(0);
@@ -84,26 +79,7 @@ public class BounderServiceTest {
 		Operation o = new Operation(Operation.Operator.AND, o1, o2);
 		check(o, "(v1==0)&&(v2==0)", "v1==0", "v1>=0", "v1<=99", "v2==0", "v2>=9", "v2<=19");
 	}
-	
-	@Test
-	public void test01b() {
-		IntegerVariable v = new IntegerVariable("v", 0, 999999999999L, SIZE64);
-		IntegerConstant c = new IntegerConstant(0, SIZE64);
-		Operation o = new Operation(Operation.Operator.EQ, v, c);
-		check(o, "v==0", "v==0", "v>=0", "v<=999999999999");
-	}
-	
-	@Test
-	public void test02b() {
-		IntegerVariable v1 = new IntegerVariable("v1", 0, 99, SIZE32);
-		IntegerVariable v2 = new IntegerVariable("v2", 9, 19, SIZE32);
-		IntegerConstant c = new IntegerConstant(0, SIZE32);
-		Operation o1 = new Operation(Operation.Operator.EQ, v1, c);
-		Operation o2 = new Operation(Operation.Operator.EQ, v2, c);
-		Operation o = new Operation(Operation.Operator.AND, o1, o2);
-		check(o, "(v1==0)&&(v2==0)", "v1==0", "v1>=0", "v1<=99", "v2==0", "v2>=9", "v2<=19");
-	}
-	
+
 }
 
 /*

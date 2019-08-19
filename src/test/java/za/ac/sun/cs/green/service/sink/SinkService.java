@@ -1,10 +1,10 @@
 package za.ac.sun.cs.green.service.sink;
 
-import java.util.Set;
-
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.service.BasicService;
+
+import java.util.Set;
 
 public class SinkService extends BasicService {
 
@@ -21,5 +21,5 @@ public class SinkService extends BasicService {
 	public Object allChildrenDone(Instance instance, Object result) {
 		return instance;
 	}
-	
+
 }

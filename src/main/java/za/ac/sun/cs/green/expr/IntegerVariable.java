@@ -4,37 +4,37 @@ public class IntegerVariable extends Variable {
 
 	private static final long serialVersionUID = 8942503924718973792L;
 
-    protected final Long lowerBound;
-    protected final Long upperBound;
-    protected final Integer size;
+	protected final Long lowerBound;
+	protected final Long upperBound;
+	protected final Integer size;
 
 	public IntegerVariable(String name, long lowerBound, long upperBound, int size) {
 		super(name);
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
-        this.size = size;
-    }
+		this.size = size;
+	}
 
 	public IntegerVariable(String name, Object original, long lowerBound, long upperBound, int size) {
 		super(name, original);
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
-        this.size = size;
-    }
-	
+		this.size = size;
+	}
+
 	public IntegerVariable(String name, Long lowerBound, Long upperBound, Integer size) {
 		super(name);
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
-        this.size = size;
-    }
-	
+		this.size = size;
+	}
+
 	public IntegerVariable(String name, Object original, Long lowerBound, Long upperBound, Integer size) {
 		super(name, original);
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
-        this.size = size;
-    }
+		this.size = size;
+	}
 
 	public Long getLowerBound() {
 		return lowerBound;
@@ -45,8 +45,8 @@ public class IntegerVariable extends Variable {
 	}
 
 	public Integer getSize() {
-	    return size;
-    }
+		return size;
+	}
 
 	@Override
 	public void accept(Visitor visitor) throws VisitorException {

@@ -14,7 +14,7 @@ public abstract class Variable extends Expression implements Serializable {
 		this.name = name;
 		this.original = null;
 	}
-	
+
 	public Variable(final String name, final Object original) {
 		this.name = name;
 		this.original = original;

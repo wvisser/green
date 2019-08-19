@@ -1,20 +1,20 @@
 package za.ac.sun.cs.green.util;
 
-import static org.junit.Assert.*;
-
-import java.util.Properties;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.taskmanager.ParallelTaskManager;
+
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ParallelSATTest {
 
@@ -62,15 +62,15 @@ public class ParallelSATTest {
 	private void checkUnsat(Expression expression) {
 		check(expression, null, false);
 	}
-	
+
 	private void checkSat(Expression expression, Expression parentExpression) {
 		check(expression, parentExpression, true);
 	}
-	
+
 	private void checkUnsat(Expression expression, Expression parentExpression) {
 		check(expression, parentExpression, false);
 	}
-	
+
 	@Test
 	public void test01() {
 		IntVariable v = new IntVariable("aa", 0, 99);

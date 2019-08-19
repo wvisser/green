@@ -4,28 +4,29 @@ import java.io.Serializable;
 
 public abstract class Expression implements Comparable<Expression>, Serializable {
 
-    private String stringRep = null;
-    public abstract void accept(Visitor visitor) throws VisitorException;
+	private String stringRep = null;
 
-    public String getString() {
-        if (stringRep == null) {
-            stringRep = this.toString();
-        }
-        return stringRep;
-    }
+	public abstract void accept(Visitor visitor) throws VisitorException;
 
-    public Double satDelta = 0.0;
+	public String getCachedString() {
+		if (stringRep == null) {
+			stringRep = this.toString();
+		}
+		return stringRep;
+	}
 
-    @Override
-    public final int compareTo(Expression expression) {
-        // TODO
-        return getString().compareTo(expression.getString());
-    }
+	public double satDelta = 0.0;
 
-    @Override
-    public abstract boolean equals(Object object);
+	@Override
+	public final int compareTo(Expression expression) {
+		// TODO
+		return getCachedString().compareTo(expression.getCachedString());
+	}
 
-    @Override
-    public abstract String toString();
+	@Override
+	public abstract boolean equals(Object object);
+
+	@Override
+	public abstract String toString();
 
 }

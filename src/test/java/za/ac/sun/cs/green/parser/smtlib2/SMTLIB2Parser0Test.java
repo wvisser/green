@@ -1,19 +1,18 @@
 package za.ac.sun.cs.green.parser.smtlib2;
 
-import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import za.ac.sun.cs.green.util.NullLogger;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import za.ac.sun.cs.green.util.NullLogger;
+import static org.junit.Assert.assertTrue;
 
 public class SMTLIB2Parser0Test {
 
 	private static final boolean DO_LOG = false;
-	
+
 	private static Logger log;
 
 	@BeforeClass

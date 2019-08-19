@@ -1,9 +1,5 @@
 package za.ac.sun.cs.green.service.factorizer;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Service;
@@ -11,12 +7,16 @@ import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.service.BasicService;
 import za.ac.sun.cs.green.util.Reporter;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 public class SATOldFactorizerService extends BasicService {
 
 	private static final String FACTORS = "FACTORS";
 
 	private static final String FACTORS_UNSOLVED = "FACTORS_UNSOLVED";
-	
+
 	/**
 	 * Number of times the factorizer has been invoked.
 	 */
@@ -31,7 +31,7 @@ public class SATOldFactorizerService extends BasicService {
 	 * Number of factored constraints returned.
 	 */
 	private int factorCount = 0;
-    private long timeConsumption = 0;
+	private long timeConsumption = 0;
 
 	public SATOldFactorizerService(Green solver) {
 		super(solver);
@@ -39,8 +39,8 @@ public class SATOldFactorizerService extends BasicService {
 
 	@Override
 	public Set<Instance> processRequest(Instance instance) {
-        long startTime = System.currentTimeMillis();
-        invocationCount++;
+		long startTime = System.currentTimeMillis();
+		invocationCount++;
 		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(FACTORS);
 		if (result == null) {
@@ -74,8 +74,8 @@ public class SATOldFactorizerService extends BasicService {
 			constraintCount += 1;
 			factorCount += fc.getNumFactors();
 		}
-        timeConsumption += (System.currentTimeMillis() - startTime);
-        return result;
+		timeConsumption += (System.currentTimeMillis() - startTime);
+		return result;
 	}
 
 	@Override
@@ -91,7 +91,7 @@ public class SATOldFactorizerService extends BasicService {
 			unsolved.remove(subinstance);
 			instance.setData(FACTORS_UNSOLVED, unsolved);
 			// Return true if no more unsolved factors; else return null to carry on the computation
-			return (unsolved.isEmpty()) ? result : null; 
+			return (unsolved.isEmpty()) ? result : null;
 		} else {
 			// We have already solved this subinstance; return null to carry on the computation
 			return null;
@@ -108,13 +108,13 @@ public class SATOldFactorizerService extends BasicService {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void report(Reporter reporter) {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocationCount);
 		reporter.report(getClass().getSimpleName(), "totalConstraints = " + constraintCount);
 		reporter.report(getClass().getSimpleName(), "factoredConstraints = " + factorCount);
-        reporter.report(getClass().getSimpleName(), "timeConsumption = " + timeConsumption);
+		reporter.report(getClass().getSimpleName(), "timeConsumption = " + timeConsumption);
 	}
 
 }

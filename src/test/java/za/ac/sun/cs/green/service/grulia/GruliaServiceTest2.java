@@ -1,22 +1,26 @@
 package za.ac.sun.cs.green.service.grulia;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
-import za.ac.sun.cs.green.parser.sexpr.LIAParser;
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.Operation;
+import za.ac.sun.cs.green.parser.sexpr.LIAParser;
 import za.ac.sun.cs.green.util.Configuration;
+
 import java.util.Properties;
+
 import static org.junit.Assert.assertEquals;
 
 /**
- * @date: 2018/08/23
+ * @date: 2018/06/20
  * @author: JH Taljaard.
  * Student Number: 18509193.
- * Supervisor:  Willem Visser (2018,2019),
- *              Jaco Geldenhuys (2017)
- *
+ * Supervisor:  Willem Visser (2018),
+ * Jaco Geldenhuys (2017)
+ * <p>
  * Description:
  * Simple Grulia test
  */
@@ -50,7 +54,7 @@ public class GruliaServiceTest2 {
 	private boolean check(Expression expression) {
 		Instance i = new Instance(solver, null, expression);
 		Object result = i.request("sat");
-        return result.toString().equals("true");
+		return result.toString().equals("true");
 	}
 
 	private void check(String input, boolean expected) {
@@ -64,7 +68,7 @@ public class GruliaServiceTest2 {
 		}
 	}
 
-   @Test
+/*   @Test
    public void modelTest() {
 		StringBuilder query1 = new StringBuilder();
 		query1 = query1.append("4\n")
@@ -99,5 +103,23 @@ public class GruliaServiceTest2 {
                 .append("1 lt * 2 c -1 v 1 c 0\n")
                 .append("1 lt * 2 c 1 v 1 c 1\n");
         check(query2.toString(), false);
+	}*/
+
+	@Test
+	public void otherTest() {
+		StringBuilder query1 = new StringBuilder();
+		query1 = query1.append("2\n")
+				.append("1 lt * 2 c -1 v 0 c -10\n")
+				.append("1 lt * 2 c 1 v 0 c 100\n");
+
+//		StringBuilder query2 = new StringBuilder();
+//		query2 = query2.append("4\n")
+//				.append("1 lt * 2 c -1 v 0 c 0\n")
+//				.append("1 lt * 2 c -1 v 1 c 0\n")
+//				.append("1 lt * 2 c -1 v 0 c 1\n")
+//				.append("1 lt * 2 c -1 v 2 c 1\n");
+
+		check(query1.toString(), true);
+//		check(query2.toString(), true);
 	}
 }

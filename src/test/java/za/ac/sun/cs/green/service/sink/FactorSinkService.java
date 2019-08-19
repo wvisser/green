@@ -1,11 +1,11 @@
 package za.ac.sun.cs.green.service.sink;
 
+import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
+import za.ac.sun.cs.green.service.BasicService;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import za.ac.sun.cs.green.Instance;
-import za.ac.sun.cs.green.Green;
-import za.ac.sun.cs.green.service.BasicService;
 
 public class FactorSinkService extends BasicService {
 

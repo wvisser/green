@@ -1,8 +1,8 @@
 package za.ac.sun.cs.green.parser.smtlib2;
 
-import java.util.logging.Logger;
-
 import za.ac.sun.cs.green.util.NullLogger;
+
+import java.util.logging.Logger;
 
 public class Parser0 {
 
@@ -18,7 +18,7 @@ public class Parser0 {
 	public Parser0(Scanner0 scanner) {
 		this(scanner, new NullLogger());
 	}
-	
+
 	public void parse() throws ParseException {
 		log.entering("", "parse");
 		while (true) {
@@ -31,7 +31,7 @@ public class Parser0 {
 		log.exiting("", "parse");
 	}
 
-	private void parseCommand() throws ParseException, ParseException {
+	private void parseCommand() throws ParseException {
 		log.entering("", "parseCommand");
 		scanner.expect(Token0.LPAREN);
 		if (scanner.next() == Token0.SET_LOGIC) {
@@ -81,11 +81,11 @@ public class Parser0 {
 
 	/**
 	 * Parse a "set-logic" command.
-	 * 
+	 *
 	 * <pre>
 	 * set_logic ::= "set-logic" symbol.
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseSetLogic() throws ParseException {
@@ -97,11 +97,11 @@ public class Parser0 {
 
 	/**
 	 * Parse a "set-option" command.
-	 * 
+	 *
 	 * <pre>
 	 * set_option ::= "set-option" option.
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseSetOption() throws ParseException {
@@ -110,10 +110,10 @@ public class Parser0 {
 		parseOption();
 		log.exiting("", "parseSetOption");
 	}
-	
+
 	/**
 	 * Parse "set-info <attribute>".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseSetInfo() throws ParseException {
@@ -125,7 +125,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "declare-sort <symbol> <numeral>".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseDeclareSort() throws ParseException {
@@ -138,7 +138,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "define-sort <symbol> ( <symbol>* ) <sort>".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseDefineSort() throws ParseException {
@@ -156,7 +156,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "declare-fun <symbol> ( <sort>* ) <sort>".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseDeclareFun() throws ParseException {
@@ -174,7 +174,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "define-fun <symbol> ( <sorted var>* ) <sort> <term>".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseDefineFun() throws ParseException {
@@ -193,7 +193,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "push <numeral>".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parsePush() throws ParseException {
@@ -205,7 +205,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "pop <numeral>".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parsePop() throws ParseException {
@@ -217,7 +217,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "assert <term>".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseAssert() throws ParseException {
@@ -229,7 +229,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "check-sat".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseCheckSat() throws ParseException {
@@ -240,7 +240,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "get-assertions".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseGetAssertions() throws ParseException {
@@ -251,7 +251,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "get-proof".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseGetProof() throws ParseException {
@@ -262,7 +262,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "get-unsat-core".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseGetUnsatCore() throws ParseException {
@@ -273,7 +273,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "get-value ( <term>+ )".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseGetValue() throws ParseException {
@@ -290,7 +290,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "get-assignment".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseGetAssignment() throws ParseException {
@@ -301,7 +301,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "get-option <keyword>".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseGetOption() throws ParseException {
@@ -313,7 +313,7 @@ public class Parser0 {
 
 	/**
 	 * Parse "get-info <infoflag>".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseGetInfo() throws ParseException {
@@ -322,10 +322,10 @@ public class Parser0 {
 		parseInfoFlag();
 		log.exiting("", "parseGetInfo");
 	}
-	
+
 	/**
 	 * Parse "exit".
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseExit() throws ParseException {
@@ -336,7 +336,7 @@ public class Parser0 {
 
 	/**
 	 * Parse an option.
-	 * 
+	 *
 	 * <pre>
 	 * option ::= ":print-success" b_value
 	 *          | ":expand-definitions" b_value
@@ -351,7 +351,7 @@ public class Parser0 {
 	 *          | ":verbosity" numeral
 	 *          | attribute.
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseOption() throws ParseException {
@@ -399,10 +399,10 @@ public class Parser0 {
 		}
 		log.exiting("", "parseOption");
 	}
-	
+
 	/**
 	 * Parse an attribute.
-	 * 
+	 *
 	 * <pre>
 	 * attribute ::= keyword
 	 *             | keyword attribute_value.
@@ -410,7 +410,7 @@ public class Parser0 {
 	 *                   | symbol
 	 *                   | "(" { s_expr } ")".
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseAttribute() throws ParseException {
@@ -430,17 +430,17 @@ public class Parser0 {
 		}
 		log.exiting("", "parseAttribute");
 	}
-	
+
 	/**
 	 * Parse an s-expression.
-	 * 
+	 *
 	 * <pre>
 	 * s_expr ::= spec_constant
 	 *          | symbol
 	 *          | keyword
 	 *          | "(" { s_expr } ")".
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseSExpr() throws ParseException {
@@ -458,18 +458,18 @@ public class Parser0 {
 				parseSExpr();
 			}
 			scanner.expect(Token0.RPAREN);
-		}		
+		}
 		log.exiting("", "parseSExpr");
 	}
-	
+
 	/**
 	 * Parse a boolean value.
-	 * 
+	 *
 	 * <pre>
 	 * b_value ::= "true"
 	 *           | "false".
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseBValue() throws ParseException {
@@ -481,15 +481,15 @@ public class Parser0 {
 		}
 		log.exiting("", "parseBValue");
 	}
-	
+
 	/**
 	 * Parse an identifier.
-	 * 
+	 *
 	 * <pre>
 	 * identifier ::= symbol
 	 *              | "(" "_" symbol numeral { numeral } ")".
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseIdentifier() throws ParseException {
@@ -508,10 +508,10 @@ public class Parser0 {
 		}
 		log.exiting("", "parseIdentifier");
 	}
-	
+
 	/**
 	 * Parse a sort.
-	 * 
+	 *
 	 * <pre>
 	 * sort ::= identifier
 	 *        | "(" identifier sort { sort } ")".
@@ -544,14 +544,14 @@ public class Parser0 {
 		}
 		log.exiting("", "parseSort");
 	}
-	
+
 	/**
 	 * Parse a sorted variable.
-	 * 
+	 *
 	 * <pre>
 	 * sorted_var ::= "(" symbol sort ")".
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseSortedVar() throws ParseException {
@@ -562,10 +562,10 @@ public class Parser0 {
 		scanner.expect(Token0.RPAREN);
 		log.exiting("", "parseSortedVar");
 	}
-	
+
 	/**
 	 * Parse a term.
-	 * 
+	 *
 	 * <pre>
 	 * term ::= spec_constant
 	 *        | qual_identifier
@@ -575,17 +575,17 @@ public class Parser0 {
 	 *        | "(" "exists" "(" sorted_var { sorted_var } ")" term ")"
 	 *        | "(" "!" term attribute { attribute } ")".
 	 * </pre>
-	 * 
+	 * <p>
 	 * We have to inline the definition of <code>qual_identifier</code> because
 	 * it may start with a "(".
-	 * 
+	 *
 	 * <pre>
 	 * qual_identifier ::= identifier
 	 *                   | "(" "as" identifier sort ")".
 	 * identifier ::= symbol
 	 *              | "(" "_" symbol numeral { numeral } ")".
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseTerm() throws ParseException {
@@ -651,14 +651,14 @@ public class Parser0 {
 
 	/**
 	 * Parse a qualified identifier.
-	 * 
+	 *
 	 * <pre>
 	 * qual_identifier ::= identifier
 	 *                   | "(" "as" identifier sort ")".
 	 * identifier ::= symbol
 	 *              | "(" "_" symbol numeral { numeral } ")".
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseQualIdentifier() throws ParseException {
@@ -682,14 +682,14 @@ public class Parser0 {
 		}
 		log.exiting("", "parseQualIdentifier");
 	}
-	
+
 	/**
 	 * Parse a variable binding.
-	 * 
+	 *
 	 * <pre>
 	 * var_binding ::= "(" symbol term ")".
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseVarBinding() throws ParseException {
@@ -700,10 +700,10 @@ public class Parser0 {
 		scanner.expect(Token0.RPAREN);
 		log.exiting("", "parseVarBinding");
 	}
-	
+
 	/**
 	 * Parse a special constant.
-	 * 
+	 *
 	 * <pre>
 	 * spec_constant ::= numeral
 	 *                 | decimal
@@ -712,7 +712,7 @@ public class Parser0 {
 	 *                 | string
 	 *                 | b_value.
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseSpecConstant() throws ParseException {
@@ -736,10 +736,10 @@ public class Parser0 {
 		}
 		log.exiting("", "parseSpecConstant");
 	}
-	
+
 	/**
 	 * Parse an information flag.
-	 * 
+	 *
 	 * <pre>
 	 * info_flag ::= ":error-behavior"
 	 *             | ":name"
@@ -750,7 +750,7 @@ public class Parser0 {
 	 *             | ":all-statistics"
 	 *             | keyword.
 	 * </pre>
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	private void parseInfoFlag() throws ParseException {
@@ -775,5 +775,5 @@ public class Parser0 {
 		}
 		log.exiting("", "parseInfoFlag");
 	}
-	
+
 }

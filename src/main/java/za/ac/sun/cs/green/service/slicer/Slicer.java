@@ -1,19 +1,9 @@
 package za.ac.sun.cs.green.service.slicer;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-
 import org.apache.logging.log4j.Logger;
+import za.ac.sun.cs.green.expr.*;
 
-import za.ac.sun.cs.green.expr.Expression;
-import za.ac.sun.cs.green.expr.Operation;
-import za.ac.sun.cs.green.expr.Variable;
-import za.ac.sun.cs.green.expr.Visitor;
-import za.ac.sun.cs.green.expr.VisitorException;
+import java.util.*;
 
 public class Slicer {
 
@@ -51,23 +41,23 @@ public class Slicer {
 	public int getInvocationCount() {
 		return invocationCount;
 	}
-	
+
 	public int getTotalConjunctCount() {
 		return totalConjunctCount;
 	}
-	
+
 	public int getMinimalConjunctCount() {
 		return minimalConjunctCount;
 	}
-	
+
 	public int getTotalVariableCount() {
 		return totalVariableCount;
 	}
-	
+
 	public int getMinimalVariableCount() {
 		return minimalVariableCount;
 	}
-	
+
 	public Expression slice(Expression fresh, Expression rest) {
 		// First update our statistics
 		invocationCount++;
@@ -152,7 +142,7 @@ public class Slicer {
 	/**
 	 * Visitor that builds the maps from conjuncts to variables and from
 	 * variables to conjuncts.
-	 * 
+	 *
 	 * @author Jaco Geldenhuys <jaco@cs.sun.ac.za>
 	 */
 	private class Collector extends Visitor {
@@ -174,15 +164,13 @@ public class Slicer {
 
 		/**
 		 * Constructor that sets the two mappings that the collector builds.
-		 * 
-		 * @param conjunct2Vars
-		 *            a map from conjuncts to the variables they contain
-		 * @param var2Conjuncts
-		 *            a map from the variables to the conjuncts in which they
-		 *            appear
+		 *
+		 * @param conjunct2Vars a map from conjuncts to the variables they contain
+		 * @param var2Conjuncts a map from the variables to the conjuncts in which they
+		 *                      appear
 		 */
 		public Collector(Map<Expression, Set<Variable>> conjunct2Vars,
-				Map<Variable, Set<Expression>> var2Conjuncts) {
+						 Map<Variable, Set<Expression>> var2Conjuncts) {
 			this.conjunct2Vars = conjunct2Vars;
 			this.var2Conjuncts = var2Conjuncts;
 		}
@@ -190,11 +178,9 @@ public class Slicer {
 		/**
 		 * Explores the expression by setting the default conjunct and then
 		 * visiting the expression.
-		 * 
-		 * @param expression
-		 *            the expression to explore
-		 * @throws VisitorException
-		 *             should never happen
+		 *
+		 * @param expression the expression to explore
+		 * @throws VisitorException should never happen
 		 */
 		public void explore(Expression expression) throws VisitorException {
 			currentConjunct = expression;
@@ -203,7 +189,7 @@ public class Slicer {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * za.ac.sun.cs.solver.expr.Visitor#postVisit(za.ac.sun.cs.solver.expr
 		 * .Variable)
@@ -230,7 +216,7 @@ public class Slicer {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * za.ac.sun.cs.solver.expr.Visitor#preVisit(za.ac.sun.cs.solver.expr
 		 * .Expression)
@@ -272,21 +258,19 @@ public class Slicer {
 		/**
 		 * Constructor for the visitor that builds the set of minimal conjuncts
 		 * and the initial working set.
-		 * 
-		 * @param minimalConjuncts
-		 *            a set of minimal conjuncts that appear in the expression
-		 * @param workset
-		 *            the initial working set of fresh conjuncts
+		 *
+		 * @param minimalConjuncts a set of minimal conjuncts that appear in the expression
+		 * @param workset          the initial working set of fresh conjuncts
 		 */
 		public Enqueuer(Set<Expression> minimalConjuncts,
-				Queue<Expression> workset) {
+						Queue<Expression> workset) {
 			this.minimalConjuncts = minimalConjuncts;
 			this.workset = workset;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * za.ac.sun.cs.solver.expr.Visitor#preVisit(za.ac.sun.cs.solver.expr
 		 * .Expression)

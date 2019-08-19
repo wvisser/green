@@ -1,14 +1,7 @@
 package za.ac.sun.cs.green.service.factorizer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.File;
-import java.util.Properties;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
@@ -17,16 +10,52 @@ import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.util.Configuration;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 public class ComplexSATFactorizerTest {
 
 	public static Green solver;
-    private static final String DRIVE = new File("").getAbsolutePath() + "/";
-    private static final String DEFAULT_Z3_PATH = DRIVE + "lib/z3/build/z3";
+	private static String DEFAULT_Z3_PATH;
+	private static final String DEFAULT_Z3_ARGS = "-smt2 -in";
+
+	private static String z3Command;
+	private static final String resourceName = "build.properties";
 
 	@BeforeClass
 	public static void initialize() {
 		solver = new Green();
 		Properties props = new Properties();
+		String z3Path = "/z3/build/z3";
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		InputStream resourceStream;
+		try {
+			resourceStream = loader.getResourceAsStream(resourceName);
+			if (resourceStream == null) {
+				// If properties are correct, override with that specified path.
+				resourceStream = new FileInputStream((new File("").getAbsolutePath()) + "/" + resourceName);
+			}
+			if (resourceStream != null) {
+				props.load(resourceStream);
+				z3Path = props.getProperty("z3path");
+			}
+			resourceStream.close();
+		} catch (IOException x) {
+			// ignore
+		}
+
+		DEFAULT_Z3_PATH = z3Path;
+
+		String p = props.getProperty("green.z3.path", DEFAULT_Z3_PATH);
+		String a = props.getProperty("green.z3.args", DEFAULT_Z3_ARGS);
+		z3Command = p + ' ' + a;
+
 		props.setProperty("green.services", "sat");
 		props.setProperty("green.service.sat", "(factor (canonize z3))");
 		props.setProperty("green.service.sat.factor", "za.ac.sun.cs.green.service.factorizer.SATOldFactorizerService");
@@ -38,7 +67,7 @@ public class ComplexSATFactorizerTest {
 	}
 
 	private void check(Expression expression, Expression parentExpression,
-			boolean expected) {
+					   boolean expected) {
 		Instance p = (parentExpression == null) ? null : new Instance(solver,
 				null, parentExpression);
 		Instance i = new Instance(solver, p, expression);
@@ -63,14 +92,14 @@ public class ComplexSATFactorizerTest {
 	private void checkUnsat(Expression expression, Expression parentExpression) {
 		check(expression, parentExpression, false);
 	}
-	
+
 	/**
 	 * Check the following system of equations:
-	 * 
+	 * <p>
 	 * (v0 <= v1) && (v1 <= v2) && ... && (vN-1 <= v0) && (vN < 10)
-	 * 
+	 * <p>
 	 * vi = 0..99
-	 * 
+	 * <p>
 	 * Should be satisfiable.
 	 */
 	@Test
@@ -95,11 +124,11 @@ public class ComplexSATFactorizerTest {
 
 	/**
 	 * Check the following system of equations:
-	 * 
+	 * <p>
 	 * (v0 < v1) && (v1 < v2) && ... && (vN-1 < v0) && (vN < 10)
-	 * 
+	 * <p>
 	 * vi = 0..99
-	 * 
+	 * <p>
 	 * Should be unsatisfiable due to cycle in first N conjuncts.
 	 */
 	@Test
@@ -121,21 +150,21 @@ public class ComplexSATFactorizerTest {
 		}
 		checkUnsat(o[N], oo);
 	}
-	
+
 	/**
 	 * Check the following system of equations:
-	 * 
+	 * <p>
 	 * (v0 < v1) && (v1 < v2) && ... && (vN-1 < vN) && (vN < N)
-	 * 
+	 * <p>
 	 * vi = 0..10
-	 * 
+	 * <p>
 	 * Should be unsatisfiable because the only possible values are:
-	 *   v0 = 0
-	 *   v1 = 1
-	 *   v2 = 2
-	 *   ...
-	 *   vN = N
-	 *   
+	 * v0 = 0
+	 * v1 = 1
+	 * v2 = 2
+	 * ...
+	 * vN = N
+	 * <p>
 	 * but last conjunct claims vN < N.
 	 */
 	@Test
@@ -157,18 +186,18 @@ public class ComplexSATFactorizerTest {
 		}
 		checkUnsat(o[N], oo);
 	}
-	
+
 	/**
 	 * Check the following system of equations:
-	 * 
-	 *    (v0 <= w0) && (w0 <= v0)
+	 * <p>
+	 * (v0 <= w0) && (w0 <= v0)
 	 * && (v1 <= w1) && (w1 <= v1)
 	 * && ...
 	 * && (vN-1 <= wN-1) && (wN-1 <= vN-1)
-	 * 
+	 * <p>
 	 * vi = 0..99
 	 * wi = 0..99
-	 * 
+	 * <p>
 	 * Should be satisfiable.
 	 */
 	@Test
@@ -192,18 +221,18 @@ public class ComplexSATFactorizerTest {
 		}
 		checkSat(oo);
 	}
-	
+
 	/**
 	 * Check the following system of equations:
-	 * 
-	 *    (v0 < w0) && (w0 < v0)
+	 * <p>
+	 * (v0 < w0) && (w0 < v0)
 	 * && (v1 < w1) && (w1 < v1)
 	 * && ...
 	 * && (vN-1 < wN-1) && (wN-1 < vN-1)
-	 * 
+	 * <p>
 	 * vi = 0..99
 	 * wi = 0..99
-	 * 
+	 * <p>
 	 * Should be unsatisfiable.
 	 */
 	@Test
@@ -227,5 +256,5 @@ public class ComplexSATFactorizerTest {
 		}
 		checkUnsat(oo);
 	}
-	
+
 }

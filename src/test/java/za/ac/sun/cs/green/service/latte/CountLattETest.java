@@ -1,16 +1,9 @@
 package za.ac.sun.cs.green.service.latte;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Properties;
-
 import org.apfloat.Apint;
 import org.junit.AfterClass;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
@@ -19,10 +12,15 @@ import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.util.Configuration;
 
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 public class CountLattETest {
 
 	public static Green solver = null;
-    private static final String DEFAULT_LATTE_PATH = "lib/latte-integrale-1.7.3/latte-int-1.7.3/code/latte/count";
+	private static final String DEFAULT_LATTE_PATH = "lib/latte-integrale-1.7.3/latte-int-1.7.3/code/latte/count";
 
 	@BeforeClass
 	public static void initialize() {
@@ -60,12 +58,12 @@ public class CountLattETest {
 	private void check(Expression expression, Apint expected) {
 		check(expression, null, expected);
 	}
-	
+
 	/**
 	 * Problem:
-	 *   1 * aa == 0
+	 * 1 * aa == 0
 	 * Count:
-	 *   1
+	 * 1
 	 */
 	@Test
 	public void test01() {
@@ -79,34 +77,34 @@ public class CountLattETest {
 
 	/**
 	 * Problem:
-	 *   1 * aa > 0
-	 *   1 * aa + -10 < 0
+	 * 1 * aa > 0
+	 * 1 * aa + -10 < 0
 	 * Count:
-	 *   9
+	 * 9
 	 */
 	@Test
 	public void test02() {
 		IntConstant zz = new IntConstant(0);
 		IntConstant oo = new IntConstant(1);
 		IntVariable vv = new IntVariable("aa", 0, 99);
-		
+
 		Operation at = new Operation(Operation.Operator.MUL, oo, vv);
 		Operation ao = new Operation(Operation.Operator.GT, at, zz);
-		
+
 		Operation bt1 = new Operation(Operation.Operator.MUL, oo, vv);
 		Operation bt2 = new Operation(Operation.Operator.ADD, bt1, new IntConstant(-10));
 		Operation bo = new Operation(Operation.Operator.LT, bt2, zz);
-		
+
 		Operation o = new Operation(Operation.Operator.AND, ao, bo);
 		check(o, new Apint(9));
 	}
-	
+
 	/**
 	 * Problem:
-	 *   3 * aa + -6 > 0
-	 *   1 * aa + -10 < 0
+	 * 3 * aa + -6 > 0
+	 * 1 * aa + -10 < 0
 	 * Count:
-	 *   7
+	 * 7
 	 */
 	@Test
 	public void test03() {
@@ -114,28 +112,28 @@ public class CountLattETest {
 		IntConstant oo = new IntConstant(1);
 		IntConstant tt = new IntConstant(3);
 		IntVariable vv = new IntVariable("aa", 0, 99);
-		
+
 		Operation at1 = new Operation(Operation.Operator.MUL, tt, vv);
 		Operation at2 = new Operation(Operation.Operator.ADD, at1, new IntConstant(-6));
 		Operation ao = new Operation(Operation.Operator.GT, at2, zz);
-		
+
 		Operation bt1 = new Operation(Operation.Operator.MUL, oo, vv);
 		Operation bt2 = new Operation(Operation.Operator.ADD, bt1, new IntConstant(-10));
 		Operation bo = new Operation(Operation.Operator.LT, bt2, zz);
-		
+
 		Operation o = new Operation(Operation.Operator.AND, ao, bo);
 		check(o, new Apint(7));
 	}
 
 	/**
 	 * Problem:
-	 *   1 * aa + -1 * bb < 0
-	 *   1 * aa + 1 > 0
-	 *   1 * aa + -10 < 0
-	 *   1 * bb + 1 > 0
-	 *   1 * bb + -10 < 0
+	 * 1 * aa + -1 * bb < 0
+	 * 1 * aa + 1 > 0
+	 * 1 * aa + -10 < 0
+	 * 1 * bb + 1 > 0
+	 * 1 * bb + -10 < 0
 	 * Count:
-	 *   45
+	 * 45
 	 */
 	@Test
 	public void test04() {
@@ -164,5 +162,5 @@ public class CountLattETest {
 
 		check(o, new Apint(45));
 	}
-	
+
 }

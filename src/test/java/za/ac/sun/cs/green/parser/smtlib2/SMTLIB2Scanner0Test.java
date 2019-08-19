@@ -1,8 +1,9 @@
 package za.ac.sun.cs.green.parser.smtlib2;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SMTLIB2Scanner0Test {
 

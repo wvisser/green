@@ -1,29 +1,12 @@
 package za.ac.sun.cs.green.service.canonizer;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.Stack;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
-import za.ac.sun.cs.green.expr.Expression;
+import za.ac.sun.cs.green.Instance;
+import za.ac.sun.cs.green.expr.*;
 import za.ac.sun.cs.green.service.BasicService;
 import za.ac.sun.cs.green.util.Reporter;
-import za.ac.sun.cs.green.expr.Constant;
-import za.ac.sun.cs.green.expr.IntConstant;
-import za.ac.sun.cs.green.expr.IntVariable;
-import za.ac.sun.cs.green.expr.IntegerConstant;
-import za.ac.sun.cs.green.expr.IntegerVariable;
-import za.ac.sun.cs.green.expr.Operation;
-import za.ac.sun.cs.green.expr.Variable;
-import za.ac.sun.cs.green.expr.Visitor;
-import za.ac.sun.cs.green.expr.VisitorException;
+
+import java.util.*;
 
 public class SATCanonizerService extends BasicService {
 
@@ -31,7 +14,7 @@ public class SATCanonizerService extends BasicService {
 	 * Number of times the slicer has been invoked.
 	 */
 	private int invocations = 0;
-    private long timeConsumption = 0;
+	private long timeConsumption = 0;
 
 	public SATCanonizerService(Green solver) {
 		super(solver);
@@ -39,8 +22,8 @@ public class SATCanonizerService extends BasicService {
 
 	@Override
 	public Set<Instance> processRequest(Instance instance) {
-        long startTime = System.currentTimeMillis();
-        @SuppressWarnings("unchecked")
+		long startTime = System.currentTimeMillis();
+		@SuppressWarnings("unchecked")
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Map<Variable, Variable> map = new HashMap<Variable, Variable>();
@@ -49,19 +32,20 @@ public class SATCanonizerService extends BasicService {
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
 		}
-        timeConsumption += (System.currentTimeMillis() - startTime);
+		timeConsumption += (System.currentTimeMillis() - startTime);
 		return result;
 	}
 
 	@Override
 	public void report(Reporter reporter) {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocations);
-        reporter.report(getClass().getSimpleName(), "timeConsumption = " + timeConsumption);
-    }
+		reporter.report(getClass().getSimpleName(), "timeConsumption = " + timeConsumption);
+	}
 
-	public Expression canonize(Expression expression, Map<Variable, Variable> map) {
+	public Expression canonize(Expression expression,
+							   Map<Variable, Variable> map) {
 		try {
-			//log.debug("Before Canonization: {}", expression);
+//			log.debug("Before Canonization: {}", expression);
 			invocations++;
 			OrderingVisitor orderingVisitor = new OrderingVisitor();
 			expression.accept(orderingVisitor);
@@ -70,9 +54,10 @@ public class SATCanonizerService extends BasicService {
 			expression.accept(canonizationVisitor);
 			Expression canonized = canonizationVisitor.getExpression();
 			if (canonized != null) {
-				canonized = new Renamer(map, canonizationVisitor.getVariableSet()).rename(canonized);
+				canonized = new Renamer(map,
+						canonizationVisitor.getVariableSet()).rename(canonized);
 			}
-			//log.debug("After Canonization: {}", canonized);
+//			log.debug("After Canonization: {}", canonized);
 			return canonized;
 		} catch (VisitorException x) {
 			log.fatal("encountered an exception -- this should not be happening!", x);
@@ -107,34 +92,37 @@ public class SATCanonizerService extends BasicService {
 			Operation.Operator op = operation.getOperator();
 			Operation.Operator nop = null;
 			switch (op) {
-			case EQ:
-				nop = Operation.Operator.EQ;
-				break;
-			case NE:
-				nop = Operation.Operator.NE;
-				break;
-			case LT:
-				nop = Operation.Operator.GT;
-				break;
-			case LE:
-				nop = Operation.Operator.GE;
-				break;
-			case GT:
-				nop = Operation.Operator.LT;
-				break;
-			case GE:
-				nop = Operation.Operator.LE;
-				break;
-			default:
-				break;
+				case EQ:
+					nop = Operation.Operator.EQ;
+					break;
+				case NE:
+					nop = Operation.Operator.NE;
+					break;
+				case LT:
+					nop = Operation.Operator.GT;
+					break;
+				case LE:
+					nop = Operation.Operator.GE;
+					break;
+				case GT:
+					nop = Operation.Operator.LT;
+					break;
+				case GE:
+					nop = Operation.Operator.LE;
+					break;
+				default:
+					break;
 			}
 			if (nop != null) {
 				Expression r = stack.pop();
 				Expression l = stack.pop();
-				if ((r instanceof IntVariable) && (l instanceof IntVariable)
-						&& (((IntVariable) r).getName().compareTo(((IntVariable) l).getName()) < 0)) {
+				if ((r instanceof IntVariable)
+						&& (l instanceof IntVariable)
+						&& (((IntVariable) r).getName().compareTo(
+						((IntVariable) l).getName()) < 0)) {
 					stack.push(new Operation(nop, r, l));
-				} else if ((r instanceof IntVariable) && (l instanceof IntConstant)) {
+				} else if ((r instanceof IntVariable)
+						&& (l instanceof IntConstant)) {
 					stack.push(new Operation(nop, r, l));
 				} else {
 					stack.push(operation);
@@ -202,7 +190,7 @@ public class SATCanonizerService extends BasicService {
 					}
 				}
 				SortedSet<Expression> newConjuncts = processBounds();
-				//				new TreeSet<Expression>();
+//				new TreeSet<Expression>();
 				Expression c = null;
 				for (Expression e : newConjuncts) {
 					if (e.equals(Operation.FALSE)) {
@@ -210,16 +198,20 @@ public class SATCanonizerService extends BasicService {
 					} else if (e instanceof Operation) {
 						Operation o = (Operation) e;
 						if (o.getOperator() == Operation.Operator.GT) {
-							e = new Operation(Operation.Operator.LT, scale(-1, o.getOperand(0)), o.getOperand(1));
+							e = new Operation(Operation.Operator.LT, scale(-1,
+									o.getOperand(0)), o.getOperand(1));
 						} else if (o.getOperator() == Operation.Operator.GE) {
-							e = new Operation(Operation.Operator.LE, scale(-1, o.getOperand(0)), o.getOperand(1));
+							e = new Operation(Operation.Operator.LE, scale(-1,
+									o.getOperand(0)), o.getOperand(1));
 						}
 						o = (Operation) e;
 						if (o.getOperator() == Operation.Operator.GT) {
-							e = new Operation(Operation.Operator.GE, merge(o.getOperand(0), new IntConstant(-1)),
+							e = new Operation(Operation.Operator.GE, merge(
+									o.getOperand(0), new IntConstant(-1)),
 									o.getOperand(1));
 						} else if (o.getOperator() == Operation.Operator.LT) {
-							e = new Operation(Operation.Operator.LE, merge(o.getOperand(0), new IntConstant(1)),
+							e = new Operation(Operation.Operator.LE, merge(
+									o.getOperand(0), new IntConstant(1)),
 									o.getOperand(1));
 						}
 					}
@@ -245,40 +237,40 @@ public class SATCanonizerService extends BasicService {
 				Operation.Operator op = o.getOperator();
 				if (isBound(lhs)) {
 					switch (op) {
-					case EQ:
-						lowerBounds.put(boundVariable, bound * boundCoeff);
-						upperBounds.put(boundVariable, bound * boundCoeff);
-						break;
-					case LT:
-						if (boundCoeff == 1) {
-							upperBounds.put(boundVariable, bound * -1 - 1);
-						} else {
-							lowerBounds.put(boundVariable, bound + 1);
-						}
-						break;
-					case LE:
-						if (boundCoeff == 1) {
-							upperBounds.put(boundVariable, bound * -1);
-						} else {
-							lowerBounds.put(boundVariable, bound);
-						}
-						break;
-					case GT:
-						if (boundCoeff == 1) {
-							lowerBounds.put(boundVariable, bound * -1 + 1);
-						} else {
-							upperBounds.put(boundVariable, bound - 1);
-						}
-						break;
-					case GE:
-						if (boundCoeff == 1) {
-							lowerBounds.put(boundVariable, bound * -1);
-						} else {
-							upperBounds.put(boundVariable, bound);
-						}
-						break;
-					default:
-						break;
+						case EQ:
+							lowerBounds.put(boundVariable, bound * boundCoeff);
+							upperBounds.put(boundVariable, bound * boundCoeff);
+							break;
+						case LT:
+							if (boundCoeff == 1) {
+								upperBounds.put(boundVariable, bound * -1 - 1);
+							} else {
+								lowerBounds.put(boundVariable, bound + 1);
+							}
+							break;
+						case LE:
+							if (boundCoeff == 1) {
+								upperBounds.put(boundVariable, bound * -1);
+							} else {
+								lowerBounds.put(boundVariable, bound);
+							}
+							break;
+						case GT:
+							if (boundCoeff == 1) {
+								lowerBounds.put(boundVariable, bound * -1 + 1);
+							} else {
+								upperBounds.put(boundVariable, bound - 1);
+							}
+							break;
+						case GE:
+							if (boundCoeff == 1) {
+								lowerBounds.put(boundVariable, bound * -1);
+							} else {
+								upperBounds.put(boundVariable, bound);
+							}
+							break;
+						default:
+							break;
 					}
 				}
 			}
@@ -350,7 +342,8 @@ public class SATCanonizerService extends BasicService {
 			if (linearInteger && !unsatisfiable) {
 				if (variable instanceof IntVariable) {
 					variableSet.add((IntVariable) variable);
-					stack.push(new Operation(Operation.Operator.MUL, Operation.ONE, variable));
+					stack.push(new Operation(Operation.Operator.MUL, Operation.ONE,
+							variable));
 				} else {
 					stack.clear();
 					linearInteger = false;
@@ -365,136 +358,134 @@ public class SATCanonizerService extends BasicService {
 			}
 			Operation.Operator op = operation.getOperator();
 			switch (op) {
-			case AND:
-				if (!stack.isEmpty()) {
-					Expression x = stack.pop();
-					if (!x.equals(Operation.TRUE)) {
-						conjuncts.add(x);
-					}
-				}
-				if (!stack.isEmpty()) {
-					Expression x = stack.pop();
-					if (!x.equals(Operation.TRUE)) {
-						conjuncts.add(x);
-					}
-				}
-				break;
-			case EQ:
-			case NE:
-			case LT:
-			case LE:
-			case GT:
-			case GE:
-				if (!stack.isEmpty()) {
-					Expression e = merge(scale(-1, stack.pop()), stack.pop());
-					if (e instanceof IntConstant) {
-						int v = ((IntConstant) e).getValue();
-						boolean b = true;
-						if (op == Operation.Operator.EQ) {
-							b = v == 0;
-						} else if (op == Operation.Operator.NE) {
-							b = v != 0;
-						} else if (op == Operation.Operator.LT) {
-							b = v < 0;
-						} else if (op == Operation.Operator.LE) {
-							b = v <= 0;
-						} else if (op == Operation.Operator.GT) {
-							b = v > 0;
-						} else if (op == Operation.Operator.GE) {
-							b = v >= 0;
+				case AND:
+					if (!stack.isEmpty()) {
+						Expression x = stack.pop();
+						if (!x.equals(Operation.TRUE)) {
+							conjuncts.add(x);
 						}
-						if (b) {
-							stack.push(Operation.TRUE);
+					}
+					if (!stack.isEmpty()) {
+						Expression x = stack.pop();
+						if (!x.equals(Operation.TRUE)) {
+							conjuncts.add(x);
+						}
+					}
+					break;
+				case EQ:
+				case NE:
+				case LT:
+				case LE:
+				case GT:
+				case GE:
+					if (!stack.isEmpty()) {
+						Expression e = merge(scale(-1, stack.pop()), stack.pop());
+						if (e instanceof IntConstant) {
+							int v = ((IntConstant) e).getValue();
+							boolean b = true;
+							if (op == Operation.Operator.EQ) {
+								b = v == 0;
+							} else if (op == Operation.Operator.NE) {
+								b = v != 0;
+							} else if (op == Operation.Operator.LT) {
+								b = v < 0;
+							} else if (op == Operation.Operator.LE) {
+								b = v <= 0;
+							} else if (op == Operation.Operator.GT) {
+								b = v > 0;
+							} else if (op == Operation.Operator.GE) {
+								b = v >= 0;
+							}
+							if (b) {
+								stack.push(Operation.TRUE);
+							} else {
+								stack.push(Operation.FALSE);
+								// unsatisfiable = true;
+							}
 						} else {
-							stack.push(Operation.FALSE);
-							// unsatisfiable = true;
+							stack.push(new Operation(op, e, Operation.ZERO));
 						}
-					} else {
-						stack.push(new Operation(op, e, Operation.ZERO));
 					}
-				}
-				break;
-			case ADD:
-				stack.push(merge(stack.pop(), stack.pop()));
-				break;
-			case SUB:
-				stack.push(merge(scale(-1, stack.pop()), stack.pop()));
-				break;
-			case MUL:
-				if (stack.size() >= 2) {
-					Expression r = stack.pop();
-					Expression l = stack.pop();
-					if ((l instanceof IntConstant) && (r instanceof IntConstant)) {
-						int li = ((IntConstant) l).getValue();
-						int ri = ((IntConstant) r).getValue();
-						stack.push(new IntConstant(li * ri));
-					} else if (l instanceof IntConstant) {
-						int li = ((IntConstant) l).getValue();
-						stack.push(scale(li, r));
-					} else if (r instanceof IntConstant) {
-						int ri = ((IntConstant) r).getValue();
-						stack.push(scale(ri, l));
-					} else {
-						stack.clear();
-						linearInteger = false;
-					}
-				}
-				break;
-			case NOT:
-				if (!stack.isEmpty()) {
-					Expression e = stack.pop();
-					if (e.equals(Operation.TRUE)) {
-						e = Operation.FALSE;
-					} else if (e.equals(Operation.FALSE)) {
-						e = Operation.TRUE;
-					} else if (e instanceof Operation) {
-						Operation o = (Operation) e;
-						switch (o.getOperator()) {
-						case NOT:
-							e = o.getOperand(0);
-							break;
-						case EQ:
-							e = new Operation(Operation.Operator.NE, o.getOperand(0), o.getOperand(1));
-							break;
-						case NE:
-							e = new Operation(Operation.Operator.EQ, o.getOperand(0), o.getOperand(1));
-							break;
-						case GE:
-							e = new Operation(Operation.Operator.LT, o.getOperand(0), o.getOperand(1));
-							break;
-						case GT:
-							e = new Operation(Operation.Operator.LE, o.getOperand(0), o.getOperand(1));
-							break;
-						case LE:
-							e = new Operation(Operation.Operator.GT, o.getOperand(0), o.getOperand(1));
-							break;
-						case LT:
-							e = new Operation(Operation.Operator.GE, o.getOperand(0), o.getOperand(1));
-							break;
-						default:
-							break;
+					break;
+				case ADD:
+					stack.push(merge(stack.pop(), stack.pop()));
+					break;
+				case SUB:
+					stack.push(merge(scale(-1, stack.pop()), stack.pop()));
+					break;
+				case MUL:
+					if (stack.size() >= 2) {
+						Expression r = stack.pop();
+						Expression l = stack.pop();
+						if ((l instanceof IntConstant) && (r instanceof IntConstant)) {
+							int li = ((IntConstant) l).getValue();
+							int ri = ((IntConstant) r).getValue();
+							stack.push(new IntConstant(li * ri));
+						} else if (l instanceof IntConstant) {
+							int li = ((IntConstant) l).getValue();
+							stack.push(scale(li, r));
+						} else if (r instanceof IntConstant) {
+							int ri = ((IntConstant) r).getValue();
+							stack.push(scale(ri, l));
+						} else {
+							stack.clear();
+							linearInteger = false;
 						}
+					}
+					break;
+				case NOT:
+					if (!stack.isEmpty()) {
+						Expression e = stack.pop();
+						if (e.equals(Operation.TRUE)) {
+							e = Operation.FALSE;
+						} else if (e.equals(Operation.FALSE)) {
+							e = Operation.TRUE;
+						} else if (e instanceof Operation) {
+							Operation o = (Operation) e;
+							switch (o.getOperator()) {
+								case NOT:
+									e = o.getOperand(0);
+									break;
+								case EQ:
+									e = new Operation(Operation.Operator.NE, o.getOperand(0), o.getOperand(1));
+									break;
+								case NE:
+									e = new Operation(Operation.Operator.EQ, o.getOperand(0), o.getOperand(1));
+									break;
+								case GE:
+									e = new Operation(Operation.Operator.LT, o.getOperand(0), o.getOperand(1));
+									break;
+								case GT:
+									e = new Operation(Operation.Operator.LE, o.getOperand(0), o.getOperand(1));
+									break;
+								case LE:
+									e = new Operation(Operation.Operator.GT, o.getOperand(0), o.getOperand(1));
+									break;
+								case LT:
+									e = new Operation(Operation.Operator.GE, o.getOperand(0), o.getOperand(1));
+									break;
+								default:
+									break;
+							}
+						} else {
+							// We just drop the NOT??
+						}
+						stack.push(e);
 					} else {
 						// We just drop the NOT??
 					}
-					stack.push(e);
-				} else {
-					// We just drop the NOT??
-				}
-				break;
-			default:
-				break;
+					break;
+				default:
+					break;
 			}
 		}
 
 		private Expression merge(Expression left, Expression right) {
 			Operation l = null;
 			Operation r = null;
-			long s = 0;
+			int s = 0;
 			if (left instanceof IntConstant) {
 				s = ((IntConstant) left).getValue();
-			} else if (left instanceof IntegerConstant) {
-				s = ((IntegerConstant) left).getValue();
 			} else {
 				if (hasRightConstant(left)) {
 					s = getRightConstant(left);
@@ -505,8 +496,6 @@ public class SATCanonizerService extends BasicService {
 			}
 			if (right instanceof IntConstant) {
 				s += ((IntConstant) right).getValue();
-			} else if (right instanceof IntegerConstant) {
-				s += ((IntegerConstant) right).getValue();
 			} else {
 				if (hasRightConstant(right)) {
 					s += getRightConstant(right);
@@ -515,24 +504,24 @@ public class SATCanonizerService extends BasicService {
 					r = (Operation) right;
 				}
 			}
-			SortedMap<Variable, Long> coefficients = new TreeMap<Variable, Long>();
-			IntegerConstant c;
+			SortedMap<Variable, Integer> coefficients = new TreeMap<Variable, Integer>();
+			IntConstant c;
 			Variable v;
-			Long k;
+			Integer k;
 
 			// Collect the coefficients of l
 			if (l != null) {
 				while (l.getOperator() == Operation.Operator.ADD) {
 					Operation o = (Operation) l.getOperand(1);
 					assert (o.getOperator() == Operation.Operator.MUL);
-					c = (IntegerConstant) o.getOperand(0);
-					v = (Variable) o.getOperand(1);
+					c = (IntConstant) o.getOperand(0);
+					v = (IntVariable) o.getOperand(1);
 					coefficients.put(v, c.getValue());
 					l = (Operation) l.getOperand(0);
 				}
 				assert (l.getOperator() == Operation.Operator.MUL);
-				c = (IntegerConstant) l.getOperand(0);
-				v = (Variable) l.getOperand(1);
+				c = (IntConstant) l.getOperand(0);
+				v = (IntVariable) l.getOperand(1);
 				coefficients.put(v, c.getValue());
 			}
 
@@ -541,7 +530,7 @@ public class SATCanonizerService extends BasicService {
 				while (r.getOperator() == Operation.Operator.ADD) {
 					Operation o = (Operation) r.getOperand(1);
 					assert (o.getOperator() == Operation.Operator.MUL);
-					c = (IntegerConstant) o.getOperand(0);
+					c = (IntConstant) o.getOperand(0);
 					v = (IntVariable) o.getOperand(1);
 					k = coefficients.get(v);
 					if (k == null) {
@@ -552,7 +541,7 @@ public class SATCanonizerService extends BasicService {
 					r = (Operation) r.getOperand(0);
 				}
 				assert (r.getOperator() == Operation.Operator.MUL);
-				c = (IntegerConstant) r.getOperand(0);
+				c = (IntConstant) r.getOperand(0);
 				v = (IntVariable) r.getOperand(1);
 				k = coefficients.get(v);
 				if (k == null) {
@@ -563,10 +552,11 @@ public class SATCanonizerService extends BasicService {
 			}
 
 			Expression lr = null;
-			for (Map.Entry<Variable, Long> e : coefficients.entrySet()) {
-				long coef = e.getValue();
+			for (Map.Entry<Variable, Integer> e : coefficients.entrySet()) {
+				int coef = e.getValue();
 				if (coef != 0) {
-					Operation term = new Operation(Operation.Operator.MUL, new IntegerConstant(coef, ((IntegerVariable) e.getKey()).getSize()), e.getKey());
+					Operation term = new Operation(Operation.Operator.MUL,
+							new IntConstant(coef), e.getKey());
 					if (lr == null) {
 						lr = term;
 					} else {
@@ -575,28 +565,22 @@ public class SATCanonizerService extends BasicService {
 				}
 			}
 			if ((lr == null) || (lr instanceof IntConstant)) {
-                return new IntConstant((int) s);
-            } else if (lr instanceof IntegerConstant) {
-			    return new IntegerConstant(s, ((IntegerConstant) lr).getSize());
+				return new IntConstant(s);
 			} else if (s == 0) {
 				return lr;
 			} else {
-				return new Operation(Operation.Operator.ADD, lr, new IntegerConstant(s, ((IntegerConstant) lr).getSize()));
+				return new Operation(Operation.Operator.ADD, lr,
+						new IntConstant(s));
 			}
 		}
 
 		private boolean hasRightConstant(Expression expression) {
-			return isAddition(expression) && ((getRightExpression(expression) instanceof IntConstant)
-					|| (getRightExpression(expression) instanceof IntegerConstant));
+			return isAddition(expression)
+					&& (getRightExpression(expression) instanceof IntConstant);
 		}
 
-		private long getRightConstant(Expression expression) {
-			Expression e = getRightExpression(expression);
-			if (e instanceof IntConstant) {
-				return ((IntConstant) e).getValue();
-			} else {
-				return ((IntegerConstant) e).getValue();
-			}
+		private int getRightConstant(Expression expression) {
+			return ((IntConstant) getRightExpression(expression)).getValue();
 		}
 
 		private Expression getLeftExpression(Expression expression) {
@@ -620,12 +604,9 @@ public class SATCanonizerService extends BasicService {
 				return Operation.ZERO;
 			}
 			if (expression instanceof IntConstant) {
-				return new IntConstant(factor * ((IntConstant) expression).getValue());
+				return new IntConstant(factor
+						* ((IntConstant) expression).getValue());
 			} else if (expression instanceof IntVariable) {
-				return expression;
-			} else if (expression instanceof IntegerConstant) {
-				return new IntegerConstant(factor * ((IntegerConstant) expression).getValue(), ((IntegerConstant) expression).getSize());
-			} else if (expression instanceof IntegerVariable) {
 				return expression;
 			} else {
 				assert (expression instanceof Operation);
@@ -645,7 +626,8 @@ public class SATCanonizerService extends BasicService {
 
 		private Stack<Expression> stack;
 
-		public Renamer(Map<Variable, Variable> map, SortedSet<IntVariable> variableSet) {
+		public Renamer(Map<Variable, Variable> map,
+					   SortedSet<IntVariable> variableSet) {
 			this.map = map;
 			stack = new Stack<Expression>();
 		}
@@ -659,7 +641,8 @@ public class SATCanonizerService extends BasicService {
 		public void postVisit(IntVariable variable) {
 			Variable v = map.get(variable);
 			if (v == null) {
-				v = new IntVariable("v" + map.size(), variable.getLowerBound(), variable.getUpperBound());
+				v = new IntVariable("v" + map.size(), variable.getLowerBound(),
+						variable.getUpperBound());
 				map.put(variable, v);
 			}
 			stack.push(v);
@@ -673,7 +656,7 @@ public class SATCanonizerService extends BasicService {
 		@Override
 		public void postVisit(Operation operation) {
 			int arity = operation.getOperator().getArity();
-			Expression operands[] = new Expression[arity];
+			Expression[] operands = new Expression[arity];
 			for (int i = arity; i > 0; i--) {
 				operands[i - 1] = stack.pop();
 			}

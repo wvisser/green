@@ -4,23 +4,21 @@ public class RealVariable extends Variable {
 
 	private static final long serialVersionUID = -8815803703741978839L;
 
-    protected final Double lowerBound;
-    protected final Double upperBound;
-    protected final Integer size;
+	private final Double lowerBound;
 
-	public RealVariable(String name, Object original, Double lowerBound, Double upperBound, Integer size) {
+	private final Double upperBound;
+
+	public RealVariable(String name, Object original, Double lowerBound, Double upperBound) {
 		super(name, original);
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
-		this.size = size;
 	}
-	
-	public RealVariable(String name, Double lowerBound, Double upperBound, Integer size) {
+
+	public RealVariable(String name, Double lowerBound, Double upperBound) {
 		super(name);
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
-        this.size = size;
-    }
+	}
 
 	public Double getLowerBound() {
 		return lowerBound;
@@ -29,10 +27,6 @@ public class RealVariable extends Variable {
 	public Double getUpperBound() {
 		return upperBound;
 	}
-
-	public Integer getSize() {
-	    return size;
-    }
 
 	@Override
 	public void accept(Visitor visitor) throws VisitorException {

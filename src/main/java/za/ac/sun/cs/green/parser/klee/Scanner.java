@@ -1,11 +1,12 @@
 package za.ac.sun.cs.green.parser.klee;
 
 
+import za.ac.sun.cs.green.util.NullLogger;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.logging.Logger;
-import za.ac.sun.cs.green.util.NullLogger;
 
 public class Scanner {
 
@@ -57,7 +58,7 @@ public class Scanner {
 	public Scanner(Reader reader) throws ParseException {
 		this(reader, new NullLogger());
 	}
-	
+
 	public Scanner(String query, Logger log) throws ParseException {
 		this.log = log;
 		reader = new StringReader(query);
@@ -71,10 +72,10 @@ public class Scanner {
 	public Scanner(String query) throws ParseException {
 		this(query, new NullLogger());
 	}
-	
+
 	/**
 	 * Returns the next token in the token stream.
-	 * 
+	 *
 	 * @return the next token
 	 */
 	public Token next() {
@@ -83,7 +84,7 @@ public class Scanner {
 
 	/**
 	 * Returns the value of the (last or current) identifier.
-	 * 
+	 *
 	 * @return the identifier
 	 */
 	public String nextId() {
@@ -92,7 +93,7 @@ public class Scanner {
 
 	/**
 	 * Returns the value of the (last or current) integer literal.
-	 * 
+	 *
 	 * @return the integer literal value
 	 */
 	public int nextInt() {

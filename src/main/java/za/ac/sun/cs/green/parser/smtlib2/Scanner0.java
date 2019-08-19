@@ -1,11 +1,11 @@
 package za.ac.sun.cs.green.parser.smtlib2;
 
+import za.ac.sun.cs.green.util.NullLogger;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.logging.Logger;
-
-import za.ac.sun.cs.green.util.NullLogger;
 
 public class Scanner0 {
 
@@ -28,17 +28,17 @@ public class Scanner0 {
 	 * If the next token is a real literal, this field contains its value.
 	 */
 	private double realValue = -1;
-	
+
 	/**
 	 * If the next token is a string literal or a keyword, this field contains its value.
 	 */
 	private String stringValue = null;
-	
+
 	/**
 	 * If the next token is a predefined keyword, this fields contains its value.
 	 */
 	private Keyword0 keyword = Keyword0.UNPREDEFINED;
-	
+
 	/**
 	 * The reader where characters are read from.
 	 */
@@ -60,7 +60,7 @@ public class Scanner0 {
 	public Scanner0(Reader reader) throws ParseException {
 		this(reader, new NullLogger());
 	}
-	
+
 	public Scanner0(String query, Logger log) throws ParseException {
 		this.log = log;
 		reader = new StringReader(query);
@@ -68,14 +68,14 @@ public class Scanner0 {
 		nextCh = ' ';
 		scanNextToken();
 	}
-	
+
 	public Scanner0(String query) throws ParseException {
 		this(query, new NullLogger());
 	}
 
 	/**
 	 * Returns the next token in the token stream.
-	 * 
+	 *
 	 * @return the next token
 	 */
 	public Token0 next() {
@@ -100,29 +100,29 @@ public class Scanner0 {
 		expect(Token0.HEXADECIMAL);
 		return value;
 	}
-	
+
 	public int expectBinary() throws ParseException {
 		int value = intValue;
 		expect(Token0.BINARY);
 		return value;
 	}
-	
+
 	public double expectDecimal() throws ParseException {
 		double value = realValue;
 		expect(Token0.DECIMAL);
 		return value;
 	}
-	
+
 	public Keyword0 expectKeyword() throws ParseException {
 		Keyword0 value = keyword;
 		expect(Token0.KEYWORD);
 		return value;
 	}
-	
+
 	public Keyword0 nextKeyword() throws ParseException {
 		return keyword;
 	}
-	
+
 	public boolean eat(Token0 token) throws ParseException {
 		if (next() != token) {
 			return false;
@@ -276,7 +276,7 @@ public class Scanner0 {
 					s.append((char) nextCh);
 					readNextCh();
 				}
-				token = Token0.SYMBOL; 
+				token = Token0.SYMBOL;
 				readNextCh();
 			} else if (isIdentifierChar(nextCh)) {
 				StringBuilder s = new StringBuilder();
@@ -349,8 +349,8 @@ public class Scanner0 {
 
 	private boolean isIdentifierChar(int ch) {
 		return Character.isLetterOrDigit(ch) || (ch == '+') || (ch == '-') || (ch == '/') || (ch == '*') || (ch == '=') || (ch == '%')
-				 || (ch == '?') || (ch == '!') || (ch == '.') || (ch == '$') || (ch == '_') || (ch == '~') || (ch == '&') || (ch == '^')
-				  || (ch == '<') || (ch == '>') || (ch == '@');
+				|| (ch == '?') || (ch == '!') || (ch == '.') || (ch == '$') || (ch == '_') || (ch == '~') || (ch == '&') || (ch == '^')
+				|| (ch == '<') || (ch == '>') || (ch == '@');
 	}
 
 	private void readNextCh() throws ParseException {

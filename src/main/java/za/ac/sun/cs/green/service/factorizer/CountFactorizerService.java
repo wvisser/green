@@ -1,11 +1,6 @@
 package za.ac.sun.cs.green.service.factorizer;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apfloat.Apint;
-
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Service;
@@ -13,13 +8,17 @@ import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.service.BasicService;
 import za.ac.sun.cs.green.util.Reporter;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 public class CountFactorizerService extends BasicService {
 
 	private static final String FACTORS = "FACTORS";
 	private static final String COUNT = "COUNT";
 
 	private static final String FACTORS_UNSOLVED = "FACTORS_UNSOLVED";
-	
+
 	/**
 	 * Number of times the slicer has been invoked.
 	 */
@@ -47,7 +46,7 @@ public class CountFactorizerService extends BasicService {
 		if (result == null) {
 			final Instance p = instance.getParent();
 
-            FactorExpressionOld fc0 = null;
+			FactorExpressionOld fc0 = null;
 			if (p != null) {
 				fc0 = (FactorExpressionOld) p.getData(FactorExpressionOld.class);
 				if (fc0 == null) {
@@ -89,20 +88,20 @@ public class CountFactorizerService extends BasicService {
 		@SuppressWarnings("unchecked")
 		HashSet<Instance> unsolved = (HashSet<Instance>) instance.getData(FACTORS_UNSOLVED);
 		if (unsolved.contains(subinstance)) {
-			Apint total = (Apint)instance.getData(COUNT);
+			Apint total = (Apint) instance.getData(COUNT);
 			total = total.multiply(count);
 			instance.setData(COUNT, total);
 			// Remove the subinstance now that it is solved 
 			unsolved.remove(subinstance);
 			instance.setData(FACTORS_UNSOLVED, unsolved);
 			// Return true if no more unsolved factors; else return null to carry on the computation
-			return (unsolved.isEmpty()) ? total : null; 
+			return (unsolved.isEmpty()) ? total : null;
 		} else {
 			// We have already solved this subinstance; return null to carry on the computation
 			return null;
 		}
 	}
-	
+
 
 	@Override
 	public Object allChildrenDone(Instance instance, Object result) {
@@ -114,7 +113,7 @@ public class CountFactorizerService extends BasicService {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void report(Reporter reporter) {
 		reporter.report(getClass().getSimpleName(), "invocations = " + invocationCount);

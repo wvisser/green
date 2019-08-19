@@ -37,7 +37,7 @@ public enum Token0 {
 	SET_LOGIC("\"set-logic\""),
 	SET_OPTION("\"set-option\""),
 	TRUE("\"true\""),
-	
+
 	LPAREN("\"(\""),
 	NOT("\"!\""),
 	RPAREN("\")\""),
@@ -50,10 +50,10 @@ public enum Token0 {
 
 	/**
 	 * Constructs a token.
-	 * 
+	 *
 	 * @param string the description string
 	 */
-	private Token0(String string) {
+	Token0(String string) {
 		this.string = string;
 	}
 

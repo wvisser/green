@@ -1,14 +1,13 @@
 package za.ac.sun.cs.green.taskmanager;
 
-import java.util.Collections;
-import java.util.Set;
-
 import org.apache.logging.log4j.Logger;
-
+import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Service;
-import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.util.Reporter;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class SerialTaskManager implements TaskManager {
 
@@ -53,14 +52,14 @@ public class SerialTaskManager implements TaskManager {
 			result = service.allChildrenDone(instance, result);
 		}
 		if (parent != null) {
-			result = parent.childDone(parentInstance, service, instance, result); 
+			result = parent.childDone(parentInstance, service, instance, result);
 		}
 		return result;
 	}
-	
+
 	@Override
 	public Object process(final String serviceName, final Instance instance) {
-		LOGGER.info("processing serviceName=\"" + serviceName + "\"");
+//		LOGGER.info("processing serviceName=\"" + serviceName + "\"");
 		processedCount++;
 		final Set<Service> services = solver.getService(serviceName);
 		return execute(null, null, services, Collections.singleton(instance));

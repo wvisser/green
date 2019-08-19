@@ -1,13 +1,13 @@
 package za.ac.sun.cs.green.service.slicer;
 
-import java.util.Collections;
-import java.util.Set;
-
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.service.BasicService;
 import za.ac.sun.cs.green.util.Reporter;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class SATSlicerService extends BasicService {
 

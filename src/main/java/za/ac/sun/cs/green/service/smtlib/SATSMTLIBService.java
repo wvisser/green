@@ -1,32 +1,20 @@
 package za.ac.sun.cs.green.service.smtlib;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
-import za.ac.sun.cs.green.expr.IntConstant;
-import za.ac.sun.cs.green.expr.IntVariable;
-import za.ac.sun.cs.green.expr.IntegerConstant;
-import za.ac.sun.cs.green.expr.IntegerVariable;
-import za.ac.sun.cs.green.expr.Operation;
+import za.ac.sun.cs.green.Instance;
+import za.ac.sun.cs.green.expr.*;
 import za.ac.sun.cs.green.expr.Operation.Operator;
-import za.ac.sun.cs.green.expr.RealConstant;
-import za.ac.sun.cs.green.expr.RealVariable;
-import za.ac.sun.cs.green.expr.Variable;
-import za.ac.sun.cs.green.expr.Visitor;
-import za.ac.sun.cs.green.expr.VisitorException;
 import za.ac.sun.cs.green.service.SATService;
 import za.ac.sun.cs.green.util.Misc;
+
+import java.util.*;
 
 public abstract class SATSMTLIBService extends SATService {
 
 	public SATSMTLIBService(Green solver) {
 		super(solver);
 	}
+
 	protected long translationTimeConsumption = 0;
 	protected int conjunctCount = 0;
 	protected int varCount = 0;
@@ -34,21 +22,21 @@ public abstract class SATSMTLIBService extends SATService {
 	@Override
 	protected Boolean solve(Instance instance) {
 		try {
-		    long start = System.currentTimeMillis();
+			long start = System.currentTimeMillis();
 			Translator t = new Translator();
 			instance.getExpression().accept(t);
 			StringBuilder b = new StringBuilder();
 			b.append("(set-option :produce-models false)");
-            // TODO : changed to QF_LIA
+			// TODO : changed to QF_LIA
 			b.append("(set-logic QF_LIA)"); // AUFLIA ??? (the previous logic)
 			b.append(Misc.join(t.getVariables(), " "));
 			b.append("(assert ").append(t.getTranslation()).append(')');
 			b.append("(check-sat)");
 			String a = b.toString();
 			translationTimeConsumption += (System.currentTimeMillis() - start);
-            conjunctCount += instance.getExpression().getString().split("&&").length;
-            varCount += t.getVariables().size();
-            return solve0(a);
+			conjunctCount += instance.getExpression().getCachedString().split("&&").length;
+			varCount += t.getVariables().size();
+			return solve0(a);
 		} catch (TranslatorUnsupportedOperation x) {
 			log.warn(x.getMessage(), x);
 		} catch (VisitorException x) {
@@ -70,11 +58,11 @@ public abstract class SATSMTLIBService extends SATService {
 	}
 
 	private static class TranslatorPair {
-		
+
 		private final String string;
-		
+
 		private final Class<? extends Variable> type;
-		
+
 		public TranslatorPair(final String string, final Class<? extends Variable> type) {
 			this.string = string;
 			this.type = type;
@@ -83,13 +71,13 @@ public abstract class SATSMTLIBService extends SATService {
 		public String getString() {
 			return string;
 		}
-		
+
 		public Class<? extends Variable> getType() {
 			return type;
 		}
 
 	}
-	
+
 	private static class Translator extends Visitor {
 
 		private final Stack<TranslatorPair> stack;
@@ -127,13 +115,13 @@ public abstract class SATSMTLIBService extends SATService {
 			return b.toString();
 		}
 
-		private String transformNegative(long v) {
+		private String transformNegative(int v) {
 			if (v < 0) {
 				StringBuilder b = new StringBuilder();
 				b.append("(- ").append(-v).append(')');
 				return b.toString();
 			} else {
-				return Long.toString(v);
+				return Integer.toString(v);
 			}
 		}
 
@@ -151,12 +139,6 @@ public abstract class SATSMTLIBService extends SATService {
 		public void postVisit(IntConstant constant) {
 			int val = constant.getValue();
 			stack.push(new TranslatorPair(transformNegative(val), IntVariable.class));
-		}
-
-		@Override
-		public void postVisit(IntegerConstant constant) {
-			long val = constant.getValue();
-			stack.push(new TranslatorPair(transformNegative(val), IntegerVariable.class));
 		}
 
 		@Override
@@ -185,28 +167,6 @@ public abstract class SATSMTLIBService extends SATService {
 				varMap.put(variable, n);
 			}
 			stack.push(new TranslatorPair(n, IntVariable.class));
-		}
-
-		@Override
-		public void postVisit(IntegerVariable variable) {
-			String v = varMap.get(variable);
-			String n = variable.getName();
-			if (v == null) {
-				StringBuilder b = new StringBuilder();
-				b.append("(declare-fun ").append(n).append(" () Int)");
-				defs.add(b.toString());
-				b.setLength(0);
-				// lower bound
-				b.append("(and (>= ").append(n).append(' ');
-				b.append(transformNegative(variable.getLowerBound()));
-				// upper bound
-				b.append(") (<= ").append(n).append(' ');
-				b.append(transformNegative(variable.getUpperBound()));
-				b.append("))");
-				domains.add(b.toString());
-				varMap.put(variable, n);
-			}
-			stack.push(new TranslatorPair(n, IntegerVariable.class));
 		}
 
 		@Override
@@ -251,57 +211,57 @@ public abstract class SATSMTLIBService extends SATService {
 				return b.toString();
 			}
 		}
-		
+
 		private String setOperator(Operator op)
 				throws TranslatorUnsupportedOperation {
 			switch (op) {
-			case EQ:
-				return "=";
-			case LT:
-				return "<";
-			case LE:
-				return "<=";
-			case GT:
-				return ">";
-			case GE:
-				return ">=";
-			case AND:
-				return "and";
-			case OR:
-				return "or";
-			case IMPLIES:
-				return "=>"; // not sure about this one?
-			case ADD:
-				return "+";
-			case SUB:
-				return "-";
-			case MUL:
-				return "*";
-			case DIV:
-				return "div";
-			case MOD:
-				return "mod";
-			case BIT_AND:
-			case BIT_OR:
-			case BIT_XOR:
-			case SHIFTL:
-			case SHIFTR:
-			case SHIFTUR:
-			case SIN:
-			case COS:
-			case TAN:
-			case ASIN:
-			case ACOS:
-			case ATAN:
-			case ATAN2:
-			case ROUND:
-			case LOG:
-			case EXP:
-			case POWER:
-			case SQRT:
-			default:
-				throw new TranslatorUnsupportedOperation(
-						"unsupported operation " + op);
+				case EQ:
+					return "=";
+				case LT:
+					return "<";
+				case LE:
+					return "<=";
+				case GT:
+					return ">";
+				case GE:
+					return ">=";
+				case AND:
+					return "and";
+				case OR:
+					return "or";
+				case IMPLIES:
+					return "=>"; // not sure about this one?
+				case ADD:
+					return "+";
+				case SUB:
+					return "-";
+				case MUL:
+					return "*";
+				case DIV:
+					return "div";
+				case MOD:
+					return "mod";
+				case BIT_AND:
+				case BIT_OR:
+				case BIT_XOR:
+				case SHIFTL:
+				case SHIFTR:
+				case SHIFTUR:
+				case SIN:
+				case COS:
+				case TAN:
+				case ASIN:
+				case ACOS:
+				case ATAN:
+				case ATAN2:
+				case ROUND:
+				case LOG:
+				case EXP:
+				case POWER:
+				case SQRT:
+				default:
+					throw new TranslatorUnsupportedOperation(
+							"unsupported operation " + op);
 			}
 		}
 

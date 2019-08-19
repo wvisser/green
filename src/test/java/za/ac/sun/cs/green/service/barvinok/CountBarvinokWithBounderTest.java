@@ -1,16 +1,9 @@
 package za.ac.sun.cs.green.service.barvinok;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.*;
-import java.util.Properties;
-
 import org.apfloat.Apint;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
@@ -19,11 +12,17 @@ import za.ac.sun.cs.green.expr.IntVariable;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.util.Configuration;
 
+import java.io.*;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 public class CountBarvinokWithBounderTest {
 
 	public static Green solver = null;
-    private static String DEFAULT_LATTE_PATH;
-    private static final String LATTE_PATH = "lattepath";
+	private static String DEFAULT_LATTE_PATH;
+	private static final String LATTE_PATH = "lattepath";
 
 	@BeforeClass
 	public static void initialize() {
@@ -35,27 +34,27 @@ public class CountBarvinokWithBounderTest {
 		props.setProperty("green.service.count.bounder", "za.ac.sun.cs.green.service.bounder.BounderService");
 		props.setProperty("green.service.count.canonize", "za.ac.sun.cs.green.service.canonizer.SATCanonizerService");
 
-        String lattePath = new File("").getAbsolutePath() + "/lib/latte-integrale-1.7.3/latte-int-1.7.3/code/latte/count";
-        InputStream is = null;
-        try {
-            is = new FileInputStream("build.properties");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+		String lattePath = new File("").getAbsolutePath() + "/lib/latte-integrale-1.7.3/latte-int-1.7.3/code/latte/count";
+		InputStream is = null;
+		try {
+			is = new FileInputStream("build.properties");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 
-        if (is != null) {
-            // If properties are correct, override with that specified path.
-            Properties p = new Properties();
-            try {
-                p.load(is);
-                lattePath = p.getProperty(LATTE_PATH);
-                is.close();
-            } catch (IOException e) {
-                // do nothing
-            }
-        }
+		if (is != null) {
+			// If properties are correct, override with that specified path.
+			Properties p = new Properties();
+			try {
+				p.load(is);
+				lattePath = p.getProperty(LATTE_PATH);
+				is.close();
+			} catch (IOException e) {
+				// do nothing
+			}
+		}
 
-        DEFAULT_LATTE_PATH = lattePath;
+		DEFAULT_LATTE_PATH = lattePath;
 		props.setProperty("green.latte.path", DEFAULT_LATTE_PATH);
 
 		Configuration config = new Configuration(solver, props);
@@ -81,12 +80,12 @@ public class CountBarvinokWithBounderTest {
 	private void check(Expression expression, Apint expected) {
 		check(expression, null, expected);
 	}
-	
+
 	/**
 	 * Problem:
-	 *   aa == 0
+	 * aa == 0
 	 * Count:
-	 *   1
+	 * 1
 	 */
 	@Test
 	public void test01() {
@@ -98,10 +97,10 @@ public class CountBarvinokWithBounderTest {
 
 	/**
 	 * Problem:
-	 *   aa > 0
-	 *   aa < 10
+	 * aa > 0
+	 * aa < 10
 	 * Count:
-	 *   9
+	 * 9
 	 */
 	@Test
 	public void test02() {
@@ -111,45 +110,45 @@ public class CountBarvinokWithBounderTest {
 		Operation o = new Operation(Operation.Operator.AND, ao, bo);
 		check(o, new Apint(9));
 	}
-	
+
 	/**
 	 * Problem:
-	 *   3 * aa > 6
-	 *   aa < 10
+	 * 3 * aa > 6
+	 * aa < 10
 	 * Count:
-	 *   7
+	 * 7
 	 */
 	@Test
 	public void test03() {
 		IntVariable vv = new IntVariable("aa", 0, 99);
 		Operation ww = new Operation(Operation.Operator.MUL, new IntConstant(3), vv);
 		Operation ao = new Operation(Operation.Operator.GT, ww, new IntConstant(6));
-		Operation bo = new Operation(Operation.Operator.LT, vv, new IntConstant(10));		
+		Operation bo = new Operation(Operation.Operator.LT, vv, new IntConstant(10));
 		Operation o = new Operation(Operation.Operator.AND, ao, bo);
 		check(o, new Apint(7));
 	}
 
 	/**
 	 * Problem:
-	 *   3 * aa > 6
+	 * 3 * aa > 6
 	 * Count:
-	 *   7
+	 * 7
 	 */
 	@Test
 	public void test04() {
 		IntVariable vv = new IntVariable("aa", 0, 9);
 		Operation ww = new Operation(Operation.Operator.MUL, new IntConstant(3), vv);
 		Operation ao = new Operation(Operation.Operator.GT, ww, new IntConstant(6));
-		Operation bo = new Operation(Operation.Operator.LT, vv, new IntConstant(10));		
+		Operation bo = new Operation(Operation.Operator.LT, vv, new IntConstant(10));
 		Operation o = new Operation(Operation.Operator.AND, ao, bo);
 		check(o, new Apint(7));
 	}
-	
+
 	/**
 	 * Problem:
-	 *   aa < bb
+	 * aa < bb
 	 * Count:
-	 *   45
+	 * 45
 	 */
 	@Test
 	public void test05() {
@@ -158,14 +157,14 @@ public class CountBarvinokWithBounderTest {
 		Operation o = new Operation(Operation.Operator.LT, aa, bb);
 		check(o, new Apint(45));
 	}
-	
+
 	/**
 	 * Problem:
-	 *   x >= 0
-	 *   y >= 0
-	 *   z >= 0
+	 * x >= 0
+	 * y >= 0
+	 * z >= 0
 	 * Count:
-	 *   1000
+	 * 1000
 	 */
 	@Test
 	public void test06() {
@@ -180,5 +179,5 @@ public class CountBarvinokWithBounderTest {
 		Operation o = new Operation(Operation.Operator.AND, o3, o4);
 		check(o, new Apint(1331));
 	}
-	
+
 }

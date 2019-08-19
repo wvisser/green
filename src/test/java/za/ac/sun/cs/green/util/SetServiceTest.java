@@ -1,10 +1,9 @@
 package za.ac.sun.cs.green.util;
 
-import java.util.Properties;
-
 import org.junit.Test;
-
 import za.ac.sun.cs.green.Green;
+
+import java.util.Properties;
 
 /* TODO incomplete */
 

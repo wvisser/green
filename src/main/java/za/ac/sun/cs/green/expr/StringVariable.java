@@ -11,7 +11,7 @@ public class StringVariable extends Variable {
 	public StringVariable(String name, Object original) {
 		super(name, original);
 	}
-	
+
 	@Override
 	public void accept(Visitor visitor) throws VisitorException {
 		visitor.preVisit(this);

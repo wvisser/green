@@ -1,25 +1,22 @@
 package za.ac.sun.cs.green.util;
 
+import org.apache.logging.log4j.Logger;
+import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Service;
+import za.ac.sun.cs.green.store.Store;
+import za.ac.sun.cs.green.taskmanager.TaskManager;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
-
-import za.ac.sun.cs.green.Service;
-import za.ac.sun.cs.green.Green;
-import za.ac.sun.cs.green.store.Store;
-import za.ac.sun.cs.green.taskmanager.TaskManager;
-
 /**
  * This is a utility class that takes an instance of {@link Properties} and
  * processes all the "{@code green.service}" properties to configure a green
  * solver.
- * 
+ *
  * @author jaco
  */
 public class Configuration {
@@ -39,13 +36,7 @@ public class Configuration {
 	}
 
 	public void configure() {
-		String p = properties.getProperty("green.log.level");
-		if (p != null) {
-			Configurator.setLevel(LOGGER.getName(), Level.getLevel(p));
-			// setLevel(Level.getLevel(p));
-			LOGGER.trace("logging level changed to {}", p);
-		}
-		p = properties.getProperty("green.taskmanager");
+		String p = properties.getProperty("green.taskmanager");
 		if (p != null) {
 			TaskManager tm = (TaskManager) createInstance(p);
 			if (tm != null) {
@@ -70,20 +61,6 @@ public class Configuration {
 			}
 		}
 	}
-
-//	private void setLevel(Level level) {
-//		final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-//		final org.apache.logging.log4j.core.config.Configuration config = ctx.getConfiguration();
-//		LoggerConfig loggerConfig = config.getLoggerConfig(LOGGER.getName());
-//		LoggerConfig specificConfig = loggerConfig;
-//		if (!loggerConfig.getName().equals(LOGGER.getName())) {
-//			specificConfig = new LoggerConfig(LOGGER.getName(), level, true);
-//			specificConfig.setParent(loggerConfig);
-//			config.addLogger(LOGGER.getName(), specificConfig);
-//		}
-//		specificConfig.setLevel(level);
-//		ctx.updateLoggers();
-//	}
 
 	private void configure(String serviceName) throws ParseException {
 		String ss = properties.getProperty("green.service." + serviceName);
@@ -256,7 +233,7 @@ public class Configuration {
 
 		private final String representation;
 
-		private Token(String representation) {
+		Token(String representation) {
 			this.representation = representation;
 		}
 

@@ -1,16 +1,11 @@
 package za.ac.sun.cs.green.parser.klee;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.IntConstant;
 import za.ac.sun.cs.green.expr.Operation;
 import za.ac.sun.cs.green.expr.Operation.Operator;
+
+import java.util.*;
 
 public class Parser {
 
@@ -61,104 +56,104 @@ public class Parser {
 			Token oper = op.getOperator();
 			Expression l = null, r = null;
 			switch (oper) {
-			case ADD:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.ADD, l, r);
-			case AND:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.BIT_AND, l, r);
-			case ASHR:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.SHIFTUR, l, r);
-			case CONCAT:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.BIT_CONCAT, l, r);
-			case EQ:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.EQ, l, r);
-			case EXTRACT:
-				// TODO
-			case LSHR:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.SHIFTR, l, r);
-			case MUL:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.MUL, l, r);
-			case NE:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.NE, l, r);
-			case NEG:
-				l = getExpression(op.getLeft());
-				return new Operation(Operator.NEG, l);
-			case NOT:
-				l = getExpression(op.getLeft());
-				return new Operation(Operator.NOT, l);
-			case OR:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.BIT_OR, l, r);
-			case READ:
-			case READLSB:
-			case READMSB:
-				// TODO
-			case SDIV:
-			case UDIV:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.DIV, l, r);
-			case SELECT:
-			case SEXT:
-				// equate to new symbolic variable
-				// add
-			case SGE:
-			case UGE:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.GE, l, r);
-			case SGT:
-			case UGT:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.GT, l, r);
-			case SLE:
-			case ULE:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.LE, l, r);
-			case SLT:
-			case ULT:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.LT, l, r);
-			case SHL:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.SHIFTL, l, r);
-			case SREM:
-			case UREM:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.MOD, l, r);
-			case SUB:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.SUB, l, r);
-			case XOR:
-				l = getExpression(op.getLeft());
-				r = getExpression(op.getRight());
-				return new Operation(Operator.BIT_XOR, l, r);
-			case ZEXT:
-				// TODO
-			default:
-				return null;
+				case ADD:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.ADD, l, r);
+				case AND:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.BIT_AND, l, r);
+				case ASHR:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.SHIFTUR, l, r);
+				case CONCAT:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.BIT_CONCAT, l, r);
+				case EQ:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.EQ, l, r);
+				case EXTRACT:
+					// TODO
+				case LSHR:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.SHIFTR, l, r);
+				case MUL:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.MUL, l, r);
+				case NE:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.NE, l, r);
+				case NEG:
+					l = getExpression(op.getLeft());
+					return new Operation(Operator.NEG, l);
+				case NOT:
+					l = getExpression(op.getLeft());
+					return new Operation(Operator.NOT, l);
+				case OR:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.BIT_OR, l, r);
+				case READ:
+				case READLSB:
+				case READMSB:
+					// TODO
+				case SDIV:
+				case UDIV:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.DIV, l, r);
+				case SELECT:
+				case SEXT:
+					// equate to new symbolic variable
+					// add
+				case SGE:
+				case UGE:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.GE, l, r);
+				case SGT:
+				case UGT:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.GT, l, r);
+				case SLE:
+				case ULE:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.LE, l, r);
+				case SLT:
+				case ULT:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.LT, l, r);
+				case SHL:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.SHIFTL, l, r);
+				case SREM:
+				case UREM:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.MOD, l, r);
+				case SUB:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.SUB, l, r);
+				case XOR:
+					l = getExpression(op.getLeft());
+					r = getExpression(op.getRight());
+					return new Operation(Operator.BIT_XOR, l, r);
+				case ZEXT:
+					// TODO
+				default:
+					return null;
 			}
 		}
 	}
@@ -275,88 +270,88 @@ public class Parser {
 			KVersion v = null;
 			Token t = scanner.next();
 			switch (t) {
-			case TYPE:
-				e = new KNumber(scanner.expectType(), parseNumber().getValue());
-				break;
-			case ZEXT:
-			case SEXT:
-				e = new KOperation(scanner.expectType(), t, parseExpression());
-				break;
-			case ADD:
-			case SUB:
-			case MUL:
-			case UDIV:
-			case UREM:
-			case SDIV:
-			case SREM:
-			case AND:
-			case OR:
-			case XOR:
-			case SHL:
-			case LSHR:
-			case ASHR:
-				e = new KOperation(scanner.expectType(), t, parseExpression(), parseExpression());
-				break;
-			case NOT:
-			case NEG:
-				if (scanner.next() == Token.TYPE) {
+				case TYPE:
+					e = new KNumber(scanner.expectType(), parseNumber().getValue());
+					break;
+				case ZEXT:
+				case SEXT:
 					e = new KOperation(scanner.expectType(), t, parseExpression());
-				} else {
+					break;
+				case ADD:
+				case SUB:
+				case MUL:
+				case UDIV:
+				case UREM:
+				case SDIV:
+				case SREM:
+				case AND:
+				case OR:
+				case XOR:
+				case SHL:
+				case LSHR:
+				case ASHR:
+					e = new KOperation(scanner.expectType(), t, parseExpression(), parseExpression());
+					break;
+				case NOT:
+				case NEG:
+					if (scanner.next() == Token.TYPE) {
+						e = new KOperation(scanner.expectType(), t, parseExpression());
+					} else {
+						f = parseExpression();
+						e = new KOperation(f.getType(), t, f);
+					}
+					break;
+				case EQ:
+				case NE:
+				case ULT:
+				case ULE:
+				case UGT:
+				case UGE:
+				case SLT:
+				case SLE:
+				case SGT:
+				case SGE:
+				case CONCAT:
+					if (scanner.next() == Token.TYPE) {
+						tp = scanner.expectType();
+						f = parseExpression();
+						g = parseExpression();
+						// TODO check that the operations have a compatible type
+						e = new KOperation(tp, t, f, g);
+					} else {
+						f = parseExpression();
+						g = parseExpression();
+						if (f.getType() != g.getType()) {
+							throw new ParseException("uncompatiable types");
+						}
+						e = new KOperation(f.getType(), t, f, g);
+					}
+					break;
+				case EXTRACT:
+					tp = scanner.expectType();
+					n = parseNumber();
 					f = parseExpression();
-					e = new KOperation(f.getType(), t, f);
-				}
-				break;
-			case EQ:
-			case NE:
-			case ULT:
-			case ULE:
-			case UGT:
-			case UGE:
-			case SLT:
-			case SLE:
-			case SGT:
-			case SGE:
-			case CONCAT:
-				if (scanner.next() == Token.TYPE) {
+					// TODO Any check?
+					e = new KOperation(tp, t, n, f);
+					break;
+				case READ:
+				case READLSB:
+				case READMSB:
+					tp = scanner.expectType();
+					f = parseExpression();
+					v = parseVersion();
+					e = new KOperation(tp, t, f, v);
+					break;
+				case SELECT:
 					tp = scanner.expectType();
 					f = parseExpression();
 					g = parseExpression();
-					// TODO check that the operations have a compatible type
-					e = new KOperation(tp, t, f, g);
-				} else {
-					f = parseExpression();
-					g = parseExpression();
-					if (f.getType() != g.getType()) {
-						throw new ParseException("uncompatiable types");
-					}
-					e = new KOperation(f.getType(), t, f, g);
-				}
-				break;
-			case EXTRACT:
-				tp = scanner.expectType();
-				n = parseNumber();
-				f = parseExpression();
-				// TODO Any check?
-				e = new KOperation(tp, t, n, f);
-				break;
-			case READ:
-			case READLSB:
-			case READMSB:
-				tp = scanner.expectType();
-				f = parseExpression();
-				v = parseVersion();
-				e = new KOperation(tp, t, f, v);
-				break;
-			case SELECT:
-				tp = scanner.expectType();
-				f = parseExpression();
-				g = parseExpression();
-				h = parseExpression();
-				// TODO check that all three operations have a compatible type
-				e = new KOperation(tp, t, f, g, h);
-				break;
-			default:
-				throw new ParseException("unexpected token " + t);
+					h = parseExpression();
+					// TODO check that all three operations have a compatible type
+					e = new KOperation(tp, t, f, g, h);
+					break;
+				default:
+					throw new ParseException("unexpected token " + t);
 			}
 			scanner.expect(Token.RPAREN);
 		}

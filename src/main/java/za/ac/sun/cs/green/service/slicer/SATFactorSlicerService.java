@@ -1,14 +1,14 @@
 package za.ac.sun.cs.green.service.slicer;
 
-import java.util.Collections;
-import java.util.Set;
-
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.service.BasicService;
 import za.ac.sun.cs.green.service.factorizer.FactorExpressionOld;
 import za.ac.sun.cs.green.util.Reporter;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class SATFactorSlicerService extends BasicService {
 
@@ -47,18 +47,18 @@ public class SATFactorSlicerService extends BasicService {
 		Set<Instance> result = (Set<Instance>) instance.getData(getClass());
 		if (result == null) {
 			final Instance p = instance.getParent();
-			
+
 			// Handle two initial conditions: no parent and no FactoredConstraint for the parent
 			FactorExpressionOld fc0 = null;
-			if (p!=null) {
+			if (p != null) {
 				fc0 = (FactorExpressionOld) p.getData(FactorExpressionOld.class);
-				if (fc0==null) {
+				if (fc0 == null) {
 					// Construct the parent's factor and store it 
 					fc0 = new FactorExpressionOld(null, p.getFullExpression());
 					p.setData(FactorExpressionOld.class, fc0);
 				}
 			}
-			
+
 			final FactorExpressionOld fc = new FactorExpressionOld(fc0, instance.getExpression());
 			instance.setData(FactorExpressionOld.class, fc);
 
@@ -67,7 +67,7 @@ public class SATFactorSlicerService extends BasicService {
 			final Instance i = new Instance(getSolver(), instance.getSource(), null, e);
 			result = Collections.singleton(i);
 			instance.setData(getClass(), result);
-			
+
 			// First update our statistics
 			invocationCount++;
 			minimalVariableCount += fc.getDependentVariableCount(instance.getExpression());

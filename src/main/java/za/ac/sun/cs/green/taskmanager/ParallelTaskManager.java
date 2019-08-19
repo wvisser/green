@@ -1,23 +1,16 @@
 package za.ac.sun.cs.green.taskmanager;
 
+import org.apache.logging.log4j.Logger;
+import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
+import za.ac.sun.cs.green.Service;
+import za.ac.sun.cs.green.util.Reporter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import org.apache.logging.log4j.Logger;
-
-import za.ac.sun.cs.green.Instance;
-import za.ac.sun.cs.green.Service;
-import za.ac.sun.cs.green.Green;
-import za.ac.sun.cs.green.util.Reporter;
+import java.util.concurrent.*;
 
 public class ParallelTaskManager implements TaskManager {
 
@@ -30,9 +23,9 @@ public class ParallelTaskManager implements TaskManager {
 	private int processedCount = 0;
 
 	private int threadsCreated = 0;
-	
+
 	private int maxSimultaneousThreads = 0;
-	
+
 	public ParallelTaskManager(final Green solver) {
 		this.solver = solver;
 		LOGGER = solver.getLogger();
@@ -102,9 +95,9 @@ public class ParallelTaskManager implements TaskManager {
 		private final Service parent;
 
 		private final Instance parentInstance;
-		
+
 		private final Service service;
-		
+
 		private final Instance instance;
 
 		public Task(final Service parent, final Instance parentInstance, final Service service, final Instance instance) {
@@ -129,11 +122,11 @@ public class ParallelTaskManager implements TaskManager {
 				result = service.allChildrenDone(instance, result);
 			}
 			if (parent != null) {
-				result = parent.childDone(parentInstance, service, instance, result); 
+				result = parent.childDone(parentInstance, service, instance, result);
 			}
 			return result;
 		}
-			
+
 	}
 
 }

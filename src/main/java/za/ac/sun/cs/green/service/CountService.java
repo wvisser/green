@@ -1,12 +1,11 @@
 package za.ac.sun.cs.green.service;
 
-import java.util.Set;
-
 import org.apfloat.Apint;
-
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.util.Reporter;
+
+import java.util.Set;
 
 public abstract class CountService extends BasicService {
 
@@ -15,9 +14,9 @@ public abstract class CountService extends BasicService {
 	private int invocationCount = 0;
 
 	private int cacheHitCount = 0;
-	
+
 	private int cacheMissCount = 0;
-	
+
 	private long timeConsumption = 0;
 
 	public CountService(Green solver) {
@@ -36,7 +35,7 @@ public abstract class CountService extends BasicService {
 	public Object allChildrenDone(Instance instance, Object result) {
 		return instance.getData(getClass());
 	}
-	
+
 	@Override
 	public Set<Instance> processRequest(Instance instance) {
 		Apint result = (Apint) instance.getData(getClass());
@@ -51,7 +50,7 @@ public abstract class CountService extends BasicService {
 
 	private Apint solve0(Instance instance) {
 		invocationCount++;
-		String key = SERVICE_KEY + instance.getFullExpression().getString();
+		String key = SERVICE_KEY + instance.getFullExpression().getCachedString();
 		Apint result = store.getApfloatInteger(key);
 		if (result == null) {
 			cacheMissCount++;
@@ -67,7 +66,7 @@ public abstract class CountService extends BasicService {
 
 	private Apint solve1(Instance instance) {
 		long startTime = System.currentTimeMillis();
-		Apint result = solve(instance); 
+		Apint result = solve(instance);
 		timeConsumption += System.currentTimeMillis() - startTime;
 		return result;
 	}

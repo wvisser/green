@@ -1,12 +1,11 @@
 package za.ac.sun.cs.green.util;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import za.ac.sun.cs.green.Green;
 
 import java.util.Properties;
 
-import org.junit.Test;
-
-import za.ac.sun.cs.green.Green;
+import static org.junit.Assert.assertEquals;
 
 public class SetTaskManagerTest {
 

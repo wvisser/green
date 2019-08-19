@@ -1,26 +1,13 @@
 package za.ac.sun.cs.green.service.smtlib;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
-import za.ac.sun.cs.green.expr.IntConstant;
-import za.ac.sun.cs.green.expr.IntVariable;
-import za.ac.sun.cs.green.expr.IntegerConstant;
-import za.ac.sun.cs.green.expr.IntegerVariable;
-import za.ac.sun.cs.green.expr.Operation;
+import za.ac.sun.cs.green.Instance;
+import za.ac.sun.cs.green.expr.*;
 import za.ac.sun.cs.green.expr.Operation.Operator;
-import za.ac.sun.cs.green.expr.RealConstant;
-import za.ac.sun.cs.green.expr.RealVariable;
-import za.ac.sun.cs.green.expr.Variable;
-import za.ac.sun.cs.green.expr.Visitor;
-import za.ac.sun.cs.green.expr.VisitorException;
 import za.ac.sun.cs.green.service.ModelService;
 import za.ac.sun.cs.green.util.Misc;
+
+import java.util.*;
 
 public abstract class ModelSMTLIBBitVectorService extends ModelService {
 
@@ -63,13 +50,16 @@ public abstract class ModelSMTLIBBitVectorService extends ModelService {
 	private static class TranslatorPair {
 		private final String string;
 		private final Class<? extends Variable> type;
+
 		public TranslatorPair(final String string, final Class<? extends Variable> type) {
 			this.string = string;
 			this.type = type;
 		}
+
 		public String getString() {
 			return string;
 		}
+
 		public Class<? extends Variable> getType() {
 			return type;
 		}
@@ -83,17 +73,17 @@ public abstract class ModelSMTLIBBitVectorService extends ModelService {
 		private final List<String> domains;
 
 		public Translator() {
-			stack = new Stack<ModelSMTLIBBitVectorService.TranslatorPair>();
+			stack = new Stack<TranslatorPair>();
 			varMap = new HashMap<Variable, String>();
 			defs = new LinkedList<String>();
 			domains = new LinkedList<String>();
 		}
 
-        public List<String> getVariableDecls() {
-            return defs;
-        }
+		public List<String> getVariableDecls() {
+			return defs;
+		}
 
-        public Map<Variable, String> getVariables() {
+		public Map<Variable, String> getVariables() {
 			return varMap;
 		}
 
@@ -140,7 +130,7 @@ public abstract class ModelSMTLIBBitVectorService extends ModelService {
 			long val = constant.getValue();
 			stack.push(new TranslatorPair(transformNegative(val), IntegerVariable.class));
 		}
-		
+
 		@Override
 		public void postVisit(RealConstant constant) {
 			double val = constant.getValue();
@@ -190,7 +180,7 @@ public abstract class ModelSMTLIBBitVectorService extends ModelService {
 			}
 			stack.push(new TranslatorPair(n, IntegerVariable.class));
 		}
-		
+
 		@Override
 		public void postVisit(RealVariable variable) {
 			String v = varMap.get(variable);
@@ -235,116 +225,116 @@ public abstract class ModelSMTLIBBitVectorService extends ModelService {
 			}
 		}
 
-		private String setFPOperator(Operator op) throws TranslatorUnsupportedOperation{
+		private String setFPOperator(Operator op) throws TranslatorUnsupportedOperation {
 			switch (op) {
-			case EQ:
-				return "fp.eq";
-			case LT:
-				return "fp.lt";
-			case LE:
-				return "fp.leq";
-			case GT:
-				return "fp.gt";
-			case GE:
-				return "fp.geq";
-			case NOT:
-				return "not";
-			case AND:
-				return "and";
-			case OR:
-				return "or";
-			case IMPLIES:
-				return "=>"; // not sure about this one?
-			case ADD:
-				return "fp.add";
-			case SUB:
-				return "fp.sub";
-			case MUL:
-				return "fp.mul";
-			case DIV:
-				return "fp.div";
-			case MOD:
-				return "fp.mod";
-			case SQRT:
-				return "fp.sqrt";
-			case BIT_AND:
-			case BIT_OR:
-			case BIT_XOR:
-			case SHIFTL:
-			case SHIFTR:
-			case SHIFTUR:
-			case SIN:
-			case COS:
-			case TAN:
-			case ASIN:
-			case ACOS:
-			case ATAN:
-			case ATAN2:
-			case ROUND:
-			case LOG:
-			case EXP:
-			case POWER:
-			default:
-				throw new TranslatorUnsupportedOperation("unsupported operation " + op);
+				case EQ:
+					return "fp.eq";
+				case LT:
+					return "fp.lt";
+				case LE:
+					return "fp.leq";
+				case GT:
+					return "fp.gt";
+				case GE:
+					return "fp.geq";
+				case NOT:
+					return "not";
+				case AND:
+					return "and";
+				case OR:
+					return "or";
+				case IMPLIES:
+					return "=>"; // not sure about this one?
+				case ADD:
+					return "fp.add";
+				case SUB:
+					return "fp.sub";
+				case MUL:
+					return "fp.mul";
+				case DIV:
+					return "fp.div";
+				case MOD:
+					return "fp.mod";
+				case SQRT:
+					return "fp.sqrt";
+				case BIT_AND:
+				case BIT_OR:
+				case BIT_XOR:
+				case SHIFTL:
+				case SHIFTR:
+				case SHIFTUR:
+				case SIN:
+				case COS:
+				case TAN:
+				case ASIN:
+				case ACOS:
+				case ATAN:
+				case ATAN2:
+				case ROUND:
+				case LOG:
+				case EXP:
+				case POWER:
+				default:
+					throw new TranslatorUnsupportedOperation("unsupported operation " + op);
 			}
 		}
-		
+
 		private String setBVOperator(Operator op) throws TranslatorUnsupportedOperation {
 			switch (op) {
-			case EQ:
-				return "=";
-			case LT:
-				return "bvslt";
-			case LE:
-				return "bvsle";
-			case GT:
-				return "bvsgt";
-			case GE:
-				return "bvsge";
-			case NOT:
-				return "not";
-			case AND:
-				return "and";
-			case OR:
-				return "or";
-			case IMPLIES:
-				return "=>"; // not sure about this one?
-			case ADD:
-				return "bvadd";
-			case SUB:
-				return "bvsub";
-			case MUL:
-				return "bvmul";
-			case DIV:
-				return "bvsdiv";
-			case MOD:
-				return "bvsmod";
-			case BIT_AND:
-				return "bvand";
-			case BIT_OR:
-				return "bvor";
-			case BIT_XOR:
-				return "bvxor";
-			case SHIFTL:
-				return "bvshl";
-			case SHIFTR:
-				return "bvashr";
-			case SHIFTUR:
-				return "bvshr";
-			case SIN:
-			case COS:
-			case TAN:
-			case ASIN:
-			case ACOS:
-			case ATAN:
-			case ATAN2:
-			case ROUND:
-			case LOG:
-			case EXP:
-			case POWER:
-			case SQRT:
-			default:
-				throw new TranslatorUnsupportedOperation("unsupported operation " + op);
+				case EQ:
+					return "=";
+				case LT:
+					return "bvslt";
+				case LE:
+					return "bvsle";
+				case GT:
+					return "bvsgt";
+				case GE:
+					return "bvsge";
+				case NOT:
+					return "not";
+				case AND:
+					return "and";
+				case OR:
+					return "or";
+				case IMPLIES:
+					return "=>"; // not sure about this one?
+				case ADD:
+					return "bvadd";
+				case SUB:
+					return "bvsub";
+				case MUL:
+					return "bvmul";
+				case DIV:
+					return "bvsdiv";
+				case MOD:
+					return "bvsmod";
+				case BIT_AND:
+					return "bvand";
+				case BIT_OR:
+					return "bvor";
+				case BIT_XOR:
+					return "bvxor";
+				case SHIFTL:
+					return "bvshl";
+				case SHIFTR:
+					return "bvashr";
+				case SHIFTUR:
+					return "bvshr";
+				case SIN:
+				case COS:
+				case TAN:
+				case ASIN:
+				case ACOS:
+				case ATAN:
+				case ATAN2:
+				case ROUND:
+				case LOG:
+				case EXP:
+				case POWER:
+				case SQRT:
+				default:
+					throw new TranslatorUnsupportedOperation("unsupported operation " + op);
 			}
 		}
 

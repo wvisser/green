@@ -1,7 +1,7 @@
 package za.ac.sun.cs.green.util;
 
-import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.taskmanager.TaskManager;
 
 public class DummyTaskManager implements TaskManager {
@@ -21,5 +21,5 @@ public class DummyTaskManager implements TaskManager {
 	@Override
 	public void shutdown() {
 	}
-	
+
 }

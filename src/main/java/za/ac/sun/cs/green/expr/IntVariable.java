@@ -19,7 +19,7 @@ public class IntVariable extends Variable {
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
 	}
-	
+
 	public Integer getLowerBound() {
 		return lowerBound;
 	}

@@ -1,5 +1,6 @@
 package za.ac.sun.cs.green.service.z3;
 
+import org.apache.logging.log4j.Level;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.expr.*;
 import za.ac.sun.cs.green.service.smtlib.ModelCoreSMTLIBService;
@@ -9,8 +10,11 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.Level;
-
+/**
+ * @author JH Taljaard (USnr 18509193)
+ * @author Willem Visser (Supervisor)
+ * @author Jaco Geldenhuys (Supervisor)
+ */
 public class ModelCoreZ3Service extends ModelCoreSMTLIBService {
 	private final String DEFAULT_Z3_PATH;
 	private final String DEFAULT_Z3_ARGS = "-smt2 -in";
@@ -28,25 +32,25 @@ public class ModelCoreZ3Service extends ModelCoreSMTLIBService {
 	public ModelCoreZ3Service(Green solver, Properties properties) {
 		super(solver);
 
-        String z3Path = "/z3/build/z3";
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        InputStream resourceStream;
-        try {
-            resourceStream = loader.getResourceAsStream(resourceName);
-            if (resourceStream == null) {
-                // If properties are correct, override with that specified path.
-                resourceStream = new FileInputStream((new File("").getAbsolutePath()) + "/" + resourceName);
-            }
-            if (resourceStream != null) {
-                properties.load(resourceStream);
-                z3Path = properties.getProperty("z3path");
-            }
-            resourceStream.close();
-        } catch (IOException x) {
-            // ignore
-        }
+		String z3Path = "/z3/build/z3";
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		InputStream resourceStream;
+		try {
+			resourceStream = loader.getResourceAsStream(resourceName);
+			if (resourceStream == null) {
+				// If properties are correct, override with that specified path.
+				resourceStream = new FileInputStream((new File("").getAbsolutePath()) + "/" + resourceName);
+			}
+			if (resourceStream != null) {
+				properties.load(resourceStream);
+				z3Path = properties.getProperty("z3path");
+			}
+			resourceStream.close();
+		} catch (IOException x) {
+			// ignore
+		}
 
-        DEFAULT_Z3_PATH = z3Path;
+		DEFAULT_Z3_PATH = z3Path;
 
 		String p = properties.getProperty("green.z3.path", DEFAULT_Z3_PATH);
 		String a = properties.getProperty("green.z3.args", DEFAULT_Z3_ARGS);
@@ -82,62 +86,58 @@ public class ModelCoreZ3Service extends ModelCoreSMTLIBService {
 			stdin.write((smtQuery + "(exit)\n").getBytes());
 			stdin.flush();
 			stdin.close();
-            output = outReader.lines().collect(Collectors.joining());
+			output = outReader.lines().collect(Collectors.joining());
 			stdout.close();
 			process.destroy();
 
-            ModelCore tmp;
-            if (issat) {
+			ModelCore tmp;
+			if (issat) {
 				tmp = retrieveModel(output, variables);
 				satTimeConsumption += (System.currentTimeMillis() - startTime);
-            } else {
+			} else {
 				tmp = retrieveCore(output, coreClauseMapping);
 				unsatTimeConsumption += (System.currentTimeMillis() - startTime);
-            }
-            timeConsumption += (System.currentTimeMillis() - startTime);
-            return tmp;
-        } catch (IOException x) {
+			}
+			timeConsumption += (System.currentTimeMillis() - startTime);
+			return tmp;
+		} catch (IOException x) {
 			log.log(Level.FATAL, x.getMessage(), x);
 		}
-        return null;
+		return null;
 	}
 
-    private ModelCore retrieveModel(String output, Map<Variable, String> variables) {
+	private ModelCore retrieveModel(String output, Map<Variable, String> variables) {
 		output = output.replaceAll("^\\s*\\(model\\s+(.*)\\s*\\)\\s*$", "$1@");
-        output = output.replaceAll("\\)\\s*\\(define-fun", ")@(define-fun");
-        output = output.replaceAll("\\(define-fun\\s+([\\w-]+)\\s*\\(\\)\\s*[\\w]+\\s+([^@]+)\\s*\\)@", "$1 == $2 ;; ");
+		output = output.replaceAll("\\)\\s*\\(define-fun", ")@(define-fun");
+		output = output.replaceAll("\\(define-fun\\s+([\\w-]+)\\s*\\(\\)\\s*[\\w]+\\s+([^@]+)\\s*\\)@", "$1 == $2 ;; ");
 
 		final Map<String, String> assignment = new HashMap<>();
 		for (String asgn : output.split(";;")) {
-		    if (asgn.contains("==")) {
-                String[] pair = asgn.split("==");
-                assignment.put(pair[0].trim(), pair[1].trim());
-            }
-        }
+			if (asgn.contains("==")) {
+				String[] pair = asgn.split("==");
+				assignment.put(pair[0].trim(), pair[1].trim());
+			}
+		}
 
-		HashMap<Variable, Constant> model = new HashMap<>();
+		HashMap<Variable, Object> model = new HashMap<>();
 		for (Map.Entry<Variable, String> entry : variables.entrySet()) {
-		    Variable var = entry.getKey();
-		    String name = entry.getValue();
-		    if (assignment.containsKey(name)) {
-                Constant value = null;
-                if (var instanceof IntVariable) {
-                	String val = assignment.get(name);
-					val = val.replaceAll("\\(\\s*-\\s*(.+)\\)", "-$1");
-					value = new IntConstant(Integer.parseInt(val));
-				} else if (var instanceof IntegerVariable) {
+			Variable var = entry.getKey();
+			String name = entry.getValue();
+			if (assignment.containsKey(name)) {
+				Constant value = null;
+				if (var instanceof IntVariable) {
 					String val = assignment.get(name);
 					val = val.replaceAll("\\(\\s*-\\s*(.+)\\)", "-$1");
-					value = new IntegerConstant(Long.parseLong(val), ((IntegerVariable) var).getSize());
+					value = new IntConstant(Integer.parseInt(val));
 				} else if (var instanceof RealVariable) {
-                    value = new RealConstant(Double.parseDouble(assignment.get(name)));
-                }
-		        if (value != null) {
-                    model.put(var, value);
-                }
-            }
-        }
-		return new ModelCore(true, model,null);
+					value = new RealConstant(Double.parseDouble(assignment.get(name)));
+				}
+				if (value != null) {
+					model.put(var, value);
+				}
+			}
+		}
+		return new ModelCore(true, model, null);
 	}
 
 	private ModelCore retrieveCore(String output, Map<String, Expression> coreClauseMapping) {
@@ -162,12 +162,12 @@ public class ModelCoreZ3Service extends ModelCoreSMTLIBService {
 //        reporter.report(getClass().getSimpleName(), "unsatCacheMissCount = " + unsatMissCount);
 //        reporter.report(getClass().getSimpleName(), "satQueries = " + satCount);
 //        reporter.report(getClass().getSimpleName(), "unsatQueries = " + unsatCount);
-        reporter.report(getClass().getSimpleName(), "timeConsumption = " + timeConsumption);
-        reporter.report(getClass().getSimpleName(), "satTimeConsumption = " + satTimeConsumption);
-        reporter.report(getClass().getSimpleName(), "unsatTimeConsumption = " + unsatTimeConsumption);
-        reporter.report(getClass().getSimpleName(), "storageTimeConsumption = " + storageTimeConsumption);
-        reporter.report(getClass().getSimpleName(), "translationTimeConsumption = " + translationTimeConsumption);
-        reporter.report(getClass().getSimpleName(), "conjunctCount = " + conjunctCount);
-        reporter.report(getClass().getSimpleName(), "varCount = " + varCount);
+		reporter.report(getClass().getSimpleName(), "timeConsumption = " + timeConsumption);
+		reporter.report(getClass().getSimpleName(), "satTimeConsumption = " + satTimeConsumption);
+		reporter.report(getClass().getSimpleName(), "unsatTimeConsumption = " + unsatTimeConsumption);
+		reporter.report(getClass().getSimpleName(), "storageTimeConsumption = " + storageTimeConsumption);
+		reporter.report(getClass().getSimpleName(), "translationTimeConsumption = " + translationTimeConsumption);
+		reporter.report(getClass().getSimpleName(), "conjunctCount = " + conjunctCount);
+		reporter.report(getClass().getSimpleName(), "varCount = " + varCount);
 	}
 }

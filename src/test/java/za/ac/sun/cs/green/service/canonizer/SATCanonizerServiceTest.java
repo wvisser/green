@@ -1,22 +1,21 @@
 package za.ac.sun.cs.green.service.canonizer;
 
-import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import za.ac.sun.cs.green.Green;
+import za.ac.sun.cs.green.Instance;
+import za.ac.sun.cs.green.expr.Expression;
+import za.ac.sun.cs.green.expr.IntConstant;
+import za.ac.sun.cs.green.expr.IntVariable;
+import za.ac.sun.cs.green.expr.Operation;
+import za.ac.sun.cs.green.util.Configuration;
 
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import za.ac.sun.cs.green.Instance;
-import za.ac.sun.cs.green.Green;
-import za.ac.sun.cs.green.expr.Expression;
-import za.ac.sun.cs.green.expr.IntConstant;
-import za.ac.sun.cs.green.expr.IntVariable;
-import za.ac.sun.cs.green.expr.Operation;
-import za.ac.sun.cs.green.util.Configuration;
+import static org.junit.Assert.*;
 
 public class SATCanonizerServiceTest {
 

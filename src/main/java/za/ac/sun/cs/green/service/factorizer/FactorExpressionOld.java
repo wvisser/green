@@ -1,16 +1,8 @@
 package za.ac.sun.cs.green.service.factorizer;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import za.ac.sun.cs.green.expr.*;
 
-import za.ac.sun.cs.green.expr.Expression;
-import za.ac.sun.cs.green.expr.Operation;
-import za.ac.sun.cs.green.expr.Variable;
-import za.ac.sun.cs.green.expr.Visitor;
-import za.ac.sun.cs.green.expr.VisitorException;
+import java.util.*;
 
 /**
  * This class records the factors for a given constraint. It supports
@@ -23,7 +15,7 @@ public class FactorExpressionOld {
 	 * Factors are sets of mutually dependent expressions. Each such set is
 	 * grouped into a map entry whose key is the set of variables involved in
 	 * expressions in the set.
-	 * 
+	 * <p>
 	 * An invariant for this map is that the keys are disjoint sets of
 	 * variables.
 	 */
@@ -44,7 +36,7 @@ public class FactorExpressionOld {
 	 * Statistics caches: these help avoid having to recompute conjunct and
 	 * variable counts which can be accumulated when the actual dependent factor
 	 * calculations are performed.
-	 * 
+	 * <p>
 	 * The first shadows var2Factor and records the number of conjuncts in each
 	 * factor. The last two cache counts from the dependent factor calculations.
 	 */
@@ -67,7 +59,7 @@ public class FactorExpressionOld {
 	/**
 	 * Create a new FactoredConstraint incrementally from a given
 	 * FactoredConstraint, base, and a new Expression, fresh.
-	 * 
+	 * <p>
 	 * A deep copy of the base is created to ensure changes here do not affect
 	 * other users of the base. The copy only goes as deep as the structures
 	 * used in this class. Specifically, things like Expressions and Variables
@@ -125,16 +117,14 @@ public class FactorExpressionOld {
 	/**
 	 * The new expression (and its associated vars) are added to the conjunct
 	 * map.
-	 * 
+	 * <p>
 	 * There are two cases: 1) The new expression is independent of the existing
 	 * map, in which case it is a new factor. 2) The new expression is dependent
 	 * on some existing factors, in which case all dependent factors must be
 	 * merged.
-	 * 
-	 * @param conjunct2Vars
-	 *            The set of variables involved in the new conjunct
-	 * @param expr
-	 *            The logical expression being conjoined
+	 *
+	 * @param conjunct2Vars The set of variables involved in the new conjunct
+	 * @param expr          The logical expression being conjoined
 	 */
 	private void addConstraint(Expression expr, Map<Expression, Set<Variable>> conjunct2Vars) {
 		Set<Variable> vars = conjunct2Vars.get(expr);
@@ -211,7 +201,7 @@ public class FactorExpressionOld {
 		/**
 		 * Rather cavalier reuse of the local collector class. Should really
 		 * have a common variable name collector that is reused.
-		 * 
+		 *
 		 * In the end vars is the set of variables in the given constraint
 		 */
 		Map<Expression, Set<Variable>> conjunct2Vars = new HashMap<Expression, Set<Variable>>();
@@ -313,7 +303,7 @@ public class FactorExpressionOld {
 	 * Visitor that builds the maps from conjuncts to variables. Should probably
 	 * reuse this, but for now it is adapted from the code in the default
 	 * slicer.
-	 * 
+	 *
 	 * @author Jaco Geldenhuys <jaco@cs.sun.ac.za>
 	 */
 	private class Collector extends Visitor {
@@ -330,9 +320,8 @@ public class FactorExpressionOld {
 
 		/**
 		 * Constructor that sets the two mappings that the collector builds.
-		 * 
-		 * @param conjunct2Vars
-		 *            a map from conjuncts to the variables they contain
+		 *
+		 * @param conjunct2Vars a map from conjuncts to the variables they contain
 		 */
 		public Collector(Map<Expression, Set<Variable>> conjunct2Vars) {
 			this.conjunct2Vars = conjunct2Vars;
@@ -341,9 +330,8 @@ public class FactorExpressionOld {
 		/**
 		 * Explores the expression by setting the default conjunct and then
 		 * visiting the expression.
-		 * 
-		 * @param expression
-		 *            the expression to explore
+		 *
+		 * @param expression the expression to explore
 		 */
 		public void explore(Expression expression) {
 			currentConjunct = expression;
@@ -357,7 +345,7 @@ public class FactorExpressionOld {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * za.ac.sun.cs.solver.expr.Visitor#postVisit(za.ac.sun.cs.solver.expr
 		 * .Variable)
@@ -375,44 +363,43 @@ public class FactorExpressionOld {
 			}
 		}
 
-        private boolean isOr(Expression e) {
-            if (e instanceof Operation) {
-                Operation.Operator op = ((Operation) e).getOperator();
-                return (op == Operation.Operator.OR);
-            }
-            return false;
-        }
+		private boolean isOr(Expression e) {
+			if (e instanceof Operation) {
+				Operation.Operator op = ((Operation) e).getOperator();
+				return (op == Operation.Operator.OR);
+			}
+			return false;
+		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * za.ac.sun.cs.solver.expr.Visitor#preVisit(za.ac.sun.cs.solver.expr
 		 * .Expression)
 		 */
-        @Override
-        public void preVisit(Expression expression) {
-            if (expression instanceof Operation) {
-                Operation.Operator op = ((Operation) expression).getOperator();
-                // only reset the conjunct if it is not already an OR expression
-                if (op == Operation.Operator.OR && !isOr(currentConjunct)) {
-                    currentConjunct = expression;
-                }
-                else if ((op == Operation.Operator.EQ) || (op == Operation.Operator.NE) || (op == Operation.Operator.LT) || (op == Operation.Operator.LE) || (op == Operation.Operator.GT) || (op == Operation.Operator.GE)) {
-                    // check if this is not part of an OR expression
-                    if (!isOr(currentConjunct))
-                        currentConjunct = expression;
-                }
-            }
-        }
+		@Override
+		public void preVisit(Expression expression) {
+			if (expression instanceof Operation) {
+				Operation.Operator op = ((Operation) expression).getOperator();
+				// only reset the conjunct if it is not already an OR expression
+				if (op == Operation.Operator.OR && !isOr(currentConjunct)) {
+					currentConjunct = expression;
+				} else if ((op == Operation.Operator.EQ) || (op == Operation.Operator.NE) || (op == Operation.Operator.LT) || (op == Operation.Operator.LE) || (op == Operation.Operator.GT) || (op == Operation.Operator.GE)) {
+					// check if this is not part of an OR expression
+					if (!isOr(currentConjunct))
+						currentConjunct = expression;
+				}
+			}
+		}
 
-        @Override
-        public void postVisit(Expression expression) {
-            if (expression instanceof Operation) {
-                if (expression == currentConjunct)
-                    currentConjunct = null;
-            }
-        }
+		@Override
+		public void postVisit(Expression expression) {
+			if (expression instanceof Operation) {
+				if (expression == currentConjunct)
+					currentConjunct = null;
+			}
+		}
 
 	}
 

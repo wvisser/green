@@ -1,15 +1,16 @@
 package za.ac.sun.cs.green.service.z3;
 
+import org.apache.logging.log4j.Level;
 import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.expr.*;
 import za.ac.sun.cs.green.service.smtlib.ModelSMTLIBService;
 import za.ac.sun.cs.green.util.Reporter;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.Level;
 
 public class ModelZ3Service extends ModelSMTLIBService {
 
@@ -121,7 +122,7 @@ public class ModelZ3Service extends ModelSMTLIBService {
 				} else if (var instanceof IntegerVariable) {
 					String val = assignment.get(name);
 					val = val.replaceAll("\\(\\s*-\\s*(.+)\\)", "-$1");
-					value = new IntegerConstant(Long.parseLong(val), ((IntegerVariable) var).getSize());
+					value = new IntegerConstant(Long.parseLong(val), Long.SIZE);
 				} else if (var instanceof RealVariable) {
 					value = new RealConstant(Double.parseDouble(assignment.get(name)));
 				}

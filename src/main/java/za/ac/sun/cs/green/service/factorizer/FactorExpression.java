@@ -1,288 +1,438 @@
 package za.ac.sun.cs.green.service.factorizer;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
 import za.ac.sun.cs.green.expr.*;
+
 import java.util.*;
-import org.apache.logging.log4j.Logger;
+import java.util.stream.Collectors;
 
 /**
+ * @author JH Taljaard (USnr 18509193)
+ * @author Willem Visser (Supervisor)
+ * @author Jaco Geldenhuys (Supervisor)
+ *
+ * Description:
  * Helper class to factorize an expression.
  */
 public class FactorExpression {
-    private Set<Expression> factors = null;
-    private Collector collector = null;
-    private UnionFind<Expression> uf = null;
-    private Expression processedExpression = null;
-    private int conjunctCount = 0;
-    protected final Logger log;
-    // stat variables
-    public long collectorTime = 0;
-    public long conjunctsTime = 0;
-    public long connectedTime = 0;
+	private Set<Expression> factors = null;
+	private CollectionVisitor collector = null;
+	private UnionFind<Expression> uf = null;
+	private Expression processedExpression = null;
+	protected final Logger log;
+	// stat variables
+	private int conjunctCount = 0;
+	public long collectorTime = 0;
+	public long conjunctsTime = 0;
 
-    public long creationTime = 0;
-    public long unionTime = 0;
+	public FactorExpression() {
+		this.log = StatusLogger.getLogger();
+	}
 
-    private int dependentConjunctCount = 0;
+	public FactorExpression(final Logger log) {
+		this.log = log;
+	}
 
-    public FactorExpression() {
-        this.log = StatusLogger.getLogger();
-    }
+	public FactorExpression(Expression e) {
+		this.log = StatusLogger.getLogger();
+		factorize(e);
+	}
 
-    public FactorExpression(final Logger log) {
-        this.log = log;
-    }
+	/**
+	 * Factorize an expression. This is accomplished by traversing the expression,
+	 * and grouping the propositions found based on the variables they contain.
+	 *
+	 * @param expression expression to factorize
+	 * @return set of factors
+	 */
+	public Set<Expression> factorize(Expression expression) {
+		CollectionVisitor collector = new CollectionVisitor();
+		long startTime = System.currentTimeMillis();
+		try {
+			expression.accept(collector);
+			collectorTime += (System.currentTimeMillis() - startTime);
+		} catch (VisitorException x) {
+			log.fatal("encountered an exception -- this should not be happening!", x);
+		}
+		startTime = System.currentTimeMillis();
+		final Map<Expression, Expression> factors = new HashMap<>();
+		UnionFind<Expression> disjointSet = collector.getDisjointSet();
+		for (Expression proposition : disjointSet.getElements()) {
+			Expression root = disjointSet.find(proposition);
+			factors.merge(root, proposition, (e1, e2) -> new Operation(Operation.Operator.AND, e1, e2));
+		}
+		conjunctCount += disjointSet.getConjunctCount();
+		conjunctsTime += (System.currentTimeMillis() - startTime);
+		return new HashSet<Expression>(factors.values());
+	}
 
-    public FactorExpression(Expression e) {
-        this.log = StatusLogger.getLogger();
-        factorize(e);
-    }
+	public Set<Expression> getFactors() {
+		return factors;
+	}
 
-    /**
-     * Factorize a given expression.
-     * @param full - the full expression
-     * @return the set of factors of the expression
-     */
-    public Set<Expression> factorize(Expression full) {
-        factors = new HashSet<>();
-        uf = new UnionFind<>(factors);
-        collector = new Collector(uf);
-        processedExpression = full;
+	public int getVariableCount() {
+		return collector.getVarCount();
+	}
 
-        if (full != null) {
-            try {
-                long start = System.currentTimeMillis();
-                collector.explore(full);
-                collectorTime += (System.currentTimeMillis() - start);
-            } catch (VisitorException x) {
-                log.fatal("encountered an exception -- this should not be happening!", x);
-            }
-        }
+	public int getConjunctCount() {
+		return conjunctCount;
+	}
 
-        if (uf.size() == 0) {
-            factors.add(full);
-            return factors;
-        }
+	/*
+	 ##################################################################
+	 ############### VISITOR TO COLLECT PROPOSITIONS ##################
+	 ##################################################################
+	*/
 
-        long start = System.currentTimeMillis();
-        factors = extractFactors(uf);
-        conjunctsTime += (System.currentTimeMillis() - start);
+	/**
+	 * Visitor that traverses an expression, picks up propositions, and groups.
+	 */
+	private static class CollectionVisitor extends Visitor {
 
-        return factors;
-    }
+		/**
+		 * Disjoint-set of propositions.
+		 */
+		private final UnionFind<Expression> disjointSet = new UnionFind<>();
 
-    /**
-     * Builds the new dependents conjuncts (from the connected components from the tree).
-     * @param uf -- UnionFind object
-     * @return returns a set the new factors
-     */
-    private Set<Expression> extractFactors(UnionFind<Expression> uf) {
-        long start = System.currentTimeMillis();
-        Map<Expression, Set<Expression>> components = getConnectedComponents(uf);
-        connectedTime += (System.currentTimeMillis() - start);
+		/**
+		 * Map each variable to the representative proposition for the factor in which
+		 * the variable appears.
+		 */
+		private final Map<Variable, Expression> rootMap = new HashMap<>();
 
-        Set<Expression> factors = new HashSet<>();
-        for (Expression e : components.keySet()) {
-            Set<Expression> conjuncts = components.get(e);
-            Expression factor = null;
-            conjunctCount += conjuncts.size();
-            for (Expression x : conjuncts) {
-                if (factor == null) {
-                    factor = x;
-                } else {
-                    factor = new Operation(Operation.Operator.AND, factor, x);
-                }
-            }
-            factors.add(factor);
-        }
-        return factors;
-    }
+		/**
+		 * The current proposition being explored. This is set when, as be traverse down
+		 * the expression tree, we encounter -- for the first time -- an operator that
+		 * is not "and".
+		 */
+		private Expression currentProposition = null;
 
-    /**
-     * Extracts the connected components from the tree.
-     * @param uf -- UnionFind object
-     * @return the Map of connected components
-     */
-    private Map<Expression, Set<Expression>> getConnectedComponents(UnionFind<Expression> uf) {
-        // TODO :: Optimize
-        Map<Expression, Set<Expression>> components = new LinkedHashMap<>();
-        for (Expression t : uf.getParentMap().keySet()) {
-            Expression representative = uf.find(t);
-            if (!components.containsKey(representative)) {
-                components.put(representative, new LinkedHashSet<>());
-            }
-            components.get(representative).add(t);
-        }
-        return components;
-    }
+		/**
+		 * Current depth of the traversal. This is needed to handle nested "and"
+		 * operations and also "and" operations nested inside "or" operations.
+		 *
+		 * For example, given
+		 *
+		 * <pre>
+		 * ((x == 0) && (y == 1)) && ((z == 0) && (q + 1 == 2))
+		 * </pre>
+		 *
+		 * the whole expression is depth 0, and so is the
+		 * <code>((x==0) && (y==1))</code> and <code>((z==2) && (q+1==3))</code>
+		 * subexpressions. The expressions <code>(x==0)</code>, <code>(y==1)</code>,
+		 * <code>(z==0)</code>, and <code>(q+1==2)</code> are depth 1, the expressions
+		 * <code>x</code>, <code>y</code>, <code>z</code>, <code>q+1</code>, and the
+		 * right-hand sides are depth 2. Lastly, <code>q</code> and <code>1</code> in
+		 * the last equality are depth 3.
+		 *
+		 * On the other hand, given
+		 *
+		 * <pre>
+		 * ((x == 0) && (y == 1)) || ((z == 0) && (q + 1 == 2))
+		 * </pre>
+		 *
+		 * the whole expression is depth 1, and <code>((x==0) && (y==1))</code> and
+		 * <code>((z==2) && (q+1==3))</code> are both depth 2. Subexpressions have
+		 * greater depths, as before.
+		 */
+		private int depth = 0;
+		private int varCount = 0;
 
-    public Set<Expression> getFactors() {
-        return factors;
-    }
+		/**
+		 * Return the disjoint-set computed by the visitor.
+		 *
+		 * @return computed disjoint-set
+		 */
+		public UnionFind<Expression> getDisjointSet() {
+			return disjointSet;
+		}
 
-    public int getNumFactors() {
-        return factors.size();
-    }
+		/**
+		 * Check if the given variable occurs in a disjoint-set. If so, merge that set
+		 * with the set of the current proposition and update the {@link #rootMap} for
+		 * the variable. Otherwise, update {@link #rootMap} to "place" the variable in
+		 * the disjoint-set to which the current proposition belongs.
+		 *
+		 * @param variable variable to handle
+		 * @see za.ac.sun.cs.green.expr.Visitor#postVisit(za.ac.sun.cs.green.expr.Variable)
+		 */
+		@Override
+		public void postVisit(Variable variable) {
+			Expression proposition = rootMap.get(variable);
+			if (proposition == null) {
+				varCount++;
+				rootMap.put(variable, disjointSet.find(currentProposition));
+			} else {
+				Expression newRoot = disjointSet.union(proposition, currentProposition);
+				if (newRoot != proposition) {
+					rootMap.put(variable, newRoot);
+				}
+			}
+		}
 
-    public int getVariableCount() {
-        return collector.getVarCount();
-    }
+		/**
+		 * Increment the depth if we are not dealing with an "and" operation or if we
+		 * have already passed depth 1. If the resulting depth is 1, the current
+		 * operation becomes the current proposition and it is added to the disjoint-set
+		 * (since this is the first time we encounter it).
+		 *
+		 * @param operation operation to handle
+		 * @see za.ac.sun.cs.green.expr.Visitor#preVisit(za.ac.sun.cs.green.expr.Operation)
+		 */
+		@Override
+		public void preVisit(Operation operation) {
+			if ((operation.getOperator() != Operation.Operator.AND) || (depth > 0)) {
+				depth++;
+			}
+			if (depth == 1) {
+				currentProposition = operation;
+				disjointSet.addElement(operation);
+			}
+		}
 
-    public int getDependentConjunctCount() {
-        return dependentConjunctCount;
-    }
+		/**
+		 * Re-adjust the depth.
+		 *
+		 * @param operation operation to handle
+		 * @see za.ac.sun.cs.green.expr.Visitor#postVisit(za.ac.sun.cs.green.expr.Operation)
+		 */
+		@Override
+		public void postVisit(Operation operation) {
+			if (depth > 0) {
+				depth--;
+			}
+		}
 
-    public Expression getProcessedExpression() {
-        return processedExpression;
-    }
+		public int getVarCount() {
+			return varCount;
+		}
+	}
+	/*##################################################################*/
 
-    public Set<Expression> getDependentFactor(Expression target) {
-        // TODO :: fix for, eg target == v1&&v2 or target == fullExpression().
-        // This is extra subroutine, not needed for main calculation.
-        // Only added since FactorExpressionOld has it.
-        // If you really want this functionality, rather use FactorExpressionOld at the moment.
 
-        Map<Expression, Set<Expression>> components = getConnectedComponents(uf);
-        Expression parent = null;
-        for (Expression key : components.keySet()) {
-            if (parent != null) {
-                break;
-            }
-            if (key.toString().contains(target.toString())) {
-                parent = key;
-                break;
-            } else if (components.get(key).toString().contains(target.toString())) {
-                for (Expression clause : components.get(key)) {
-                    if (clause.toString().contains(target.toString())) {
-                        parent = key;
-                        break;
-                    }
-                }
-            }
-        }
+	/*
+	 ##################################################################
+	 ################# Union-Find Implementation ######################
+	 ##################################################################
+	*/
 
-        Set<Expression> factors = new HashSet<>();
+	/*
+	 * (C) Copyright 2010-2018, by Tom Conerly and Contributors.
+	 *
+	 * JGraphT : a free Java graph-theory library
+	 *
+	 * This program and the accompanying materials are dual-licensed under
+	 * either
+	 *
+	 * (a) the terms of the GNU Lesser General Public License version 2.1
+	 * as published by the Free Software Foundation, or (at your option) any
+	 * later version.
+	 *
+	 * or (per the licensee's choosing)
+	 *
+	 * (b) the terms of the Eclipse Public License v1.0 as published by
+	 * the Eclipse Foundation.
+	 */
 
-        if (parent == null) {
-            log.info("no dependent factor");
-            return null;
-        }
-        dependentConjunctCount = 0;
-        Set<Expression> clauses = components.get(parent);
-        Expression factor = null;
-        for (Expression x : clauses) {
-            dependentConjunctCount++;
-            conjunctCount++;
-            if (factor == null) {
-                factor = x;
-            } else {
-                factor = new Operation(Operation.Operator.AND, factor, x);
-            }
-        }
-        factors.add(factor);
-        return factors;
-    }
+	/**
+	 * An implementation of <a href="http://en.wikipedia.org/wiki/Disjoint-set_data_structure">Union
+	 * Find</a> data structure. Union Find is a disjoint-set data structure. It supports two operations:
+	 * finding the set a specific element is in, and merging two sets. The implementation uses union by
+	 * rank and path compression to achieve an amortized cost of $O(\alpha(n))$ per operation where
+	 * $\alpha$ is the inverse Ackermann function. UnionFind uses the hashCode and equals method of the
+	 * elements it operates on.
+	 *
+	 * @param <T> element type
+	 * @author Tom Conerly
+	 * @since Feb 10, 2010
+	 */
+	public static class UnionFind<T> {
+		private final Map<T, T> parentMap = new LinkedHashMap<>(); // map each element to parent of set
+		private final Map<T, Integer> rankMap = new LinkedHashMap<>(); // map each element to its rank
+		private int count; // number of components/conjuncts
+		private long unionTime = 0;
+		private long findTime = 0;
 
-    public int getConjunctCount() {
-        return conjunctCount;
-    }
+		/**
+		 * Adds a new element to the data structure in its own set.
+		 *
+		 * @param element The element to add.
+		 */
+		public void addElement(T element) {
+//			if (parentMap.containsKey(element))
+//				throw new IllegalArgumentException(
+//						"element is already contained in UnionFind: " + element);
+//			parentMap.put(element, element);
+//			rankMap.put(element, 0);
+//			count++;
+			if (!parentMap.containsKey(element)) {
+				parentMap.put(element, element);
+				rankMap.put(element, 0);
+				count++;
+			}
+		}
 
-    private class Collector extends Visitor {
-        /**
-         * Stores the parent (of components of UF) with corresponding variable as index.
-         */
-        private Map<Variable, Expression> parents = null;
+		/**
+		 * @return map from element to parent element
+		 */
+		protected Map<T, T> getParentMap() {
+			return parentMap;
+		}
 
-        /**
-         * Tree to capture the dependent expressions.
-         */
-        private UnionFind<Expression> uf = null;
+		public Set<T> getElements() {
+			return getParentMap().keySet();
+		}
 
-        /**
-         * The currentConjunct being visited.
-         */
-        private Expression currentConjunct = null;
+		/**
+		 * @return map from element to rank
+		 */
+		protected Map<T, Integer> getRankMap() {
+			return rankMap;
+		}
 
-        private int varCount = 0;
+		/**
+		 * Find the root (representative) element of a given element. This
+		 * implementation uses Tarjan and Van Leeuwen's "path splitting" mechanism.
+		 *
+		 * @param element the element to search for
+		 * @return representative element
+		 */
+		public T find(T element) {
+//			if (!parentMap.containsKey(element)) {
+//				throw new IllegalArgumentException(
+//						"element is not contained in this UnionFind data structure: " + element);
+//			}
+//
+//			T current = element;
+//			while (true) {
+//				T parent = parentMap.get(current);
+//				if (parent.equals(current)) {
+//					break;
+//				}
+//				current = parent;
+//			}
+//			final T root = current;
+//
+//			current = element;
+//			while (!current.equals(root)) {
+//				T parent = parentMap.get(current);
+//				parentMap.put(current, root);
+//				current = parent;
+//			}
+//
+//			return root;
+			T parent = parentMap.get(element);
+			if (parent == null) {
+				throw new IllegalArgumentException("element is not contained in this data structure: " + element);
+			}
+			long startTime = System.currentTimeMillis();
+			while (!parent.equals(element)) {
+				T prev = element;
+				element = parent;
+				parent = parentMap.get(element);
+				parentMap.put(prev, parent);
+			}
+			findTime += (System.currentTimeMillis() - startTime);
+			return element;
+		}
 
-        public int getVarCount() {
-            return varCount;
-        }
+		/**
+		 * Merge the disjoint sets in which the parameters appear and return the
+		 * representative for the new, merged set. This implementation uses
+		 * union-by-rank.
+		 *
+		 * @param element1 first element
+		 * @param element2 second element
+		 * @return representative of the newly-merged set that contains the parameters
+		 */
+		public T union(T element1, T element2) {
+			if (!parentMap.containsKey(element1) || !parentMap.containsKey(element2)) {
+				throw new IllegalArgumentException("elements must be contained in given set");
+			}
+			long startTime = System.currentTimeMillis();
+			T parent1 = find(element1);
+			T parent2 = find(element2);
+			if (parent1.equals(parent2)) {
+				unionTime += (System.currentTimeMillis() - startTime);
+				return parent1;
+			}
+			int rank1 = rankMap.get(parent1);
+			int rank2 = rankMap.get(parent2);
+			T parent;
+			if (rank1 < rank2) {
+				parentMap.put(parent1, parent2);
+				parent = parent2;
+			} else if (rank1 > rank2) {
+				parentMap.put(parent2, parent1);
+				parent = parent1;
+			} else {
+				parentMap.put(parent2, parent1);
+				rankMap.put(parent1, rank1 + 1);
+				parent = parent1;
+			}
+//			count--; // one less component
+			unionTime += (System.currentTimeMillis() - startTime);
+			return parent;
+		}
 
-        public Collector(UnionFind<Expression> uf) {
-            this.uf = uf;
-            this.parents = new HashMap<>();
-        }
+		/**
+		 * @return the number of conjuncts
+		 */
+		public int getConjunctCount() {
+			return count;
+		}
 
-        /**
-         * Explores the expression by setting the default conjunct and then
-         * visiting the expression.
-         *
-         * @param expression
-         *            the expression to explore
-         * @throws VisitorException
-         *             should never happen
-         */
-        public void explore(Expression expression) throws VisitorException {
-            currentConjunct = expression;
-            expression.accept(this);
-        }
+		/**
+		 * Returns the total number of elements in this data structure.
+		 *
+		 * @return the total number of elements in this data structure.
+		 */
+		public int size() {
+			return parentMap.size();
+		}
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * za.ac.sun.cs.solver.expr.Visitor#postVisit(za.ac.sun.cs.solver.expr
-         * .Variable)
-         */
-        @Override
-        public void postVisit(Variable variable) {
-            if (currentConjunct != null) {
-                if (!parents.containsKey(variable)) {
-                    parents.put(variable, currentConjunct);
-                }
+		/**
+		 * Resets the UnionFind data structure: each element is placed in its own singleton set.
+		 */
+		public void reset() {
+			for (T element : parentMap.keySet()) {
+				parentMap.put(element, element);
+				rankMap.put(element, 0);
+			}
+			count = parentMap.size();
+		}
 
-                if (!uf.getParentMap().containsKey(currentConjunct)) {
-                    uf.addElement(currentConjunct);
-                    uf.union(parents.get(variable), currentConjunct);
-                    varCount++;
-                } else {
-                    uf.union(parents.get(variable), currentConjunct);
-                }
-            }
-        }
+		/**
+		 * Returns a string representation of this data structure. Each component is represented as
+		 * $\left{v_i:v_1,v_2,v_3,...v_n\right}$, where $v_i$ is the representative of the set.
+		 *
+		 * @return string representation of this data structure
+		 */
+		public String toString() {
+			Map<T, Set<T>> setRep = new LinkedHashMap<>();
+			for (T t : parentMap.keySet()) {
+				T representative = find(t);
+				if (!setRep.containsKey(representative))
+					setRep.put(representative, new LinkedHashSet<>());
+				setRep.get(representative).add(t);
+			}
 
-        private boolean isOr(Expression e) {
-            if (e instanceof Operation) {
-                Operation.Operator op = ((Operation) e).getOperator();
-                return (op == Operation.Operator.OR);
-            }
-            return false;
-        }
+			return setRep
+					.keySet().stream()
+					.map(
+							key -> "{" + key + ":" + setRep.get(key).stream().map(Objects::toString).collect(
+									Collectors.joining(",")) + "}")
+					.collect(Collectors.joining(", ", "{", "}"));
+		}
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * za.ac.sun.cs.solver.expr.Visitor#preVisit(za.ac.sun.cs.solver.expr
-         * .Expression)
-         */
-        @Override
-        public void preVisit(Expression expression) {
-            if (expression instanceof Operation) {
-                Operation.Operator op = ((Operation) expression).getOperator();
-                if (op == Operation.Operator.OR && !isOr(currentConjunct)) {
-                    currentConjunct = expression;
-                } else if ((op == Operation.Operator.NOT)
-                        || (op == Operation.Operator.EQ)
-                        || (op == Operation.Operator.NE)
-                        || (op == Operation.Operator.LT)
-                        || (op == Operation.Operator.LE)
-                        || (op == Operation.Operator.GT)
-                        || (op == Operation.Operator.GE)) {
-                    currentConjunct = expression;
-                }
-            }
-        }
-    }
+		public long getUnionTime() {
+			return unionTime;
+		}
+
+		public long getFindTime() {
+			return findTime;
+		}
+	}
+	/*##################################################################*/
 }
