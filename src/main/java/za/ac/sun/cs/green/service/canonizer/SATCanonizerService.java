@@ -475,6 +475,15 @@ public class SATCanonizerService extends BasicService {
 						// We just drop the NOT??
 					}
 					break;
+//				case MOD:
+//					Expression r = stack.pop();
+//					stack.push(new Operation(Operation.Operator.MOD, stack.pop(), r));
+//					break;
+//				case DIV:
+////					linearInteger = false;
+//					r = stack.pop();
+//					stack.push(new Operation(Operation.Operator.DIV, stack.pop(), r));
+//					break;
 				default:
 					break;
 			}

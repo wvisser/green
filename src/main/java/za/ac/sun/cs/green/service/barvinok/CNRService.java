@@ -16,11 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * @date: 2017/07/26
- * @author: JH Taljaard.
- * Student Number: 18509193.
- * Supervisor:  Willem Visser   (2018, 2019),
- * Jaco Geldenhuys (2017)
+ * @author JH Taljaard (USnr 18509193)
+ * @author Willem Visser (Supervisor)
+ * @author Jaco Geldenhuys (Supervisor)
  * <p>
  * Description:
  * CNR -- Count and Recur
@@ -125,12 +123,12 @@ public class CNRService extends CountService {
 	/*
 	 * Total number of times a formula is retrieved from Redis.
 	 */
-	private static int cacheHitCount = 0;
+	private int cacheHitCount = 0;
 
 	/*
 	 * Total number of times a formula is not in Redis.
 	 */
-	private static int cacheMissCount = 0;
+	private int cacheMissCount = 0;
 
 	/*
 	 * Total number of time the service is invoked.
@@ -142,19 +140,19 @@ public class CNRService extends CountService {
 	/*
 	 * Contains the model to use for the expression evaluator
 	 */
-	protected static Map<IntVariable, Object> MODEL_MAPPING;
+//	protected static Map<IntVariable, Object> MODEL_MAPPING;
 
 	/*
 	 * Keep track of all the variables in a formula.
 	 * The use is for look-ups in the MODEL_MAPPING
 	 * for the evaluator.
 	 */
-	protected static HashMap<IntVariable, Boolean> vars;
+	protected HashMap<IntVariable, Boolean> vars;
 
 	/*
 	 * Store all the bound variables of the formula
 	 */
-	protected static ArrayList<IntVariable> bounds;
+	protected ArrayList<IntVariable> bounds;
 
 	public CNRService(Green solver, Properties properties) {
 		super(solver);
@@ -222,7 +220,6 @@ public class CNRService extends CountService {
 		String result = "";
 		vars = new HashMap<>();
 		bounds = new ArrayList<>();
-		MODEL_MAPPING = new HashMap<IntVariable, Object>();
 		HashMap<Expression, Expression> cases = null;
 
 		if (store != null) {
@@ -283,16 +280,11 @@ public class CNRService extends CountService {
 
 		try {
 			//extract bounds
-			BoundsVisitor bv = new BoundsVisitor(vars, bounds, MODEL_MAPPING);
-
+			BoundsVisitor bv = new BoundsVisitor(vars, bounds);
 			instance.getFullExpression().accept(bv);
-		} catch (VisitorException e) {
-			e.printStackTrace();
-		}
 
-		//evaluate formulas
-		EvaluatorVisitor evaluator = new EvaluatorVisitor(MODEL_MAPPING);
-		try {
+			//evaluate formulas
+			EvaluatorVisitor evaluator = new EvaluatorVisitor(bv.getModelMapping());
 			assert (cases != null);
 			for (Expression k : cases.keySet()) {
 				k.accept(evaluator);
@@ -300,12 +292,12 @@ public class CNRService extends CountService {
 					cases.get(k).accept(evaluator);
 				}
 			}
+			//return count
+			return new Apint(evaluator.getCount());
 		} catch (VisitorException e) {
 			e.printStackTrace();
+			return new Apint(-1);
 		}
-
-		//return count
-		return new Apint(evaluator.getCount());
 	}
 
 	/**
@@ -891,11 +883,15 @@ class BoundsVisitor extends Visitor {
 	private ArrayList<IntVariable> bounds;
 	private Map<IntVariable, Object> modelMapping;
 
-	public BoundsVisitor(HashMap<IntVariable, Boolean> vars, ArrayList<IntVariable> bounds, Map<IntVariable, Object> modelMapping) {
+	public BoundsVisitor(HashMap<IntVariable, Boolean> vars, ArrayList<IntVariable> bounds) {
 		super();
 		this.vars = vars;
 		this.bounds = bounds;
-		this.modelMapping = modelMapping;
+		this.modelMapping = new HashMap<>();
+	}
+
+	public Map<IntVariable, Object> getModelMapping() {
+		return modelMapping;
 	}
 
 	@Override

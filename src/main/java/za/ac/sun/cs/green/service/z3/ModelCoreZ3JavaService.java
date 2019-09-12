@@ -29,7 +29,7 @@ public class ModelCoreZ3JavaService extends ModelCoreService {
 
 	private static class Z3Wrapper {
 		private Context ctx;
-		private Solver solver;
+//		private Solver solver;
 
 		private static Z3Wrapper instance = null;
 
@@ -52,13 +52,13 @@ public class ModelCoreZ3JavaService extends ModelCoreService {
 				e.printStackTrace();
 				throw new RuntimeException("## Error Z3: Exception caught in Z3 JNI: \n" + e);
 			}
-			// TODO : Changed logic to QF_LIA from AUF_LIA
+			// Changed logic to QF_LIA from AUF_LIA
 //            solver = ctx.mkSolver(LOGIC); // removed since this creation is unnecessary
 		}
 
-		public Solver getSolver() {
-			return this.solver;
-		}
+//		public Solver getSolver() {
+//			return this.solver;
+//		}
 
 		public Context getCtx() {
 			return this.ctx;
@@ -68,7 +68,7 @@ public class ModelCoreZ3JavaService extends ModelCoreService {
 	public ModelCoreZ3JavaService(Green solver, Properties properties) {
 		super(solver);
 		Z3Wrapper z3Wrapper = Z3Wrapper.getInstance();
-		Z3solver = z3Wrapper.getSolver();
+//		Z3solver = z3Wrapper.getSolver();
 		ctx = z3Wrapper.getCtx();
 	}
 
@@ -88,11 +88,11 @@ public class ModelCoreZ3JavaService extends ModelCoreService {
 		Map<BoolExpr, Expression> namedAsserts = translator.getCoreMappings();
 		// model should now be in ctx
 		try {
-			Z3solver = ctx.mkSolver(LOGIC); // create clean instance
+			Z3solver = ctx.mkSolver(LOGIC); // create clean instance | should change to reset
 			for (BoolExpr px : namedAsserts.keySet()) {
 				// px is the Predicate name
 				// assert and track each predicate/assertion
-				Z3solver.assertAndTrack(translator.getAsserts().get(namedAsserts.get(px)), px);
+				Z3solver.assertAndTrack(translator.getSpecificAssert(namedAsserts.get(px)), px);
 			}
 		} catch (Z3Exception e1) {
 			log.log(Level.WARN, "Error in Z3" + e1.getMessage());

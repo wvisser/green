@@ -23,6 +23,10 @@ class Z3JavaTranslator extends Visitor {
 		return asserts;
 	}
 
+	public BoolExpr getSpecificAssert(Expression key) {
+		return getAsserts().get(key);
+	}
+
 	public Z3JavaTranslator(Context c) {
 		this.context = c;
 		stack = new Stack<Expr>();

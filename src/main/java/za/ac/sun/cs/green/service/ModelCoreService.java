@@ -4,8 +4,8 @@ import za.ac.sun.cs.green.Green;
 import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.Expression;
 import za.ac.sun.cs.green.expr.Variable;
-import za.ac.sun.cs.green.service.grulia.repository.SatEntry;
-import za.ac.sun.cs.green.service.grulia.repository.UnsatEntry;
+import za.ac.sun.cs.green.service.grulia.gruliastore.SatEntry;
+import za.ac.sun.cs.green.service.grulia.gruliastore.UnsatEntry;
 import za.ac.sun.cs.green.util.Reporter;
 
 import java.util.Map;

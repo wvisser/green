@@ -1,7 +1,6 @@
 package za.ac.sun.cs.green.store.memstore;
 
 import za.ac.sun.cs.green.Green;
-import za.ac.sun.cs.green.service.grulia.repository.Entry;
 import za.ac.sun.cs.green.store.BasicStore;
 import za.ac.sun.cs.green.store.redis.RedisStore;
 import za.ac.sun.cs.green.util.Reporter;

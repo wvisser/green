@@ -5,10 +5,10 @@ import za.ac.sun.cs.green.Instance;
 import za.ac.sun.cs.green.expr.*;
 import za.ac.sun.cs.green.service.ModelCoreService;
 import za.ac.sun.cs.green.service.SATService1;
-import za.ac.sun.cs.green.service.grulia.repository.BinaryTreeStore;
-import za.ac.sun.cs.green.service.grulia.repository.Repository;
-import za.ac.sun.cs.green.service.grulia.repository.SatEntry;
-import za.ac.sun.cs.green.service.grulia.repository.UnsatEntry;
+import za.ac.sun.cs.green.service.grulia.gruliastore.BinaryTreeStore;
+import za.ac.sun.cs.green.service.grulia.gruliastore.GruliaStore;
+import za.ac.sun.cs.green.service.grulia.gruliastore.SatEntry;
+import za.ac.sun.cs.green.service.grulia.gruliastore.UnsatEntry;
 import za.ac.sun.cs.green.service.z3.ModelCoreZ3JavaService;
 import za.ac.sun.cs.green.util.Reporter;
 
@@ -81,11 +81,11 @@ public class GruliaService extends SATService1 {
 	/**
 	 * Stores data of satisfiable formulas.
 	 */
-	private final Repository<SatEntry> SAT_REPO;
+	private final GruliaStore<SatEntry> SAT_REPO;
 	/**
 	 * Stores data of unsatisfiable formulas.
 	 */
-	private final Repository<UnsatEntry> UNSAT_REPO;
+	private final GruliaStore<UnsatEntry> UNSAT_REPO;
 
 	/**
 	 * Instance of model checker.
@@ -495,23 +495,23 @@ public class GruliaService extends SATService1 {
 		if (SAT_REPO.size() != 0) {
 			long start = System.currentTimeMillis();
 			long start1;
-			List<SatEntry> temp = SAT_REPO.extract(dummy, K);
+			List<SatEntry> models = SAT_REPO.extract(dummy, K);
 			modelsExtractionTime += (System.currentTimeMillis() - start);
-			if (temp == null || temp.isEmpty()) {
+			if (models == null || models.isEmpty()) {
 				satCacheMissCount++;
 				return false;
 			}
 
 			start = System.currentTimeMillis();
-			for (SatEntry entry : temp) {
+			for (SatEntry model : models) {
 				// extract model
-				if (entry == null) {
+				if (model == null) {
 					break;
 				}
 
 				// test model satisfiability
 				start1 = System.currentTimeMillis();
-				GruliaExpressionEvaluator exprSATCheck = new GruliaExpressionEvaluator(entry.getSolution());
+				GruliaExpressionEvaluator exprSATCheck = new GruliaExpressionEvaluator(model.getSolution());
 				try {
 					expr.accept(exprSATCheck);
 				} catch (VisitorException x) {
@@ -557,18 +557,18 @@ public class GruliaService extends SATService1 {
 		 */
 		if (UNSAT_REPO.size() != 0) {
 			long start0 = System.currentTimeMillis();
-			List<UnsatEntry> temp = UNSAT_REPO.extract(dummy, K);
+			List<UnsatEntry> cores = UNSAT_REPO.extract(dummy, K);
 			coreExtractionTime += (System.currentTimeMillis() - start0);
 			boolean shares;
 
-			if (temp == null || temp.isEmpty()) {
+			if (cores == null || cores.isEmpty()) {
 				unsatCacheMissCount++;
 				return false;
 			}
 
 			start0 = System.currentTimeMillis();
-			String exprStr = expr.toString();
-			for (UnsatEntry entry : temp) {
+			String exprStr = expr.toString(); // using shorter string gives incorrect results, but long queries might StackOverflowError on toString()
+			for (UnsatEntry entry : cores) {
 				// extract expression
 				if (entry == null) {
 					break;
@@ -578,7 +578,7 @@ public class GruliaService extends SATService1 {
 				if (core.size() != 0) {
 					shares = true;
 					for (Expression clause : core) {
-						if (!exprStr.contains(clause.toString())) {
+						if (!exprStr.contains("(" + clause.toString() + ")")) {
 							shares = false;
 							break;
 						}
@@ -731,12 +731,22 @@ public class GruliaService extends SATService1 {
 		reporter.report(getClass().getSimpleName(), "satEntries added to cache = " + satEntryCount);
 		reporter.report(getClass().getSimpleName(), "unsatEntries added to cache = " + unsatEntryCount);
 		reporter.report(getClass().getSimpleName(), "satDeltaIs0 = " + satDeltaIs0);
+		//		reporter.report(getClass().getSimpleName(), "total Models reused = " + totSatModelCount);
 
 		// TIMES
 		reporter.report(getClass().getSimpleName(), "timeConsumption = " + timeConsumption);
 		reporter.report(getClass().getSimpleName(), "satTimeConsumption = " + satTimeConsumption);
 		reporter.report(getClass().getSimpleName(), "unsatTimeConsumption = " + unsatTimeConsumption);
-//		reporter.report(getClass().getSimpleName(), "total Models reused = " + totSatModelCount);
+		reporter.report(getClass().getSimpleName(), "cacheLoadTime = " + cacheLoadTimeConsumption);
+		reporter.report(getClass().getSimpleName(), "K_Model_extractTime = " + modelsExtractionTime);
+		reporter.report(getClass().getSimpleName(), "K_Model_testingTime = " + modelsTestingTime);
+		reporter.report(getClass().getSimpleName(), "model_evaluationTime = " + modelEvalTime);
+		reporter.report(getClass().getSimpleName(), "core_extractTime = " + coreExtractionTime);
+		reporter.report(getClass().getSimpleName(), "core_testingTime = " + coreTestingTime);
+		reporter.report(getClass().getSimpleName(), "satDelta_computationTime = " + satDeltaCalculationTime);
+		reporter.report(getClass().getSimpleName(), "satCache_checkTime = " + satCacheTime);
+		reporter.report(getClass().getSimpleName(), "unsatCache_checkTime = " + unsatCacheTime);
+		reporter.report(getClass().getSimpleName(), "solverCallTime = " + solverTime);
 /*
 		if (false) {
 			// Sat delta values
@@ -757,17 +767,6 @@ public class GruliaService extends SATService1 {
 			displayAsHistogram(reporter, modelNumbers);
 		}
 */
-		reporter.report(getClass().getSimpleName(), "cacheLoadTime = " + cacheLoadTimeConsumption);
-		reporter.report(getClass().getSimpleName(), "K_Model_extractTime = " + modelsExtractionTime);
-//		reporter.report(getClass().getSimpleName(), "K Model Extract count = " + count_of_models_extraction);
-		reporter.report(getClass().getSimpleName(), "K_Model_testingTime = " + modelsTestingTime);
-		reporter.report(getClass().getSimpleName(), "model_evaluationTime = " + modelEvalTime);
-		reporter.report(getClass().getSimpleName(), "core_extractTime = " + coreExtractionTime);
-		reporter.report(getClass().getSimpleName(), "core_testingTime = " + coreTestingTime);
-		reporter.report(getClass().getSimpleName(), "satDelta_computationTime = " + satDeltaCalculationTime);
-		reporter.report(getClass().getSimpleName(), "satCache_checkTime = " + satCacheTime);
-		reporter.report(getClass().getSimpleName(), "unsatCache_checkTime = " + unsatCacheTime);
-		reporter.report(getClass().getSimpleName(), "solverCallTime = " + solverTime);
 	}
 
 	/**
@@ -933,7 +932,7 @@ class GruliaVisitor extends Visitor {
 				stack.push(Math.abs(Math.abs(r) - Math.abs(l)));
 				break;
 			case MOD:
-				stack.push(Math.floorMod(l, r));
+				stack.push(l % r);
 				break;
 			default:
 				stack.push(0);

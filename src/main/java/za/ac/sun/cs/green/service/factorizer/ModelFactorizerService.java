@@ -61,6 +61,7 @@ public class ModelFactorizerService extends BasicService {
 	protected Set<Instance> processRequest0(Instance instance) {
 		Set<Expression> factors = factorizer.factorize(instance.getFullExpression());
 		Set<Instance> result = new HashSet<>();
+//		log.debug("Factorizer computes instance for :" + instance.getFullExpression());
 		for (Expression factor : factors) {
 //			log.debug("Factorizer computes instance for :" + factor);
 			result.add(new Instance(getSolver(), instance.getSource(), null, factor));
@@ -135,7 +136,7 @@ public class ModelFactorizerService extends BasicService {
 	public Object allChildrenDone(Instance instance, Object result) {
 		if (result instanceof HashMap) {
 			HashMap<Variable, Object>  model = (HashMap<Variable, Object> ) result;
-			if (!model.isEmpty()) {
+			if (model != null) {
 				@SuppressWarnings("unchecked")
 				HashMap<Variable, Object> wholeModel = (HashMap<Variable, Object>) instance.getData(MODELS);
 				return new HashMap<>(wholeModel);
