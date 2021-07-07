@@ -52,11 +52,11 @@ public class SerialTaskManager implements TaskManager {
 			result = service.allChildrenDone(instance, result);
 		}
 		if (parent != null) {
-			result = parent.childDone(parentInstance, service, instance, result); 
+			result = parent.childDone(parentInstance, service, instance, result);
 		}
 		return result;
 	}
-	
+
 	@Override
 	public Object process(final String serviceName, final Instance instance) {
 		log.info("processing serviceName=\"" + serviceName + "\"");
