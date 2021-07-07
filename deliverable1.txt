@@ -1,0 +1,7 @@
+The oracle was incorrect. I noticed that the input code and output code would
+only give the same result if the inequality at the end of the oracle was a less
+than or equal to, not a less than as it was originally. The build was fixed by
+changing the inqequality accordingly.
+
+https://github.com/denni9th/green/tree/d3952fafc90487e09b860b22571b24e5d0641c74
+

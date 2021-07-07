@@ -1,5 +1,17 @@
 language: java
 
+#sudo: required
+
+#services:
+# - docker
+
+#script:
+# - docker run -p 127.0.0.1:80:4567 buildc /bin/sh -c "ant; ant test;"
+
 script:
  - ant;
  - ant test;
+ - for f in bin/junit/*; do cat $f; done
+
+#before_install:
+# - docker build ./ -t buildc
